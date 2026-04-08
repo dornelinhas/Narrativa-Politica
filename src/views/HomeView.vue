@@ -83,49 +83,27 @@ const paths = computed(() => mockData.paths)
 }
 
 .hero {
-  height: 85vh;
+  height: 90vh;
   display: flex;
   align-items: center;
-  background: linear-gradient(135deg, #FFF9FB 0%, #F7F1F3 100%);
+  background: var(--grad-logo-1);
+  color: white;
   position: relative;
   overflow: hidden;
 }
 
-.hero::after {
-  content: '';
-  position: absolute;
-  top: 10%;
-  right: -5%;
-  width: 500px;
-  height: 500px;
-  background: radial-gradient(circle, var(--accent-coral) 0%, transparent 70%);
-  opacity: 0.1;
-  border-radius: 50%;
-}
-
-.hero-content {
-  max-width: 800px;
-  position: relative;
-  z-index: 2;
-}
-
-.hero-title {
-  font-size: 4rem;
-  line-height: 1.1;
-  margin-bottom: 30px;
-  font-weight: 700;
+.hero-subtitle {
+  font-size: 1.25rem;
+  color: rgba(255, 255, 255, 0.9);
+  margin-bottom: 40px;
+  max-width: 600px;
 }
 
 .highlight {
-  color: var(--accent-gold);
-  font-style: italic;
-}
-
-.hero-subtitle {
-  font-size: 1.25rem;
-  color: #555;
-  margin-bottom: 40px;
-  max-width: 600px;
+  color: var(--text-main);
+  background: var(--accent-yellow);
+  padding: 0 10px;
+  font-style: normal;
 }
 
 .hero-actions {

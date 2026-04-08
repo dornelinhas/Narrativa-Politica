@@ -2,8 +2,16 @@
   <header class="header" :class="{ 'header-scrolled': isScrolled }">
     <div class="container header-inner">
       <router-link to="/" class="logo">
-        <span class="logo-text">Narrativa</span>
-        <span class="logo-subtext">Política</span>
+        <div class="logo-box">
+          <span class="logo-letters">NP</span>
+          <div class="logo-shape dot-red"></div>
+          <div class="logo-shape rect-pink"></div>
+          <div class="logo-shape square-yellow"></div>
+        </div>
+        <div class="logo-text-group">
+          <span class="logo-text">Narrativa</span>
+          <span class="logo-subtext">Política</span>
+        </div>
       </router-link>
 
       <nav class="nav" :class="{ 'nav-active': isMobileMenuOpen }">
@@ -81,23 +89,80 @@ onUnmounted(() => {
 
 .logo {
   display: flex;
+  align-items: center;
+  gap: 15px;
+  text-decoration: none;
+}
+
+.logo-box {
+  position: relative;
+  width: 50px;
+  height: 50px;
+  background: var(--text-main);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border-radius: 4px;
+}
+
+.logo-letters {
+  color: white;
+  font-weight: 900;
+  font-size: 1.4rem;
+  z-index: 2;
+  font-family: var(--font-sans);
+}
+
+.logo-shape {
+  position: absolute;
+  z-index: 1;
+}
+
+.dot-red {
+  width: 15px;
+  height: 15px;
+  background: var(--accent-red);
+  border-radius: 50%;
+  top: 5px;
+  left: 5px;
+}
+
+.rect-pink {
+  width: 20px;
+  height: 10px;
+  background: var(--accent-pink);
+  top: 5px;
+  right: -5px;
+}
+
+.square-yellow {
+  width: 15px;
+  height: 15px;
+  background: var(--accent-yellow);
+  bottom: 5px;
+  left: 10px;
+}
+
+.logo-text-group {
+  display: flex;
   flex-direction: column;
-  line-height: 1;
 }
 
 .logo-text {
   font-family: var(--font-serif);
-  font-size: 1.5rem;
+  font-size: 1.4rem;
   font-weight: 700;
   color: var(--text-main);
+  line-height: 1;
 }
 
 .logo-subtext {
-  font-size: 0.7rem;
-  letter-spacing: 3px;
+  font-size: 0.65rem;
+  letter-spacing: 4px;
   text-transform: uppercase;
-  color: var(--accent-gold);
-  font-weight: 600;
+  color: var(--accent-pink);
+  font-weight: 800;
 }
 
 .nav {
