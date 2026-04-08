@@ -70,24 +70,45 @@ const featuredArticles = computed(() => mockData.articles.slice(0, 2))
 }
 
 .hero-title {
-  font-size: 5rem;
-  line-height: 1;
+  font-size: 5.5rem;
+  line-height: 0.95;
   margin-bottom: 30px;
-  color: var(--text-dark);
-}
-
-.text-gradient {
-  background: var(--grad-main);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  color: var(--text-white);
+  text-shadow: 0 10px 30px rgba(0,0,0,0.5);
 }
 
 .hero-subtitle {
-  font-size: 1.4rem;
+  font-size: 1.5rem;
   max-width: 800px;
   margin: 0 auto 50px;
-  color: #475569;
+  color: rgba(255,255,255,0.8);
   font-weight: 500;
+  text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+}
+
+.section-title {
+  color: white;
+  margin-bottom: 60px;
+}
+
+.highlight-card h3 {
+  color: white;
+}
+
+.highlight-card p {
+  color: rgba(255,255,255,0.7);
+}
+
+.article-card {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.article-card h3 {
+  color: white;
+}
+
+.article-card p {
+  color: rgba(255,255,255,0.6);
 }
 
 .hero-actions {

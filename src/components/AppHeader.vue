@@ -177,46 +177,42 @@ onUnmounted(() => {
   bottom: 0px;
   right: 18px;
 }
-
-.brand-text {
-  display: flex;
-  flex-direction: column;
-  line-height: 1;
+.header-scrolled {
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(25px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  height: 80px;
 }
 
 .main-name {
-  font-weight: 800;
-  font-size: 1.5rem;
-  color: var(--text-dark);
+  font-weight: 900;
+  font-size: 1.6rem;
+  color: var(--text-white);
+  letter-spacing: -1px;
 }
 
 .sub-name {
   font-size: 0.65rem;
   text-transform: uppercase;
-  letter-spacing: 5px;
-  color: var(--color-pink);
-  font-weight: 700;
+  letter-spacing: 6px;
+  color: var(--color-vibrant-pink);
+  font-weight: 800;
   margin-top: 2px;
-}
-
-.nav {
-  display: flex;
-  gap: 32px;
 }
 
 .nav-link {
   font-size: 0.8rem;
-  font-weight: 700;
+  font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 1.5px;
-  color: var(--text-dark);
-  opacity: 0.6;
+  color: var(--text-white);
+  opacity: 0.7;
   position: relative;
 }
 
 .nav-link:hover, .router-link-active {
   opacity: 1;
-  color: var(--color-pink);
+  color: var(--color-vibrant-pink);
 }
 
 .nav-link::after {
@@ -226,7 +222,7 @@ onUnmounted(() => {
   left: 0;
   width: 0;
   height: 2px;
-  background: var(--grad-main);
+  background: var(--color-vibrant-pink);
   transition: var(--transition);
 }
 
@@ -244,9 +240,10 @@ onUnmounted(() => {
 .bar {
   width: 28px;
   height: 3px;
-  background-color: var(--text-dark);
+  background-color: var(--text-white);
   border-radius: 4px;
 }
+
 
 @media (max-width: 992px) {
   .nav {
