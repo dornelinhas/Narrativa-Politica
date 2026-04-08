@@ -3,66 +3,53 @@
     <!-- Hero Section -->
     <section class="hero">
       <div class="container hero-content">
-        <h1 class="hero-title">Narrativas que moldam a <span class="highlight">política</span> global.</h1>
+        <h1 class="hero-title">Narrativas que <span class="text-gradient">transformam</span> o mundo.</h1>
         <p class="hero-subtitle">
-          Análise acadêmica, curadoria estratégica de oportunidades e mentoria de carreira para quem quer fazer a diferença nas Relações Internacionais.
+          Uma plataforma dedicada à análise estratégica, mentoria de carreira e curadoria de oportunidades em Relações Internacionais e Política.
         </p>
         <div class="hero-actions">
-          <router-link to="/artigos" class="btn btn-primary">Ler Artigos</router-link>
-          <router-link to="/mentoria" class="btn btn-outline">Conhecer Mentoria</router-link>
+          <router-link to="/artigos" class="btn btn-primary">Explorar Análises</router-link>
+          <router-link to="/mentoria" class="btn btn-outline">Nossa Mentoria</router-link>
         </div>
       </div>
     </section>
 
-    <!-- Featured Articles -->
-    <section class="featured section-padding container">
+    <!-- Cards Section -->
+    <section class="container section-padding">
+      <div class="grid-highlights">
+        <div class="glass-card highlight-card">
+          <div class="icon-box grad-1">✦</div>
+          <h3>Análise Acadêmica</h3>
+          <p>Rigor teórico aplicado aos desafios contemporâneos da política global.</p>
+        </div>
+        <div class="glass-card highlight-card">
+          <div class="icon-box grad-2">★</div>
+          <h3>Curadoria Estratégica</h3>
+          <p>Oportunidades selecionadas com análise de diferencial competitivo.</p>
+        </div>
+        <div class="glass-card highlight-card">
+          <div class="icon-box grad-3">♥</div>
+          <h3>Mentoria de Carreira</h3>
+          <p>Aceleração profissional para mulheres em Relações Internacionais.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Featured Section -->
+    <section class="featured-section container section-padding">
       <div class="section-header">
-        <h2 class="section-title">Análises Recentes</h2>
-        <router-link to="/artigos" class="view-all">Ver tudo</router-link>
+        <h2 class="section-title">Últimas Publicações</h2>
+        <router-link to="/artigos" class="link-more">Ver todas as análises &rarr;</router-link>
       </div>
       <div class="article-grid">
-        <div v-for="article in featuredArticles" :key="article.id" class="article-card">
-          <div class="card-img" :style="{ backgroundImage: `url(${article.image})` }"></div>
-          <div class="card-body">
-            <span class="category">{{ article.category }}</span>
+        <div v-for="article in featuredArticles" :key="article.id" class="article-card glass-card">
+          <div class="card-image" :style="{ backgroundImage: `url(${article.image})` }"></div>
+          <div class="card-content">
+            <span class="badge">{{ article.category }}</span>
             <h3>{{ article.title }}</h3>
             <p>{{ article.excerpt }}</p>
-            <router-link :to="`/artigo/${article.id}`" class="read-more">Leia mais &rarr;</router-link>
+            <router-link :to="`/artigo/${article.id}`" class="btn-text">Ler artigo completo</router-link>
           </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Call to Action Opportunities -->
-    <section class="cta-opportunities section-padding">
-      <div class="container cta-inner">
-        <div class="cta-text">
-          <h2>Curadoria Estratégica</h2>
-          <p>Não entregamos apenas vagas, entregamos o caminho. Analisamos cada oportunidade sob uma ótica estratégica para que você saiba exatamente onde investir seu tempo.</p>
-          <router-link to="/oportunidades" class="btn btn-primary">Ver Oportunidades</router-link>
-        </div>
-        <div class="cta-stats">
-          <div class="stat-item">
-            <span class="stat-number">100+</span>
-            <span class="stat-label">Mentoradas</span>
-          </div>
-          <div class="stat-item">
-            <span class="stat-number">50+</span>
-            <span class="stat-label">Relatórios</span>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Learning Paths Highlights -->
-    <section class="paths-highlights section-padding container">
-      <h2 class="section-title centered">Trilhas de Aprendizado</h2>
-      <div class="paths-grid">
-        <div v-for="path in paths" :key="path.id" class="path-card">
-          <div class="path-icon">✦</div>
-          <h3>{{ path.title }}</h3>
-          <p>{{ path.description }}</p>
-          <router-link to="/trilhas" class="link-elegant">Ver trilha completa</router-link>
         </div>
       </div>
     </section>
@@ -74,220 +61,130 @@ import mockData from '../data/mockData.json'
 import { computed } from 'vue'
 
 const featuredArticles = computed(() => mockData.articles.slice(0, 2))
-const paths = computed(() => mockData.paths)
 </script>
 
 <style scoped>
-.section-padding {
-  padding: 100px 0;
+.hero {
+  padding: 140px 0 100px;
+  text-align: center;
 }
 
-.hero {
-  height: 90vh;
-  display: flex;
-  align-items: center;
-  background: var(--grad-logo-1);
-  color: white;
-  position: relative;
-  overflow: hidden;
+.hero-title {
+  font-size: 5rem;
+  line-height: 1;
+  margin-bottom: 30px;
+  color: var(--text-dark);
+}
+
+.text-gradient {
+  background: var(--grad-main);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 .hero-subtitle {
-  font-size: 1.25rem;
-  color: rgba(255, 255, 255, 0.9);
-  margin-bottom: 40px;
-  max-width: 600px;
-}
-
-.highlight {
-  color: var(--text-main);
-  background: var(--accent-yellow);
-  padding: 0 10px;
-  font-style: normal;
+  font-size: 1.4rem;
+  max-width: 800px;
+  margin: 0 auto 50px;
+  color: #475569;
+  font-weight: 500;
 }
 
 .hero-actions {
   display: flex;
+  justify-content: center;
   gap: 20px;
 }
 
-/* Featured Section */
-.section-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
-  margin-bottom: 50px;
+.section-padding {
+  padding: 100px 0;
 }
 
-.section-title {
-  font-size: 2.5rem;
+.grid-highlights {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 30px;
 }
 
-.section-title.centered {
+.highlight-card {
+  padding: 50px 40px;
   text-align: center;
-  margin-bottom: 60px;
+  transition: var(--transition);
 }
 
-.view-all {
-  font-weight: 600;
-  text-transform: uppercase;
-  font-size: 0.8rem;
-  color: var(--accent-gold);
-  border-bottom: 1px solid var(--accent-gold);
+.highlight-card:hover {
+  transform: translateY(-15px);
+  background: white;
+}
+
+.icon-box {
+  width: 60px;
+  height: 60px;
+  border-radius: 15px;
+  margin: 0 auto 25px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  color: white;
+  font-weight: 900;
+}
+
+.grad-1 { background: var(--color-red); }
+.grad-2 { background: var(--color-pink); }
+.grad-3 { background: var(--color-blue); }
+
+.highlight-card h3 {
+  margin-bottom: 15px;
+  font-size: 1.5rem;
 }
 
 .article-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 30px;
-}
-
-.article-card {
-  background: white;
-  border-radius: var(--border-radius);
-  overflow: hidden;
-  box-shadow: 0 5px 20px rgba(0,0,0,0.03);
-  transition: var(--transition);
-}
-
-.article-card:hover {
-  transform: translateY(-10px);
-  box-shadow: 0 15px 30px rgba(0,0,0,0.08);
-}
-
-.card-img {
-  height: 300px;
-  background-size: cover;
-  background-position: center;
-}
-
-.card-body {
-  padding: 30px;
-}
-
-.category {
-  font-size: 0.75rem;
-  text-transform: uppercase;
-  color: var(--accent-coral);
-  font-weight: 700;
-  letter-spacing: 1px;
-}
-
-.card-body h3 {
-  margin: 15px 0;
-  font-size: 1.5rem;
-}
-
-.card-body p {
-  color: #666;
-  font-size: 0.95rem;
-  margin-bottom: 20px;
-}
-
-.read-more {
-  font-weight: 600;
-  color: var(--text-main);
-  font-size: 0.9rem;
-}
-
-/* CTA Opportunities */
-.cta-opportunities {
-  background-color: var(--accent-teal);
-  color: white;
-}
-
-.cta-inner {
-  display: grid;
-  grid-template-columns: 1.5fr 1fr;
-  align-items: center;
-  gap: 80px;
-}
-
-.cta-text h2 {
-  font-size: 3rem;
-  margin-bottom: 25px;
-}
-
-.cta-text p {
-  font-size: 1.1rem;
-  margin-bottom: 40px;
-  opacity: 0.9;
-}
-
-.cta-stats {
-  display: flex;
   gap: 40px;
 }
 
-.stat-item {
+.article-card {
+  overflow: hidden;
   display: flex;
   flex-direction: column;
 }
 
-.stat-number {
-  font-family: var(--font-serif);
-  font-size: 3.5rem;
-  font-weight: 700;
-  color: var(--accent-gold);
+.card-image {
+  height: 280px;
+  background-size: cover;
+  background-position: center;
 }
 
-.stat-label {
-  text-transform: uppercase;
-  letter-spacing: 2px;
-  font-size: 0.8rem;
-  opacity: 0.8;
-}
-
-/* Paths highlights */
-.paths-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 40px;
-}
-
-.path-card {
+.card-content {
   padding: 40px;
-  background: white;
-  border: 1px solid var(--gray-light);
-  border-radius: var(--border-radius);
 }
 
-.path-icon {
-  font-size: 2rem;
-  color: var(--accent-gold);
+.badge {
+  background: var(--color-yellow);
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 0.7rem;
+  font-weight: 800;
+  text-transform: uppercase;
   margin-bottom: 20px;
-}
-
-.path-card h3 {
-  margin-bottom: 15px;
-}
-
-.link-elegant {
   display: inline-block;
+}
+
+.btn-text {
   margin-top: 20px;
-  font-weight: 600;
-  color: var(--accent-coral);
+  display: inline-block;
+  font-weight: 800;
+  color: var(--color-pink);
+  text-transform: uppercase;
+  font-size: 0.8rem;
+  letter-spacing: 1px;
 }
 
 @media (max-width: 992px) {
-  .hero-title {
-    font-size: 3rem;
-  }
-  .article-grid {
-    grid-template-columns: 1fr;
-  }
-}
-
-@media (max-width: 768px) {
-  .hero-title {
-    font-size: 2.5rem;
-  }
-  .cta-inner {
-    grid-template-columns: 1fr;
-    gap: 50px;
-  }
-  .paths-grid {
-    grid-template-columns: 1fr;
-  }
+  .hero-title { font-size: 3.5rem; }
+  .grid-highlights { grid-template-columns: 1fr; }
+  .article-grid { grid-template-columns: 1fr; }
 }
 </style>

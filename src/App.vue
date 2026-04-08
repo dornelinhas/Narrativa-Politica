@@ -1,5 +1,6 @@
 <template>
   <div class="app-layout">
+    <div class="bg-vibrant"></div>
     <AppHeader />
     <main class="main-content">
       <router-view v-slot="{ Component }">
