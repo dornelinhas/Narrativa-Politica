@@ -1,28 +1,26 @@
 :root {
-  /* Paleta Saturada e Profunda - Extraída da Foto 1 */
-  --color-deep-red: #4A0E0E;
-  --color-vibrant-red: #FF4B2B;
-  --color-deep-green: #0F2027;
-  --color-vibrant-green: #A8E063;
-  --color-deep-purple: #1a0a24;
-  --color-vibrant-pink: #FF0099;
-  --color-vibrant-blue: #00C6FF;
-  --color-yellow: #FBD72B;
+  /* Paleta Exata Fornecida */
+  --color-blue: #007BFF;       /* Azul Vibrante */
+  --color-purple: #8A2BE2;     /* Roxo Transição */
+  --color-pink: #FF4D6D;       /* Rosa Choque */
+  --color-red: #D00000;        /* Vermelho */
+  --color-yellow: #FFD700;     /* Amarelo */
+  --color-green-deep: #1B3022; /* Verde Escuro */
   
-  /* Gradiente "Deep Aurora" Flutuante */
-  --grad-main: linear-gradient(135deg, #1a0a24 0%, #4A0E0E 25%, #0F2027 50%, #203A43 75%, #1a0a24 100%);
+  /* Gradiente "Narrativa" com a paleta exata */
+  --grad-main: linear-gradient(135deg, #1B3022 0%, #D00000 20%, #FF4D6D 40%, #8A2BE2 60%, #007BFF 80%, #1B3022 100%);
   
   --text-white: #FFFFFF;
-  --text-dim: rgba(255, 255, 255, 0.7);
+  --text-dim: rgba(255, 255, 255, 0.75);
   
   --font-sans: 'Montserrat', 'Inter', sans-serif;
   
-  /* Glassmorphism Profissional (Fumê) */
-  --glass-bg: rgba(0, 0, 0, 0.25);
-  --glass-border: rgba(255, 255, 255, 0.1);
-  --glass-blur: blur(20px);
+  /* Glassmorphism Refinado */
+  --glass-bg: rgba(0, 0, 0, 0.35);
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --glass-blur: blur(25px);
   
-  --transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+  --transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 * {

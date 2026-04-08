@@ -140,7 +140,7 @@ onUnmounted(() => {
 .dot-green {
   width: 12px;
   height: 12px;
-  background: #C4D38D; /* Verde musgo claro como na imagem */
+  background: var(--color-green-deep);
   border-radius: 50%;
   top: 10px;
   left: 28px;
@@ -165,7 +165,7 @@ onUnmounted(() => {
 .rect-green-light {
   width: 16px;
   height: 16px;
-  background: #C4D38D;
+  background: var(--color-blue); /* Usando azul para equilibrar a composição */
   bottom: 8px;
   right: 6px;
 }
@@ -173,7 +173,7 @@ onUnmounted(() => {
 .dot-blue {
   width: 8px;
   height: 8px;
-  background: #4481EB;
+  background: var(--color-purple);
   bottom: 0px;
   right: 18px;
 }
