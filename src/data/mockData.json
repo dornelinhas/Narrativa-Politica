@@ -1,0 +1,101 @@
+{
+  "articles": [
+    {
+      "id": 1,
+      "title": "A Inserção de Gênero nas Relações Internacionais: Uma Perspectiva Feminista",
+      "category": "Gênero e Política",
+      "excerpt": "Uma análise sobre como as teorias feministas desafiam as estruturas tradicionais de poder e moldam a política externa contemporânea.",
+      "date": "2024-03-25",
+      "image": "https://images.unsplash.com/photo-1573164713714-d95e436ab8d6?auto=format&fit=crop&w=800&q=80",
+      "content": "As Relações Internacionais (RI) têm sido historicamente dominadas por perspectivas androcêntricas que invisibilizam as experiências e contribuições das mulheres. Este artigo explora as principais vertentes do feminismo nas RI, desde o feminismo liberal até o pós-colonial, discutindo como a inclusão da perspectiva de gênero altera nossa compreensão de segurança, economia global e direitos humanos. \n\nA análise foca em estudos de caso recentes onde a diplomacia de gênero provou ser um diferencial estratégico na resolução de conflitos internacionais."
+    },
+    {
+      "id": 2,
+      "title": "Eleições nos EUA 2024: Impactos Estratégicos para a América Latina",
+      "category": "Análise Política",
+      "excerpt": "Explorando os cenários possíveis do pleito americano e como cada resultado pode influenciar as relações bilaterais com o Brasil.",
+      "date": "2024-03-10",
+      "image": "https://images.unsplash.com/photo-1529107386315-e1a2ed48a620?auto=format&fit=crop&w=800&q=80",
+      "content": "A política externa dos Estados Unidos é um dos pilares da estabilidade — ou instabilidade — geopolítica na América Latina. Com a aproximação das eleições de 2024, as atenções se voltam para as propostas dos candidatos em relação ao comércio, imigração e políticas ambientais. \n\nPara o Brasil, o desafio é manter o pragmatismo e buscar oportunidades de cooperação, independentemente da administração que assumir a Casa Branca."
+    },
+    {
+      "id": 3,
+      "title": "A Economia Política da Transição Energética",
+      "category": "Economia e Política",
+      "excerpt": "O papel dos países em desenvolvimento na nova ordem energética global e as tensões entre crescimento e sustentabilidade.",
+      "date": "2024-02-28",
+      "image": "https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?auto=format&fit=crop&w=800&q=80",
+      "content": "A transição para fontes de energia limpa não é apenas um desafio técnico, mas fundamentalmente político. Este artigo discute como as potências globais estão competindo pelo controle das cadeias de suprimentos de minerais críticos e como o Brasil pode se posicionar como um líder sustentável."
+    }
+  ],
+  "opportunities": [
+    {
+      "id": 1,
+      "title": "Programa de Estágio - Missão Diplomática em Brasília",
+      "organization": "Embaixada do Reino Unido",
+      "deadline": "2024-04-15",
+      "strategic_analysis": "Esta oportunidade é excelente para quem busca experiência direta em diplomacia pública. O diferencial aqui é focar sua carta de motivação na sua capacidade de análise de dados e interesse em políticas de sustentabilidade, pilares atuais da missão britânica no Brasil.",
+      "link": "https://example.com/apply-diplomacy"
+    },
+    {
+      "id": 2,
+      "title": "Fellowship em Direitos Humanos e Gênero",
+      "organization": "ONU Mulheres",
+      "deadline": "2024-05-01",
+      "strategic_analysis": "O foco desta vaga é a implementação local de políticas globais. Candidatas com experiência em pesquisa acadêmica em gênero (como as mencionadas em nossas Trilhas) têm alta competitividade. Recomendo destacar publicações ou participações em grupos de pesquisa.",
+      "link": "https://example.com/fellowship-un"
+    }
+  ],
+  "paths": [
+    {
+      "id": 1,
+      "title": "Carreira em Relações Internacionais",
+      "description": "Do graduação ao Itamaraty ou organizações internacionais. Um guia passo a passo.",
+      "steps": [
+        "Fundamentos Acadêmicos e Idiomas",
+        "Experiência em Simulações (MUNs) e Grupos de Pesquisa",
+        "Networking Estratégico e LinkedIn",
+        "Pós-Graduação e Especialização"
+      ]
+    },
+    {
+      "id": 2,
+      "title": "Pesquisa Acadêmica de Impacto",
+      "description": "Como transformar sua tese em um artigo publicável e relevante politicamente.",
+      "steps": [
+        "Definição do Problema de Pesquisa",
+        "Metodologia e Coleta de Dados",
+        "Redação Científica e Revisão por Pares",
+        "Submissão em Periódicos de Alto Impacto"
+      ]
+    }
+  ],
+  "projects": [
+    {
+      "id": 1,
+      "title": "Observatório de Gênero na Política",
+      "description": "Monitoramento da participação feminina nas decisões legislativas estaduais.",
+      "impact": "Mais de 50 relatórios publicados e citados por veículos de mídia nacional."
+    },
+    {
+      "id": 2,
+      "title": "Mentoria para Mulheres em RI",
+      "description": "Programa de aceleração de carreira para jovens profissionais da área.",
+      "impact": "100+ mentoradas em 5 países lusófonos."
+    }
+  ],
+  "services": [
+    {
+      "id": 1,
+      "title": "Mentoria Individual",
+      "description": "Sessões personalizadas para planejamento de carreira internacional, revisão de currículo e preparação para entrevistas.",
+      "price": "Consulte valores"
+    },
+    {
+      "id": 2,
+      "title": "Palestras e Workshops",
+      "description": "Temas: Geopolítica Contemporânea, Gênero nas Organizações e Carreira no Terceiro Setor.",
+      "price": "Sob demanda"
+    }
+  ]
+}

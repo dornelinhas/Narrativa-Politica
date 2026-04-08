@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Narrativa Política | Simples</title>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <style>
+        :root {
+            --bg-primary: #FFF9FB;
+            --text-main: #2D3142;
+            --accent-gold: #D4AF37;
+            --accent-coral: #F28482;
+            --accent-teal: #84A59D;
+            --font-serif: 'Playfair Display', serif;
+            --font-sans: 'Montserrat', sans-serif;
+            --transition: all 0.3s ease;
+        }
+
+        body {
+            font-family: var(--font-sans);
+            background-color: var(--bg-primary);
+            color: var(--text-main);
+            margin: 0;
+            line-height: 1.6;
+        }
+
+        h1, h2, h3, .serif { font-family: var(--font-serif); }
+
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+
+        header {
+            padding: 20px 0;
+            background: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        nav { display: flex; justify-content: space-between; align-items: center; }
+
+        .logo { font-size: 1.5rem; font-weight: 700; color: var(--text-main); text-decoration: none; }
+        .logo span { color: var(--accent-gold); font-size: 0.7rem; display: block; letter-spacing: 3px; }
+
+        .nav-links { display: flex; gap: 20px; }
+        .nav-links a { text-decoration: none; color: var(--text-main); font-size: 0.8rem; text-transform: uppercase; font-weight: 600; }
+
+        .hero { padding: 100px 0; background: linear-gradient(135deg, #FFF9FB, #F7F1F3); text-align: center; }
+        .hero h1 { font-size: 4rem; margin-bottom: 20px; }
+        .hero p { font-size: 1.2rem; max-width: 700px; margin: 0 auto 40px; color: #555; }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 30px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            transition: var(--transition);
+        }
+
+        .btn-primary { background: var(--accent-coral); color: white; }
+        .btn-primary:hover { background: #E07A5F; transform: translateY(-3px); }
+
+        section { padding: 80px 0; }
+        .section-title { font-size: 2.5rem; text-align: center; margin-bottom: 50px; }
+
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; }
+
+        .card { background: white; padding: 30px; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.02); }
+        .card h3 { margin-bottom: 15px; }
+
+        .fallback-msg {
+            background: #fff3cd;
+            color: #856404;
+            padding: 15px;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <div class="fallback-msg">
+            Versão de Backup: Use esta se o servidor local (run.bat) tiver problemas.
+        </div>
+
+        <header>
+            <div class="container nav">
+                <a href="#" class="logo">Narrativa <span>POLÍTICA</span></a>
+                <div class="nav-links">
+                    <a href="#artigos">Artigos</a>
+                    <a href="#oportunidades">Oportunidades</a>
+                    <a href="#mentoria">Mentoria</a>
+                </div>
+            </div>
+        </header>
+
+        <section class="hero">
+            <div class="container">
+                <h1>Narrativas que moldam a <span style="color:var(--accent-gold); font-style:italic">política</span> global.</h1>
+                <p>Análise acadêmica, curadoria de oportunidades e mentoria estratégica em Relações Internacionais.</p>
+                <a href="#artigos" class="btn btn-primary">Começar a Ler</a>
+            </div>
+        </section>
+
+        <section id="artigos" class="container">
+            <h2 class="section-title">Artigos em Destaque</h2>
+            <div class="grid">
+                <div v-for="article in articles" :key="article.id" class="card">
+                    <span style="color:var(--accent-coral); font-size:0.7rem; font-weight:700; text-transform:uppercase">{{ article.category }}</span>
+                    <h3>{{ article.title }}</h3>
+                    <p>{{ article.excerpt }}</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="oportunidades" style="background: white;">
+            <div class="container">
+                <h2 class="section-title">Curadoria Estratégica</h2>
+                <div class="grid">
+                    <div v-for="opp in opportunities" :key="opp.id" class="card" style="border-left: 4px solid var(--accent-gold)">
+                        <h3>{{ opp.title }}</h3>
+                        <p style="font-weight:600; color:var(--accent-coral)">{{ opp.organization }}</p>
+                        <p><i>{{ opp.strategic_analysis }}</i></p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <footer style="background:var(--text-main); color:white; padding:50px 0; text-align:center">
+            <p>&copy; 2024 Narrativa Política. Todos os direitos reservados.</p>
+        </footer>
+    </div>
+
+    <script>
+        const { createApp } = Vue
+        createApp({
+            data() {
+                return {
+                    articles: [
+                        { id: 1, title: 'A Inserção de Gênero nas RI', category: 'Gênero e Política', excerpt: 'Análise sobre como as teorias feministas desafiam as estruturas de poder.' },
+                        { id: 2, title: 'Eleições nos EUA 2024', category: 'Geopolítica', excerpt: 'Cenários e impactos estratégicos para a América Latina.' }
+                    ],
+                    opportunities: [
+                        { id: 1, title: 'Estágio Diplomático', organization: 'Embaixada UK', strategic_analysis: 'Foco em análise de dados e sustentabilidade.' },
+                        { id: 2, title: 'Fellowship Direitos Humanos', organization: 'ONU Mulheres', strategic_analysis: 'Ideal para quem tem pesquisa em gênero.' }
+                    ]
+                }
+            }
+        }).mount('#app')
+    </script>
+</body>
+</html>
