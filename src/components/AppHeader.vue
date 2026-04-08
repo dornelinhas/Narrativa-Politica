@@ -1,33 +1,44 @@
 <template>
   <header class="header" :class="{ 'header-scrolled': isScrolled }">
     <div class="container header-inner">
-      <router-link to="/" class="logo-container">
-        <div class="logo-np">
-          <span class="np-text">NP</span>
-          <div class="shape dot-red"></div>
-          <div class="shape dot-blue"></div>
-          <div class="shape rect-pink"></div>
+      <router-link to="/" class="logo-group">
+        <div class="logo-icon">
+          <span class="logo-np">NP</span>
+          <div class="decoration dot-red"></div>
+          <div class="decoration dot-blue"></div>
         </div>
-        <div class="brand-text">
-          <span class="main-name">Narrativa</span>
-          <span class="sub-name">Política</span>
+        <div class="logo-text">
+          <span class="name-top">Narrativa</span>
+          <span class="name-bottom">Política</span>
         </div>
       </router-link>
 
-      <nav class="nav" :class="{ 'nav-active': isMobileMenuOpen }">
-        <router-link @click="closeMenu" to="/" class="nav-link">Home</router-link>
-        <router-link @click="closeMenu" to="/artigos" class="nav-link">Artigos</router-link>
-        <router-link @click="closeMenu" to="/oportunidades" class="nav-link">Oportunidades</router-link>
-        <router-link @click="closeMenu" to="/trilhas" class="nav-link">Trilhas</router-link>
-        <router-link @click="closeMenu" to="/mentoria" class="nav-link">Mentoria</router-link>
+      <nav class="nav-desktop">
+        <router-link to="/" class="nav-item">Home</router-link>
+        <router-link to="/artigos" class="nav-item">Artigos</router-link>
+        <router-link to="/oportunidades" class="nav-item">Oportunidades</router-link>
+        <router-link to="/trilhas" class="nav-item">Trilhas</router-link>
+        <router-link to="/mentoria" class="nav-item btn-cta">Mentoria</router-link>
       </nav>
 
-      <div class="mobile-toggle" @click="toggleMenu">
-        <span class="bar"></span>
-        <span class="bar"></span>
-        <span class="bar"></span>
-      </div>
+      <button class="menu-toggle" @click="toggleMenu">
+        <span></span>
+        <span></span>
+      </button>
     </div>
+
+    <!-- Mobile Menu Overlay -->
+    <transition name="fade">
+      <div v-if="isMobileMenuOpen" class="nav-mobile-overlay">
+        <nav class="nav-mobile">
+          <router-link @click="closeMenu" to="/">Home</router-link>
+          <router-link @click="closeMenu" to="/artigos">Artigos</router-link>
+          <router-link @click="closeMenu" to="/oportunidades">Oportunidades</router-link>
+          <router-link @click="closeMenu" to="/trilhas">Trilhas</router-link>
+          <router-link @click="closeMenu" to="/mentoria">Mentoria</router-link>
+        </nav>
+      </div>
+    </transition>
   </header>
 </template>
 
@@ -38,7 +49,7 @@ const isScrolled = ref(false)
 const isMobileMenuOpen = ref(false)
 
 const handleScroll = () => {
-  isScrolled.value = window.scrollY > 20
+  isScrolled.value = window.scrollY > 50
 }
 
 const toggleMenu = () => {
@@ -60,22 +71,22 @@ onUnmounted(() => {
 
 <style scoped>
 .header {
-  height: 100px;
-  width: 100%;
-  background: transparent;
-  display: flex;
-  align-items: center;
-  position: sticky;
+  position: fixed;
   top: 0;
+  left: 0;
+  width: 100%;
+  height: 100px;
   z-index: 1000;
   transition: var(--transition);
+  display: flex;
+  align-items: center;
 }
 
 .header-scrolled {
-  background: rgba(255, 255, 255, 0.9);
-  backdrop-filter: blur(20px);
   height: 80px;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 4px 30px rgba(0,0,0,0.05);
 }
 
 .header-inner {
@@ -85,101 +96,147 @@ onUnmounted(() => {
   width: 100%;
 }
 
-.logo-container {
+.logo-group {
   display: flex;
   align-items: center;
   gap: 15px;
   text-decoration: none;
 }
 
-.logo-np {
+.logo-icon {
   position: relative;
-  width: 50px;
-  height: 50px;
+  width: 48px;
+  height: 48px;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-.np-text {
-  color: var(--text-main);
+.logo-np {
   font-weight: 900;
-  font-size: 1.6rem;
-  z-index: 10;
+  font-size: 1.4rem;
+  color: var(--text-main);
+  z-index: 2;
 }
 
-.shape {
+.decoration {
   position: absolute;
-  z-index: 5;
-  opacity: 0.8;
+  border-radius: 50%;
+  opacity: 0.6;
 }
 
-.dot-red { width: 18px; height: 18px; background: var(--color-red); border-radius: 50%; top: 0; left: 5px; }
-.dot-blue { width: 12px; height: 12px; background: var(--color-blue); border-radius: 50%; bottom: 5px; right: 5px; }
-.rect-pink { width: 20px; height: 8px; background: var(--color-pink); top: 5px; right: 0; }
+.dot-red {
+  width: 20px;
+  height: 20px;
+  background: var(--color-red);
+  top: 0;
+  left: 0;
+}
 
-.brand-text { display: flex; flex-direction: column; line-height: 1; }
-.main-name { font-weight: 800; font-size: 1.4rem; color: var(--text-main); }
-.sub-name { font-size: 0.6rem; text-transform: uppercase; letter-spacing: 4px; color: var(--color-pink); font-weight: 700; }
+.dot-blue {
+  width: 15px;
+  height: 15px;
+  background: var(--color-blue);
+  bottom: 5px;
+  right: 0;
+}
 
-.nav { display: flex; gap: 30px; }
+.logo-text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1;
+}
 
-.nav-link {
+.name-top {
+  font-weight: 800;
+  font-size: 1.25rem;
+  color: var(--text-main);
+}
+
+.name-bottom {
+  font-size: 0.6rem;
+  text-transform: uppercase;
+  letter-spacing: 4px;
+  color: var(--color-pink);
+  font-weight: 700;
+  margin-top: 2px;
+}
+
+.nav-desktop {
+  display: flex;
+  align-items: center;
+  gap: 35px;
+}
+
+.nav-item {
+  text-decoration: none;
   font-size: 0.85rem;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 1px;
   color: var(--text-main);
-  opacity: 0.6;
   position: relative;
-  text-decoration: none;
   transition: var(--transition);
 }
 
-.nav-link:hover, .router-link-active {
-  opacity: 1;
+.nav-item:hover {
   color: var(--color-blue);
 }
 
-.nav-link::after {
-  content: '';
-  position: absolute;
-  bottom: -5px;
-  left: 0;
-  width: 0;
-  height: 2px;
+.btn-cta {
   background: var(--color-blue);
-  transition: var(--transition);
+  color: white;
+  padding: 10px 20px;
+  border-radius: 4px;
 }
 
-.nav-link:hover::after, .router-link-active::after { width: 100%; }
+.btn-cta:hover {
+  background: var(--text-main);
+  color: white;
+}
 
-.mobile-toggle {
+.menu-toggle {
   display: none;
+  background: none;
+  border: none;
   flex-direction: column;
-  gap: 5px;
+  gap: 6px;
   cursor: pointer;
 }
 
-.bar { width: 25px; height: 3px; background: var(--text-main); border-radius: 2px; }
+.menu-toggle span {
+  width: 30px;
+  height: 2px;
+  background: var(--text-main);
+}
 
 @media (max-width: 992px) {
-  .mobile-toggle { display: flex; }
-  .nav {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    width: 100%;
-    background: white;
-    flex-direction: column;
-    padding: 30px;
-    gap: 20px;
-    transform: translateY(-100%);
-    opacity: 0;
-    pointer-events: none;
-    transition: var(--transition);
-    box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-  }
-  .nav-active { transform: translateY(0); opacity: 1; pointer-events: all; }
+  .nav-desktop { display: none; }
+  .menu-toggle { display: flex; }
 }
+
+.nav-mobile-overlay {
+  position: fixed;
+  inset: 0;
+  background: white;
+  z-index: 999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.nav-mobile {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  text-align: center;
+}
+
+.nav-mobile a {
+  font-size: 2rem;
+  font-weight: 800;
+  text-decoration: none;
+  color: var(--text-main);
+}
+</style>
 </style>
