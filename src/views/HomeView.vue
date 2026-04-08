@@ -2,7 +2,7 @@
   <div class="home">
     <section class="hero">
       <div class="container hero-content">
-        <h1 class="hero-title">Narrativas que <span class="text-vibrant">moldam</span> o cenário global.</h1>
+        <h1 class="hero-title">Narrativas que <span class="text-gradient">transformam</span> o mundo.</h1>
         <p class="hero-subtitle">
           Análise acadêmica, curadoria estratégica de oportunidades e mentoria de carreira em Relações Internacionais.
         </p>

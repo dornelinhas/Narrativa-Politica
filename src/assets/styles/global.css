@@ -35,7 +35,7 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* Efeito de Fundo Flutuante Profissional */
+/* Fundo Degradê Suave e Elegante */
 .bg-vibrant {
   position: fixed;
   top: 0;
@@ -43,16 +43,22 @@ body {
   width: 100%;
   height: 100%;
   z-index: -1;
-  background: radial-gradient(circle at 10% 20%, rgba(0, 123, 255, 0.05) 0%, transparent 40%),
-              radial-gradient(circle at 90% 80%, rgba(255, 77, 109, 0.05) 0%, transparent 40%),
-              radial-gradient(circle at 50% 50%, rgba(138, 43, 226, 0.03) 0%, transparent 60%);
-  overflow: hidden;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 1) 0%, rgba(0, 123, 255, 0.05) 25%, rgba(255, 77, 109, 0.05) 50%, rgba(255, 215, 0, 0.05) 75%, rgba(255, 255, 255, 1) 100%);
+  background-size: 200% 200%;
+  animation: gradientFlow 15s ease infinite;
 }
 
-.container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 30px;
+@keyframes gradientFlow {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.text-gradient {
+  background: linear-gradient(to right, var(--color-blue), var(--color-purple), var(--color-pink), var(--color-red));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: 900;
 }
 
 h1, h2, h3 {
