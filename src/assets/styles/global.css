@@ -1,26 +1,24 @@
 :root {
-  /* Paleta Exata Fornecida */
-  --color-blue: #007BFF;       /* Azul Vibrante */
-  --color-purple: #8A2BE2;     /* Roxo Transição */
-  --color-pink: #FF4D6D;       /* Rosa Choque */
-  --color-red: #D00000;        /* Vermelho */
-  --color-yellow: #FFD700;     /* Amarelo */
-  --color-green-deep: #1B3022; /* Verde Escuro */
+  /* Paleta Oficial do Usuário */
+  --color-blue: #007BFF;
+  --color-purple: #8A2BE2;
+  --color-pink: #FF4D6D;
+  --color-red: #D00000;
+  --color-yellow: #FFD700;
+  --color-green-deep: #1B3022;
   
-  /* Gradiente "Narrativa" com a paleta exata */
-  --grad-main: linear-gradient(135deg, #1B3022 0%, #D00000 20%, #FF4D6D 40%, #8A2BE2 60%, #007BFF 80%, #1B3022 100%);
+  --bg-light: #FFFFFF;
+  --text-main: #0F172A;
+  --text-muted: #64748B;
   
-  --text-white: #FFFFFF;
-  --text-dim: rgba(255, 255, 255, 0.75);
+  --grad-vibrant: linear-gradient(135deg, var(--color-blue), var(--color-purple), var(--color-pink));
   
-  --font-sans: 'Montserrat', 'Inter', sans-serif;
+  --font-sans: 'Inter', 'Montserrat', sans-serif;
+  --font-serif: 'Playfair Display', serif;
   
-  /* Glassmorphism Refinado */
-  --glass-bg: rgba(0, 0, 0, 0.35);
-  --glass-border: rgba(255, 255, 255, 0.08);
-  --glass-blur: blur(25px);
-  
-  --transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  --glass-bg: rgba(255, 255, 255, 0.8);
+  --glass-border: rgba(0, 0, 0, 0.05);
+  --transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 * {
@@ -31,102 +29,85 @@
 
 body {
   font-family: var(--font-sans);
-  background: #000000; /* Fundo base escuro */
-  color: var(--text-white);
-  line-height: 1.6;
-  overflow-x: hidden;
+  background-color: var(--bg-light);
+  color: var(--text-main);
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
 }
 
-/* Fundo Animado Flutuante de Alta Intensidade */
+/* Efeito de Fundo Flutuante Profissional */
 .bg-vibrant {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: var(--grad-main);
-  background-size: 300% 300%;
-  animation: gradientFlow 20s ease infinite;
-  z-index: -2;
-}
-
-/* Elementos de luz flutuantes extras para dar o efeito da foto */
-.bg-vibrant::after {
-  content: '';
-  position: absolute;
-  top: 0; left: 0; width: 100%; height: 100%;
-  background: radial-gradient(circle at 20% 30%, rgba(255, 75, 43, 0.15) 0%, transparent 50%),
-              radial-gradient(circle at 80% 70%, rgba(168, 224, 99, 0.15) 0%, transparent 50%);
-  filter: blur(80px);
-}
-
-@keyframes gradientFlow {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
+  z-index: -1;
+  background: radial-gradient(circle at 10% 20%, rgba(0, 123, 255, 0.05) 0%, transparent 40%),
+              radial-gradient(circle at 90% 80%, rgba(255, 77, 109, 0.05) 0%, transparent 40%),
+              radial-gradient(circle at 50% 50%, rgba(138, 43, 226, 0.03) 0%, transparent 60%);
+  overflow: hidden;
 }
 
 .container {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 0 24px;
+  padding: 0 30px;
 }
 
-/* Tipografia Estilo ONG de Prestígio */
 h1, h2, h3 {
-  font-family: var(--font-sans);
-  font-weight: 900;
-  letter-spacing: -0.04em;
-  text-transform: none;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.2;
 }
 
 .btn {
   cursor: pointer;
   border: none;
-  padding: 18px 36px;
+  padding: 14px 28px;
   font-family: var(--font-sans);
-  font-weight: 800;
-  border-radius: 4px;
+  font-weight: 700;
+  border-radius: 6px;
   transition: var(--transition);
   text-transform: uppercase;
-  letter-spacing: 2px;
+  letter-spacing: 1px;
   font-size: 0.8rem;
   display: inline-block;
-  position: relative;
-  overflow: hidden;
 }
 
 .btn-primary {
-  background: white;
-  color: #000;
+  background: var(--text-main);
+  color: white;
 }
 
 .btn-primary:hover {
-  transform: translateY(-5px) scale(1.05);
-  box-shadow: 0 20px 40px rgba(0,0,0,0.4);
-  background: var(--color-yellow);
+  background: var(--color-blue);
+  transform: translateY(-3px);
+  box-shadow: 0 10px 20px rgba(0, 123, 255, 0.2);
 }
 
 .btn-outline {
   background: transparent;
-  border: 1px solid rgba(255,255,255,0.3);
-  color: white;
-  backdrop-filter: blur(5px);
+  border: 2px solid var(--text-main);
+  color: var(--text-main);
 }
 
 .btn-outline:hover {
-  background: white;
-  color: black;
+  border-color: var(--color-pink);
+  color: var(--color-pink);
 }
 
 .glass-card {
-  background: var(--glass-bg);
-  backdrop-filter: var(--glass-blur);
-  -webkit-backdrop-filter: var(--glass-blur);
+  background: white;
   border: 1px solid var(--glass-border);
-  border-radius: 4px; /* Estilo mais sóbrio e moderno */
-  box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+  border-radius: 12px;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.03);
   transition: var(--transition);
+}
+
+.glass-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
 }
 
 /* Animations */

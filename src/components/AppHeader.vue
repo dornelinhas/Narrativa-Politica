@@ -4,13 +4,9 @@
       <router-link to="/" class="logo-container">
         <div class="logo-np">
           <span class="np-text">NP</span>
-          <!-- Formas geométricas idênticas à imagem -->
           <div class="shape dot-red"></div>
-          <div class="shape dot-green"></div>
-          <div class="shape rect-pink"></div>
-          <div class="shape rect-yellow"></div>
-          <div class="shape rect-green-light"></div>
           <div class="shape dot-blue"></div>
+          <div class="shape rect-pink"></div>
         </div>
         <div class="brand-text">
           <span class="main-name">Narrativa</span>
@@ -64,7 +60,7 @@ onUnmounted(() => {
 
 <style scoped>
 .header {
-  height: 90px;
+  height: 100px;
   width: 100%;
   background: transparent;
   display: flex;
@@ -76,10 +72,10 @@ onUnmounted(() => {
 }
 
 .header-scrolled {
-  background: rgba(255, 255, 255, 0.7);
-  backdrop-filter: blur(15px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(20px);
   height: 80px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.03);
 }
 
 .header-inner {
@@ -92,162 +88,98 @@ onUnmounted(() => {
 .logo-container {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 15px;
   text-decoration: none;
 }
 
-/* Logo NP inspirado na imagem */
 .logo-np {
   position: relative;
-  width: 56px;
-  height: 56px;
-  background: transparent;
+  width: 50px;
+  height: 50px;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
 .np-text {
-  color: #FFFFFF;
-  font-family: 'Inter', sans-serif;
+  color: var(--text-main);
   font-weight: 900;
-  font-size: 1.8rem;
+  font-size: 1.6rem;
   z-index: 10;
-  text-shadow: 0 2px 10px rgba(0,0,0,0.1);
-}
-
-/* Criando o efeito NP com fundo "transparente" (as letras parecem buracos mas são brancas) */
-/* Aqui usaremos a cor branca sólida como na logo original da imagem */
-.np-text {
-  color: white;
-  -webkit-text-stroke: 1px rgba(0,0,0,0.05);
 }
 
 .shape {
   position: absolute;
   z-index: 5;
+  opacity: 0.8;
 }
 
-.dot-red {
-  width: 22px;
-  height: 22px;
-  background: var(--color-red);
-  border-radius: 50%;
-  top: -2px;
-  left: 8px;
-}
+.dot-red { width: 18px; height: 18px; background: var(--color-red); border-radius: 50%; top: 0; left: 5px; }
+.dot-blue { width: 12px; height: 12px; background: var(--color-blue); border-radius: 50%; bottom: 5px; right: 5px; }
+.rect-pink { width: 20px; height: 8px; background: var(--color-pink); top: 5px; right: 0; }
 
-.dot-green {
-  width: 12px;
-  height: 12px;
-  background: var(--color-green-deep);
-  border-radius: 50%;
-  top: 10px;
-  left: 28px;
-}
+.brand-text { display: flex; flex-direction: column; line-height: 1; }
+.main-name { font-weight: 800; font-size: 1.4rem; color: var(--text-main); }
+.sub-name { font-size: 0.6rem; text-transform: uppercase; letter-spacing: 4px; color: var(--color-pink); font-weight: 700; }
 
-.rect-pink {
-  width: 28px;
-  height: 14px;
-  background: var(--color-pink);
-  top: 4px;
-  right: -2px;
-}
-
-.rect-yellow {
-  width: 14px;
-  height: 28px;
-  background: var(--color-yellow);
-  bottom: -2px;
-  left: 12px;
-}
-
-.rect-green-light {
-  width: 16px;
-  height: 16px;
-  background: var(--color-blue); /* Usando azul para equilibrar a composição */
-  bottom: 8px;
-  right: 6px;
-}
-
-.dot-blue {
-  width: 8px;
-  height: 8px;
-  background: var(--color-purple);
-  bottom: 0px;
-  right: 18px;
-}
-.header-scrolled {
-  background: rgba(0, 0, 0, 0.4);
-  backdrop-filter: blur(25px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-  height: 80px;
-}
-
-.main-name {
-  font-weight: 900;
-  font-size: 1.6rem;
-  color: var(--text-white);
-  letter-spacing: -1px;
-}
-
-.sub-name {
-  font-size: 0.65rem;
-  text-transform: uppercase;
-  letter-spacing: 6px;
-  color: var(--color-vibrant-pink);
-  font-weight: 800;
-  margin-top: 2px;
-}
+.nav { display: flex; gap: 30px; }
 
 .nav-link {
-  font-size: 0.8rem;
-  font-weight: 800;
+  font-size: 0.85rem;
+  font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 1.5px;
-  color: var(--text-white);
-  opacity: 0.7;
+  letter-spacing: 1px;
+  color: var(--text-main);
+  opacity: 0.6;
   position: relative;
+  text-decoration: none;
+  transition: var(--transition);
 }
 
 .nav-link:hover, .router-link-active {
   opacity: 1;
-  color: var(--color-vibrant-pink);
+  color: var(--color-blue);
 }
 
 .nav-link::after {
   content: '';
   position: absolute;
-  bottom: -6px;
+  bottom: -5px;
   left: 0;
   width: 0;
   height: 2px;
-  background: var(--color-vibrant-pink);
+  background: var(--color-blue);
   transition: var(--transition);
 }
 
-.nav-link:hover::after, .router-link-active::after {
-  width: 100%;
-}
+.nav-link:hover::after, .router-link-active::after { width: 100%; }
 
 .mobile-toggle {
   display: none;
   flex-direction: column;
-  gap: 6px;
+  gap: 5px;
   cursor: pointer;
 }
 
-.bar {
-  width: 28px;
-  height: 3px;
-  background-color: var(--text-white);
-  border-radius: 4px;
-}
-
+.bar { width: 25px; height: 3px; background: var(--text-main); border-radius: 2px; }
 
 @media (max-width: 992px) {
+  .mobile-toggle { display: flex; }
   .nav {
-    display: none; /* Simplificando mobile */
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    background: white;
+    flex-direction: column;
+    padding: 30px;
+    gap: 20px;
+    transform: translateY(-100%);
+    opacity: 0;
+    pointer-events: none;
+    transition: var(--transition);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.05);
   }
+  .nav-active { transform: translateY(0); opacity: 1; pointer-events: all; }
 }
 </style>
