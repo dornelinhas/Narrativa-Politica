@@ -1134,7 +1134,7 @@ const saveItem = async () => {
   const result = await saveItemToSupabase(activeTab.value, editingItem.value, isNew.value)
   
   if (!result.success) {
-    showToast('Erro ao salvar no banco de dados.', 'error')
+    showToast(`Erro: ${result.error}`, 'error')
     return
   }
 

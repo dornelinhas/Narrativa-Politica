@@ -113,18 +113,25 @@ export const saveItemToSupabase = async (table, item, isNew = false) => {
     } else if (table === 'settings') {
       // Salva cada configuração individualmente na tabela site_settings
       for (const [key, value] of Object.entries(item)) {
-        await supabase.from('site_settings').upsert({ key, value })
+        const { error } = await supabase.from('site_settings').upsert({ key, value })
+        if (error) {
+          console.error(`Erro ao salvar a chave ${key}:`, error)
+          return { success: false, error: error.message }
+        }
       }
       return { success: true }
     } else {
       if (isNew) result = await supabase.from(table).insert(dataToSave)
       else result = await supabase.from(table).update(dataToSave).eq('id', item.id)
     }
-    if (result?.error) throw result.error
+
+    if (result?.error) {
+      return { success: false, error: result.error.message }
+    }
     return { success: true }
   } catch (e) {
-    console.error(`Erro ao salvar em ${table}:`, e)
-    return { success: false, error: e }
+    console.error(`Erro crítico ao salvar em ${table}:`, e)
+    return { success: false, error: e.message || 'Erro de conexão' }
   }
 }
 
