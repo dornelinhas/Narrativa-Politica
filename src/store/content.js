@@ -80,8 +80,16 @@ export const fetchAllContent = async () => {
     
     if (settings?.length) {
       settings.forEach(s => {
-        siteContent.settings[s.key] = s.value
+        // Só atualiza se o valor não for nulo ou vazio
+        if (s.value !== null && s.value !== undefined) {
+          siteContent.settings[s.key] = s.value
+        }
       })
+    }
+    
+    // Garantia final: Se o nome do site sumir, força o padrão
+    if (!siteContent.settings.siteName) {
+      siteContent.settings.siteName = "Narrativa Política"
     }
     
     return { success: true }
