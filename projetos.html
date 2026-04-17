@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Projetos & Métricas — Narrativa Política</title>
+  <link rel="stylesheet" href="assets/css/style.css">
+  <style>
+    .impact-bar { background:#f0f0f8; border-radius:50px; height:8px; margin-top:12px; overflow:hidden; }
+    .impact-fill { height:100%; border-radius:50px; background:var(--np-gradient); transition:width 1.5s ease; width:0; }
+    .project-card { background:white; border-radius:var(--radius); overflow:hidden; border:1px solid var(--border); transition:all .3s; }
+    .project-card:hover { transform:translateY(-6px); box-shadow:var(--shadow-lg); }
+    .project-header { padding:28px; background:var(--np-gradient); color:white; }
+    .project-header .tag { display:inline-block;background:rgba(255,255,255,.2);padding:4px 12px;border-radius:50px;font-size:.75rem;font-weight:700;margin-bottom:12px; }
+    .project-title { font-family:var(--font-display);font-size:1.2rem;font-weight:800; }
+    .project-body { padding:28px; }
+    .project-metrics { display:flex; gap:24px; margin-top:20px; flex-wrap:wrap; }
+    .p-metric { text-align:center; }
+    .p-metric .num { font-family:var(--font-display);font-size:1.6rem;font-weight:800;background:var(--np-gradient);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent; }
+    .p-metric .lbl { font-size:.7rem;color:var(--muted); }
+    .methodology-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:20px; }
+    .method-card { padding:28px; background:white; border-radius:var(--radius); border:1px solid var(--border); border-left:4px solid; }
+  </style>
+</head>
+<body>
+<nav class="navbar" id="navbar"></nav>
+<div class="mobile-menu" id="mobile-menu"></div>
+
+<section class="page-hero">
+  <div class="container">
+    <span class="page-hero-badge">Projetos & Métricas</span>
+    <h1>Impacto que pode<br><span style="background:var(--np-gradient);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;">ser medido</span></h1>
+    <p>Projetos realizados e os indicadores que provam nossa transformação.</p>
+  </div>
+</section>
+
+<!-- IMPACT COUNTERS -->
+<section class="stats-strip">
+  <div class="container">
+    <div class="stats-grid">
+      <div class="stat-item reveal"><div class="stat-number" data-count="2500" data-suffix="+">2500+</div><div class="stat-label">Mulheres Impactadas</div></div>
+      <div class="stat-item reveal"><div class="stat-number" data-count="50" data-suffix="+">50+</div><div class="stat-label">Projetos Executados</div></div>
+      <div class="stat-item reveal"><div class="stat-number" data-count="120" data-suffix="">120</div><div class="stat-label">Líderes Formados</div></div>
+      <div class="stat-item reveal"><div class="stat-number" data-count="18" data-suffix="">18</div><div class="stat-label">Estados Alcançados</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- AREA BREAKDOWN -->
+<section class="section">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="section-badge">Impacto por Área</span>
+      <h2 class="section-title">Onde nosso trabalho chega</h2>
+    </div>
+    <div class="grid-2" style="align-items:start;">
+      <div class="card reveal" style="padding:40px;">
+        <h3 style="font-family:var(--font-display);font-size:1.1rem;font-weight:700;margin-bottom:28px;">Distribuição por Área de Atuação</h3>
+        <div style="display:flex;flex-direction:column;gap:20px;">
+          <div>
+            <div style="display:flex;justify-content:space-between;"><span style="font-weight:600;font-size:.875rem;">Igualdade de Gênero</span><span style="font-weight:800;color:var(--purple);">38%</span></div>
+            <div class="impact-bar"><div class="impact-fill" data-width="38"></div></div>
+          </div>
+          <div>
+            <div style="display:flex;justify-content:space-between;"><span style="font-weight:600;font-size:.875rem;">Sustentabilidade & Meio Ambiente</span><span style="font-weight:800;color:var(--blue);">24%</span></div>
+            <div class="impact-bar"><div class="impact-fill" data-width="24" style="background:var(--blue);"></div></div>
+          </div>
+          <div>
+            <div style="display:flex;justify-content:space-between;"><span style="font-weight:600;font-size:.875rem;">Formação de Lideranças</span><span style="font-weight:800;color:var(--rose);">22%</span></div>
+            <div class="impact-bar"><div class="impact-fill" data-width="22" style="background:var(--rose);"></div></div>
+          </div>
+          <div>
+            <div style="display:flex;justify-content:space-between;"><span style="font-weight:600;font-size:.875rem;">Políticas Públicas</span><span style="font-weight:800;color:#B8860B;">16%</span></div>
+            <div class="impact-bar"><div class="impact-fill" data-width="16" style="background:var(--gold);"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:20px;">
+        <div class="card reveal" style="padding:28px;background:linear-gradient(135deg,#f0f4ff,#f8f0ff);">
+          <div style="font-size:2rem;margin-bottom:8px;">🏆</div>
+          <h3 style="font-family:var(--font-display);font-weight:700;margin-bottom:8px;">Reconhecimentos</h3>
+          <p style="color:var(--muted);font-size:.875rem;">Projetos premiados por organizações nacionais e internacionais de impacto social e desenvolvimento sustentável.</p>
+        </div>
+        <div class="card reveal" style="padding:28px;background:linear-gradient(135deg,#fff0f3,#fff8e1);">
+          <div style="font-size:2rem;margin-bottom:8px;">🌍</div>
+          <h3 style="font-family:var(--font-display);font-weight:700;margin-bottom:8px;">Alcance Internacional</h3>
+          <p style="color:var(--muted);font-size:.875rem;">Parcerias com organizações em 5 países da América Latina, contribuindo para políticas regionais de gênero e desenvolvimento.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURED PROJECTS -->
+<section class="section" style="background:linear-gradient(180deg,#f8f9ff,#fff);">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="section-badge">Projetos em Destaque</span>
+      <h2 class="section-title">Histórias de transformação</h2>
+    </div>
+    <div class="grid-2">
+      <div class="project-card reveal">
+        <div class="project-header">
+          <span class="tag">Igualdade de Gênero</span>
+          <h3 class="project-title">Programa Mulheres na Liderança Política</h3>
+        </div>
+        <div class="project-body">
+          <p style="color:var(--muted);font-size:.9rem;line-height:1.7;">Formação de lideranças femininas para candidaturas e participação em espaços de decisão municipal, com capacitação em gestão pública, comunicação política e articulação de redes.</p>
+          <div class="project-metrics">
+            <div class="p-metric"><div class="num">850</div><div class="lbl">Mulheres formadas</div></div>
+            <div class="p-metric"><div class="num">12</div><div class="lbl">Municípios</div></div>
+            <div class="p-metric"><div class="num">68%</div><div class="lbl">Retorno político</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="project-card reveal">
+        <div class="project-header" style="background:linear-gradient(135deg,#1B3022,#2d5a3d);">
+          <span class="tag">Sustentabilidade</span>
+          <h3 class="project-title">Economia Verde para Comunidades Rurais</h3>
+        </div>
+        <div class="project-body">
+          <p style="color:var(--muted);font-size:.9rem;line-height:1.7;">Consultoria econômica para transição de comunidades rurais para práticas sustentáveis, integrando dados de impacto ambiental com análise socioeconômica das famílias envolvidas.</p>
+          <div class="project-metrics">
+            <div class="p-metric"><div class="num">420</div><div class="lbl">Famílias beneficiadas</div></div>
+            <div class="p-metric"><div class="num">5</div><div class="lbl">Biomas</div></div>
+            <div class="p-metric"><div class="num">32%</div><div class="lbl">Aumento de renda</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="project-card reveal">
+        <div class="project-header" style="background:linear-gradient(135deg,#007BFF,#8A2BE2);">
+          <span class="tag">Pesquisa & Dados</span>
+          <h3 class="project-title">Mapeamento do Trabalho de Cuidado no Brasil</h3>
+        </div>
+        <div class="project-body">
+          <p style="color:var(--muted);font-size:.9rem;line-height:1.7;">Pesquisa econômica em parceria com universidades para quantificar e visibilizar o trabalho de cuidado não remunerado, subsidiando políticas públicas de valorização.</p>
+          <div class="project-metrics">
+            <div class="p-metric"><div class="num">3.200</div><div class="lbl">Entrevistadas</div></div>
+            <div class="p-metric"><div class="num">8</div><div class="lbl">Estados</div></div>
+            <div class="p-metric"><div class="num">2</div><div class="lbl">Publicações</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="project-card reveal">
+        <div class="project-header" style="background:linear-gradient(135deg,#FF4D6D,#D00000);">
+          <span class="tag">Advocacy</span>
+          <h3 class="project-title">Orçamento Público com Perspectiva de Gênero</h3>
+        </div>
+        <div class="project-body">
+          <p style="color:var(--muted);font-size:.9rem;line-height:1.7;">Assessoria técnica para municípios implementarem orçamentos sensíveis ao gênero, com capacitação de servidoras, metodologia de análise e relatórios para prestação de contas.</p>
+          <div class="project-metrics">
+            <div class="p-metric"><div class="num">15</div><div class="lbl">Municípios</div></div>
+            <div class="p-metric"><div class="num">200+</div><div class="lbl">Servidoras capacitadas</div></div>
+            <div class="p-metric"><div class="num">4</div><div class="lbl">Premiações</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- METHODOLOGY -->
+<section class="section">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="section-badge">Metodologia</span>
+      <h2 class="section-title">Como medimos impacto</h2>
+      <p class="section-sub">Rigor metodológico combinado com escuta ativa das comunidades.</p>
+    </div>
+    <div class="methodology-grid">
+      <div class="method-card reveal" style="border-color:var(--purple);">
+        <div style="font-size:1.5rem;margin-bottom:12px;">📐</div>
+        <h3 style="font-family:var(--font-display);font-weight:700;margin-bottom:8px;">Linha de Base</h3>
+        <p style="color:var(--muted);font-size:.875rem;">Diagnóstico inicial robusto para estabelecer indicadores mensuráveis antes de cada intervenção.</p>
+      </div>
+      <div class="method-card reveal" style="border-color:var(--blue);">
+        <div style="font-size:1.5rem;margin-bottom:12px;">📊</div>
+        <h3 style="font-family:var(--font-display);font-weight:700;margin-bottom:8px;">Monitoramento Contínuo</h3>
+        <p style="color:var(--muted);font-size:.875rem;">Coleta sistemática de dados quantitativos e qualitativos ao longo de toda a execução dos projetos.</p>
+      </div>
+      <div class="method-card reveal" style="border-color:var(--rose);">
+        <div style="font-size:1.5rem;margin-bottom:12px;">🔍</div>
+        <h3 style="font-family:var(--font-display);font-weight:700;margin-bottom:8px;">Avaliação de Impacto</h3>
+        <p style="color:var(--muted);font-size:.875rem;">Metodologias rigorosas (RCT, difference-in-differences, matching) para isolar efeitos causais.</p>
+      </div>
+      <div class="method-card reveal" style="border-color:var(--forest);">
+        <div style="font-size:1.5rem;margin-bottom:12px;">📣</div>
+        <h3 style="font-family:var(--font-display);font-weight:700;margin-bottom:8px;">Comunicação de Resultados</h3>
+        <p style="color:var(--muted);font-size:.875rem;">Relatórios acessíveis que traduzem números em narrativas que mobilizam doadores, gestores e comunidades.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section newsletter-section">
+  <div class="container">
+    <div class="reveal">
+      <h2>Acompanhe nossa<br><span style="background:var(--np-gradient);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;">Narrativa Política</span></h2>
+      <p>Receba análises exclusivas e atualizações sobre nossos projetos.</p>
+      <form class="newsletter-form" onsubmit="handleNewsletter(event)">
+        <input type="email" placeholder="seu@email.com.br" required>
+        <button type="submit" class="btn btn-primary">Inscrever-me</button>
+      </form>
+    </div>
+  </div>
+</section>
+
+<footer class="footer" id="footer"></footer>
+<script src="assets/js/main.js"></script>
+<script>
+  // Animate progress bars on scroll
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        const fills = e.target.querySelectorAll('.impact-fill');
+        fills.forEach(f => { f.style.width = f.dataset.width + '%'; });
+      }
+    });
+  }, { threshold: .3 });
+  document.querySelectorAll('.card').forEach(c => observer.observe(c));
+</script>
+</body>
+</html>

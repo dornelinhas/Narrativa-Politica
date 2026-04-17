@@ -1,27 +1,44 @@
 <template>
-  <div class="opportunities container section-padding">
-    <h1 class="page-title">Curadoria de Oportunidades</h1>
-    <p class="subtitle">Vagas e programas selecionados com uma análise estratégica para acelerar sua carreira.</p>
+  <div class="opportunities-view section-padding container">
+    <div class="page-header text-center reveal-on-scroll">
+      <span class="badge">Vagas & Editais</span>
+      <h1 class="page-title">Oportunidades</h1>
+      <p class="subtitle">Conectando talentos a chamadas de impacto social, vagas e editais que potencializam o seu desenvolvimento.</p>
+    </div>
 
-    <div class="opportunity-list">
-      <div v-for="opp in opportunities" :key="opp.id" class="opp-card">
+    <div class="opportunities-controls container reveal-on-scroll delay-1">
+      <div class="search-opps">
+        <Search :size="18" class="search-icon-opps" />
+        <input type="text" v-model="oppSearch" placeholder="Filtrar por cargo, instituição ou tema...">
+      </div>
+      <div class="filter-tabs-opps">
+        <button v-for="tab in ['Todas', 'Vagas', 'Editais', 'Bolsas']" 
+                :key="tab"
+                :class="{ active: currentFilter === tab }" 
+                @click="currentFilter = tab"
+        >
+          {{ tab }}
+        </button>
+      </div>
+    </div>
+
+    <div class="opportunities-grid reveal-on-scroll delay-2">
+      <div v-for="opp in filteredOpps" :key="opp.id" class="opp-card">
         <div class="opp-header">
-          <div class="opp-main-info">
-            <h3 class="opp-title">{{ opp.title }}</h3>
-            <p class="opp-org">{{ opp.organization }}</p>
-          </div>
-          <div class="opp-meta">
-            <span class="deadline">Prazo: {{ formatDate(opp.deadline) }}</span>
+          <span class="opp-type-badge" :class="opp.type.toLowerCase()">{{ opp.type }}</span>
+          <div class="opp-deadline">
+            <Clock :size="14" />
+            <span>Até {{ opp.deadline }}</span>
           </div>
         </div>
-
-        <div class="opp-analysis">
-          <div class="analysis-tag">✦ Diferencial Estratégico</div>
-          <p>{{ opp.strategic_analysis }}</p>
+        <h3 class="opp-title">{{ opp.title }}</h3>
+        <p class="opp-org">{{ opp.organization || opp.org }}</p>
+        <div v-if="opp.tags" class="opp-tags">
+          <span v-for="tag in opp.tags.split(',')" :key="tag" class="opp-tag">#{{ tag.trim().replace('#', '') }}</span>
         </div>
-
+        <p class="opp-desc">{{ opp.description }}</p>
         <div class="opp-footer">
-          <a :href="opp.link" target="_blank" class="btn btn-outline btn-small">Ver Detalhes Externos</a>
+          <a :href="opp.link || '#'" target="_blank" class="btn-opp-link">Saber mais <ArrowRight :size="16" /></a>
         </div>
       </div>
     </div>
@@ -29,119 +46,151 @@
 </template>
 
 <script setup>
-import mockData from '../data/mockData.json'
+import { ref, computed } from 'vue'
+import { siteContent } from '../store/content'
+import { Search, Clock, ArrowRight } from 'lucide-vue-next'
 
-const opportunities = mockData.opportunities
+const currentFilter = ref('Todas')
+const oppSearch = ref('')
 
-const formatDate = (dateStr) => {
-  return new Date(dateStr).toLocaleDateString('pt-BR', {
-    day: 'numeric',
-    month: 'short'
+const filteredOpps = computed(() => {
+  const opps = siteContent.opportunities || []
+  return opps.filter(o => {
+    const matchesTab = currentFilter.value === 'Todas' || o.type === currentFilter.value
+    const query = oppSearch.value.toLowerCase()
+    const matchesSearch = o.title.toLowerCase().includes(query) || 
+                          (o.organization && o.organization.toLowerCase().includes(query)) ||
+                          (o.org && o.org.toLowerCase().includes(query))
+    return matchesTab && matchesSearch
   })
-}
+})
 </script>
 
 <style scoped>
-.section-padding {
-  padding: 80px 0;
+.opportunities-view {
+  position: relative;
+  z-index: 10;
+  padding-top: 160px;
+  padding-bottom: 100px;
 }
 
-.page-title {
-  font-size: 3rem;
-  margin-bottom: 15px;
-  text-align: center;
-}
+.page-header { margin-bottom: 60px; }
+.page-title { font-size: 3.5rem; font-weight: 900; color: #1A1C2E; margin-bottom: 15px; letter-spacing: -2px; }
+.subtitle { font-size: 1.25rem; color: #64748B; max-width: 600px; margin: 0 auto; line-height: 1.6; }
 
-.subtitle {
-  text-align: center;
-  max-width: 600px;
-  margin: 0 auto 60px;
-  color: #666;
-}
+.badge { background: #8A2BE2; color: white; padding: 6px 14px; border-radius: 20px; font-size: 0.85rem; font-weight: 800; text-transform: uppercase; margin-bottom: 16px; display: inline-block; }
 
-.opportunity-list {
+/* CONTROLS */
+.opportunities-controls {
   display: flex;
-  flex-direction: column;
-  gap: 30px;
-  max-width: 900px;
-  margin: 0 auto;
+  justify-content: space-between;
+  align-items: center;
+  gap: 32px;
+  margin-bottom: 48px;
+}
+
+.search-opps {
+  position: relative;
+  flex: 1;
+  max-width: 500px;
+}
+
+.search-icon-opps {
+  position: absolute;
+  left: 18px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #94A3B8;
+}
+
+.search-opps input {
+  width: 100%;
+  padding: 14px 18px 14px 50px;
+  border-radius: 14px;
+  border: 2.5px solid #F1F5F9;
+  background: #F8FAFC;
+  font-size: 0.95rem;
+  transition: all 0.3s;
+  outline: none;
+}
+
+.search-opps input:focus { border-color: #8A2BE2; background: #fff; }
+
+.filter-tabs-opps { display: flex; gap: 8px; }
+.filter-tabs-opps button { padding: 12px 24px; border-radius: 12px; border: none; background: #F1F5F9; font-weight: 800; cursor: pointer; transition: all 0.2s; color: #64748B; font-size: 0.8rem; text-transform: uppercase; }
+.filter-tabs-opps button.active { background: #8A2BE2; color: white; }
+
+.opportunities-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 32px;
 }
 
 .opp-card {
-  background: white;
-  padding: 40px;
-  border-radius: var(--border-radius);
-  border: 1px solid var(--gray-light);
-  box-shadow: 0 5px 15px rgba(0,0,0,0.02);
-  transition: var(--transition);
+  background: #FFFFFF;
+  border: 1px solid #F1F5F9;
+  border-radius: 24px;
+  padding: 32px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+  display: flex;
+  flex-direction: column;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  overflow: visible; /* Prevents badge cutting */
 }
 
 .opp-card:hover {
-  border-color: var(--accent-gold);
-  transform: translateX(5px);
+  transform: translateY(-8px);
+  box-shadow: 0 30px 60px rgba(0,0,0,0.08);
+  border-color: #E2E8F0;
 }
 
 .opp-header {
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 25px;
+  align-items: center;
+  margin-bottom: 24px;
 }
 
-.opp-title {
-  font-size: 1.5rem;
-  color: var(--text-main);
-  margin-bottom: 5px;
-}
-
-.opp-org {
-  color: var(--accent-coral);
-  font-weight: 600;
-  font-size: 0.9rem;
+.opp-type-badge {
+  background: #F3E8FF;
+  color: #8A2BE2;
+  font-size: 0.75rem;
+  font-weight: 800;
+  padding: 6px 14px;
+  border-radius: 8px;
   text-transform: uppercase;
-  letter-spacing: 1px;
+  letter-spacing: 0.5px;
 }
 
-.deadline {
-  background: var(--bg-primary);
-  padding: 5px 15px;
-  border-radius: 20px;
-  font-size: 0.8rem;
-  font-weight: 600;
-  color: #888;
-}
+.opp-deadline { display: flex; align-items: center; gap: 6px; font-size: 0.8rem; color: #94A3B8; font-weight: 700; }
 
-.opp-analysis {
-  background: rgba(212, 175, 55, 0.05);
-  padding: 25px;
-  border-left: 3px solid var(--accent-gold);
-  margin-bottom: 25px;
-}
+.opp-title { font-size: 1.5rem; font-weight: 900; color: #1A1C2E; margin-bottom: 8px; line-height: 1.3; }
+.opp-org { color: #FF2D55; font-weight: 800; font-size: 0.95rem; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
 
-.analysis-tag {
-  font-size: 0.7rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  color: var(--accent-gold);
-  margin-bottom: 10px;
-}
+.opp-tags { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+.opp-tag { font-size: 0.75rem; font-weight: 800; color: #8A2BE2; background: rgba(138, 43, 226, 0.05); padding: 4px 10px; border-radius: 6px; }
 
-.opp-analysis p {
+.opp-desc { font-size: 1rem; color: #475569; line-height: 1.7; margin-bottom: 24px; flex: 1; }
+
+.btn-opp-link {
+  font-weight: 800;
+  color: #1A1C2E;
+  text-decoration: none;
   font-size: 0.95rem;
-  line-height: 1.6;
-  color: #444;
-  font-style: italic;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s;
 }
 
-.btn-small {
-  padding: 8px 16px;
-  font-size: 0.7rem;
+.btn-opp-link:hover { color: #8A2BE2; transform: translateX(5px); }
+
+@media (max-width: 992px) {
+  .opportunities-controls { flex-direction: column; align-items: stretch; }
 }
 
 @media (max-width: 768px) {
-  .opp-header {
-    flex-direction: column;
-    gap: 15px;
-  }
+  .opportunities-view { padding-top: 120px; }
+  .page-title { font-size: 2.5rem; }
 }
 </style>

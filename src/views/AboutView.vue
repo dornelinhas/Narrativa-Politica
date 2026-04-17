@@ -1,126 +1,223 @@
 <template>
-  <div class="about container section-padding">
-    <div class="about-grid">
-      <div class="about-image">
-        <!-- Using a placeholder but designed to be replaced by the owner's photo -->
-        <div class="image-box">
-          <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=800&q=80" alt="Sobre Nós">
-        </div>
-      </div>
-      <div class="about-content">
-        <h1 class="page-title">Sobre a Narrativa Política</h1>
-        <p class="lead">Unindo rigor acadêmico e pragmatismo estratégico para navegar o cenário internacional.</p>
-        
-        <div class="text-body">
-          <p>A <strong>Narrativa Política</strong> nasceu da necessidade de preencher a lacuna entre a teoria acadêmica e a prática no mercado de Relações Internacionais e Análise Política.</p>
-          
-          <p>Nossa missão é democratizar o acesso a análises de alta qualidade e oferecer as ferramentas necessárias para que jovens profissionais — especialmente mulheres — possam construir carreiras de impacto em um ambiente global competitivo.</p>
-          
-          <p>Acreditamos que a política não é apenas sobre o que acontece nos gabinetes, mas sobre as narrativas que construímos e as oportunidades que escolhemos cultivar.</p>
-        </div>
+  <div class="about-minimal-page">
+    <div class="container-refined">
+      
+      <div class="about-grid-new">
+        <!-- LEFT COLUMN: PHOTO & QUICK INFO -->
+        <aside class="about-aside">
+          <div class="portrait-container">
+            <img :src="siteContent.about.image || '/images/anne-dornelas.png'" alt="Anne Dornelas" class="portrait-img" />
+          </div>
+          <div class="aside-info">
+            <h2 class="name-title">{{ siteContent.about.name }}</h2>
+            <p class="role-subtitle">{{ siteContent.about.role }}</p>
+            <div class="contact-links-aside">
+              <a href="https://www.linkedin.com/company/narrativa-políticaorg" target="_blank">LinkedIn</a>
+              <a href="mailto:contatonarrativapolitica@gmail.com">Contato</a>
+            </div>
+          </div>
+        </aside>
 
-        <div class="values">
-          <div class="value-item">
-            <h3>Visão</h3>
-            <p>Ser a principal referência em curadoria estratégica e mentoria de carreira em RI no Brasil.</p>
-          </div>
-          <div class="value-item">
-            <h3>Impacto</h3>
-            <p>Fomentar uma geração de analistas críticos, preparados e diversificados.</p>
-          </div>
-        </div>
+        <!-- RIGHT COLUMN: BIO & EXPERTISE -->
+        <main class="about-main-content">
+          <section class="bio-intro-section">
+            <p class="professional-mission">
+              {{ siteContent.about.mission }}
+            </p>
+          </section>
+
+          <div class="divider-line"></div>
+
+          <section class="bio-narrative text-readable" v-html="formatBio(siteContent.about.bioInstitucional)"></section>
+
+          <section class="expertise-areas">
+            <h3>Áreas de Atuação</h3>
+            <div class="expertise-list">
+              <span>Análise Econométrica</span>
+              <span>Advocacy de Gênero</span>
+              <span>Estratégia de Impacto Social</span>
+              <span>Articulação Política</span>
+            </div>
+          </section>
+
+          <footer class="about-footer-simple">
+            <router-link to="/contatos" class="link-standard">Solicitar consultoria ou palestra →</router-link>
+          </footer>
+        </main>
       </div>
+
     </div>
   </div>
 </template>
 
+<script setup>
+import { siteContent } from '../store/content'
+
+const formatBio = (text) => {
+  if (!text) return ''
+  return text.split('\n\n').map(p => `<p>${p}</p>`).join('')
+}
+</script>
+
 <style scoped>
-.section-padding {
-  padding: 100px 0;
+.about-minimal-page {
+  background: #fff;
+  padding-top: 140px;
+  padding-bottom: 100px;
+  min-height: 100vh;
+  color: #111827;
 }
 
-.about-grid {
+.container-refined {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 0 40px;
+}
+
+.about-grid-new {
   display: grid;
-  grid-template-columns: 1fr 1.2fr;
+  grid-template-columns: 280px 1fr;
   gap: 80px;
-  align-items: center;
+  align-items: start;
 }
 
-.about-image .image-box {
-  position: relative;
-  padding-left: 30px;
-  padding-bottom: 30px;
+/* ASIDE */
+.portrait-container {
+  width: 100%;
+  aspect-ratio: 1/1;
+  overflow: hidden;
+  border-radius: 12px;
+  background: #f1f5f9;
+  margin-bottom: 24px;
 }
 
-.about-image .image-box::before {
-  content: '';
-  position: absolute;
-  top: -30px;
-  left: 0;
-  width: 70%;
-  height: 70%;
-  border: 5px solid var(--accent-gold);
-  z-index: -1;
+.portrait-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: grayscale(20%);
 }
 
-.about-image img {
-  border-radius: var(--border-radius);
-  box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+.name-title {
+  font-size: 1.5rem;
+  font-weight: 900;
+  margin-bottom: 4px;
+  letter-spacing: -0.5px;
 }
 
-.page-title {
-  font-size: 3.5rem;
-  margin-bottom: 20px;
-  color: var(--text-main);
+.role-subtitle {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #64748B;
+  margin-bottom: 24px;
 }
 
-.lead {
+.contact-links-aside {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.contact-links-aside a {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #FF2D55;
+  text-decoration: none;
+}
+
+/* MAIN CONTENT */
+.professional-mission {
   font-size: 1.4rem;
-  font-family: var(--font-serif);
-  color: var(--accent-coral);
+  line-height: 1.5;
+  font-weight: 600;
+  color: #111827;
   margin-bottom: 40px;
-  font-style: italic;
 }
 
-.text-body p {
-  margin-bottom: 20px;
+.divider-line {
+  width: 60px;
+  height: 2px;
+  background: #E5E7EB;
+  margin-bottom: 40px;
+}
+
+.bio-narrative :deep(p) {
   font-size: 1.1rem;
   line-height: 1.8;
-  color: #444;
+  color: #374151;
+  margin-bottom: 1.5rem;
 }
 
-.values {
+.expertise-areas {
   margin-top: 60px;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 30px;
 }
 
-.value-item h3 {
-  font-size: 1.4rem;
-  margin-bottom: 15px;
-  color: var(--accent-gold);
+.expertise-areas h3 {
+  font-size: 0.8rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: #94A3B8;
+  margin-bottom: 20px;
 }
 
-.value-item p {
-  font-size: 0.95rem;
-  color: #666;
+.expertise-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
 }
 
-@media (max-width: 992px) {
-  .about-grid {
+.expertise-list span {
+  font-size: 0.85rem;
+  font-weight: 700;
+  background: #F8FAFC;
+  color: #475569;
+  padding: 8px 16px;
+  border-radius: 8px;
+  border: 1px solid #E2E8F0;
+}
+
+.about-footer-simple {
+  margin-top: 80px;
+  padding-top: 40px;
+  border-top: 1px solid #F1F5F9;
+}
+
+.link-standard {
+  font-weight: 800;
+  color: #111827;
+  text-decoration: none;
+  font-size: 1rem;
+  transition: color 0.2s;
+}
+
+.link-standard:hover {
+  color: #FF2D55;
+}
+
+@media (max-width: 850px) {
+  .about-grid-new {
     grid-template-columns: 1fr;
-    gap: 60px;
+    gap: 48px;
   }
-  .about-image {
-    max-width: 500px;
-    margin: 0 auto;
+  .about-aside {
+    display: flex;
+    align-items: center;
+    gap: 32px;
+  }
+  .portrait-container {
+    width: 140px;
+    margin-bottom: 0;
   }
 }
 
-@media (max-width: 768px) {
-  .page-title {
-    font-size: 2.5rem;
+@media (max-width: 600px) {
+  .about-aside {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .professional-mission {
+    font-size: 1.2rem;
   }
 }
 </style>

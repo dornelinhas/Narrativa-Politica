@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Painel Admin — Narrativa Política</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <style>
+    body { background:#f5f6fa; }
+    .admin-header { background:white; border-bottom:1px solid var(--border); padding:20px 32px; display:flex; justify-content:space-between; align-items:center; }
+    .admin-header h1 { font-family:var(--font-display); font-size:1.2rem; font-weight:800; }
+    .admin-section { background:white; border-radius:var(--radius); padding:32px; margin-bottom:24px; border:1px solid var(--border); }
+    .admin-section h2 { font-family:var(--font-display); font-weight:800; font-size:1.1rem; margin-bottom:24px; padding-bottom:16px; border-bottom:1px solid var(--border); }
+    .form-row { display:grid; grid-template-columns:1fr 1fr; gap:20px; }
+    .save-btn { background:var(--np-gradient); color:white; border:none; padding:12px 28px; border-radius:50px; font-family:var(--font-body); font-weight:700; font-size:.9rem; cursor:pointer; }
+    .tag-input-area { display:flex; flex-wrap:wrap; gap:8px; padding:12px; border:1.5px solid var(--border); border-radius:var(--radius-sm); min-height:52px; cursor:text; }
+    .tag-pill { background:rgba(138,43,226,.1); color:var(--purple); padding:4px 12px; border-radius:50px; font-size:.8rem; font-weight:700; display:flex; align-items:center; gap:6px; }
+    .tag-pill button { background:none; border:none; cursor:pointer; color:var(--purple); font-size:.9rem; padding:0; line-height:1; }
+    .toast { position:fixed; bottom:32px; right:32px; background:var(--forest); color:white; padding:14px 24px; border-radius:50px; font-weight:700; font-size:.875rem; transform:translateY(100px); opacity:0; transition:all .4s; z-index:999; }
+    .toast.show { transform:none; opacity:1; }
+    @media(max-width:640px){ .form-row{grid-template-columns:1fr;} }
+  </style>
+</head>
+<body>
+
+<div class="admin-layout">
+  <!-- SIDEBAR -->
+  <div class="admin-sidebar">
+    <div style="margin-bottom:32px;">
+      <div style="font-family:var(--font-display);font-weight:800;font-size:1.2rem;background:var(--np-gradient);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:4px;">NP Admin</div>
+      <div style="color:rgba(255,255,255,.4);font-size:.75rem;">Painel de Gerenciamento</div>
+    </div>
+    <div class="admin-nav-item active" onclick="showSection('geral',this)">🏠 Geral do Site</div>
+    <div class="admin-nav-item" onclick="showSection('sobre',this)">👤 Sobre Mim</div>
+    <div class="admin-nav-item" onclick="showSection('servicos',this)">🎯 Serviços</div>
+    <div class="admin-nav-item" onclick="showSection('projetos',this)">📊 Projetos</div>
+    <div class="admin-nav-item" onclick="showSection('trilhas',this)">🚀 Trilhas</div>
+    <div class="admin-nav-item" onclick="showSection('blog',this)">✍️ Blog</div>
+    <div class="admin-nav-item" onclick="showSection('oportunidades',this)">💼 Oportunidades</div>
+    <hr style="border-color:rgba(255,255,255,.1);margin:20px 0;">
+    <a href="../index.html" class="admin-nav-item" style="display:flex;">← Ver o site</a>
+  </div>
+
+  <!-- CONTENT -->
+  <div class="admin-content">
+    <div class="admin-header">
+      <h1 id="section-title">Configurações Gerais</h1>
+      <button class="save-btn" onclick="saveSection()">💾 Salvar Alterações</button>
+    </div>
+
+    <!-- GERAL -->
+    <div id="section-geral">
+      <div class="admin-section">
+        <h2>Informações do Site</h2>
+        <div class="form-row">
+          <div class="admin-form-group">
+            <label>Nome do site</label>
+            <input type="text" value="Narrativa Política" id="site-name">
+          </div>
+          <div class="admin-form-group">
+            <label>E-mail de contato</label>
+            <input type="email" value="contato@narrativapolitica.com.br" id="site-email">
+          </div>
+        </div>
+        <div class="admin-form-group">
+          <label>Tagline principal (aparece no Hero)</label>
+          <input type="text" value="Transformando Teoria Econômica em Impacto" id="site-tagline">
+        </div>
+        <div class="admin-form-group">
+          <label>Subtítulo (áreas de atuação)</label>
+          <input type="text" value="Economia de Dados · Impactos · ONGs · Liderança e Gênero" id="site-subtitle">
+        </div>
+      </div>
+      <div class="admin-section">
+        <h2>Redes Sociais</h2>
+        <div class="form-row">
+          <div class="admin-form-group">
+            <label>Instagram</label>
+            <input type="url" placeholder="https://instagram.com/..." id="social-ig">
+          </div>
+          <div class="admin-form-group">
+            <label>LinkedIn</label>
+            <input type="url" placeholder="https://linkedin.com/in/..." id="social-li">
+          </div>
+          <div class="admin-form-group">
+            <label>Twitter / X</label>
+            <input type="url" placeholder="https://twitter.com/..." id="social-tw">
+          </div>
+          <div class="admin-form-group">
+            <label>YouTube</label>
+            <input type="url" placeholder="https://youtube.com/..." id="social-yt">
+          </div>
+        </div>
+      </div>
+      <div class="admin-section">
+        <h2>Métricas de Impacto (Contadores)</h2>
+        <div class="form-row">
+          <div class="admin-form-group">
+            <label>Mulheres Impactadas</label>
+            <input type="number" value="2500" id="stat-mulheres">
+          </div>
+          <div class="admin-form-group">
+            <label>Projetos Executados</label>
+            <input type="number" value="50" id="stat-projetos">
+          </div>
+          <div class="admin-form-group">
+            <label>Líderes Formados</label>
+            <input type="number" value="120" id="stat-lideres">
+          </div>
+          <div class="admin-form-group">
+            <label>Anos de Experiência</label>
+            <input type="number" value="15" id="stat-anos">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SOBRE -->
+    <div id="section-sobre" style="display:none;">
+      <div class="admin-section">
+        <h2>Seção "Sobre Mim"</h2>
+        <div class="form-row">
+          <div class="admin-form-group">
+            <label>Seu nome completo</label>
+            <input type="text" placeholder="Ex: Ana Lima" id="about-name">
+          </div>
+          <div class="admin-form-group">
+            <label>Título / Cargo</label>
+            <input type="text" value="Economista | Consultora de Impacto | Líder do Terceiro Setor" id="about-title">
+          </div>
+        </div>
+        <div class="admin-form-group">
+          <label>Parágrafo 1 — Bio</label>
+          <textarea id="about-p1">Economista com mais de 10 anos de experiência na interseção entre dados, políticas públicas e impacto social. Especialista em análise econômica aplicada ao terceiro setor, com foco em projetos de igualdade de gênero e desenvolvimento sustentável.</textarea>
+        </div>
+        <div class="admin-form-group">
+          <label>Parágrafo 2 — Bio</label>
+          <textarea id="about-p2">Fundadora da Narrativa Política, plataforma dedicada a transformar teoria econômica em ação concreta. Já assessorei mais de 50 organizações, formei centenas de líderes e contribuí para políticas públicas que beneficiaram milhares de pessoas.</textarea>
+        </div>
+        <div class="admin-form-group">
+          <label>Parágrafo 3 — Bio</label>
+          <textarea id="about-p3">Minha missão é simples: democratizar o conhecimento econômico e colocá-lo a serviço de quem mais precisa.</textarea>
+        </div>
+        <div class="admin-form-group">
+          <label>Link da Foto (URL)</label>
+          <input type="url" placeholder="https://..." id="about-photo">
+          <small style="color:var(--muted);font-size:.75rem;display:block;margin-top:6px;">Cole o link da sua foto hospedada (Google Drive com acesso público, Imgur, etc.)</small>
+        </div>
+      </div>
+    </div>
+
+    <!-- BLOG -->
+    <div id="section-blog" style="display:none;">
+      <div class="admin-section">
+        <h2>Gerenciar Artigos</h2>
+        <p style="color:var(--muted);margin-bottom:24px;font-size:.9rem;">Para adicionar um novo artigo ao blog, preencha os campos abaixo e clique em "Publicar". Para editar um artigo existente, copie o código JSON de <code>assets/data/content.json</code> e modifique o array <code>"posts"</code>.</p>
+        <div class="form-row">
+          <div class="admin-form-group">
+            <label>Título do artigo</label>
+            <input type="text" placeholder="Ex: Como o PIB não conta a história das mulheres" id="post-title">
+          </div>
+          <div class="admin-form-group">
+            <label>Categoria</label>
+            <select id="post-cat">
+              <option>Economia</option>
+              <option>Gênero</option>
+              <option>Terceiro Setor</option>
+              <option>Liderança</option>
+              <option>Políticas Públicas</option>
+            </select>
+          </div>
+        </div>
+        <div class="admin-form-group">
+          <label>Resumo / Excerpt</label>
+          <textarea placeholder="Breve descrição que aparece na listagem..." id="post-excerpt"></textarea>
+        </div>
+        <div class="form-row">
+          <div class="admin-form-group">
+            <label>Emoji / Capa</label>
+            <input type="text" placeholder="Ex: 📈" id="post-emoji">
+          </div>
+          <div class="admin-form-group">
+            <label>Tempo de leitura (min)</label>
+            <input type="number" value="5" id="post-read">
+          </div>
+        </div>
+        <button class="save-btn" onclick="showToast('Artigo publicado com sucesso! ✓')">📝 Publicar Artigo</button>
+      </div>
+    </div>
+
+    <!-- OPORTUNIDADES -->
+    <div id="section-oportunidades" style="display:none;">
+      <div class="admin-section">
+        <h2>Adicionar Oportunidade</h2>
+        <div class="form-row">
+          <div class="admin-form-group">
+            <label>Título da vaga</label>
+            <input type="text" placeholder="Ex: Analista de Projetos Sociais" id="opp-title">
+          </div>
+          <div class="admin-form-group">
+            <label>Organização</label>
+            <input type="text" placeholder="Ex: Instituto Amazônia Viva" id="opp-org">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="admin-form-group">
+            <label>Tipo</label>
+            <select id="opp-type">
+              <option>CLT</option>
+              <option>Consultoria</option>
+              <option>Bolsa de Pesquisa</option>
+              <option>Voluntário</option>
+              <option>Estágio</option>
+            </select>
+          </div>
+          <div class="admin-form-group">
+            <label>Localização</label>
+            <input type="text" placeholder="Ex: São Paulo, SP" id="opp-location">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="admin-form-group">
+            <label>Área</label>
+            <input type="text" placeholder="Ex: Gênero, Meio Ambiente..." id="opp-area">
+          </div>
+          <div class="admin-form-group">
+            <label>Prazo de inscrição</label>
+            <input type="date" id="opp-deadline">
+          </div>
+        </div>
+        <div class="admin-form-group">
+          <label>Link para inscrição</label>
+          <input type="url" placeholder="https://..." id="opp-link">
+        </div>
+        <button class="save-btn" onclick="showToast('Oportunidade adicionada com sucesso! ✓')">📌 Publicar Oportunidade</button>
+      </div>
+    </div>
+
+    <!-- OTHER SECTIONS PLACEHOLDER -->
+    <div id="section-servicos" style="display:none;">
+      <div class="admin-section">
+        <h2>Serviços</h2>
+        <p style="color:var(--muted);">Edite os serviços diretamente no arquivo <code>pages/servicos.html</code> ou no <code>assets/data/content.json</code>. Os campos de texto dos cards de serviço foram projetados para fácil edição direta no HTML — procure pelas tags com classe <code>service-big-title</code> e <code>service-big-subtitle</code>.</p>
+      </div>
+    </div>
+    <div id="section-projetos" style="display:none;">
+      <div class="admin-section">
+        <h2>Projetos & Métricas</h2>
+        <p style="color:var(--muted);">Adicione novos projetos editando o arquivo <code>pages/projetos.html</code>. Cada projeto está num bloco <code>.project-card</code>. Copie um bloco existente e ajuste os dados. Os contadores de impacto são controlados pelo atributo <code>data-count</code> nas <code>.stat-number</code>.</p>
+      </div>
+    </div>
+    <div id="section-trilhas" style="display:none;">
+      <div class="admin-section">
+        <h2>Trilhas de Liderança</h2>
+        <p style="color:var(--muted);">Edite os módulos em <code>pages/trilhas.html</code>. Cada módulo é um bloco <code>.big-module</code>. Para alterar preços, textos e tópicos, edite diretamente o HTML. Para adicionar um novo módulo, copie um bloco <code>.big-module</code> existente e ajuste o conteúdo.</p>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="toast" id="toast">✅ Salvo com sucesso!</div>
+
+<script>
+  function showSection(id, el) {
+    document.querySelectorAll('[id^="section-"]').forEach(s => s.style.display='none');
+    document.getElementById('section-'+id).style.display='block';
+    document.querySelectorAll('.admin-nav-item').forEach(i => i.classList.remove('active'));
+    el.classList.add('active');
+    const titles = { geral:'Configurações Gerais', sobre:'Sobre Mim', servicos:'Serviços', projetos:'Projetos & Métricas', trilhas:'Trilhas de Liderança', blog:'Blog & Artigos', oportunidades:'Oportunidades' };
+    document.getElementById('section-title').textContent = titles[id] || id;
+  }
+  function saveSection() { showToast('Alterações salvas com sucesso! ✓'); }
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 3000);
+  }
+</script>
+</body>
+</html>

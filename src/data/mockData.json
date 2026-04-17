@@ -2,100 +2,106 @@
   "articles": [
     {
       "id": 1,
-      "title": "A Inserção de Gênero nas Relações Internacionais: Uma Perspectiva Feminista",
-      "category": "Gênero e Política",
-      "excerpt": "Uma análise sobre como as teorias feministas desafiam as estruturas tradicionais de poder e moldam a política externa contemporânea.",
+      "title": "A Economia do Cuidado e o Impacto Social em ONGs",
+      "category": "Economia e Gênero",
+      "excerpt": "Como a valorização do trabalho de cuidado pode estruturar novos modelos de impacto no terceiro setor.",
       "date": "2024-03-25",
       "image": "https://images.unsplash.com/photo-1573164713714-d95e436ab8d6?auto=format&fit=crop&w=800&q=80",
-      "content": "As Relações Internacionais (RI) têm sido historicamente dominadas por perspectivas androcêntricas que invisibilizam as experiências e contribuições das mulheres. Este artigo explora as principais vertentes do feminismo nas RI, desde o feminismo liberal até o pós-colonial, discutindo como a inclusão da perspectiva de gênero altera nossa compreensão de segurança, economia global e direitos humanos. \n\nA análise foca em estudos de caso recentes onde a diplomacia de gênero provou ser um diferencial estratégico na resolução de conflitos internacionais."
+      "content": "A economia do cuidado é um pilar invisível da nossa sociedade. Este artigo explora como o terceiro setor pode liderar a mudança na valorização desse trabalho, transformando dados em políticas de impacto direto dentro das ONGs."
     },
     {
       "id": 2,
-      "title": "Eleições nos EUA 2024: Impactos Estratégicos para a América Latina",
-      "category": "Análise Política",
-      "excerpt": "Explorando os cenários possíveis do pleito americano e como cada resultado pode influenciar as relações bilaterais com o Brasil.",
+      "title": "Relatórios de Impacto: Por que os Dados são Essenciais para ONGs?",
+      "category": "Impacto e Dados",
+      "excerpt": "Aprenda como estruturar a mensuração de impacto da sua organização para atrair mais parcerias e doações.",
       "date": "2024-03-10",
       "image": "https://images.unsplash.com/photo-1529107386315-e1a2ed48a620?auto=format&fit=crop&w=800&q=80",
-      "content": "A política externa dos Estados Unidos é um dos pilares da estabilidade — ou instabilidade — geopolítica na América Latina. Com a aproximação das eleições de 2024, as atenções se voltam para as propostas dos candidatos em relação ao comércio, imigração e políticas ambientais. \n\nPara o Brasil, o desafio é manter o pragmatismo e buscar oportunidades de cooperação, independentemente da administração que assumir a Casa Branca."
+      "content": "Não basta fazer o bem; é preciso saber medir e comunicar. Relatórios de impacto baseados em dados sólidos são o diferencial estratégico das ONGs que conseguem escala e sustentabilidade."
     },
     {
       "id": 3,
-      "title": "A Economia Política da Transição Energética",
-      "category": "Economia e Política",
-      "excerpt": "O papel dos países em desenvolvimento na nova ordem energética global e as tensões entre crescimento e sustentabilidade.",
+      "title": "Liderança Feminina no Clima: Uma Perspectiva Econômica",
+      "category": "Clima e Liderança",
+      "excerpt": "O papel fundamental das mulheres na liderança de iniciativas globais para a mitigação das mudanças climáticas.",
       "date": "2024-02-28",
       "image": "https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?auto=format&fit=crop&w=800&q=80",
-      "content": "A transição para fontes de energia limpa não é apenas um desafio técnico, mas fundamentalmente político. Este artigo discute como as potências globais estão competindo pelo controle das cadeias de suprimentos de minerais críticos e como o Brasil pode se posicionar como um líder sustentável."
+      "content": "A crise climática é um desafio econômico sem precedentes. Este artigo discute como a liderança feminina e a educação de base são as ferramentas mais potentes para a transição energética justa."
     }
   ],
   "opportunities": [
     {
       "id": 1,
-      "title": "Programa de Estágio - Missão Diplomática em Brasília",
-      "organization": "Embaixada do Reino Unido",
+      "title": "Analista de Projetos - Impacto Social",
+      "organization": "Fundação Estudar",
       "deadline": "2024-04-15",
-      "strategic_analysis": "Esta oportunidade é excelente para quem busca experiência direta em diplomacia pública. O diferencial aqui é focar sua carta de motivação na sua capacidade de análise de dados e interesse em políticas de sustentabilidade, pilares atuais da missão britânica no Brasil.",
-      "link": "https://example.com/apply-diplomacy"
+      "strategic_analysis": "Vaga ideal para quem domina análise de dados e quer atuar diretamente na gestão de projetos educacionais. Destaque sua capacidade de síntese em relatórios de impacto.",
+      "link": "https://example.com/apply-impact"
     },
     {
       "id": 2,
-      "title": "Fellowship em Direitos Humanos e Gênero",
-      "organization": "ONU Mulheres",
+      "title": "Pesquisadora Júnior - Economia e Gênero",
+      "organization": "Think Olga",
       "deadline": "2024-05-01",
-      "strategic_analysis": "O foco desta vaga é a implementação local de políticas globais. Candidatas com experiência em pesquisa acadêmica em gênero (como as mencionadas em nossas Trilhas) têm alta competitividade. Recomendo destacar publicações ou participações em grupos de pesquisa.",
-      "link": "https://example.com/fellowship-un"
+      "strategic_analysis": "Excelente oportunidade para aplicar conhecimentos teóricos de economia em pesquisas que pautam a mídia e o setor público sobre a vida das mulheres.",
+      "link": "https://example.com/research-gender"
     }
   ],
   "paths": [
     {
       "id": 1,
-      "title": "Carreira em Relações Internacionais",
-      "description": "Do graduação ao Itamaraty ou organizações internacionais. Um guia passo a passo.",
+      "title": "Carreira em Impacto Social e ONGs",
+      "description": "Da graduação à gestão de projetos de alto impacto. Um guia prático.",
       "steps": [
-        "Fundamentos Acadêmicos e Idiomas",
-        "Experiência em Simulações (MUNs) e Grupos de Pesquisa",
-        "Networking Estratégico e LinkedIn",
-        "Pós-Graduação e Especialização"
+        "Voluntariado Estratégico e Vivência Local",
+        "Especialização em Gestão do Terceiro Setor",
+        "Domínio de Metodologias de Impacto (Teoria da Mudança)",
+        "Elaboração de Relatórios de Impacto Baseados em Dados"
       ]
     },
     {
       "id": 2,
-      "title": "Pesquisa Acadêmica de Impacto",
-      "description": "Como transformar sua tese em um artigo publicável e relevante politicamente.",
+      "title": "Pesquisa Econômica com Propósito",
+      "description": "Como transformar sua pesquisa acadêmica em ferramenta de mudança social.",
       "steps": [
-        "Definição do Problema de Pesquisa",
-        "Metodologia e Coleta de Dados",
-        "Redação Científica e Revisão por Pares",
-        "Submissão em Periódicos de Alto Impacto"
+        "Definição de Indicadores de Gênero e Raça",
+        "Coleta de Dados e Análise Econométrica Básica",
+        "Tradução da Pesquisa para Linguagem de Políticas Públicas",
+        "Publicação e Advocacy Baseado em Evidências"
       ]
     }
   ],
   "projects": [
     {
       "id": 1,
-      "title": "Observatório de Gênero na Política",
-      "description": "Monitoramento da participação feminina nas decisões legislativas estaduais.",
-      "impact": "Mais de 50 relatórios publicados e citados por veículos de mídia nacional."
+      "title": "Relatório Anual de Impacto ONG X",
+      "description": "Consolidação de dados e métricas de impacto para uma das maiores ONGs de educação do país.",
+      "impact": "Ajudou a captar 20% mais recursos no ciclo seguinte através de transparência baseada em dados."
     },
     {
       "id": 2,
-      "title": "Mentoria para Mulheres em RI",
-      "description": "Programa de aceleração de carreira para jovens profissionais da área.",
-      "impact": "100+ mentoradas em 5 países lusófonos."
+      "title": "Mentoria Liderança Feminina",
+      "description": "Programa focado em desenvolver novas gestoras para o terceiro setor.",
+      "impact": "50+ mulheres posicionadas em cargos de liderança em ONGs e movimentos sociais."
     }
   ],
   "services": [
     {
       "id": 1,
-      "title": "Mentoria Individual",
-      "description": "Sessões personalizadas para planejamento de carreira internacional, revisão de currículo e preparação para entrevistas.",
+      "title": "Mentoria de Liderança",
+      "description": "Focada em mulheres que desejam ocupar espaços de decisão em ONGs e movimentos sociais, baseada em vivência prática.",
       "price": "Consulte valores"
     },
     {
       "id": 2,
-      "title": "Palestras e Workshops",
-      "description": "Temas: Geopolítica Contemporânea, Gênero nas Organizações e Carreira no Terceiro Setor.",
+      "title": "Palestras Estratégicas",
+      "description": "Temas: Economia e Gênero, Educação no Século XXI e Liderança Feminina no Clima.",
       "price": "Sob demanda"
+    },
+    {
+      "id": 3,
+      "title": "Consultoria de Impacto",
+      "description": "Apoio na estruturação de relatórios de impacto e análise de dados para organizações do terceiro setor.",
+      "price": "Personalizado"
     }
   ]
 }

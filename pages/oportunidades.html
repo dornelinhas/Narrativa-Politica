@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Oportunidades — Narrativa Política</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <style>
+    .opp-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(320px,1fr)); gap:20px; }
+    .opp-card { background:white; border-radius:var(--radius); padding:28px; border:1px solid var(--border); transition:all .3s; display:flex; flex-direction:column; gap:16px; position:relative; overflow:hidden; }
+    .opp-card::before { content:''; position:absolute; top:0; left:0; width:4px; height:100%; }
+    .opp-card.tipo-clt::before    { background:var(--blue);   }
+    .opp-card.tipo-voluntario::before { background:#1DD1A1; }
+    .opp-card.tipo-bolsa::before  { background:var(--gold);   }
+    .opp-card.tipo-consultoria::before { background:var(--purple); }
+    .opp-card.tipo-estagio::before { background:var(--rose); }
+    .opp-card:hover { transform:translateY(-4px); box-shadow:var(--shadow-lg); }
+    .opp-title { font-family:var(--font-display); font-weight:800; font-size:1rem; line-height:1.4; }
+    .opp-org { color:var(--muted); font-size:.85rem; margin-top:4px; display:flex; align-items:center; gap:6px; }
+    .opp-type { display:inline-block; padding:4px 12px; border-radius:50px; font-size:.7rem; font-weight:800; }
+    .type-clt    { background:rgba(0,123,255,.1); color:var(--blue); }
+    .type-voluntario { background:rgba(29,209,161,.1); color:#1DD1A1; }
+    .type-bolsa  { background:rgba(255,215,0,.2); color:#B8860B; }
+    .type-consultoria { background:rgba(138,43,226,.1); color:var(--purple); }
+    .type-estagio { background:rgba(255,77,109,.1); color:var(--rose); }
+    .opp-info { display:flex; flex-wrap:wrap; gap:10px; }
+    .opp-chip { font-size:.75rem; color:var(--muted); background:#f5f5f8; padding:4px 10px; border-radius:50px; display:flex; align-items:center; gap:4px; }
+    .opp-deadline { font-size:.75rem; font-weight:800; color:var(--rose); margin-top:4px; }
+    .opp-btn { margin-top:auto; }
+    .opp-search { display:flex; gap:12px; margin-bottom:40px; flex-wrap:wrap; }
+    .opp-search input { flex:1; min-width:200px; padding:12px 20px; border-radius:50px; border:1.5px solid var(--border); outline:none; font-family:var(--font-body); font-size:.9rem; }
+    .opp-search input:focus { border-color:var(--purple); }
+    .filter-bar { display:flex; gap:10px; flex-wrap:wrap; margin-bottom:32px; }
+    .filter-btn { padding:8px 18px; border-radius:50px; border:1.5px solid var(--border); background:white; font-family:var(--font-body); font-size:.8rem; font-weight:700; cursor:pointer; transition:all .2s; }
+    .filter-btn:hover, .filter-btn.active { background:var(--purple); color:white; border-color:var(--purple); }
+    .submit-opp { background:linear-gradient(135deg,#f8f9ff,#f0f4ff); border:2px dashed rgba(138,43,226,.3); border-radius:var(--radius-lg); padding:48px; text-align:center; margin-top:48px; }
+  </style>
+</head>
+<body>
+<nav class="navbar" id="navbar"></nav>
+<div class="mobile-menu" id="mobile-menu"></div>
+
+<section class="page-hero">
+  <div class="container">
+    <span class="page-hero-badge">Oportunidades</span>
+    <h1>Vagas no <span style="background:var(--np-gradient);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;">Terceiro Setor</span></h1>
+    <p>Oportunidades selecionadas em ONGs, institutos, governo e organizações de impacto social no Brasil e além.</p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+
+    <!-- SEARCH -->
+    <div class="opp-search reveal">
+      <input type="text" id="search-input" placeholder="🔍  Buscar por cargo, organização ou área..." oninput="filterOpps()">
+    </div>
+
+    <!-- FILTERS -->
+    <div class="filter-bar reveal">
+      <button class="filter-btn active" onclick="filterByType(this,'all')">Todas</button>
+      <button class="filter-btn" onclick="filterByType(this,'clt')">CLT</button>
+      <button class="filter-btn" onclick="filterByType(this,'consultoria')">Consultoria</button>
+      <button class="filter-btn" onclick="filterByType(this,'bolsa')">Bolsa/Pesquisa</button>
+      <button class="filter-btn" onclick="filterByType(this,'voluntario')">Voluntário</button>
+      <button class="filter-btn" onclick="filterByType(this,'estagio')">Estágio</button>
+    </div>
+
+    <div class="opp-grid" id="opps-grid">
+
+      <div class="opp-card tipo-clt reveal" data-type="clt" data-text="analista projetos sociais instituto amazônia viva belém meio ambiente">
+        <div>
+          <h3 class="opp-title">Analista de Projetos Sociais</h3>
+          <p class="opp-org">🌿 Instituto Amazônia Viva</p>
+        </div>
+        <div><span class="opp-type type-clt">CLT</span></div>
+        <div class="opp-info">
+          <span class="opp-chip">📍 Belém, PA</span>
+          <span class="opp-chip">🌱 Meio Ambiente</span>
+          <span class="opp-chip">💼 Pleno</span>
+        </div>
+        <p class="opp-deadline">⏰ Inscrições até 20 Mai 2025</p>
+        <div class="opp-btn"><a href="#" class="btn btn-primary" style="padding:10px 20px;font-size:.8rem;width:100%;justify-content:center;">Ver vaga →</a></div>
+      </div>
+
+      <div class="opp-card tipo-consultoria reveal" data-type="consultoria" data-text="coordenadora políticas gênero onu mulheres brasil brasília">
+        <div>
+          <h3 class="opp-title">Coordenadora de Políticas de Gênero</h3>
+          <p class="opp-org">🌐 ONU Mulheres Brasil</p>
+        </div>
+        <div><span class="opp-type type-consultoria">Consultoria</span></div>
+        <div class="opp-info">
+          <span class="opp-chip">📍 Brasília, DF</span>
+          <span class="opp-chip">♀️ Gênero</span>
+          <span class="opp-chip">💼 Sênior</span>
+        </div>
+        <p class="opp-deadline">⏰ Inscrições até 30 Abr 2025</p>
+        <div class="opp-btn"><a href="#" class="btn btn-primary" style="padding:10px 20px;font-size:.8rem;width:100%;justify-content:center;">Ver vaga →</a></div>
+      </div>
+
+      <div class="opp-card tipo-clt reveal" data-type="clt" data-text="gestora programas impacto fundação avina são paulo">
+        <div>
+          <h3 class="opp-title">Gestora de Programas de Impacto</h3>
+          <p class="opp-org">🚀 Fundação Avina</p>
+        </div>
+        <div><span class="opp-type type-clt">CLT</span></div>
+        <div class="opp-info">
+          <span class="opp-chip">📍 São Paulo, SP</span>
+          <span class="opp-chip">⚡ Impacto Social</span>
+          <span class="opp-chip">💼 Pleno/Sênior</span>
+        </div>
+        <p class="opp-deadline">⏰ Inscrições até 15 Mai 2025</p>
+        <div class="opp-btn"><a href="#" class="btn btn-primary" style="padding:10px 20px;font-size:.8rem;width:100%;justify-content:center;">Ver vaga →</a></div>
+      </div>
+
+      <div class="opp-card tipo-bolsa reveal" data-type="bolsa" data-text="pesquisadora economia feminista ipea remoto pesquisa">
+        <div>
+          <h3 class="opp-title">Pesquisadora em Economia Feminista</h3>
+          <p class="opp-org">📊 IPEA — Instituto de Pesquisa Econômica Aplicada</p>
+        </div>
+        <div><span class="opp-type type-bolsa">Bolsa de Pesquisa</span></div>
+        <div class="opp-info">
+          <span class="opp-chip">📍 Remoto</span>
+          <span class="opp-chip">🔬 Pesquisa</span>
+          <span class="opp-chip">🎓 Nível Pós-Doc</span>
+        </div>
+        <p class="opp-deadline">⏰ Inscrições até 10 Mai 2025</p>
+        <div class="opp-btn"><a href="#" class="btn btn-primary" style="padding:10px 20px;font-size:.8rem;width:100%;justify-content:center;">Ver vaga →</a></div>
+      </div>
+
+      <div class="opp-card tipo-voluntario reveal" data-type="voluntario" data-text="facilitadora grupo mulheres instituto cidadania recife">
+        <div>
+          <h3 class="opp-title">Facilitadora de Grupos de Mulheres</h3>
+          <p class="opp-org">💜 Instituto Cidadania e Gênero</p>
+        </div>
+        <div><span class="opp-type type-voluntario">Voluntário</span></div>
+        <div class="opp-info">
+          <span class="opp-chip">📍 Recife, PE</span>
+          <span class="opp-chip">♀️ Gênero</span>
+          <span class="opp-chip">🕐 Meio período</span>
+        </div>
+        <p class="opp-deadline">⏰ Inscrições abertas</p>
+        <div class="opp-btn"><a href="#" class="btn btn-outline" style="padding:10px 20px;font-size:.8rem;width:100%;justify-content:center;">Ver oportunidade →</a></div>
+      </div>
+
+      <div class="opp-card tipo-estagio reveal" data-type="estagio" data-text="estágio comunicação impacto social instituto são paulo">
+        <div>
+          <h3 class="opp-title">Estágio em Comunicação de Impacto</h3>
+          <p class="opp-org">📣 Rede de Inovação Social</p>
+        </div>
+        <div><span class="opp-type type-estagio">Estágio</span></div>
+        <div class="opp-info">
+          <span class="opp-chip">📍 São Paulo, SP</span>
+          <span class="opp-chip">📢 Comunicação</span>
+          <span class="opp-chip">🎓 Graduação</span>
+        </div>
+        <p class="opp-deadline">⏰ Inscrições até 25 Abr 2025</p>
+        <div class="opp-btn"><a href="#" class="btn btn-primary" style="padding:10px 20px;font-size:.8rem;width:100%;justify-content:center;">Ver vaga →</a></div>
+      </div>
+
+      <div class="opp-card tipo-consultoria reveal" data-type="consultoria" data-text="consultora monitoramento avaliação banco mundial remoto">
+        <div>
+          <h3 class="opp-title">Consultora de Monitoramento e Avaliação</h3>
+          <p class="opp-org">🌍 Banco Mundial — BIRD</p>
+        </div>
+        <div><span class="opp-type type-consultoria">Consultoria Internacional</span></div>
+        <div class="opp-info">
+          <span class="opp-chip">📍 Remoto / Híbrido</span>
+          <span class="opp-chip">📊 M&amp;A</span>
+          <span class="opp-chip">🌐 Internacional</span>
+        </div>
+        <p class="opp-deadline">⏰ Inscrições até 5 Mai 2025</p>
+        <div class="opp-btn"><a href="#" class="btn btn-primary" style="padding:10px 20px;font-size:.8rem;width:100%;justify-content:center;">Ver vaga →</a></div>
+      </div>
+
+      <div class="opp-card tipo-clt reveal" data-type="clt" data-text="coordenadora captação recursos ong ambiental rio de janeiro">
+        <div>
+          <h3 class="opp-title">Coordenadora de Captação de Recursos</h3>
+          <p class="opp-org">💚 Instituto Água Viva</p>
+        </div>
+        <div><span class="opp-type type-clt">CLT</span></div>
+        <div class="opp-info">
+          <span class="opp-chip">📍 Rio de Janeiro, RJ</span>
+          <span class="opp-chip">💰 Captação</span>
+          <span class="opp-chip">💼 Sênior</span>
+        </div>
+        <p class="opp-deadline">⏰ Inscrições até 28 Abr 2025</p>
+        <div class="opp-btn"><a href="#" class="btn btn-primary" style="padding:10px 20px;font-size:.8rem;width:100%;justify-content:center;">Ver vaga →</a></div>
+      </div>
+
+    </div>
+
+    <!-- SUBMIT OPPORTUNITY -->
+    <div class="submit-opp reveal">
+      <div style="font-size:2.5rem;margin-bottom:16px;">📬</div>
+      <h3 style="font-family:var(--font-display);font-weight:800;font-size:1.3rem;margin-bottom:12px;">Tem uma oportunidade para divulgar?</h3>
+      <p style="color:var(--muted);max-width:480px;margin:0 auto 28px;">Compartilhe vagas, editais, bolsas e oportunidades do terceiro setor com nossa comunidade.</p>
+      <a href="mailto:contato@narrativapolitica.com.br?subject=Divulgação de Oportunidade" class="btn btn-primary">Enviar oportunidade →</a>
+    </div>
+
+  </div>
+</section>
+
+<section class="section newsletter-section">
+  <div class="container">
+    <div class="reveal">
+      <h2>Receba oportunidades<br><span style="background:var(--np-gradient);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;">toda semana</span></h2>
+      <p>Vagas e editais do terceiro setor direto no seu e-mail, antes de qualquer um.</p>
+      <form class="newsletter-form" onsubmit="handleNewsletter(event)">
+        <input type="email" placeholder="seu@email.com.br" required>
+        <button type="submit" class="btn btn-primary">Inscrever-me</button>
+      </form>
+    </div>
+  </div>
+</section>
+
+<footer class="footer" id="footer"></footer>
+<script src="../assets/js/main.js"></script>
+<script>
+  let currentType = 'all';
+  function filterOpps() {
+    const q = document.getElementById('search-input').value.toLowerCase();
+    document.querySelectorAll('#opps-grid .opp-card').forEach(card => {
+      const text = card.dataset.text || '';
+      const typeMatch = currentType === 'all' || card.dataset.type === currentType;
+      const textMatch = !q || text.includes(q);
+      card.style.display = (typeMatch && textMatch) ? '' : 'none';
+    });
+  }
+  function filterByType(btn, type) {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentType = type;
+    filterOpps();
+  }
+</script>
+</body>
+</html>

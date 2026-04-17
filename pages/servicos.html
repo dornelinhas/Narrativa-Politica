@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Serviços — Narrativa Política</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <style>
+    .service-big { background:white; border-radius:var(--radius-lg); overflow:hidden; border:1px solid var(--border); margin-bottom:32px; display:grid; grid-template-columns:1fr 1.5fr; transition:all .3s; }
+    .service-big:hover { box-shadow:var(--shadow-lg); }
+    .service-big-visual { padding:48px 40px; display:flex; flex-direction:column; justify-content:center; }
+    .service-big-emoji { font-size:4rem; margin-bottom:20px; }
+    .service-big-title { font-family:var(--font-display); font-size:1.6rem; font-weight:800; margin-bottom:12px; color:white; }
+    .service-big-subtitle { color:rgba(255,255,255,.8); font-size:.9rem; line-height:1.6; }
+    .service-big-body { padding:48px 40px; }
+    .service-big-body h3 { font-family:var(--font-display); font-weight:700; margin-bottom:16px; }
+    .service-big-body p { color:var(--muted); line-height:1.8; margin-bottom:20px; }
+    .includes-list { list-style:none; display:flex; flex-direction:column; gap:10px; margin-bottom:28px; }
+    .includes-list li { display:flex; gap:10px; font-size:.875rem; color:var(--muted); }
+    .includes-list li span { color:var(--purple); font-weight:700; flex-shrink:0; }
+    .faq-item { border-bottom:1px solid var(--border); padding:24px 0; cursor:pointer; }
+    .faq-q { display:flex; justify-content:space-between; align-items:center; font-weight:700; font-size:.95rem; }
+    .faq-a { color:var(--muted); font-size:.875rem; line-height:1.7; margin-top:14px; display:none; }
+    .faq-item.open .faq-a { display:block; }
+    .faq-item.open .faq-arrow { transform:rotate(180deg); }
+    .faq-arrow { transition:transform .3s; }
+    @media(max-width:768px){.service-big{grid-template-columns:1fr;}.service-big-visual{padding:36px 28px;}.service-big-body{padding:28px;}}
+  </style>
+</head>
+<body>
+<nav class="navbar" id="navbar"></nav>
+<div class="mobile-menu" id="mobile-menu"></div>
+
+<section class="page-hero">
+  <div class="container">
+    <span class="page-hero-badge">Serviços</span>
+    <h1>Como posso <span style="background:var(--np-gradient);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;">apoiar você</span></h1>
+    <p>Da mentoria individual à consultoria organizacional — encontre o formato ideal para sua jornada de impacto.</p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+
+    <div class="service-big reveal">
+      <div class="service-big-visual" style="background:linear-gradient(135deg,#8A2BE2,#FF4D6D);">
+        <div class="service-big-emoji">🎯</div>
+        <h2 class="service-big-title">Mentoria Individual</h2>
+        <p class="service-big-subtitle">Acompanhamento personalizado para alavancar sua carreira no terceiro setor e em políticas públicas.</p>
+        <div style="margin-top:28px;padding:16px;background:rgba(255,255,255,.15);border-radius:12px;">
+          <div style="color:white;font-size:1.8rem;font-weight:800;font-family:var(--font-display);">R$ 450</div>
+          <div style="color:rgba(255,255,255,.7);font-size:.8rem;">por sessão (60 min) · Pacotes disponíveis</div>
+        </div>
+      </div>
+      <div class="service-big-body">
+        <h3>O que é a Mentoria Individual?</h3>
+        <p>Sessões 1:1 desenhadas especificamente para o seu momento de carreira. Seja você uma profissional querendo migrar para o terceiro setor, uma gestora de ONG buscando ampliar impacto, ou uma pesquisadora que deseja influenciar políticas públicas — a mentoria se adapta à sua realidade.</p>
+        <h3>O que está incluso:</h3>
+        <ul class="includes-list">
+          <li><span>✓</span> Diagnóstico completo de competências e lacunas</li>
+          <li><span>✓</span> Plano de desenvolvimento personalizado</li>
+          <li><span>✓</span> Indicação de cursos, livros e redes relevantes</li>
+          <li><span>✓</span> Suporte por WhatsApp entre sessões (pacote trimestral)</li>
+          <li><span>✓</span> Revisão de currículo, projetos ou propostas</li>
+          <li><span>✓</span> Conexão com minha rede de parceiras e oportunidades</li>
+        </ul>
+        <a href="mailto:contato@narrativapolitica.com.br" class="btn btn-primary">Solicitar uma sessão →</a>
+      </div>
+    </div>
+
+    <div class="service-big reveal">
+      <div class="service-big-visual" style="background:linear-gradient(135deg,#007BFF,#1B3022);">
+        <div class="service-big-emoji">🎤</div>
+        <h2 class="service-big-title">Palestras & Keynotes</h2>
+        <p class="service-big-subtitle">Conteúdo transformador para eventos corporativos, governamentais e do terceiro setor.</p>
+        <div style="margin-top:28px;padding:16px;background:rgba(255,255,255,.15);border-radius:12px;">
+          <div style="color:white;font-size:1.8rem;font-weight:800;font-family:var(--font-display);">Sob consulta</div>
+          <div style="color:rgba(255,255,255,.7);font-size:.8rem;">Proposta personalizada por evento</div>
+        </div>
+      </div>
+      <div class="service-big-body">
+        <h3>Temas disponíveis</h3>
+        <p>Palestras construídas com base em pesquisa e experiência real, adaptadas ao contexto e público do seu evento. Disponível em formato presencial ou online.</p>
+        <ul class="includes-list">
+          <li><span>🎯</span> "Economia Feminista: o que os dados revelam sobre desigualdade"</li>
+          <li><span>🎯</span> "Como medir (e comunicar) o impacto da sua organização"</li>
+          <li><span>🎯</span> "Líderes do Amanhã: mulheres no terceiro setor brasileiro"</li>
+          <li><span>🎯</span> "Dados para decidir melhor: analytics no setor social"</li>
+          <li><span>🎯</span> "Orçamento público e gênero: o que todo gestor deve saber"</li>
+          <li><span>✦</span> Temas personalizados sob demanda</li>
+        </ul>
+        <a href="mailto:contato@narrativapolitica.com.br" class="btn btn-primary">Solicitar proposta →</a>
+      </div>
+    </div>
+
+    <div class="service-big reveal">
+      <div class="service-big-visual" style="background:linear-gradient(135deg,#D00000,#FF4D6D);">
+        <div class="service-big-emoji">📊</div>
+        <h2 class="service-big-title">Consultoria Política</h2>
+        <p class="service-big-subtitle">Assessoria estratégica para ONGs, institutos e poder público com enfoque em gênero e impacto.</p>
+        <div style="margin-top:28px;padding:16px;background:rgba(255,255,255,.15);border-radius:12px;">
+          <div style="color:white;font-size:1.8rem;font-weight:800;font-family:var(--font-display);">Projeto personalizado</div>
+          <div style="color:rgba(255,255,255,.7);font-size:.8rem;">Diagnóstico inicial gratuito</div>
+        </div>
+      </div>
+      <div class="service-big-body">
+        <h3>Para organizações que querem mais impacto</h3>
+        <p>Trabalho diretamente com equipes de ONGs, institutos e órgãos governamentais para fortalecer sua capacidade de gerar, medir e comunicar impacto. Projetos de 3 a 12 meses com entregas claras e mensuráveis.</p>
+        <ul class="includes-list">
+          <li><span>✓</span> Diagnóstico organizacional com perspectiva de gênero</li>
+          <li><span>✓</span> Desenvolvimento de teoria da mudança</li>
+          <li><span>✓</span> Criação de sistema de monitoramento e avaliação</li>
+          <li><span>✓</span> Capacitação da equipe em análise de dados sociais</li>
+          <li><span>✓</span> Relatórios de impacto para prestação de contas</li>
+          <li><span>✓</span> Suporte em captação de recursos e editais</li>
+        </ul>
+        <a href="mailto:contato@narrativapolitica.com.br" class="btn btn-primary">Iniciar conversa →</a>
+      </div>
+    </div>
+
+    <div class="service-big reveal">
+      <div class="service-big-visual" style="background:linear-gradient(135deg,#FFD700,#FF4D6D);">
+        <div class="service-big-emoji">🚀</div>
+        <h2 class="service-big-title">Programas de Liderança</h2>
+        <p class="service-big-subtitle">Formação intensiva para grupos de líderes do terceiro setor e do serviço público.</p>
+        <div style="margin-top:28px;padding:16px;background:rgba(255,255,255,.15);border-radius:12px;">
+          <div style="color:white;font-size:1.8rem;font-weight:800;font-family:var(--font-display);">Turma 2025</div>
+          <div style="color:rgba(255,255,255,.7);font-size:.8rem;">Vagas limitadas · Inscrições abertas</div>
+        </div>
+      </div>
+      <div class="service-big-body">
+        <h3>Formação coletiva de alto impacto</h3>
+        <p>Programas de 2 a 6 meses para grupos de 15 a 30 participantes. Combinam teoria econômica, estudos de caso, prática orientada e construção de rede. Ideal para organizações que desejam capacitar equipes inteiras.</p>
+        <ul class="includes-list">
+          <li><span>✓</span> Módulos presenciais e online combinados (blended)</li>
+          <li><span>✓</span> Mentoria em grupo e individual</li>
+          <li><span>✓</span> Projetos aplicados nas organizações dos participantes</li>
+          <li><span>✓</span> Construção de rede entre as líderes do programa</li>
+          <li><span>✓</span> Certificação reconhecida pelo mercado</li>
+          <li><span>✓</span> Conteúdo adaptado ao contexto da turma</li>
+        </ul>
+        <a href="mailto:contato@narrativapolitica.com.br" class="btn btn-primary">Quero participar →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="section" style="background:linear-gradient(180deg,#f8f9ff,#fff);">
+  <div class="container" style="max-width:760px;">
+    <div class="section-header reveal">
+      <span class="section-badge">FAQ</span>
+      <h2 class="section-title">Perguntas frequentes</h2>
+    </div>
+    <div class="reveal">
+      <div class="faq-item" onclick="this.classList.toggle('open')">
+        <div class="faq-q">Quais são as formas de pagamento? <span class="faq-arrow">▼</span></div>
+        <div class="faq-a">Aceito cartão de crédito (até 12x), PIX e transferência bancária. Para consultoria organizacional, emito nota fiscal e aceito pagamento por boleto para CNPJs.</div>
+      </div>
+      <div class="faq-item" onclick="this.classList.toggle('open')">
+        <div class="faq-q">As mentorias são presenciais ou online? <span class="faq-arrow">▼</span></div>
+        <div class="faq-a">As mentorias individuais são realizadas online via Google Meet ou Zoom, o que permite atender profissionais de todo o Brasil e exterior. Palestras e programas de liderança podem ser presenciais mediante disponibilidade e proposta.</div>
+      </div>
+      <div class="faq-item" onclick="this.classList.toggle('open')">
+        <div class="faq-q">Como funciona o diagnóstico inicial gratuito? <span class="faq-arrow">▼</span></div>
+        <div class="faq-a">É uma conversa de 30 minutos por videochamada para entender seu momento, seus objetivos e como posso ajudar. Não há nenhum compromisso de contratação. Envie um e-mail para agendar.</div>
+      </div>
+      <div class="faq-item" onclick="this.classList.toggle('open')">
+        <div class="faq-q">A consultoria atende organizações de todos os portes? <span class="faq-arrow">▼</span></div>
+        <div class="faq-a">Sim. Trabalho com desde pequenas iniciativas locais até grandes institutos e fundações. A proposta é sempre personalizada ao porte, orçamento e necessidades de cada organização.</div>
+      </div>
+      <div class="faq-item" onclick="this.classList.toggle('open')">
+        <div class="faq-q">Você emite nota fiscal? <span class="faq-arrow">▼</span></div>
+        <div class="faq-a">Sim, emito nota fiscal (NFS-e) para todos os serviços. Sou MEI/ME regularizada e posso fornecer toda a documentação necessária para pagamento via CNPJ de organizações.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section newsletter-section">
+  <div class="container">
+    <div class="reveal">
+      <h2>Acompanhe nossa<br><span style="background:var(--np-gradient);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;">Narrativa Política</span></h2>
+      <p>Fique por dentro de novas vagas de mentoria e datas de programas.</p>
+      <form class="newsletter-form" onsubmit="handleNewsletter(event)">
+        <input type="email" placeholder="seu@email.com.br" required>
+        <button type="submit" class="btn btn-primary">Inscrever-me</button>
+      </form>
+    </div>
+  </div>
+</section>
+
+<footer class="footer" id="footer"></footer>
+<script src="../assets/js/main.js"></script>
+</body>
+</html>

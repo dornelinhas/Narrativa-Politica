@@ -1,145 +1,140 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+
+/* ============================================================
+   NARRATIVA POLÍTICA — Design System v4
+   Estética: Ativismo Vibrante × Consultoria de Elite
+   ============================================================ */
+
 :root {
-  /* Paleta Oficial do Usuário */
-  --color-blue: #007BFF;
+  /* PALETA OFICIAL NP */
+  --color-pink: #FF2D55;
   --color-purple: #8A2BE2;
-  --color-pink: #FF4D6D;
-  --color-red: #D00000;
-  --color-yellow: #FFD700;
-  --color-green-deep: #1B3022;
-  
-  --bg-body: #FFFFFF;
-  --bg-alt: #F8FAFC;
-  --text-main: #0F172A;
-  --text-muted: #475569;
-  
-  --font-sans: 'Inter', 'Montserrat', sans-serif;
-  --font-serif: 'Playfair Display', serif;
-  
-  --container-max: 1280px;
-  --section-spacing: 120px;
-  --border-radius: 8px;
-  --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --color-petrol: #00CED1;
+  --color-lime: #D4E157;
+  --color-graphite: #1A1C2E;
+
+  /* CORES EXPANDIDAS PARA BLOCOS */
+  --color-pink-soft: #FFF0F3;
+  --color-purple-soft: #F3EAFF;
+  --color-petrol-soft: #E0FAFB;
+  --color-lime-soft: #F9FCCF;
+  --color-pink-mid: #FFD6DE;
+  --color-purple-mid: #D8C4F7;
+  --color-petrol-mid: #A0EBEE;
+
+  /* GRADIENTES */
+  --brand-gradient: linear-gradient(135deg, #FF2D55, #8A2BE2, #00CED1);
+  --brand-gradient-reverse: linear-gradient(135deg, #00CED1, #8A2BE2, #FF2D55);
+  --brand-gradient-warm: linear-gradient(135deg, #FF2D55, #8A2BE2);
+  --brand-gradient-cool: linear-gradient(135deg, #8A2BE2, #00CED1);
+
+  /* TEXTO */
+  --text-main: #1A1C2E;
+  --text-muted: #374151; /* CINZA CHUMBO ESCURO */
+  --text-soft: #4B5563; /* CINZA MAIS ESCURO PARA SOFT */
+
+  /* FUNDOS */
+  --bg-body: #FAFAFA;
+  --bg-warm: #FFF8F0;
+
+  /* UTILITÁRIOS */
+  --shadow-sm: 0 2px 8px rgba(0,0,0,0.06);
+  --shadow-md: 0 8px 32px rgba(0,0,0,0.08);
+  --shadow-lg: 0 24px 64px rgba(0,0,0,0.12);
+  --shadow-glow-pink: 0 8px 32px rgba(255,45,85,0.3);
+  --shadow-glow-purple: 0 8px 32px rgba(138,43,226,0.3);
+  --shadow-glow-petrol: 0 8px 32px rgba(0,206,209,0.3);
+  --transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  --radius: 16px;
+  --radius-lg: 24px;
+  --radius-xl: 32px;
 }
 
+/* ── RESET & BASE ─────────────────────────────── */
 * {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif !important;
   box-sizing: border-box;
-  margin: 0;
-  padding: 0;
 }
+
+html { scroll-behavior: smooth; }
 
 body {
-  font-family: var(--font-sans);
-  background-color: var(--bg-body);
-  color: var(--text-main);
-  line-height: 1.6;
+  margin: 0;
+  padding: 0;
+  background: var(--bg-body);
+  color: #1A1C2E;
+  overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-.container {
-  max-width: var(--container-max);
-  margin: 0 auto;
-  padding: 0 40px;
+/* TEXTO ESCURO APENAS PARA FUNDOS CLAROS */
+p, li, blockquote, .description, .excerpt, .summary {
+  color: #374151; /* Removido !important para permitir override em seções escuras */
+  line-height: 1.6;
 }
 
-/* Tipografia Estilo ONG Profissional */
-h1, h2, h3, h4 {
-  font-weight: 800;
-  line-height: 1.1;
+/* CLASSES DE UTILIDADE PARA ALTO CONTRASTE EM ÁREAS ESPECÍFICAS */
+.text-readable {
+  color: #374151 !important;
+}
+
+img { max-width: 100%; display: block; }
+a { text-decoration: none; color: inherit; }
+
+/* ── LAYOUT ───────────────────────────────────── */
+.container { max-width: 1200px; margin: 0 auto; padding: 0 40px; }
+
+/* ── TYPOGRAPHY ───────────────────────────────── */
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 900;
   letter-spacing: -0.02em;
+  color: #111827; /* Removido !important */
 }
 
-h2 {
-  font-size: 2.5rem;
-  text-transform: uppercase;
-  margin-bottom: 40px;
-  position: relative;
-  display: inline-block;
-}
-
-h2::after {
-  content: '';
-  position: absolute;
-  bottom: -10px;
-  left: 0;
-  width: 60px;
-  height: 4px;
-  background: var(--color-blue);
-}
-
-.section-padding {
-  padding: var(--section-spacing) 0;
-}
-
-/* Botões Modernos */
-.btn {
-  cursor: pointer;
-  border: none;
-  padding: 16px 36px;
-  font-family: var(--font-sans);
-  font-weight: 700;
-  border-radius: var(--border-radius);
-  transition: var(--transition);
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  font-size: 0.85rem;
-  display: inline-block;
-  text-decoration: none;
-}
-
-.btn-primary {
-  background: var(--color-blue);
-  color: white;
-}
-
-.btn-primary:hover {
-  background: var(--color-purple);
-  transform: translateY(-2px);
-  box-shadow: 0 10px 20px rgba(0, 123, 255, 0.2);
-}
-
-.btn-outline {
-  background: transparent;
-  border: 2px solid var(--text-main);
-  color: var(--text-main);
-}
-
-.btn-outline:hover {
-  background: var(--text-main);
-  color: white;
-}
-
-/* Cartões Modulares */
-.card-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 30px;
-}
-
-.card {
-  background: white;
-  padding: 40px;
-  border-radius: var(--border-radius);
-  border: 1px solid #E2E8F0;
-  transition: var(--transition);
-}
-
-.card:hover {
-  border-color: var(--color-blue);
-  box-shadow: 0 20px 40px rgba(0,0,0,0.05);
-  transform: translateY(-5px);
-}
-
-/* Gradiente Colorido conforme pedido */
 .text-gradient {
-  background: linear-gradient(to right, var(--color-blue), var(--color-purple), var(--color-pink), var(--color-red));
+  background: var(--brand-gradient);
   -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
   -webkit-text-fill-color: transparent;
+  display: inline-block;
 }
 
-/* Animations */
-.fade-enter-active, .fade-leave-active {
-  transition: opacity 0.5s ease;
+/* ── GLOBAL BUTTON STYLES ─────────────────────── */
+/* Ensure ALL interactive elements are always clickable */
+a, button, [role="button"], input[type="submit"],
+router-link, .btn, .btn-sm, .btn-hero-primary, .btn-hero-outline,
+.btn-service-outline, .btn-service-solid, .btn-trail-start,
+.nav-item, .nav-item-dropdown, .dropdown-item,
+.login-btn-outline, .menu-toggle {
+  position: relative;
+  z-index: 2;
+  pointer-events: auto !important;
+  cursor: pointer;
 }
-.fade-enter-from, .fade-leave-to {
+
+/* ── TRANSITIONS ──────────────────────────────── */
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
   opacity: 0;
+}
+
+/* ── SCROLLBAR CUSTOM ─────────────────────────── */
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: var(--bg-body); }
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, var(--color-pink), var(--color-purple));
+  border-radius: 10px;
+}
+
+/* ── SELECTION ────────────────────────────────── */
+::selection {
+  background: var(--color-pink);
+  color: white;
 }

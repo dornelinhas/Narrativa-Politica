@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sobre Mim — Narrativa Política</title>
+  <link rel="stylesheet" href="assets/css/style.css">
+  <style>
+    .timeline { position: relative; padding-left: 32px; }
+    .timeline::before { content:''; position:absolute; left:0; top:0; bottom:0; width:2px; background:var(--np-gradient); }
+    .timeline-item { position: relative; margin-bottom: 40px; }
+    .timeline-dot {
+      position: absolute; left: -40px; top: 4px;
+      width: 16px; height: 16px; border-radius: 50%;
+      background: var(--np-gradient);
+      border: 3px solid white;
+      box-shadow: 0 0 0 3px rgba(138,43,226,.2);
+    }
+    .timeline-year { font-size: .75rem; font-weight: 800; color: var(--purple); text-transform: uppercase; letter-spacing: .1em; margin-bottom: 6px; }
+    .timeline-title { font-family: var(--font-display); font-weight: 700; font-size: 1.05rem; margin-bottom: 6px; }
+    .timeline-desc { color: var(--muted); font-size: .875rem; line-height: 1.7; }
+    .values-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 24px; }
+    .value-card { text-align: center; padding: 40px 28px; background: white; border-radius: var(--radius); border: 1px solid var(--border); transition: all .3s; }
+    .value-card:hover { transform: translateY(-6px); box-shadow: var(--shadow-lg); }
+    .value-emoji { font-size: 2.5rem; margin-bottom: 16px; display: block; }
+    .value-title { font-family: var(--font-display); font-weight: 700; margin-bottom: 10px; }
+    .value-desc { color: var(--muted); font-size: .875rem; }
+  </style>
+</head>
+<body>
+<nav class="navbar" id="navbar"></nav>
+<div class="mobile-menu" id="mobile-menu"></div>
+
+<!-- PAGE HERO -->
+<section class="page-hero">
+  <div class="container">
+    <span class="page-hero-badge">Sobre Mim</span>
+    <h1>Uma economista a serviço<br><span style="background:var(--np-gradient);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;">do impacto real</span></h1>
+    <p>Conheça a história, os valores e a missão por trás da Narrativa Política.</p>
+  </div>
+</section>
+
+<!-- BIO SECTION -->
+<section class="section">
+  <div class="container">
+    <div class="about-layout">
+      <div class="about-visual reveal">
+        <div class="about-photo-frame" style="max-width:100%;">
+          <div class="about-photo-placeholder" style="min-height:420px;">
+            <span style="font-size:5rem;">👤</span>
+            <p style="color:rgba(255,255,255,.8);font-size:.9rem;max-width:200px;text-align:center;">Adicione sua foto aqui — substitua este bloco por uma tag &lt;img&gt;</p>
+          </div>
+          <div class="about-badge-float" style="bottom:-16px;right:-16px;">
+            <div class="num">10+</div>
+            <div class="label">Anos de<br>Experiência</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="about-content reveal">
+        <p class="eyebrow">Trajetória</p>
+        <h2>De números a <br>narrativas de mudança</h2>
+        <p>Economista formada com especialização em desenvolvimento humano e políticas públicas, acredito que os dados têm um superpoder: quando bem contados, eles humanizam, sensibilizam e mobilizam.</p>
+        <p>Ao longo da minha carreira, trabalhei com organizações da sociedade civil, institutos de pesquisa e esferas governamentais, sempre na interseção entre teoria econômica e transformação concreta na vida das pessoas — especialmente mulheres e grupos historicamente excluídos dos centros de decisão.</p>
+        <p>Fundei a Narrativa Política com uma convicção: o conhecimento econômico precisa ser democratizado. Cada pessoa que entende como o sistema funciona tem mais poder para questioná-lo, reformá-lo e construir alternativas melhores.</p>
+
+        <div class="about-skills" style="margin-top:32px;">
+          <span class="skill-chip" style="border-color:#8A2BE2;color:#8A2BE2;">Economia Feminista</span>
+          <span class="skill-chip" style="border-color:#007BFF;color:#007BFF;">Análise de Impacto</span>
+          <span class="skill-chip" style="border-color:#FF4D6D;color:#FF4D6D;">Políticas Públicas</span>
+          <span class="skill-chip" style="border-color:#1B3022;color:#1B3022;">Consultoria ONG</span>
+          <span class="skill-chip" style="border-color:#D00000;color:#D00000;">Gênero & Desenvolvimento</span>
+          <span class="skill-chip" style="border-color:#B8860B;color:#B8860B;">Mentoria de Liderança</span>
+        </div>
+
+        <div style="display:flex;gap:14px;margin-top:40px;flex-wrap:wrap;">
+          <a href="pages/servicos.html" class="btn btn-primary">Ver meus serviços →</a>
+          <a href="pages/servicos.html" class="btn btn-outline">Fale Conosco</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TIMELINE -->
+<section class="section" style="background: linear-gradient(180deg,#f8f9ff,#fff);">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="section-badge">Trajetória</span>
+      <h2 class="section-title">Uma jornada de impacto acumulado</h2>
+    </div>
+    <div style="max-width:700px;margin:0 auto;">
+      <div class="timeline reveal">
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <p class="timeline-year">2024 — presente</p>
+          <h3 class="timeline-title">Fundação da Narrativa Política</h3>
+          <p class="timeline-desc">Criação da plataforma dedicada à formação de líderes do terceiro setor e à democratização do conhecimento econômico. Lançamento das Trilhas de Liderança de Impacto.</p>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <p class="timeline-year">2020 — 2024</p>
+          <h3 class="timeline-title">Consultora Sênior — Terceiro Setor</h3>
+          <p class="timeline-desc">Assessoria estratégica para mais de 30 organizações da sociedade civil. Desenvolvimento de frameworks de monitoramento e avaliação de impacto com enfoque em gênero.</p>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <p class="timeline-year">2016 — 2020</p>
+          <h3 class="timeline-title">Pesquisadora em Políticas Públicas</h3>
+          <p class="timeline-desc">Instituto de pesquisa econômica com foco em análise de programas sociais, orçamento público e impacto de políticas de igualdade de gênero.</p>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <p class="timeline-year">2012 — 2016</p>
+          <h3 class="timeline-title">Graduação & Especialização em Economia</h3>
+          <p class="timeline-desc">Formação em Ciências Econômicas com especialização em Desenvolvimento Humano e Economia Feminista. Intercâmbio internacional em políticas sociais comparadas.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- VALUES -->
+<section class="section">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="section-badge">Valores</span>
+      <h2 class="section-title">O que guia minha atuação</h2>
+    </div>
+    <div class="values-grid">
+      <div class="value-card reveal">
+        <span class="value-emoji">🔬</span>
+        <h3 class="value-title">Rigor com propósito</h3>
+        <p class="value-desc">Dados e evidências como base para toda ação. Sem rigor, não há impacto sustentável.</p>
+      </div>
+      <div class="value-card reveal">
+        <span class="value-emoji">♀️</span>
+        <h3 class="value-title">Perspectiva de gênero</h3>
+        <p class="value-desc">Toda análise precisa questionar quem se beneficia — e quem fica de fora dos indicadores.</p>
+      </div>
+      <div class="value-card reveal">
+        <span class="value-emoji">🌐</span>
+        <h3 class="value-title">Democratização do saber</h3>
+        <p class="value-desc">Conhecimento que não circula não transforma. Acessibilidade é parte do impacto.</p>
+      </div>
+      <div class="value-card reveal">
+        <span class="value-emoji">🤝</span>
+        <h3 class="value-title">Colaboração sistêmica</h3>
+        <p class="value-desc">Mudanças duradouras emergem de redes. Nenhuma organização transforma sistemas sozinha.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- NEWSLETTER -->
+<section class="section newsletter-section">
+  <div class="container">
+    <div class="reveal">
+      <h2>Acompanhe nossa<br><span style="background:var(--np-gradient);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;">Narrativa Política</span></h2>
+      <p>Análises exclusivas, oportunidades e conteúdo sobre economia e impacto social.</p>
+      <form class="newsletter-form" onsubmit="handleNewsletter(event)">
+        <input type="email" placeholder="seu@email.com.br" required>
+        <button type="submit" class="btn btn-primary">Inscrever-me</button>
+      </form>
+    </div>
+  </div>
+</section>
+
+<footer class="footer" id="footer"></footer>
+<script src="assets/js/main.js"></script>
+</body>
+</html>

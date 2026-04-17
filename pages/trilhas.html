@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Trilhas de Liderança — Narrativa Política</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <style>
+    .trail-hero-badge {
+      display: inline-flex; align-items: center; gap: 10px;
+      background: rgba(255,255,255,.15); border: 1px solid rgba(255,255,255,.25);
+      border-radius: 50px; padding: 8px 20px; color: white;
+      font-size: .85rem; font-weight: 700; margin-bottom: 24px;
+    }
+    .progress-strip {
+      background: white; border-radius: var(--radius-lg); padding: 32px;
+      display: flex; align-items: center; gap: 0;
+      box-shadow: var(--shadow-lg); margin-top: 60px;
+      overflow: hidden; flex-wrap: wrap;
+    }
+    .progress-step {
+      flex: 1; min-width: 120px; text-align: center;
+      padding: 16px 12px; position: relative;
+    }
+    .progress-step:not(:last-child)::after {
+      content: '→'; position: absolute; right: -12px; top: 50%;
+      transform: translateY(-50%); color: var(--muted); font-size: 1.2rem; z-index: 1;
+    }
+    .step-dot {
+      width: 40px; height: 40px; border-radius: 50%;
+      margin: 0 auto 10px; display: flex; align-items: center; justify-content: center;
+      font-weight: 800; font-size: .875rem;
+    }
+    .step-dot.free  { background: var(--np-gradient); color: white; }
+    .step-dot.paid  { background: #f0f0f8; color: var(--muted); }
+    .step-label { font-size: .75rem; font-weight: 700; color: var(--text); }
+    .step-sublabel { font-size: .65rem; color: var(--muted); margin-top: 3px; }
+
+    .big-module {
+      border-radius: var(--radius-lg); overflow: hidden;
+      border: 1px solid var(--border); margin-bottom: 32px;
+      transition: all .3s;
+    }
+    .big-module:hover { box-shadow: var(--shadow-lg); }
+    .big-module-header {
+      padding: 36px 40px; display: flex; justify-content: space-between; align-items: center;
+      gap: 24px; flex-wrap: wrap;
+    }
+    .big-module-header.free  { background: var(--np-gradient); color: white; }
+    .big-module-header.paid1 { background: linear-gradient(135deg,#f0f4ff,#e8f0fe); }
+    .big-module-header.paid2 { background: linear-gradient(135deg,#fff0f3,#ffe4ec); }
+    .big-module-header.paid3 { background: linear-gradient(135deg,#f0fff4,#e6f9ed); }
+    .bm-number {
+      font-family: var(--font-display); font-size: 4rem; font-weight: 800;
+      opacity: .2; line-height: 1;
+    }
+    .bm-content { flex: 1; }
+    .bm-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 6px 14px; border-radius: 50px; font-size: .75rem; font-weight: 800;
+      margin-bottom: 12px;
+    }
+    .bm-badge.free { background: rgba(255,255,255,.25); color: white; }
+    .bm-badge.paid { background: rgba(138,43,226,.1); color: var(--purple); }
+    .bm-title { font-family: var(--font-display); font-size: 1.5rem; font-weight: 800; margin-bottom: 8px; }
+    .free .bm-title { color: white; }
+    .bm-desc { font-size: .9rem; opacity: .8; }
+    .bm-price { text-align: right; flex-shrink: 0; }
+    .price-tag {
+      font-family: var(--font-display); font-size: 1.8rem; font-weight: 800;
+    }
+    .price-note { font-size: .75rem; margin-top: 4px; opacity: .7; }
+    .big-module-body { padding: 40px; background: white; display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
+    .bm-topics h4 { font-family: var(--font-display); font-weight: 700; margin-bottom: 16px; font-size: 1rem; }
+    .bm-topics ul { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+    .bm-topics li {
+      display: flex; gap: 10px; align-items: flex-start;
+      font-size: .875rem; color: var(--muted); line-height: 1.5;
+    }
+    .bm-topics li span { flex-shrink: 0; color: var(--purple); font-weight: 700; }
+    .bm-meta h4 { font-family: var(--font-display); font-weight: 700; margin-bottom: 16px; font-size: 1rem; }
+    .bm-meta-item { display: flex; gap: 12px; align-items: center; margin-bottom: 14px; font-size: .875rem; }
+    .bm-meta-icon { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1rem; flex-shrink: 0; }
+    .bm-cta { margin-top: 24px; }
+    @media (max-width: 640px) {
+      .big-module-body { grid-template-columns: 1fr; }
+      .big-module-header { flex-direction: column; align-items: flex-start; }
+    }
+  </style>
+</head>
+<body>
+<nav class="navbar" id="navbar"></nav>
+<div class="mobile-menu" id="mobile-menu"></div>
+
+<!-- HERO -->
+<section class="page-hero" style="background:var(--np-gradient);min-height:50vh;display:flex;align-items:center;padding-top:calc(var(--nav-h) + 60px);padding-bottom:60px;">
+  <div class="container" style="position:relative;z-index:1;">
+    <span class="page-hero-badge" style="color:white;">✦ Trilhas de Liderança de Impacto</span>
+    <h1 style="color:white;">Sua jornada de<br>liderança começa aqui</h1>
+    <p style="color:rgba(255,255,255,.8);max-width:560px;">4 módulos progressivos — do fundamento à maestria — para formar líderes capazes de transformar organizações e políticas públicas.</p>
+
+    <div class="progress-strip reveal" style="margin-top:48px;">
+      <div class="progress-step">
+        <div class="step-dot free">01</div>
+        <div class="step-label">Fundamentos</div>
+        <div class="step-sublabel" style="color:#1DD1A1;font-weight:800;">✓ Gratuito</div>
+      </div>
+      <div class="progress-step">
+        <div class="step-dot paid">02</div>
+        <div class="step-label">Dados & Análise</div>
+        <div class="step-sublabel">🔒 Premium</div>
+      </div>
+      <div class="progress-step">
+        <div class="step-dot paid">03</div>
+        <div class="step-label">Gênero & Políticas</div>
+        <div class="step-sublabel">🔒 Premium</div>
+      </div>
+      <div class="progress-step">
+        <div class="step-dot paid">04</div>
+        <div class="step-label">Liderança Plena</div>
+        <div class="step-sublabel">🔒 Premium</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MODULES DETAIL -->
+<section class="section">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="section-badge">Conteúdo</span>
+      <h2 class="section-title">Os 4 módulos da trilha</h2>
+      <p class="section-sub">Cada módulo é uma etapa essencial — completo e transformador por si só, ainda mais poderoso em sequência.</p>
+    </div>
+
+    <!-- Módulo 1 — Gratuito -->
+    <div class="big-module reveal">
+      <div class="big-module-header free">
+        <div class="bm-number">01</div>
+        <div class="bm-content">
+          <span class="bm-badge free">✓ Completamente Gratuito</span>
+          <h2 class="bm-title">Fundamentos do Impacto Social</h2>
+          <p class="bm-desc">Sua porta de entrada para o universo do terceiro setor e da transformação sistêmica.</p>
+        </div>
+        <div class="bm-price" style="color:white;">
+          <div class="price-tag">Grátis</div>
+          <div class="price-note">Sem cartão de crédito</div>
+        </div>
+      </div>
+      <div class="big-module-body">
+        <div class="bm-topics">
+          <h4>O que você vai aprender</h4>
+          <ul>
+            <li><span>→</span> O que é impacto social e como mensurá-lo de forma rigorosa</li>
+            <li><span>→</span> Introdução à Economia Social e seus fundamentos teóricos</li>
+            <li><span>→</span> Mapeamento do Terceiro Setor no Brasil: atores, legislação e financiamento</li>
+            <li><span>→</span> Primeiros passos em advocacy: como influenciar políticas públicas</li>
+            <li><span>→</span> Construção de narrativas de impacto para diferentes públicos</li>
+            <li><span>→</span> Case studies de organizações que transformaram seus setores</li>
+          </ul>
+        </div>
+        <div class="bm-meta">
+          <h4>Detalhes do módulo</h4>
+          <div class="bm-meta-item"><div class="bm-meta-icon accent-purple">📚</div><span>6 aulas em vídeo + materiais de apoio</span></div>
+          <div class="bm-meta-item"><div class="bm-meta-icon accent-blue">⏱</div><span>Aproximadamente 8 horas de conteúdo</span></div>
+          <div class="bm-meta-item"><div class="bm-meta-icon accent-forest">📜</div><span>Certificado de conclusão incluso</span></div>
+          <div class="bm-meta-item"><div class="bm-meta-icon accent-rose">🤝</div><span>Acesso à comunidade exclusiva</span></div>
+          <div class="bm-meta-item"><div class="bm-meta-icon accent-gold">♾</div><span>Acesso vitalício ao conteúdo</span></div>
+          <div class="bm-cta">
+            <a href="#inscricao" class="btn btn-primary" style="width:100%;justify-content:center;">Começar Grátis Agora →</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Módulo 2 -->
+    <div class="big-module reveal">
+      <div class="big-module-header paid1">
+        <div class="bm-number" style="color:var(--purple);">02</div>
+        <div class="bm-content">
+          <span class="bm-badge paid">🔒 Módulo Premium</span>
+          <h2 class="bm-title">Dados para Transformação</h2>
+          <p class="bm-desc" style="color:var(--muted);">Domine a coleta, análise e comunicação de dados sociais para provar — e ampliar — seu impacto.</p>
+        </div>
+        <div class="bm-price">
+          <div class="price-tag" style="color:var(--purple);">R$ 297</div>
+          <div class="price-note" style="color:var(--muted);">ou 3x R$ 109</div>
+        </div>
+      </div>
+      <div class="big-module-body">
+        <div class="bm-topics">
+          <h4>O que você vai aprender</h4>
+          <ul>
+            <li><span>→</span> Metodologias de coleta de dados em comunidades e organizações</li>
+            <li><span>→</span> Análise qualitativa e quantitativa de dados sociais</li>
+            <li><span>→</span> Visualização de dados para comunicação de impacto</li>
+            <li><span>→</span> Indicadores do IBGE, ONU e organismos internacionais</li>
+            <li><span>→</span> Como construir um relatório de impacto profissional</li>
+            <li><span>→</span> Ferramentas gratuitas: Google Data Studio, Kobo Toolbox, Power BI</li>
+          </ul>
+        </div>
+        <div class="bm-meta">
+          <h4>Detalhes do módulo</h4>
+          <div class="bm-meta-item"><div class="bm-meta-icon accent-purple">📚</div><span>10 aulas + 3 workshops práticos</span></div>
+          <div class="bm-meta-item"><div class="bm-meta-icon accent-blue">⏱</div><span>Aproximadamente 15 horas de conteúdo</span></div>
+          <div class="bm-meta-item"><div class="bm-meta-icon accent-rose">🛠</div><span>Projetos práticos com feedback</span></div>
+          <div class="bm-meta-item"><div class="bm-meta-icon accent-forest">📜</div><span>Certificado de conclusão</span></div>
+          <div class="bm-cta">
+            <a href="#inscricao" class="btn btn-primary" style="width:100%;justify-content:center;">Quero este módulo →</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Módulo 3 -->
+    <div class="big-module reveal">
+      <div class="big-module-header paid2">
+        <div class="bm-number" style="color:var(--rose);">03</div>
+        <div class="bm-content">
+          <span class="bm-badge paid">🔒 Módulo Premium</span>
+          <h2 class="bm-title">Gênero & Políticas Públicas</h2>
+          <p class="bm-desc" style="color:var(--muted);">Economia feminista aplicada: ferramentas para analisar, formular e avaliar políticas com perspectiva de gênero.</p>
+        </div>
+        <div class="bm-price">
+          <div class="price-tag" style="color:var(--rose);">R$ 397</div>
+          <div class="price-note" style="color:var(--muted);">ou 3x R$ 142</div>
+        </div>
+      </div>
+      <div class="big-module-body">
+        <div class="bm-topics">
+          <h4>O que você vai aprender</h4>
+          <ul>
+            <li><span>→</span> Fundamentos da economia feminista e suas aplicações práticas</li>
+            <li><span>→</span> Orçamento público com perspectiva de gênero</li>
+            <li><span>→</span> Análise do impacto diferenciado de políticas por gênero</li>
+            <li><span>→</span> Formulação de políticas públicas inclusivas e interseccionais</li>
+            <li><span>→</span> Monitoramento e avaliação de programas de igualdade</li>
+            <li><span>→</span> Advocacy legislativo: como influenciar decisões de política</li>
+          </ul>
+        </div>
+        <div class="bm-meta">
+          <h4>Detalhes do módulo</h4>
+          <div class="bm-meta-item"><div class="bm-meta-icon accent-rose">📚</div><span>12 aulas + live mensal com especialistas</span></div>
+          <div class="bm-meta-item"><div class="bm-meta-icon accent-blue">⏱</div><span>Aproximadamente 18 horas de conteúdo</span></div>
+          <div class="bm-meta-item"><div class="bm-meta-icon accent-purple">👥</div><span>Grupo exclusivo de alunas</span></div>
+          <div class="bm-meta-item"><div class="bm-meta-icon accent-forest">📜</div><span>Certificado de conclusão</span></div>
+          <div class="bm-cta">
+            <a href="#inscricao" class="btn btn-primary" style="width:100%;justify-content:center;">Quero este módulo →</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Módulo 4 -->
+    <div class="big-module reveal">
+      <div class="big-module-header paid3">
+        <div class="bm-number" style="color:var(--forest);">04</div>
+        <div class="bm-content">
+          <span class="bm-badge paid">🔒 Módulo Premium</span>
+          <h2 class="bm-title">Liderança & Sustentabilidade Organizacional</h2>
+          <p class="bm-desc" style="color:var(--muted);">Módulo final: gerencie, capte recursos e construa organizações do terceiro setor sustentáveis e de alto impacto.</p>
+        </div>
+        <div class="bm-price">
+          <div class="price-tag" style="color:var(--forest);">R$ 497</div>
+          <div class="price-note" style="color:var(--muted);">ou 3x R$ 179</div>
+        </div>
+      </div>
+      <div class="big-module-body">
+        <div class="bm-topics">
+          <h4>O que você vai aprender</h4>
+          <ul>
+            <li><span>→</span> Gestão estratégica de ONGs: planejamento, governança e cultura</li>
+            <li><span>→</span> Captação de recursos: editais, parcerias e doações individuais</li>
+            <li><span>→</span> Storytelling de impacto para diferentes doadores e públicos</li>
+            <li><span>→</span> Construção e gestão de redes de advocacia e incidência</li>
+            <li><span>→</span> Sustentabilidade financeira e diversificação de fontes</li>
+            <li><span>→</span> Projeto final: seu plano de impacto nos próximos 2 anos</li>
+          </ul>
+        </div>
+        <div class="bm-meta">
+          <h4>Detalhes do módulo</h4>
+          <div class="bm-meta-item"><div class="bm-meta-icon accent-forest">📚</div><span>14 aulas + 2 mentorias em grupo</span></div>
+          <div class="bm-meta-item"><div class="bm-meta-icon accent-blue">⏱</div><span>Aproximadamente 20 horas de conteúdo</span></div>
+          <div class="bm-meta-item"><div class="bm-meta-icon accent-gold">🎯</div><span>Apresentação de projeto final</span></div>
+          <div class="bm-meta-item"><div class="bm-meta-icon accent-purple">📜</div><span>Certificação completa da Trilha</span></div>
+          <div class="bm-cta">
+            <a href="#inscricao" class="btn btn-primary" style="width:100%;justify-content:center;">Quero este módulo →</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BUNDLE CTA -->
+    <div class="card reveal" style="background:var(--np-gradient);border:none;text-align:center;padding:60px 40px;" id="inscricao">
+      <h2 style="font-family:var(--font-display);font-size:2rem;font-weight:800;color:white;margin-bottom:16px;">Trilha Completa — Módulos 2, 3 e 4</h2>
+      <p style="color:rgba(255,255,255,.8);max-width:500px;margin:0 auto 32px;">Economize 30% adquirindo os três módulos premium juntos e garanta sua formação completa como líder de impacto.</p>
+      <div style="font-family:var(--font-display);font-size:3rem;font-weight:800;color:white;margin-bottom:8px;">R$ 797</div>
+      <p style="color:rgba(255,255,255,.6);margin-bottom:32px;">ou 6x R$ 145 · Economize R$ 394</p>
+      <a href="#" class="btn" style="background:white;color:var(--purple);font-size:1rem;padding:16px 40px;">Quero a Trilha Completa →</a>
+    </div>
+  </div>
+</section>
+
+<section class="section newsletter-section">
+  <div class="container">
+    <div class="reveal">
+      <h2>Acompanhe nossa<br><span style="background:var(--np-gradient);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;">Narrativa Política</span></h2>
+      <p>Seja a primeira a saber quando abrirmos novas turmas.</p>
+      <form class="newsletter-form" onsubmit="handleNewsletter(event)">
+        <input type="email" placeholder="seu@email.com.br" required>
+        <button type="submit" class="btn btn-primary">Avisar-me</button>
+      </form>
+    </div>
+  </div>
+</section>
+
+<footer class="footer" id="footer"></footer>
+<script src="../assets/js/main.js"></script>
+</body>
+</html>

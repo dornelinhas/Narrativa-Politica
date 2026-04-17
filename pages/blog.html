@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Blog & Artigos — Narrativa Política</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <style>
+    .filter-bar { display:flex; gap:10px; flex-wrap:wrap; margin-bottom:48px; }
+    .filter-btn { padding:8px 20px; border-radius:50px; border:1.5px solid var(--border); background:white; font-family:var(--font-body); font-size:.8rem; font-weight:700; cursor:pointer; transition:all .2s; }
+    .filter-btn:hover, .filter-btn.active { background:var(--purple); color:white; border-color:var(--purple); }
+    .blog-featured { display:grid; grid-template-columns:1.5fr 1fr; gap:24px; margin-bottom:24px; }
+    .blog-featured-main { background:white; border-radius:var(--radius-lg); overflow:hidden; border:1px solid var(--border); transition:all .3s; }
+    .blog-featured-main:hover { transform:translateY(-6px); box-shadow:var(--shadow-lg); }
+    .feat-thumb { aspect-ratio:16/8; background:var(--np-gradient); display:flex; align-items:center; justify-content:center; font-size:5rem; }
+    .feat-body { padding:32px; }
+    .feat-title { font-family:var(--font-display); font-size:1.5rem; font-weight:800; margin-bottom:12px; line-height:1.3; }
+    .feat-excerpt { color:var(--muted); line-height:1.8; }
+    .blog-sidebar-posts { display:flex; flex-direction:column; gap:16px; }
+    .side-post { background:white; border-radius:var(--radius); padding:20px; border:1px solid var(--border); display:flex; gap:16px; transition:all .2s; }
+    .side-post:hover { box-shadow:var(--shadow); transform:translateY(-2px); }
+    .side-post-thumb { width:60px; height:60px; border-radius:12px; background:var(--np-gradient); display:flex; align-items:center; justify-content:center; font-size:1.8rem; flex-shrink:0; }
+    .side-post-title { font-family:var(--font-display); font-weight:700; font-size:.9rem; line-height:1.4; margin-bottom:6px; }
+    .side-post-meta { font-size:.75rem; color:var(--muted); }
+    @media(max-width:768px){ .blog-featured{grid-template-columns:1fr;} }
+  </style>
+</head>
+<body>
+<nav class="navbar" id="navbar"></nav>
+<div class="mobile-menu" id="mobile-menu"></div>
+
+<section class="page-hero">
+  <div class="container">
+    <span class="page-hero-badge">Blog & Artigos</span>
+    <h1>Narrativas que <span style="background:var(--np-gradient);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;">transformam</span></h1>
+    <p>Análises, reflexões e dados sobre economia, políticas públicas, gênero e impacto social.</p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+
+    <!-- FILTER BAR -->
+    <div class="filter-bar reveal">
+      <button class="filter-btn active" onclick="filterPosts(this,'all')">Todos</button>
+      <button class="filter-btn" onclick="filterPosts(this,'economia')">Economia</button>
+      <button class="filter-btn" onclick="filterPosts(this,'genero')">Gênero</button>
+      <button class="filter-btn" onclick="filterPosts(this,'terceiro-setor')">Terceiro Setor</button>
+      <button class="filter-btn" onclick="filterPosts(this,'lideranca')">Liderança</button>
+      <button class="filter-btn" onclick="filterPosts(this,'politicas')">Políticas Públicas</button>
+    </div>
+
+    <!-- FEATURED -->
+    <div class="blog-featured reveal">
+      <div class="blog-featured-main">
+        <div class="feat-thumb">📈</div>
+        <div class="feat-body">
+          <div class="blog-meta" style="margin-bottom:16px;">
+            <span class="blog-cat">Economia</span>
+            <span>12 Abr 2025</span>
+            <span>8 min de leitura</span>
+          </div>
+          <h2 class="feat-title">Como o PIB não conta a história das mulheres brasileiras</h2>
+          <p class="feat-excerpt">Uma análise crítica dos indicadores econômicos tradicionais e o que eles ignoram sobre o trabalho feminino e cuidado não remunerado. Os números que deveríamos estar acompanhando — e por que a economia ainda é cega ao gênero.</p>
+          <div style="margin-top:24px;">
+            <a href="#" class="btn btn-primary" style="padding:10px 24px;font-size:.875rem;">Ler artigo completo →</a>
+          </div>
+        </div>
+      </div>
+      <div class="blog-sidebar-posts">
+        <div class="side-post">
+          <div class="side-post-thumb">🌱</div>
+          <div>
+            <h3 class="side-post-title">5 métricas que toda ONG deveria acompanhar em 2025</h3>
+            <div class="side-post-meta">Terceiro Setor · 28 Mar 2025</div>
+          </div>
+        </div>
+        <div class="side-post">
+          <div class="side-post-thumb">⚡</div>
+          <div>
+            <h3 class="side-post-title">O teto de vidro tem dados: o que a ciência diz sobre desigualdade</h3>
+            <div class="side-post-meta">Liderança · 15 Mar 2025</div>
+          </div>
+        </div>
+        <div class="side-post">
+          <div class="side-post-thumb">🏛</div>
+          <div>
+            <h3 class="side-post-title">Orçamento participativo: como funciona na prática</h3>
+            <div class="side-post-meta">Políticas Públicas · 5 Mar 2025</div>
+          </div>
+        </div>
+        <div class="side-post">
+          <div class="side-post-thumb">🤝</div>
+          <div>
+            <h3 class="side-post-title">Advocacy eficaz: 7 estratégias testadas para influenciar decisores</h3>
+            <div class="side-post-meta">Terceiro Setor · 18 Fev 2025</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ALL POSTS -->
+    <h3 style="font-family:var(--font-display);font-weight:800;font-size:1.3rem;margin-bottom:28px;" class="reveal">Todos os artigos</h3>
+    <div class="grid-3" id="posts-grid">
+      <div class="blog-card reveal" data-cat="economia">
+        <div class="blog-thumb">📈</div>
+        <div class="blog-body">
+          <div class="blog-meta"><span class="blog-cat">Economia</span><span>12 Abr 2025</span><span>8 min</span></div>
+          <h3 class="blog-title">Como o PIB não conta a história das mulheres brasileiras</h3>
+          <p class="blog-excerpt">Uma análise crítica dos indicadores econômicos e o que eles ignoram sobre o trabalho feminino.</p>
+          <a href="#" class="blog-link">Ler artigo →</a>
+        </div>
+      </div>
+      <div class="blog-card reveal" data-cat="terceiro-setor">
+        <div class="blog-thumb">🌱</div>
+        <div class="blog-body">
+          <div class="blog-meta"><span class="blog-cat">Terceiro Setor</span><span>28 Mar 2025</span><span>6 min</span></div>
+          <h3 class="blog-title">5 métricas que toda ONG deveria acompanhar em 2025</h3>
+          <p class="blog-excerpt">Os indicadores que realmente importam para provar — e melhorar — o seu impacto social.</p>
+          <a href="#" class="blog-link">Ler artigo →</a>
+        </div>
+      </div>
+      <div class="blog-card reveal" data-cat="lideranca">
+        <div class="blog-thumb">⚡</div>
+        <div class="blog-body">
+          <div class="blog-meta"><span class="blog-cat">Liderança</span><span>15 Mar 2025</span><span>10 min</span></div>
+          <h3 class="blog-title">O teto de vidro tem dados: desigualdade em cargos de liderança</h3>
+          <p class="blog-excerpt">Pesquisas revelam os mecanismos que perpetuam a sub-representação feminina nas lideranças.</p>
+          <a href="#" class="blog-link">Ler artigo →</a>
+        </div>
+      </div>
+      <div class="blog-card reveal" data-cat="politicas">
+        <div class="blog-thumb">🏛</div>
+        <div class="blog-body">
+          <div class="blog-meta"><span class="blog-cat">Políticas Públicas</span><span>5 Mar 2025</span><span>7 min</span></div>
+          <h3 class="blog-title">Orçamento participativo: como funciona na prática brasileira</h3>
+          <p class="blog-excerpt">Da teoria à prática: como municípios estão usando o OP para ampliar participação cidadã.</p>
+          <a href="#" class="blog-link">Ler artigo →</a>
+        </div>
+      </div>
+      <div class="blog-card reveal" data-cat="terceiro-setor">
+        <div class="blog-thumb">🤝</div>
+        <div class="blog-body">
+          <div class="blog-meta"><span class="blog-cat">Terceiro Setor</span><span>18 Fev 2025</span><span>5 min</span></div>
+          <h3 class="blog-title">Advocacy eficaz: 7 estratégias testadas para influenciar decisores</h3>
+          <p class="blog-excerpt">Como organizações civis estão ganhando espaço nas arenas de decisão política.</p>
+          <a href="#" class="blog-link">Ler artigo →</a>
+        </div>
+      </div>
+      <div class="blog-card reveal" data-cat="genero">
+        <div class="blog-thumb">♀️</div>
+        <div class="blog-body">
+          <div class="blog-meta"><span class="blog-cat">Gênero</span><span>1 Fev 2025</span><span>9 min</span></div>
+          <h3 class="blog-title">Economia do cuidado: o que os dados revelam sobre trabalho invisível</h3>
+          <p class="blog-excerpt">Quantificar o cuidado não remunerado é o primeiro passo para valorizá-lo nas políticas públicas.</p>
+          <a href="#" class="blog-link">Ler artigo →</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section newsletter-section">
+  <div class="container">
+    <div class="reveal">
+      <h2>Receba nossos artigos<br><span style="background:var(--np-gradient);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;">em primeira mão</span></h2>
+      <p>Assine a newsletter e receba análises exclusivas toda semana no seu e-mail.</p>
+      <form class="newsletter-form" onsubmit="handleNewsletter(event)">
+        <input type="email" placeholder="seu@email.com.br" required>
+        <button type="submit" class="btn btn-primary">Inscrever-me</button>
+      </form>
+    </div>
+  </div>
+</section>
+
+<footer class="footer" id="footer"></footer>
+<script src="../assets/js/main.js"></script>
+<script>
+  function filterPosts(btn, cat) {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('#posts-grid .blog-card').forEach(card => {
+      const show = cat === 'all' || card.dataset.cat === cat;
+      card.style.display = show ? '' : 'none';
+    });
+  }
+</script>
+</body>
+</html>
