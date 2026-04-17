@@ -30,10 +30,15 @@ onMounted(async () => {
   }
 })
 
-// Atualiza o título da aba do navegador automaticamente
+// Atualiza o título e o ícone da aba automaticamente
 watch(() => siteContent.settings.siteName, (newName) => {
-  if (newName) {
-    document.title = newName
+  if (newName) document.title = newName
+}, { immediate: true })
+
+watch(() => siteContent.settings.siteLogo, (newLogo) => {
+  if (newLogo) {
+    const favicon = document.getElementById('favicon-link')
+    if (favicon) favicon.href = newLogo
   }
 }, { immediate: true })
 </script>
