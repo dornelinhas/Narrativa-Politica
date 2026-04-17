@@ -14,11 +14,11 @@
 </template>
 
 <script setup>
-import { onMounted } from 'vue'
+import { onMounted, watch } from 'vue'
 import AppHeader from './components/AppHeader.vue'
 import AppFooter from './components/AppFooter.vue'
 import { applySettings } from './store/settings'
-import { fetchAllContent } from './store/content'
+import { fetchAllContent, siteContent } from './store/content'
 
 onMounted(async () => {
   console.log('App Mounted - Starting data fetch')
@@ -29,6 +29,13 @@ onMounted(async () => {
     console.error('Erro na montagem inicial:', e)
   }
 })
+
+// Atualiza o título da aba do navegador automaticamente
+watch(() => siteContent.settings.siteName, (newName) => {
+  if (newName) {
+    document.title = newName
+  }
+}, { immediate: true })
 </script>
 
 <style>
