@@ -104,10 +104,9 @@ export const saveItemToSupabase = async (table, item, isNew = false) => {
       result = await supabase.from('about').upsert(dataToSave)
     } else if (table === 'settings') {
       // Salva cada configuração individualmente na tabela site_settings
-      const updates = Object.entries(item).map(([key, value]) => {
-        return supabase.from('site_settings').upsert({ key, value }, { onConflict: 'key' })
-      })
-      await Promise.all(updates)
+      for (const [key, value] of Object.entries(item)) {
+        await supabase.from('site_settings').upsert({ key, value })
+      }
       return { success: true }
     } else {
       if (isNew) result = await supabase.from(table).insert(dataToSave)
