@@ -765,25 +765,50 @@
 
                       <!-- SECTION: SISTEMA -->
                       <section class="settings-section">
-                        <div class="section-header-v2"><Cog :size="18" /> <h3>Preferências do Sistema</h3></div>
-                        <div class="form-group-v2">
-                          <label>Exibir Métricas na Home?</label>
-                          <div class="toggle-group-v2">
-                            <label class="toggle-v2">
-                              <input type="checkbox" v-model="editingItem.showMetrics">
-                              <span class="slider-v2"></span>
-                            </label>
-                            <span class="toggle-label-v2">{{ editingItem.showMetrics ? 'Sim, exibir números' : 'Ocultar' }}</span>
+                        <div class="section-header-v2"><Cog :size="18" /> <h3>Controle de Acesso e Menu</h3></div>
+                        
+                        <div class="settings-toggles-grid">
+                          <div class="form-group-v2">
+                            <label>Exibir Login no Menu?</label>
+                            <div class="toggle-group-v2">
+                              <label class="toggle-v2">
+                                <input type="checkbox" v-model="editingItem.showLogin">
+                                <span class="slider-v2"></span>
+                              </label>
+                              <span class="toggle-label-v2">{{ editingItem.showLogin ? 'Visível' : 'Oculto' }}</span>
+                            </div>
+                          </div>
+
+                          <div class="form-group-v2">
+                            <label>Permitir Novos Cadastros?</label>
+                            <div class="toggle-group-v2">
+                              <label class="toggle-v2">
+                                <input type="checkbox" v-model="editingItem.allowRegistration">
+                                <span class="slider-v2"></span>
+                              </label>
+                              <span class="toggle-label-v2">{{ editingItem.allowRegistration ? 'Liberado' : 'Bloqueado' }}</span>
+                            </div>
                           </div>
                         </div>
-                        <div class="form-group-v2">
-                          <label>Modo Manutenção?</label>
-                          <div class="toggle-group-v2">
-                            <label class="toggle-v2">
-                              <input type="checkbox" v-model="editingItem.maintenanceMode">
-                              <span class="slider-v2 red"></span>
-                            </label>
-                            <span class="toggle-label-v2">{{ editingItem.maintenanceMode ? 'SISTEMA OFFLINE' : 'Sistema Online' }}</span>
+
+                        <div class="menu-visibility-grid">
+                          <label class="grid-title">Visibilidade das Abas do Menu</label>
+                          <div class="toggles-container">
+                            <div v-for="item in [
+                              { key: 'menuHome', label: 'Home' },
+                              { key: 'menuAbout', label: 'Sobre' },
+                              { key: 'menuServices', label: 'Serviços' },
+                              { key: 'menuProjects', label: 'Projetos' },
+                              { key: 'menuPaths', label: 'Trilhas' },
+                              { key: 'menuLibrary', label: 'Biblioteca' },
+                              { key: 'menuContact', label: 'Contatos' }
+                            ]" :key="item.key" class="menu-toggle-item">
+                              <span>{{ item.label }}</span>
+                              <label class="toggle-v2 sm">
+                                <input type="checkbox" v-model="editingItem[item.key]">
+                                <span class="slider-v2"></span>
+                              </label>
+                            </div>
                           </div>
                         </div>
                       </section>
@@ -1500,6 +1525,67 @@ input:checked + .slider-v2:before { transform: translateX(20px); }
 
 .form-group-v2 textarea { resize: vertical; min-height: 80px; }
 
+/* NOVOS ESTILOS DE CONFIGURAÇÃO */
+.settings-toggles-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin-bottom: 32px;
+  padding-bottom: 32px;
+  border-bottom: 1px solid #F3F4F6;
+}
+
+.menu-visibility-grid {
+  background: #F9FAFB;
+  padding: 24px;
+  border-radius: 16px;
+  border: 1px solid #E5E7EB;
+}
+
+.grid-title {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 800;
+  color: #6B7280;
+  margin-bottom: 20px;
+  text-transform: uppercase;
+}
+
+.toggles-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 16px;
+}
+
+.menu-toggle-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: white;
+  padding: 12px 16px;
+  border-radius: 12px;
+  border: 1px solid #F3F4F6;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #374151;
+}
+
+.toggle-v2.sm {
+  width: 36px;
+  height: 20px;
+}
+
+.toggle-v2.sm .slider-v2:before {
+  height: 14px;
+  width: 14px;
+  left: 3px;
+  bottom: 3px;
+}
+
+.toggle-v2.sm input:checked + .slider-v2:before {
+  transform: translateX(16px);
+}
+
 
 .editor-slide-enter-active, .editor-slide-leave-active { transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
 .editor-slide-enter-from, .editor-slide-leave-to { transform: translateX(100%); }
@@ -1515,4 +1601,65 @@ input:checked + .slider-v2:before { transform: translateX(20px); }
 .input-minimal, .select-minimal { padding: 8px 12px; font-size: 0.8rem; border-width: 1px; }
 .empty-mini-builder { font-size: 0.75rem; color: #9CA3AF; text-align: center; padding: 12px; border: 1px dashed #E5E7EB; border-radius: 8px; }
 .form-group-v2 textarea { resize: vertical; min-height: 80px; }
+
+/* NOVOS ESTILOS DE CONFIGURAÇÃO */
+.settings-toggles-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin-bottom: 32px;
+  padding-bottom: 32px;
+  border-bottom: 1px solid #F3F4F6;
+}
+
+.menu-visibility-grid {
+  background: #F9FAFB;
+  padding: 24px;
+  border-radius: 16px;
+  border: 1px solid #E5E7EB;
+}
+
+.grid-title {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 800;
+  color: #6B7280;
+  margin-bottom: 20px;
+  text-transform: uppercase;
+}
+
+.toggles-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 16px;
+}
+
+.menu-toggle-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: white;
+  padding: 12px 16px;
+  border-radius: 12px;
+  border: 1px solid #F3F4F6;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #374151;
+}
+
+.toggle-v2.sm {
+  width: 36px;
+  height: 20px;
+}
+
+.toggle-v2.sm .slider-v2:before {
+  height: 14px;
+  width: 14px;
+  left: 3px;
+  bottom: 3px;
+}
+
+.toggle-v2.sm input:checked + .slider-v2:before {
+  transform: translateX(16px);
+}
 </style>

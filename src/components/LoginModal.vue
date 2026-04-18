@@ -13,7 +13,7 @@
         </div>
 
         <!-- ABAS DE NAVEGAÇÃO INTERNA -->
-        <div class="modal-auth-tabs">
+        <div class="modal-auth-tabs" v-if="siteContent.settings.allowRegistration || isRegisterMode">
           <button @click="isRegisterMode = false" :class="{ active: !isRegisterMode }">Entrar</button>
           <button @click="isRegisterMode = true" :class="{ active: isRegisterMode }">Cadastrar</button>
         </div>
@@ -86,6 +86,9 @@
         <div class="login-modal-footer">
           <p v-if="!isRegisterMode">Problemas com acesso? <router-link to="/contatos" @click="handleClose">Fale com o suporte</router-link>.</p>
           <p v-else>Já tem uma conta? <a href="#" @click.prevent="isRegisterMode = false">Faça login aqui</a>.</p>
+          <p v-if="!isRegisterMode && !siteContent.settings.allowRegistration" style="font-size: 0.75rem; color: #FF2D55; font-weight: 700; margin-top: 12px; text-transform: uppercase; letter-spacing: 0.5px;">
+            Novos cadastros estão suspensos temporariamente.
+          </p>
         </div>
       </div>
     </div>

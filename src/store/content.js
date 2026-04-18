@@ -14,7 +14,16 @@ const initialContent = {
     siteName: "Narrativa Política",
     siteTagline: "Transformando Teoria Econômica em Impacto",
     siteDescription: "Plataforma de economia e dados.",
-    contactEmail: "contatonarrativapolitica@gmail.com"
+    contactEmail: "contatonarrativapolitica@gmail.com",
+    showLogin: true,
+    allowRegistration: false,
+    menuHome: true,
+    menuAbout: true,
+    menuServices: true,
+    menuProjects: true,
+    menuPaths: true,
+    menuLibrary: true,
+    menuContact: true
   },
   team: [],
   about: { name: 'Anne Dornelas', role: 'Administradora', mission: '', bioInstitucional: '', bioAuthor: '', bioInstructor: '' },
