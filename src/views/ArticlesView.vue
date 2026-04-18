@@ -2,16 +2,11 @@
 import { ref, computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { siteContent } from '../store/content'
-import { Search, Calendar, ArrowRight } from 'lucide-vue-next'
+import { Search, ArrowRight } from 'lucide-vue-next'
 
 const route = useRoute()
 const activeTab = ref('Todos')
 const searchQuery = ref('')
-const searchType = ref('name')
-
-const onboardingPosts = computed(() => {
-  return siteContent.posts.slice(0, 3)
-})
 
 const getAuthorName = (authorId) => {
   if (!authorId) return 'Anne Dornelas'
@@ -29,19 +24,8 @@ const filteredPosts = computed(() => {
   return siteContent.posts.filter(p => {
     const matchesTab = activeTab.value === 'Todos' || p.category === activeTab.value
     const query = searchQuery.value.toLowerCase()
-    
-    let matchesSearch = false
-    const authorName = getAuthorName(p.authorId).toLowerCase()
-    
-    if (searchType.value === 'name') {
-      matchesSearch = (p.title && p.title.toLowerCase().includes(query)) || 
-                      (authorName.includes(query))
-    } else {
-      matchesSearch = (p.excerpt && p.excerpt.toLowerCase().includes(query)) || 
-                      (p.category && p.category.toLowerCase().includes(query)) ||
-                      (p.tags && p.tags.toLowerCase().includes(query))
-    }
-    
+    const matchesSearch = (p.title && p.title.toLowerCase().includes(query)) || 
+                         (p.excerpt && p.excerpt.toLowerCase().includes(query))
     return matchesTab && (query === '' || matchesSearch)
   })
 })
@@ -49,7 +33,7 @@ const filteredPosts = computed(() => {
 const formatDate = (dateStr) => {
   try {
     if (!dateStr) return 'Data indisponível'
-    return new Date(dateStr).toLocaleDateString('pt-BR', { day: 'numeric', month: 'short', year: 'numeric' })
+    return new Date(dateStr).toLocaleDateString('pt-BR', { day: 'numeric', month: 'short' })
   } catch (e) {
     return 'Data inválida'
   }
@@ -57,101 +41,75 @@ const formatDate = (dateStr) => {
 </script>
 
 <template>
-  <div class="articles-v3">
+  <div class="articles-brutalist">
     <!-- HERO -->
-    <section class="articles-hero">
+    <section class="articles-hero activist-gradient">
       <div class="container hero-inner">
-        <div class="hero-accent" style="background: linear-gradient(135deg, #FF2D55, #8A2BE2);"></div>
-        <span class="hero-badge">Curadoria Editorial</span>
-        <h1 class="hero-title-light">Conteúdo & <span class="hero-gradient-text">Pesquisa</span></h1>
-        <p class="hero-subtitle-dark">Análises autorais e notícias sobre economia, gênero, política e sustentabilidade.</p>
+        <h1 class="hero-title">CONTEÚDO <br /><span class="text-yellow">& PESQUISA</span></h1>
+        <p class="hero-desc">Análises autorais e notícias sobre economia, gênero, política e sustentabilidade.</p>
       </div>
     </section>
 
-    <!-- MAIN ARTICLES HUB -->
-    <div class="container articles-main-hub">
-      <div class="articles-layout-grid">
-        <!-- LISTAGEM -->
-        <main class="articles-list-side">
-          <!-- CONTROLS -->
-          <section class="articles-controls-inline">
-            <div class="articles-controls-top">
-              <div class="search-box-wrapper">
-                <div class="search-type-tabs">
-                  <button @click="searchType = 'name'" :class="{ active: searchType === 'name' }">Por Nome</button>
-                  <button @click="searchType = 'tag'" :class="{ active: searchType === 'tag' }">Por Hashtag</button>
-                </div>
-                <div class="search-box">
-                  <Search :size="18" class="search-icon" />
-                  <input type="text" v-model="searchQuery" :placeholder="searchType === 'name' ? 'Digite o título ou autor...' : 'Digite a #hashtag...'">
-                </div>
-              </div>
-              
-              <div class="articles-tabs">
-                <button v-for="tab in ['Todos', 'Artigo', 'Análise', 'Notícia']" 
-                  :key="tab"
-                  @click="activeTab = tab" 
-                  :class="{ active: activeTab === tab }"
-                  class="tab-btn"
-                >
-                  {{ tab }}
-                </button>
+    <!-- HUB -->
+    <div class="container main-hub">
+      <div class="hub-header-brutalist">
+        <div class="search-bar-brutalist">
+          <Search :size="20" class="search-icon" />
+          <input type="text" v-model="searchQuery" placeholder="Pesquisar por título ou tema..." />
+        </div>
+        
+        <div class="filters-brutalist">
+          <button v-for="tab in ['Todos', 'Artigo', 'Análise', 'Notícia']" 
+            :key="tab"
+            @click="activeTab = tab" 
+            :class="{ active: activeTab === tab }"
+            class="filter-btn"
+          >
+            {{ tab }}
+          </button>
+        </div>
+      </div>
+
+      <div class="articles-layout">
+        <div class="articles-grid-brutalist">
+          <router-link v-for="post in filteredPosts" :key="post.id" :to="`/conteudo/${post.id}`" class="brutalist-post-card">
+            <div class="post-img-wrap">
+              <img :src="post.image" :alt="post.title" />
+              <div class="tag-overlay">
+                <span class="tag">{{ post.category }}</span>
               </div>
             </div>
-
-            <div class="tags-cloud">
-              <span class="tags-label">Sugestões:</span>
-              <button v-for="tag in ['#Economia', '#Gênero', '#Dados', '#Liderança', '#Advocacy']" 
-                :key="tag" 
-                @click="searchQuery = tag.replace('#', '')"
-                class="tag-pill"
-              >
-                {{ tag }}
-              </button>
+            <div class="post-info">
+              <span class="post-meta">{{ formatDate(post.date) }} • Por {{ getAuthorName(post.authorId) }}</span>
+              <h3 class="post-title">{{ post.title }}</h3>
+              <p class="post-excerpt">{{ post.excerpt }}</p>
+              <div class="post-link">
+                Ler Análise <ArrowRight :size="16" />
+              </div>
             </div>
-          </section>
+          </router-link>
 
-          <!-- GRID -->
-          <section class="articles-grid-section">
-            <div v-if="filteredPosts.length" class="articles-grid-side">
-              <router-link v-for="post in filteredPosts" :key="post.id" :to="`/conteudo/${post.id}`" class="article-card-side">
-                <div class="card-img-side">
-                  <img :src="post.image" :alt="post.title" />
-                  <span class="category-badge-side" v-if="post.category">{{ post.category }}</span>
-                </div>
-                <div class="card-content-side">
-                  <span class="post-date-side">{{ formatDate(post.date) }}</span>
-                  <h3 class="post-title-side">{{ post.title }}</h3>
-                  <p class="post-excerpt-side text-readable">{{ post.excerpt }}</p>
-                  <div class="card-footer-side">
-                    <span class="author-name-side text-readable">Por {{ getAuthorName(post.authorId) }}</span>
-                    <span class="read-more-side">Ler Análise →</span>
-                  </div>
-                </div>
+          <div v-if="filteredPosts.length === 0" class="no-results-brutalist">
+             <h2 class="font-display">NADA ENCONTRADO.</h2>
+             <p>Tente ajustar sua pesquisa ou filtros.</p>
+          </div>
+        </div>
+
+        <aside class="articles-sidebar">
+          <div class="sidebar-box-brutalist pink">
+            <h3 class="font-display">ESSENCIAIS</h3>
+            <div class="mini-list">
+              <router-link v-for="post in siteContent.posts.slice(0, 3)" :key="post.id" :to="`/conteudo/${post.id}`" class="mini-item">
+                <strong>{{ post.title }}</strong>
+                <ArrowRight :size="14" />
               </router-link>
             </div>
-            <div v-else class="empty-results">
-              <p>Nenhum artigo encontrado para sua busca.</p>
-            </div>
-          </section>
-        </main>
+          </div>
 
-        <!-- SIDEBAR ONBOARDING -->
-        <aside class="articles-sidebar-onboarding">
-          <div class="onboarding-sidebar-card">
-            <div class="onboarding-mag-header">
-              <span class="onboarding-kicker">É novo por aqui?</span>
-              <h3>Guias de Início</h3>
-              <p class="text-readable">Essenciais para entender nossa base técnica.</p>
-            </div>
-            <div class="onboarding-sidebar-list">
-              <router-link v-for="post in onboardingPosts" :key="post.id" :to="`/conteudo/${post.id}`" class="onboarding-mini-item">
-                <div class="mini-item-info">
-                  <strong>{{ post.title }}</strong>
-                  <span class="mini-item-cat" v-if="post.category">{{ post.category }}</span>
-                </div>
-              </router-link>
-            </div>
+          <div class="sidebar-box-brutalist yellow mt-8">
+            <h3 class="font-display">NEWSLETTER</h3>
+            <p class="font-sans font-bold text-sm mb-4">Receba análises estratégicas direto no seu e-mail.</p>
+            <button class="brutalist-button-mini w-full">Inscrever-se</button>
           </div>
         </aside>
       </div>
@@ -160,88 +118,154 @@ const formatDate = (dateStr) => {
 </template>
 
 <style scoped>
-.articles-v3 { background: #fff; min-height: 100vh; }
+.articles-brutalist { background: var(--color-bg); min-height: 100vh; padding-bottom: 100px; }
 
-.articles-hero { background: #F9FAFB; padding: 160px 0 80px; text-align: center; border-bottom: 1px solid #F1F5F9; }
-.hero-inner { display: flex; flex-direction: column; align-items: center; }
-.hero-accent { width: 40px; height: 4px; border-radius: 2px; margin-bottom: 24px; }
-.hero-badge { font-size: 0.7rem; font-weight: 900; letter-spacing: 2px; color: #94A3B8; text-transform: uppercase; margin-bottom: 16px; }
-.hero-title-light { font-size: clamp(2.4rem, 5vw, 3.5rem); font-weight: 900; color: #111827; letter-spacing: -2px; }
-.hero-gradient-text { background: linear-gradient(135deg, #FF2D55, #8A2BE2); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
-.hero-subtitle-dark { font-size: 1.15rem; color: #374151; max-width: 580px; margin: 20px auto 0; line-height: 1.6; font-weight: 500; }
+.articles-hero { padding: 180px 0 100px; border-bottom: 8px solid var(--color-dark); }
+.hero-title { font-size: clamp(3rem, 10vw, 7rem); color: white; line-height: 0.85; margin-bottom: 30px; }
+.text-yellow { color: var(--color-yellow); }
+.hero-desc { font-family: var(--font-sans); font-weight: 700; color: white; font-size: 1.2rem; max-width: 600px; opacity: 0.9; }
 
-.articles-main-hub { padding: 80px 0; }
-.articles-layout-grid { display: grid; grid-template-columns: 1fr 340px; gap: 64px; }
+.main-hub { margin-top: -60px; position: relative; z-index: 10; }
 
-/* CONTROLS INLINE */
-.articles-controls-inline { margin-bottom: 48px; }
-.articles-controls-top { display: flex; justify-content: space-between; align-items: flex-end; gap: 32px; margin-bottom: 32px; }
-
-.search-box-wrapper { flex: 1; display: flex; flex-direction: column; gap: 10px; }
-.search-type-tabs { display: flex; gap: 16px; }
-.search-type-tabs button { background: none; border: none; font-size: 0.7rem; font-weight: 900; color: #94A3B8; text-transform: uppercase; cursor: pointer; padding: 0; letter-spacing: 1px; }
-.search-type-tabs button.active { color: #8A2BE2; }
-
-.search-box { position: relative; width: 100%; }
-.search-icon { position: absolute; left: 18px; top: 50%; transform: translateY(-50%); color: #94A3B8; }
-.search-box input { width: 100%; padding: 16px 20px 16px 52px; border-radius: 16px; border: 2px solid #F1F5F9; background: #F8FAFC; font-size: 1rem; color: #111827; outline: none; transition: all 0.3s; }
-.search-box input:focus { border-color: #8A2BE2; background: #fff; box-shadow: 0 10px 30px rgba(138,43,226,0.05); }
-
-.articles-tabs { display: flex; gap: 8px; }
-.tab-btn { padding: 12px 20px; border: 2px solid #F1F5F9; background: #fff; border-radius: 12px; font-weight: 800; cursor: pointer; transition: all 0.2s; color: #64748B; font-size: 0.75rem; text-transform: uppercase; }
-.tab-btn:hover { border-color: #FF2D55; color: #111827; }
-.tab-btn.active { background: linear-gradient(135deg, #FF2D55, #8A2BE2); border-color: transparent; color: #fff !important; box-shadow: 0 8px 20px rgba(255, 45, 85, 0.2); }
-
-.tags-cloud { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
-.tags-label { font-size: 0.75rem; font-weight: 800; color: #94A3B8; }
-.tag-pill { background: #F8FAFC; color: #475569; border: 1.5px solid #F1F5F9; padding: 6px 14px; border-radius: 100px; font-size: 0.8rem; font-weight: 700; cursor: pointer; transition: all 0.2s; }
-.tag-pill:hover { 
-  background: linear-gradient(135deg, #8A2BE2, #00CED1); 
-  border-color: transparent; 
-  color: #fff !important; 
-  box-shadow: 0 8px 20px rgba(138, 43, 226, 0.2);
+.hub-header-brutalist {
+  background: white;
+  border: 4px solid var(--color-dark);
+  padding: 40px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 40px;
+  box-shadow: 10px 10px 0 var(--color-dark);
+  margin-bottom: 60px;
 }
 
-/* LIST COLUMN */
-.articles-grid-side { display: flex; flex-direction: column; gap: 40px; }
-.article-card-side { text-decoration: none; display: grid; grid-template-columns: 280px 1fr; gap: 32px; align-items: start; transition: all 0.3s; }
-.article-card-side:hover { transform: translateX(10px); }
+.search-bar-brutalist { flex: 1; position: relative; }
+.search-icon { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: var(--color-dark); }
+.search-bar-brutalist input {
+  width: 100%;
+  padding: 15px 15px 15px 50px;
+  border: 3px solid var(--color-dark);
+  background: var(--color-bg);
+  font-family: var(--font-sans);
+  font-weight: 700;
+  outline: none;
+}
 
-.card-img-side { height: 200px; border-radius: 20px; overflow: hidden; position: relative; }
-.card-img-side img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s; }
-.article-card-side:hover .card-img-side img { transform: scale(1.05); }
-.category-badge-side { position: absolute; top: 16px; left: 16px; background: #FF2D55; color: #fff; font-size: 0.65rem; font-weight: 900; text-transform: uppercase; padding: 6px 12px; border-radius: 6px; letter-spacing: 1px; }
+.filters-brutalist { display: flex; gap: 10px; }
+.filter-btn {
+  padding: 10px 20px;
+  border: 3px solid var(--color-dark);
+  background: white;
+  font-family: var(--font-sans);
+  font-weight: 900;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+  cursor: pointer;
+  transition: all 0.2s;
+}
 
-.card-content-side { padding: 8px 0; }
-.post-date-side { font-size: 0.85rem; font-weight: 700; color: #94A3B8; text-transform: uppercase; display: block; margin-bottom: 12px; }
-.post-title-side { font-size: 1.6rem; font-weight: 900; color: #111827; line-height: 1.2; margin-bottom: 12px; letter-spacing: -0.5px; }
-.post-excerpt-side { font-size: 1.05rem; color: #374151; line-height: 1.6; margin-bottom: 20px; }
+.filter-btn.active, .filter-btn:hover {
+  background: var(--color-dark);
+  color: white;
+  transform: translateY(-2px);
+}
 
-.card-footer-side { display: flex; justify-content: space-between; align-items: center; }
-.author-name-side { font-size: 0.85rem; font-weight: 800; color: #111827; }
-.read-more-side { font-size: 0.85rem; font-weight: 800; color: #FF2D55; }
+.articles-layout { display: grid; grid-template-columns: 1fr 320px; gap: 60px; }
 
-/* SIDEBAR ONBOARDING */
-.articles-sidebar-onboarding { position: sticky; top: 100px; height: fit-content; }
-.onboarding-sidebar-card { background: #F9FAFB; border: 1px solid #E5E7EB; border-radius: 28px; padding: 32px; }
-.onboarding-mag-header { margin-bottom: 24px; }
-.onboarding-kicker { font-size: 0.7rem; font-weight: 900; color: #8A2BE2; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 8px; display: block; }
-.onboarding-mag-header h3 { font-size: 1.4rem; font-weight: 900; color: #111827; margin-bottom: 8px; }
-.onboarding-mag-header p { font-size: 0.9rem; color: #64748B; font-weight: 600; line-height: 1.5; }
+.articles-grid-brutalist { display: flex; flex-direction: column; gap: 40px; }
 
-.onboarding-sidebar-list { display: flex; flex-direction: column; gap: 16px; }
-.onboarding-mini-item { text-decoration: none; padding: 16px; background: #fff; border-radius: 16px; border: 1px solid #F1F5F9; transition: all 0.3s; }
-.onboarding-mini-item:hover { border-color: #FF2D55; transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,0.03); }
-.mini-item-info strong { display: block; font-size: 0.95rem; font-weight: 800; color: #111827; line-height: 1.3; margin-bottom: 4px; }
-.mini-item-cat { font-size: 0.7rem; font-weight: 900; color: #FF2D55; text-transform: uppercase; letter-spacing: 1px; }
+.brutalist-post-card {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  gap: 40px;
+  background: white;
+  border: 4px solid var(--color-dark);
+  padding: 0;
+  text-decoration: none;
+  color: inherit;
+  transition: all 0.3s;
+}
+
+.brutalist-post-card:hover {
+  transform: translate(-6px, -6px);
+  box-shadow: 10px 10px 0 var(--color-red);
+}
+
+.post-img-wrap {
+  position: relative;
+  border-right: 4px solid var(--color-dark);
+  height: 100%;
+  min-height: 250px;
+  overflow: hidden;
+}
+
+.post-img-wrap img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(1); transition: all 0.5s; }
+.brutalist-post-card:hover .post-img-wrap img { filter: grayscale(0); transform: scale(1.05); }
+
+.post-info { padding: 40px; display: flex; flex-direction: column; justify-content: center; }
+.post-meta { font-family: var(--font-sans); font-weight: 800; font-size: 0.75rem; text-transform: uppercase; color: var(--color-red); margin-bottom: 15px; }
+.post-title { font-size: 2.2rem; margin-bottom: 15px; line-height: 1; }
+.post-excerpt { font-weight: 500; opacity: 0.7; line-height: 1.6; margin-bottom: 25px; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+.post-link { font-weight: 900; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 0.1em; display: flex; align-items: center; gap: 10px; }
+
+.sidebar-box-brutalist {
+  border: 4px solid var(--color-dark);
+  padding: 30px;
+  background: white;
+  box-shadow: 8px 8px 0 var(--color-dark);
+}
+
+.sidebar-box-brutalist.pink { border-color: var(--color-pink); }
+.sidebar-box-brutalist.yellow { border-color: var(--color-yellow); }
+
+.mini-list { display: flex; flex-direction: column; gap: 20px; margin-top: 20px; }
+.mini-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  text-decoration: none;
+  color: inherit;
+  font-family: var(--font-sans);
+  font-weight: 800;
+  font-size: 0.9rem;
+  line-height: 1.3;
+}
+.mini-item:hover { color: var(--color-red); }
+
+.mt-8 { margin-top: 2rem; }
+.mb-4 { margin-bottom: 1rem; }
+.w-full { width: 100%; }
+
+.brutalist-button-mini {
+  background: var(--color-dark);
+  color: white;
+  border: none;
+  padding: 12px;
+  font-family: var(--font-sans);
+  font-weight: 900;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.brutalist-button-mini:hover { background: var(--color-red); }
+
+.no-results-brutalist { padding: 80px 0; text-align: center; }
 
 @media (max-width: 1100px) {
-  .articles-layout-grid { grid-template-columns: 1fr; }
-  .article-card-side { grid-template-columns: 200px 1fr; }
+  .articles-layout { grid-template-columns: 1fr; }
+  .articles-sidebar { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
+  .sidebar-box-brutalist { margin-top: 0 !important; }
 }
 
-@media (max-width: 768px) {
-  .article-card-side { grid-template-columns: 1fr; }
-  .articles-controls-top { flex-direction: column; align-items: stretch; }
+@media (max-width: 850px) {
+  .brutalist-post-card { grid-template-columns: 1fr; }
+  .post-img-wrap { height: 250px; border-right: none; border-bottom: 4px solid var(--color-dark); }
+  .hub-header-brutalist { flex-direction: column; align-items: stretch; }
+}
+
+@media (max-width: 600px) {
+  .articles-sidebar { grid-template-columns: 1fr; }
 }
 </style>

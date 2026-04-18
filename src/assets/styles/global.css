@@ -1,58 +1,42 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@400;500;600;700;800;900&display=swap');
 
 /* ============================================================
-   NARRATIVA POLÍTICA — Design System v4
-   Estética: Ativismo Vibrante × Consultoria de Elite
+   NARRATIVA POLÍTICA — Design System v5 (Reference: Intelecto Radical)
+   Estética: Ativismo Brutalista × Alto Impacto
    ============================================================ */
 
 :root {
-  /* PALETA OFICIAL NP */
-  --color-pink: #FF2D55;
-  --color-purple: #8A2BE2;
-  --color-petrol: #00CED1;
-  --color-lime: #D4E157;
-  --color-graphite: #1A1C2E;
-
-  /* CORES EXPANDIDAS PARA BLOCOS */
-  --color-pink-soft: #FFF0F3;
-  --color-purple-soft: #F3EAFF;
-  --color-petrol-soft: #E0FAFB;
-  --color-lime-soft: #F9FCCF;
-  --color-pink-mid: #FFD6DE;
-  --color-purple-mid: #D8C4F7;
-  --color-petrol-mid: #A0EBEE;
-
-  /* GRADIENTES */
-  --brand-gradient: linear-gradient(135deg, #FF2D55, #8A2BE2, #00CED1);
-  --brand-gradient-reverse: linear-gradient(135deg, #00CED1, #8A2BE2, #FF2D55);
-  --brand-gradient-warm: linear-gradient(135deg, #FF2D55, #8A2BE2);
-  --brand-gradient-cool: linear-gradient(135deg, #8A2BE2, #00CED1);
+  /* PALETA REFERÊNCIA */
+  --color-red: #DF2028;
+  --color-pink: #FF6BCA;
+  --color-yellow: #FFE65A;
+  --color-lime: #A4CD39;
+  --color-mint: #A2E3B1;
+  --color-blue: #3D78E0;
+  --color-dark: #1C1C1C;
+  --color-bg: #F7F7F5;
 
   /* TEXTO */
-  --text-main: #1A1C2E;
-  --text-muted: #374151; /* CINZA CHUMBO ESCURO */
-  --text-soft: #4B5563; /* CINZA MAIS ESCURO PARA SOFT */
+  --text-main: #1C1C1C;
+  --text-light: #F7F7F5;
 
-  /* FUNDOS */
-  --bg-body: #FAFAFA;
-  --bg-warm: #FFF8F0;
+  /* FONTES */
+  --font-display: "Archivo Black", sans-serif;
+  --font-sans: "Inter", sans-serif;
 
-  /* UTILITÁRIOS */
-  --shadow-sm: 0 2px 8px rgba(0,0,0,0.06);
-  --shadow-md: 0 8px 32px rgba(0,0,0,0.08);
-  --shadow-lg: 0 24px 64px rgba(0,0,0,0.12);
-  --shadow-glow-pink: 0 8px 32px rgba(255,45,85,0.3);
-  --shadow-glow-purple: 0 8px 32px rgba(138,43,226,0.3);
-  --shadow-glow-petrol: 0 8px 32px rgba(0,206,209,0.3);
-  --transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-  --radius: 16px;
-  --radius-lg: 24px;
-  --radius-xl: 32px;
+  /* UTILITÁRIOS BRUTALISTAS */
+  --border-width: 4px;
+  --border-thick: 8px;
+  --shadow-hard: 8px 8px 0px var(--color-dark);
+  --shadow-hard-red: 4px 4px 0px var(--color-red);
+  --shadow-hard-yellow: 4px 4px 0px var(--color-yellow);
+  --shadow-hard-lime: 4px 4px 0px var(--color-lime);
+  
+  --transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 /* ── RESET & BASE ─────────────────────────────── */
 * {
-  font-family: 'Inter', system-ui, -apple-system, sans-serif !important;
   box-sizing: border-box;
 }
 
@@ -61,80 +45,109 @@ html { scroll-behavior: smooth; }
 body {
   margin: 0;
   padding: 0;
-  background: var(--bg-body);
-  color: #1A1C2E;
+  background: var(--color-bg);
+  color: var(--text-main);
+  font-family: var(--font-sans);
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-}
-
-/* TEXTO ESCURO APENAS PARA FUNDOS CLAROS */
-p, li, blockquote, .description, .excerpt, .summary {
-  color: #374151; /* Removido !important para permitir override em seções escuras */
-  line-height: 1.6;
-}
-
-/* CLASSES DE UTILIDADE PARA ALTO CONTRASTE EM ÁREAS ESPECÍFICAS */
-.text-readable {
-  color: #374151 !important;
+  min-height: 100vh;
 }
 
 img { max-width: 100%; display: block; }
 a { text-decoration: none; color: inherit; }
 
-/* ── LAYOUT ───────────────────────────────────── */
-.container { max-width: 1200px; margin: 0 auto; padding: 0 40px; }
-
 /* ── TYPOGRAPHY ───────────────────────────────── */
-h1, h2, h3, h4, h5, h6 {
-  font-weight: 900;
-  letter-spacing: -0.02em;
-  color: #111827; /* Removido !important */
+h1, h2, h3, h4, h5, h6, .font-display {
+  font-family: var(--font-display);
+  text-transform: uppercase;
+  letter-spacing: -0.04em;
+  line-height: 0.9;
 }
 
-.text-gradient {
-  background: var(--brand-gradient);
+p, .font-sans {
+  font-family: var(--font-sans);
+}
+
+.activist-gradient {
+  background: linear-gradient(110deg, #A80022 0%, #DF2028 35%, #A4CD39 75%, #1D976C 100%);
+}
+
+.activist-gradient-text {
+  background: linear-gradient(110deg, #DF2028 0%, #A4CD39 100%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
   -webkit-text-fill-color: transparent;
-  display: inline-block;
 }
 
-/* ── GLOBAL BUTTON STYLES ─────────────────────── */
-/* Ensure ALL interactive elements are always clickable */
-a, button, [role="button"], input[type="submit"],
-router-link, .btn, .btn-sm, .btn-hero-primary, .btn-hero-outline,
-.btn-service-outline, .btn-service-solid, .btn-trail-start,
-.nav-item, .nav-item-dropdown, .dropdown-item,
-.login-btn-outline, .menu-toggle {
-  position: relative;
-  z-index: 2;
-  pointer-events: auto !important;
+/* ── BRUTALIST COMPONENTS ─────────────────────── */
+.brutalist-card {
+  background: white;
+  border: var(--border-width) solid var(--color-dark);
+  transition: var(--transition);
+}
+
+.brutalist-card:hover {
+  transform: translate(-4px, -4px);
+  box-shadow: var(--shadow-hard);
+}
+
+.brutalist-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 2rem;
+  font-family: var(--font-sans);
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  border: var(--border-width) solid var(--color-dark);
+  background: var(--color-yellow);
+  color: var(--color-dark);
   cursor: pointer;
+  transition: var(--transition);
 }
 
-/* ── TRANSITIONS ──────────────────────────────── */
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 0.3s ease;
+.brutalist-button:hover {
+  transform: translate(-4px, -4px);
+  box-shadow: var(--shadow-hard);
 }
 
-.fade-enter-from,
-.fade-leave-to {
-  opacity: 0;
+.brutalist-button.dark {
+  background: var(--color-dark);
+  color: var(--text-light);
+}
+
+.brutalist-button.red {
+  background: var(--color-red);
+  color: var(--text-light);
+}
+
+/* ── UTILITIES ────────────────────────────────── */
+.container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+
+.tag {
+  display: inline-flex;
+  padding: 0.5rem 1rem;
+  font-weight: 800;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  background: var(--color-yellow);
+  color: var(--color-dark);
 }
 
 /* ── SCROLLBAR CUSTOM ─────────────────────────── */
-::-webkit-scrollbar { width: 8px; }
-::-webkit-scrollbar-track { background: var(--bg-body); }
+::-webkit-scrollbar { width: 10px; }
+::-webkit-scrollbar-track { background: var(--color-bg); }
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, var(--color-pink), var(--color-purple));
+  background: var(--color-red);
   border-radius: 10px;
 }
 
 /* ── SELECTION ────────────────────────────────── */
 ::selection {
-  background: var(--color-pink);
-  color: white;
+  background: var(--color-yellow);
+  color: var(--color-dark);
 }

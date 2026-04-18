@@ -1,198 +1,194 @@
 <template>
-  <div class="home-np">
-    <!-- ═══════════════════════════════════════════
-         HERO — Full Gradient Immersive
-         ═══════════════════════════════════════════ -->
-    <section class="hero-immersive">
-      <div class="hero-bg-shapes">
-        <div class="shape shape-circle"></div>
-        <div class="shape shape-rect"></div>
-        <div class="shape shape-square"></div>
-        <div class="shape shape-dot"></div>
-      </div>
-      <div class="container hero-grid">
-        <div class="hero-text">
-          <div class="tagline-kicker">
-            <span class="k-pink">ESTRATÉGIA</span>
-            <span class="k-dot">•</span>
-            <span class="k-petrol">IMPACTO</span>
-            <span class="k-dot">•</span>
-            <span class="k-lime">MUDANÇA</span>
+  <div class="home-brutalist">
+    <!-- HERO SECTION -->
+    <section class="hero-activist activist-gradient">
+      <!-- Floating Shapes -->
+      <div class="geo-shape shape-pill-y pink floating-1"></div>
+      <div class="geo-shape shape-square yellow floating-2"></div>
+      <div class="geo-shape shape-circle blue floating-3"></div>
+
+      <div class="container hero-content">
+        <h1 class="hero-title">
+          REIVINDIQUE <br />
+          <span class="text-yellow">O FUTURO</span>.
+        </h1>
+        
+        <div class="hero-intro-box">
+          <p class="hero-description">
+            Uma plataforma para ativismo de alto impacto, análise política e mobilização comunitária. Não viemos para debater, viemos para mudar a estrutura.
+          </p>
+          <div class="hero-actions">
+            <button class="brutalist-button" @click="$router.push('/contatos')">Agir Agora</button>
           </div>
-          <h1 class="hero-title-big">
-            Transformando<br>
-            teoria <span class="hero-highlight">econômica</span><br>
-            em <span class="hero-highlight">ação real.</span>
-          </h1>
-          <p class="hero-lead">
-            Análise de impacto, formação de lideranças e estruturação de narrativas políticas baseadas em dados e vivência acadêmica.
+        </div>
+      </div>
+    </section>
+
+    <!-- MARQUEE -->
+    <div class="marquee-brutalist">
+      <div class="marquee-content">
+        <span v-for="n in 10" :key="n" class="marquee-item">
+          POR DEMOCRACIA, TERRITÓRIO E JUSTIÇA SOCIAL 
+          <div class="geo-shape shape-circle dark-mini"></div>
+        </span>
+      </div>
+    </div>
+
+    <!-- FEATURED WRITING (Articles) -->
+    <section id="essays" class="section-padding bg-bg">
+      <div class="container">
+        <div class="section-header-brutalist">
+          <h2 class="font-display text-7xl">
+            Nossa <br /> <span class="activist-gradient-text">Voz Estratégica</span>
+          </h2>
+          <p class="header-side-text">
+            Ensaios críticos, educação política e ferramentas de mobilização comunitária.
           </p>
         </div>
-        <div class="hero-visual">
-          <div class="hero-np-emblem">
-            <span class="emblem-letters">NP</span>
-            <div class="emblem-shape es-1"></div>
-            <div class="emblem-shape es-2"></div>
-            <div class="emblem-shape es-3"></div>
-            <div class="emblem-shape es-4"></div>
-            <div class="emblem-shape es-5"></div>
-          </div>
-        </div>
-      </div>
 
-      <!-- PILARES — Inside Hero Dark Block -->
-      <div class="container pillars-container">
-        <div class="pillars-grid-blocks">
-          <div v-for="(pillar, i) in pillars" :key="i" class="pillar-block" :class="'pillar-' + pillar.color">
-            <div class="pillar-block-icon">
-              <component :is="pillar.icon" :size="32" />
+        <div class="featured-grid">
+          <!-- Featured Article (Main) -->
+          <div v-if="siteContent.posts.length > 0" class="featured-main brutalist-card-large" @click="$router.push('/conteudo/' + siteContent.posts[0].id)">
+            <div class="card-image-wrap">
+              <img :src="siteContent.posts[0].image" alt="Featured" class="card-img" />
+              <div class="tag-overlay">
+                <span class="tag">{{ siteContent.posts[0].category }}</span>
+              </div>
             </div>
-            <h3 class="pillar-block-title">{{ pillar.label }}</h3>
-            <p class="pillar-block-desc">{{ pillar.desc }}</p>
+            <div class="card-content">
+              <h3 class="card-title-lg">{{ siteContent.posts[0].title }}</h3>
+              <p class="card-excerpt">{{ siteContent.posts[0].excerpt }}</p>
+              <div class="card-footer">
+                <span class="read-more">Ler Ensaio Completo <ArrowRight :size="16" /></span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Side Articles -->
+          <div class="featured-side">
+            <div v-for="(post, i) in siteContent.posts.slice(1, 3)" :key="post.id" 
+                 class="brutalist-card-small" 
+                 :class="i % 2 === 0 ? 'pink-hover' : 'blue-hover'"
+                 @click="$router.push('/conteudo/' + post.id)">
+              <div class="card-header-mini">
+                <span class="tag" :class="i % 2 === 0 ? 'pink' : 'blue'">{{ post.category }}</span>
+                <ArrowRight :size="20" class="arrow-icon" />
+              </div>
+              <h4 class="card-title-sm">{{ post.title }}</h4>
+            </div>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- ═══════════════════════════════════════════
-         NOSSOS SERVIÇOS — Vibrant Grid
-         ═══════════════════════════════════════════ -->
-    <section class="services-home">
+    <!-- RADAR (Pillars / Opportunities) -->
+    <section class="radar-section">
+      <div class="geo-shape shape-circle yellow bg-shape-1"></div>
+      <div class="container radar-grid">
+        <div class="radar-info">
+          <div class="radar-kicker">
+            <div class="geo-shape shape-square red mini"></div>
+            <span class="kicker-text">O Radar Ativista</span>
+          </div>
+          <h2 class="font-display text-7xl mb-8">Oportuni<br/>dades</h2>
+          <div class="radar-highlight-box">
+             Vagas, subsídios e bolsas para lideranças que constroem a base e não apenas a marca. Atualizado pela nossa rede.
+          </div>
+        </div>
+
+        <div class="radar-list">
+          <div v-for="(pillar, i) in pillars" :key="i" class="radar-item brutalist-card">
+            <div class="radar-item-content">
+              <div class="radar-item-header">
+                <div class="geo-shape shape-circle mini" :class="pillar.color"></div>
+                <span class="pillar-label">{{ pillar.label }}</span>
+              </div>
+              <h4 class="pillar-title">{{ pillar.desc }}</h4>
+              <p class="pillar-org">Impacto focado em {{ pillar.label.toLowerCase() }}</p>
+            </div>
+            <div class="radar-action-box">
+              PRAZO: ABERTO
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SERVICES (Eixos de Ação) -->
+    <section class="services-dark">
+      <div class="grid-bg"></div>
+      <div class="container relative z-10">
+        <div class="services-header">
+          <div class="geo-shape shape-circle red mini border-white"></div>
+          <h2 class="font-display text-6xl text-white">NOSSOS <span class="text-yellow">EIXOS DE AÇÃO</span></h2>
+        </div>
+
+        <div class="services-brutalist-grid">
+          <div v-for="(svc, i) in services" :key="i" class="svc-brutalist-card" :class="svc.accent">
+            <component :is="svc.icon" class="svc-icon" :class="svc.accent + '-text'" />
+            <h3 class="svc-title">{{ svc.title }}</h3>
+            <p class="svc-desc">{{ svc.description }}</p>
+            <div class="svc-footer">
+              <span>Conheça os Projetos</span>
+              <ArrowRight :size="16" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- NEWSLETTER -->
+    <section class="newsletter-brutalist-section">
       <div class="container">
-        <div class="section-intro">
-          <span class="section-eyebrow">O QUE FAZEMOS</span>
-          <h2 class="section-title-lg">Nossos <span class="text-gradient">Serviços</span></h2>
-          <p class="section-desc">Consultoria, mentoria e palestras para quem quer gerar mudança real no mundo.</p>
-        </div>
-        <div class="services-grid-home">
-          <router-link v-for="(service, index) in services" :key="index"
-                       to="/servicos"
-                       class="service-block-card reveal-item"
-                       :class="'svc-' + service.accent"
-                       :style="{ transitionDelay: (index * 0.1) + 's' }">
-            <div class="svc-icon-wrap" :style="{ background: service.iconBg }">
-              <component :is="service.icon" :size="28" color="#fff" />
+        <div class="newsletter-box">
+          <div class="newsletter-info">
+            <div class="nl-kicker">
+               <Zap :size="24" class="red-text" />
+               <span>Rede de Mobilização</span>
             </div>
-            <h3>{{ service.title }}</h3>
-            <p>{{ service.description }}</p>
-            <span class="svc-link">
-              Saiba mais
-              <ArrowRight :size="14" />
-            </span>
-          </router-link>
-        </div>
-      </div>
-    </section>
-
-    <!-- ═══════════════════════════════════════════
-         ARTIGOS — Editorial com Capas Vibrantes
-         ═══════════════════════════════════════════ -->
-    <section class="articles-section">
-      <div class="container">
-        <div class="section-header-flex">
-          <div>
-            <span class="section-eyebrow">CONTEÚDO</span>
-            <h2 class="section-title-lg section-title-dark">Artigos e <span class="text-gradient">Notícias</span></h2>
-            <p class="section-desc">Análises autorais sobre economia, política e impacto social no Brasil.</p>
+            <h2 class="font-display text-5xl mb-4">Junte-se ao <br /> Movimento.</h2>
+            <p class="nl-text">Receba despachos estratégicos, convocações de ação e atualizações das frentes de luta. Sem spam.</p>
           </div>
-          <router-link to="/conteudo" class="btn-np-sm">
-            Ver todos
-            <ArrowRight :size="14" />
-          </router-link>
-        </div>
-        <div class="articles-grid">
-          <article v-for="(post, idx) in siteContent.posts.slice(0, 3)" :key="post.id"
-                   class="article-card reveal-item"
-                   :style="{ transitionDelay: (idx * 0.12) + 's' }">
-            <div class="article-cover">
-              <img :src="post.image" :alt="post.title" loading="lazy" />
-              <span class="article-tag tag-pink">{{ post.category }}</span>
-            </div>
-            <div class="article-body">
-              <h4>{{ post.title }}</h4>
-              <p>{{ post.excerpt }}</p>
-              <router-link :to="'/conteudo/' + post.id" class="article-link">
-                Ler artigo →
-              </router-link>
-            </div>
-          </article>
-        </div>
-      </div>
-    </section>
 
-    <!-- ═══════════════════════════════════════════
-         MANIFESTO — Faixa de Impacto NP
-         ═══════════════════════════════════════════ -->
-    <section class="manifesto-strip">
-      <div class="container manifesto-grid">
-        <div class="manifesto-text">
-          <h2>Acreditamos que <span class="text-gradient">dados transformam</span> narrativas.</h2>
-          <p>A Narrativa Política existe para conectar pesquisa acadêmica, ativismo de base e comunicação estratégica — entregando soluções que geram mudanças mensuráveis.</p>
-          <router-link to="/sobre" class="btn-np-dark">
-            Sobre a Narrativa
-            <ArrowRight :size="16" />
-          </router-link>
-        </div>
-        <div class="manifesto-visual">
-          <div class="manifesto-stat" v-for="(stat, si) in manifestoStats" :key="si">
-            <span class="stat-icon" :style="{ background: stat.bg }">
-              <component :is="stat.icon" :size="22" color="#fff" />
-            </span>
-            <div>
-              <strong>{{ stat.label }}</strong>
-              <span>{{ stat.desc }}</span>
-            </div>
+          <div class="newsletter-action">
+            <div class="geo-shape shape-circle red floating-nl-1"></div>
+            <div class="geo-shape shape-square mint floating-nl-2"></div>
+            
+            <form @submit.prevent="handleSubscribe" class="nl-form-brutalist">
+              <input 
+                type="email" 
+                v-model="newsletterEmail" 
+                placeholder="Digite seu email..." 
+                class="nl-input-brutalist"
+                required
+              />
+              <button type="submit" class="brutalist-button red w-full justify-center">Quero Fazer Parte</button>
+            </form>
           </div>
         </div>
-      </div>
-    </section>
-
-    <!-- ═══════════════════════════════════════════
-         NEWSLETTER — Full-Width Gradient
-         ═══════════════════════════════════════════ -->
-    <section class="newsletter-fullwidth">
-      <div class="newsletter-shapes">
-        <div class="nl-shape nl-s1"></div>
-        <div class="nl-shape nl-s2"></div>
-        <div class="nl-shape nl-s3"></div>
-      </div>
-      <div class="container newsletter-center">
-        <h2 class="newsletter-title">Receba <span style="color: var(--color-lime); text-shadow: 0 0 20px rgba(212,225,87,0.3);">Nossa Narrativa</span></h2>
-        <p class="newsletter-subtitle" style="color: #FFFFFF; opacity: 1;">Receba nossa Newsletter. Inscreva-se para receber análises exclusivas sobre economia, gênero, política e sustentabilidade.</p>
-        <form @submit.prevent="handleSubscribe" class="newsletter-form">
-          <input type="email" v-model="newsletterEmail" placeholder="Seu melhor e-mail" required class="newsletter-input" aria-label="Endereço de e-mail" />
-          <button type="submit" class="newsletter-btn">Inscrever-se</button>
-        </form>
       </div>
     </section>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
-import { Database, ShieldCheck, Users, Mic2, ArrowRight, TrendingUp, Heart, BarChart3, Globe, BookOpen, Award, Target } from 'lucide-vue-next'
+import { ref } from 'vue'
+import { ArrowRight, Zap, Database, ShieldCheck, Users, Mic2, BarChart3, TrendingUp, Globe, Heart } from 'lucide-vue-next'
 import { siteContent, saveContent } from '../store/content'
 
 const newsletterEmail = ref('')
 
 const pillars = [
-  { icon: BarChart3, label: 'Economia de Gênero', desc: 'Políticas econômicas centradas em gênero para impacto real.', color: 'pink' },
-  { icon: TrendingUp, label: 'Liderança STEM', desc: 'Capacitando mulheres em ciência, tecnologia e dados.', color: 'purple' },
-  { icon: Globe, label: 'Advocacy & Dados', desc: 'Dados públicos transformados em argumentos políticos.', color: 'petrol' },
-  { icon: Heart, label: 'Impacto Social', desc: 'Projetos que conectam teoria à transformação real.', color: 'lime' }
+  { icon: BarChart3, label: 'Economia de Gênero', desc: 'Formação em Políticas Públicas', color: 'pink' },
+  { icon: TrendingUp, label: 'Liderança STEM', desc: 'Bolsas para Mulheres em Dados', color: 'purple' },
+  { icon: Globe, label: 'Advocacy', desc: 'Mentoria em Incidência Política', color: 'blue' },
+  { icon: Heart, label: 'Impacto Social', desc: 'Fundo de Apoio a Territórios', color: 'lime' }
 ]
 
 const services = [
-  { icon: Database, iconBg: '#FF2D55', accent: 'pink', title: 'Análise de Dados', description: 'Pesquisa econômica técnica focada em política e desigualdades.' },
-  { icon: ShieldCheck, iconBg: '#8A2BE2', accent: 'purple', title: 'Consultoria ESG', description: 'Estratégias de impacto socioambiental para instituições.' },
-  { icon: Users, iconBg: '#00CED1', accent: 'petrol', title: 'Mentorias', description: 'Programas de capacitação para lideranças femininas.' },
-  { icon: Mic2, iconBg: '#D4E157', accent: 'lime', title: 'Palestras', description: 'Keynotes sobre economia, relações internacionais e gênero.' }
-]
-
-const manifestoStats = [
-  { icon: BookOpen, bg: '#FF2D55', label: 'Pesquisa Aplicada', desc: 'Economia, gênero e políticas públicas' },
-  { icon: Award, bg: '#8A2BE2', label: 'Formação de Líderes', desc: 'Mentorias e capacitações estratégicas' },
-  { icon: Target, bg: '#00CED1', label: 'Impacto Direto', desc: 'Do dado ao projeto de transformação' }
+  { icon: Database, accent: 'pink', title: 'Escola de Formação', description: 'Cursos e materiais para desenvolvimento de novas lideranças comunitárias.' },
+  { icon: ShieldCheck, accent: 'lime', title: 'Incidência Política', description: 'Acompanhamento legislativo e construção de campanhas de pressão pública.' },
+  { icon: Users, accent: 'blue', title: 'Apoio a Territórios', description: 'Suporte logístico e intelectual para movimentos sociais na linha de frente.' }
 ]
 
 const handleSubscribe = () => { 
@@ -206,736 +202,456 @@ const handleSubscribe = () => {
   }
   newsletterEmail.value = ''
 }
-
-onMounted(() => {
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add('reveal-visible')
-      }
-    })
-  }, { threshold: 0.1 })
-  document.querySelectorAll('.reveal-item').forEach(el => observer.observe(el))
-})
 </script>
 
 <style scoped>
-/* ═══════════════════════════════════════════════
-   ANIMATIONS
-   ═══════════════════════════════════════════════ */
-.reveal-item {
-  opacity: 0;
-  transform: translateY(30px);
-  transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
-}
-.reveal-visible {
-  opacity: 1;
-  transform: translateY(0);
+.home-brutalist {
+  overflow-x: hidden;
 }
 
-@keyframes float {
-  0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-20px); }
+.container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 40px;
 }
 
-@keyframes pulse-glow {
-  0%, 100% { opacity: 0.6; transform: scale(1); }
-  50% { opacity: 1; transform: scale(1.05); }
+.section-padding {
+  padding: 100px 0;
 }
 
-/* ═══════════════════════════════════════════════
-   HERO — IMMERSIVE GRADIENT
-   ═══════════════════════════════════════════════ */
-.hero-immersive {
-  min-height: auto;
-  background: linear-gradient(150deg, #1A1C2E 0%, #2D1B4E 35%, #1A1C2E 100%);
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  padding: 120px 0 80px;
+.bg-bg { background: var(--color-bg); }
+
+/* HERO */
+.hero-activist {
   position: relative;
+  min-height: 95vh;
+  display: flex;
+  align-items: center;
+  padding-top: 100px;
+  padding-bottom: 60px;
+  border-bottom: 8px solid var(--color-dark);
   overflow: hidden;
 }
 
-.hero-bg-shapes {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  z-index: 0;
-}
-
-.shape {
-  position: absolute;
-  border-radius: 50%;
-  filter: blur(80px);
-  animation: pulse-glow 6s ease-in-out infinite;
-}
-
-.shape-circle {
-  width: 500px; height: 500px;
-  background: radial-gradient(circle, rgba(255,45,85,0.25), transparent 70%);
-  top: -10%; left: -10%;
-}
-
-.shape-rect {
-  width: 400px; height: 400px;
-  background: radial-gradient(circle, rgba(138,43,226,0.2), transparent 70%);
-  bottom: -5%; right: 10%;
-  animation-delay: -2s;
-}
-
-.shape-square {
-  width: 300px; height: 300px;
-  background: radial-gradient(circle, rgba(0,206,209,0.15), transparent 70%);
-  top: 30%; right: 25%;
-  animation-delay: -4s;
-}
-
-.shape-dot {
-  width: 200px; height: 200px;
-  background: radial-gradient(circle, rgba(212,225,87,0.12), transparent 70%);
-  bottom: 20%; left: 20%;
-  animation-delay: -1s;
-}
-
-.hero-grid {
-  display: grid;
-  grid-template-columns: 1.2fr 0.8fr;
-  gap: 60px;
-  align-items: center;
+.hero-content {
   position: relative;
-  z-index: 1;
+  z-index: 10;
+  width: 100%;
 }
 
-.tagline-kicker {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 24px;
-  font-weight: 800;
-  font-size: 0.85rem;
-  letter-spacing: 2.5px;
-}
-
-.k-pink { color: var(--color-pink); }
-.k-petrol { color: var(--color-petrol); }
-.k-lime { color: var(--color-lime); }
-.k-dot { color: rgba(255,255,255,0.3); }
-
-.hero-title-big {
-  font-size: clamp(2.8rem, 5vw, 4.5rem);
-  font-weight: 900;
-  line-height: 1.05;
-  color: #FFFFFF !important;
-  margin-bottom: 28px;
-  letter-spacing: -0.03em;
-}
-
-.hero-highlight {
-  background: var(--brand-gradient);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-.hero-lead {
-  font-size: 1.25rem;
-  color: rgba(255,255,255,0.85) !important;
-  max-width: 600px;
-  line-height: 1.8;
-  font-weight: 500;
-}
-
-/* HERO VISUAL — Logo Emblem */
-.hero-visual {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.hero-np-emblem {
-  position: relative;
-  width: 320px;
-  height: 320px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.emblem-letters {
-  font-size: 8rem;
-  font-weight: 900;
+.hero-title {
+  font-size: clamp(3rem, 12vw, 9rem);
   color: white;
-  z-index: 2;
-  position: relative;
-  text-shadow: 0 0 60px rgba(255,45,85,0.3);
+  line-height: 0.85;
+  margin-bottom: 40px;
 }
 
-.emblem-shape {
-  position: absolute;
-  animation: float 5s ease-in-out infinite;
-}
+.text-yellow { color: var(--color-yellow); }
 
-.es-1 {
-  width: 40px; height: 40px;
-  background: var(--color-pink);
-  border-radius: 50%;
-  top: 20px; left: 40%;
-  animation-delay: 0s;
-}
-
-.es-2 {
-  width: 20px; height: 20px;
-  background: var(--color-lime);
-  border-radius: 50%;
-  top: 40px; left: 52%;
-  animation-delay: -1s;
-}
-
-.es-3 {
-  width: 60px; height: 36px;
-  background: var(--color-pink);
-  border-radius: 6px;
-  top: 22px; right: 18%;
-  animation-delay: -2s;
-  opacity: 0.9;
-}
-
-.es-4 {
-  width: 36px; height: 54px;
-  background: var(--color-lime);
-  border-radius: 6px;
-  bottom: 40px; left: 28%;
-  animation-delay: -0.5s;
-  opacity: 0.85;
-}
-
-.es-5 {
-  width: 28px; height: 28px;
-  background: var(--color-petrol);
-  border-radius: 6px;
-  bottom: 50px; right: 30%;
-  animation-delay: -3s;
-  opacity: 0.8;
-}
-
-/* ═══════════════════════════════════════════════
-   PILARES — INSIDE HERO DARK BLOCK
-   ═══════════════════════════════════════════════ */
-.pillars-container {
-  position: relative;
-  z-index: 5;
-  padding-top: 60px;
-}
-
-.pillars-grid-blocks {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 20px;
-}
-
-.pillar-block {
-  padding: 36px 28px;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  border-radius: 16px;
-  transition: transform 0.35s cubic-bezier(0.16,1,0.3,1), box-shadow 0.35s ease;
-  position: relative;
-  color: #FFFFFF !important;
-}
-
-.pillar-block:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 12px 32px rgba(0,0,0,0.18);
-}
-
-.pillar-pink { background: var(--color-pink); }
-.pillar-purple { background: var(--color-purple); }
-.pillar-petrol { background: #008B8B; } 
-.pillar-lime { background: #829400; } 
-
-.pillar-block-icon {
-  width: 52px;
-  height: 52px;
-  background: rgba(255,255,255,0.25);
-  border-radius: 14px;
+.hero-intro-box {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  padding: 40px;
+  max-width: 700px;
   display: flex;
   align-items: center;
-  justify-content: center;
-  color: #FFFFFF !important;
+  gap: 40px;
 }
 
-.pillar-block-title {
-  font-size: 1.05rem;
-  font-weight: 900;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  color: #FFFFFF !important;
-}
-
-.pillar-block-desc {
-  font-size: 0.85rem;
-  line-height: 1.55;
-  color: #FFFFFF !important;
-  opacity: 0.95;
-}
-
-/* ═══════════════════════════════════════════════
-   SERVICES HOME
-   ═══════════════════════════════════════════════ */
-.services-home {
-  padding: 120px 0;
-  background: #F9FAFB;
-}
-
-.section-intro {
-  text-align: center;
-  margin-bottom: 64px;
-}
-
-.section-eyebrow {
-  display: inline-block;
-  font-size: 0.75rem;
-  font-weight: 900;
-  letter-spacing: 3px;
-  text-transform: uppercase;
-  color: var(--color-pink);
-  margin-bottom: 12px;
-}
-
-.section-title-lg {
-  font-size: clamp(2rem, 4vw, 3.2rem);
-  font-weight: 900;
-  color: var(--color-graphite);
-  margin-bottom: 12px;
-}
-
-.section-title-dark {
-  color: var(--color-graphite) !important;
-}
-
-.section-desc {
+.hero-description {
+  font-family: var(--font-sans);
+  font-weight: 600;
+  color: white;
   font-size: 1.1rem;
-  color: var(--text-muted, #6B7280);
-  max-width: 560px;
-  margin: 0 auto;
   line-height: 1.6;
 }
 
-.services-grid-home {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 24px;
+@media (max-width: 768px) {
+  .hero-intro-box { flex-direction: column; align-items: flex-start; gap: 20px; }
+  .hero-title { font-size: clamp(3rem, 15vw, 6rem); }
 }
 
-.service-block-card {
-  padding: 40px;
-  border-radius: var(--radius-lg);
-  border: 2px solid transparent;
-  transition: var(--transition);
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  text-decoration: none;
-  color: var(--text-main);
+/* FLOATING SHAPES */
+.geo-shape { display: inline-block; border: 4px solid var(--color-dark); }
+.shape-pill-y { height: 180px; width: 80px; border-radius: 100px; }
+.shape-square { aspect-ratio: 1; width: 100px; }
+.shape-circle { aspect-ratio: 1; border-radius: 50%; width: 50px; }
+
+.geo-shape.pink { background: var(--color-pink); }
+.geo-shape.yellow { background: var(--color-yellow); }
+.geo-shape.blue { background: var(--color-blue); }
+.geo-shape.red { background: var(--color-red); }
+.geo-shape.lime { background: var(--color-lime); }
+.geo-shape.purple { background: var(--color-pink); } /* Using pink for purple as in ref */
+
+.floating-1 { position: absolute; top: 15%; right: 15%; box-shadow: 8px 8px 0 rgba(28,28,28,0.3); animation: float 4s ease-in-out infinite; }
+.floating-2 { position: absolute; bottom: 15%; left: 10%; transform: rotate(15deg); box-shadow: -8px 8px 0 rgba(28,28,28,0.3); animation: float 5s ease-in-out infinite 1s; }
+.floating-3 { position: absolute; top: 40%; left: 55%; animation: pulse 6s ease-in-out infinite; }
+
+@keyframes float {
+  0%, 100% { transform: translateY(0) rotate(var(--rot, 0deg)); }
+  50% { transform: translateY(-20px) rotate(var(--rot, 0deg)); }
 }
 
-.svc-pink { background: var(--color-pink-soft); border-color: var(--color-pink-mid); }
-.svc-purple { background: var(--color-purple-soft); border-color: var(--color-purple-mid); }
-.svc-petrol { background: var(--color-petrol-soft); border-color: var(--color-petrol-mid); }
-.svc-lime { background: var(--color-lime-soft); border-color: #E8EFA3; }
-
-.service-block-card:hover {
-  transform: translateY(-6px);
-  box-shadow: var(--shadow-lg);
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
 }
 
-.svc-pink:hover { box-shadow: var(--shadow-glow-pink); }
-.svc-purple:hover { box-shadow: var(--shadow-glow-purple); }
-.svc-petrol:hover { box-shadow: var(--shadow-glow-petrol); }
-.svc-lime:hover { box-shadow: 0 8px 32px rgba(212,225,87,0.4); }
-
-.svc-icon-wrap {
-  width: 56px;
-  height: 56px;
-  border-radius: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+/* MARQUEE */
+.marquee-brutalist {
+  background: var(--color-pink);
+  color: var(--color-dark);
+  padding: 20px 0;
+  border-top: 4px solid var(--color-dark);
+  border-bottom: 4px solid var(--color-dark);
+  overflow: hidden;
+  white-space: nowrap;
 }
 
-.service-block-card h3 {
-  font-size: 1.4rem;
-  font-weight: 900;
-  color: var(--color-graphite);
+.marquee-content {
+  display: inline-block;
+  animation: marquee 30s linear infinite;
 }
 
-.service-block-card p {
-  color: var(--text-muted);
-  font-size: 0.95rem;
-  line-height: 1.65;
-  flex: 1;
-}
-
-.svc-link {
+.marquee-item {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 0 30px;
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  font-weight: 800;
-  font-size: 0.85rem;
-  color: var(--color-pink);
-  margin-top: auto;
-  transition: gap 0.3s ease;
+  gap: 30px;
 }
 
-.service-block-card:hover .svc-link {
-  gap: 10px;
+.dark-mini { width: 15px !important; height: 15px !important; background: var(--color-dark) !important; border: none !important; }
+
+@keyframes marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
 }
 
-/* ═══════════════════════════════════════════════
-   ARTICLES — EDITORIAL CARDS
-   ═══════════════════════════════════════════════ */
-.articles-section {
-  padding: 120px 0;
-  background: linear-gradient(180deg, rgba(255,45,85,0.03) 0%, rgba(138,43,226,0.05) 100%);
-}
-
-.section-header-flex {
+/* SECTION HEADERS */
+.section-header-brutalist {
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
-  margin-bottom: 56px;
+  margin-bottom: 60px;
+  gap: 40px;
 }
 
-.btn-np-sm {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 12px 28px;
-  background: var(--color-graphite);
-  color: #fff;
-  border-radius: 12px;
+.text-7xl { font-size: clamp(2.5rem, 6vw, 5rem); line-height: 0.9; }
+.header-side-text {
+  max-width: 300px;
+  border-left: 6px solid var(--color-lime);
+  padding-left: 20px;
   font-weight: 800;
-  font-size: 0.85rem;
-  text-decoration: none;
-  transition: var(--transition);
-  white-space: nowrap;
+  text-transform: uppercase;
+  font-size: 0.8rem;
+  letter-spacing: 0.1em;
 }
 
-.btn-np-sm:hover {
-  background: var(--color-pink);
-  transform: translateY(-2px);
-}
-
-.articles-grid {
+/* FEATURED GRID */
+.featured-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 28px;
+  grid-template-columns: 2fr 1fr;
+  gap: 40px;
 }
 
-.article-card {
-  background: #fff;
-  border-radius: var(--radius-lg);
-  overflow: hidden;
-  border: 1px solid rgba(0,0,0,0.06);
-  box-shadow: var(--shadow-sm);
-  transition: var(--transition);
+.brutalist-card-large {
   display: flex;
-  flex-direction: column;
+  border: 4px solid var(--color-dark);
+  background: white;
+  cursor: pointer;
+  transition: all 0.3s;
 }
 
-.article-card:hover {
-  transform: translateY(-8px);
-  box-shadow: var(--shadow-lg);
+.brutalist-card-large:hover {
+  box-shadow: 12px 12px 0 var(--color-lime);
+  transform: translate(-6px, -6px);
 }
 
-.article-cover {
-  width: 100%;
-  height: 210px;
-  overflow: hidden;
+.card-image-wrap {
+  width: 50%;
   position: relative;
+  border-right: 4px solid var(--color-dark);
+  overflow: hidden;
 }
 
-.article-cover img {
+.card-img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform 0.5s ease;
+  filter: grayscale(1);
+  transition: all 0.5s;
 }
 
-.article-card:hover .article-cover img {
-  transform: scale(1.06);
+.brutalist-card-large:hover .card-img { filter: grayscale(0); transform: scale(1.05); }
+
+.tag-overlay { position: absolute; top: 20px; left: 20px; }
+
+.card-content { width: 50%; padding: 40px; display: flex; flex-direction: column; }
+.card-title-lg { font-size: 2.2rem; margin-bottom: 20px; line-height: 1; }
+.card-excerpt { font-weight: 500; opacity: 0.8; line-height: 1.6; margin-bottom: 30px; }
+.read-more { font-weight: 900; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.1em; display: flex; align-items: center; gap: 10px; }
+.brutalist-card-large:hover .read-more { color: var(--color-red); }
+
+.featured-side { display: flex; flex-direction: column; gap: 30px; }
+.brutalist-card-small {
+  border: 4px solid var(--color-dark);
+  background: white;
+  padding: 30px;
+  cursor: pointer;
+  transition: all 0.3s;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
-.article-tag {
-  position: absolute;
-  bottom: 14px;
-  left: 14px;
-  color: #fff;
-  font-size: 0.65rem;
+.card-header-mini { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; }
+.tag.pink { background: var(--color-pink); color: white; }
+.tag.blue { background: var(--color-blue); color: white; }
+.arrow-icon { opacity: 0.3; transition: all 0.3s; }
+
+.brutalist-card-small:hover { transform: translate(-4px, -4px); }
+.pink-hover:hover { box-shadow: 8px 8px 0 var(--color-pink); }
+.blue-hover:hover { box-shadow: 8px 8px 0 var(--color-blue); }
+.brutalist-card-small:hover .arrow-icon { opacity: 1; transform: rotate(-45deg); }
+
+.card-title-sm { font-size: 1.6rem; line-height: 1.1; }
+
+@media (max-width: 1024px) {
+  .featured-grid { grid-template-columns: 1fr; }
+  .brutalist-card-large { flex-direction: column; }
+  .card-image-wrap { width: 100%; height: 300px; border-right: none; border-bottom: 4px solid var(--color-dark); }
+  .card-content { width: 100%; }
+}
+
+/* RADAR */
+.radar-section {
+  background: var(--color-lime);
+  padding: 100px 0;
+  border-top: 4px solid var(--color-dark);
+  border-bottom: 4px solid var(--color-dark);
+  position: relative;
+  overflow: hidden;
+}
+
+.bg-shape-1 { position: absolute; bottom: -50px; left: -50px; width: 250px !important; opacity: 0.3; }
+
+.radar-grid { display: grid; grid-template-columns: 1fr 2fr; gap: 60px; position: relative; z-index: 10; }
+
+.radar-kicker { display: flex; align-items: center; gap: 15px; margin-bottom: 20px; }
+.shape-square.red.mini { width: 20px !important; border: 2px solid var(--color-dark); }
+.kicker-text { font-weight: 900; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 0.15em; }
+
+.radar-highlight-box {
+  background: white;
+  border: 4px solid var(--color-dark);
+  padding: 30px;
+  font-weight: 700;
+  font-size: 1.2rem;
+  box-shadow: 8px 8px 0 var(--color-dark);
+}
+
+.radar-list { display: flex; flex-direction: column; gap: 20px; }
+.radar-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 30px;
+  background: white;
+  cursor: pointer;
+}
+
+.radar-item-header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+.geo-shape.mini { width: 12px !important; border: 2px solid var(--color-dark); }
+.pillar-label { font-weight: 900; text-transform: uppercase; font-size: 0.7rem; letter-spacing: 0.1em; }
+.pillar-title { font-family: var(--font-display); font-size: 1.8rem; line-height: 1; }
+.pillar-org { font-weight: 600; opacity: 0.6; margin-top: 5px; }
+
+.radar-action-box {
+  border: 3px solid var(--color-dark);
+  padding: 15px 25px;
   font-weight: 900;
-  letter-spacing: 0.1em;
-  padding: 6px 14px;
-  border-radius: 8px;
+  font-size: 0.8rem;
+  background: var(--color-bg);
+  transition: all 0.2s;
 }
 
-.tag-pink { background: var(--color-pink); }
-.tag-purple { background: var(--color-purple); }
-.tag-petrol { background: var(--color-petrol); color: var(--color-graphite); }
-.tag-lime { background: var(--color-lime); color: var(--color-graphite); }
+.radar-item:hover .radar-action-box { background: var(--color-dark); color: white; }
 
-.article-body {
-  padding: 28px;
-  display: flex;
-  flex-direction: column;
-  flex: 1;
+@media (max-width: 992px) {
+  .radar-grid { grid-template-columns: 1fr; }
 }
 
-.article-body h4 {
-  font-size: 1.1rem;
-  font-weight: 800;
-  color: var(--color-graphite);
-  line-height: 1.35;
-  margin-bottom: 10px;
-}
-
-.article-body p {
-  font-size: 0.88rem;
-  color: var(--text-muted);
-  line-height: 1.65;
-  flex: 1;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  margin-bottom: 16px;
-}
-
-.article-link {
-  font-size: 0.85rem;
-  font-weight: 800;
-  color: var(--color-pink);
-  text-decoration: none;
-  transition: color 0.2s;
-  margin-top: auto;
-}
-
-.article-link:hover { color: var(--color-purple); }
-
-/* ═══════════════════════════════════════════════
-   MANIFESTO STRIP
-   ═══════════════════════════════════════════════ */
-.manifesto-strip {
-  padding: 100px 0;
-  background: var(--color-graphite);
-  position: relative;
-}
-
-.manifesto-grid {
-  display: grid;
-  grid-template-columns: 1.2fr 1fr;
-  gap: 80px;
-  align-items: center;
-}
-
-.manifesto-text h2 {
-  font-size: clamp(1.8rem, 3vw, 2.6rem);
-  color: #fff;
-  line-height: 1.2;
-  margin-bottom: 20px;
-}
-
-.manifesto-text p {
-  color: rgba(255,255,255,0.6);
-  font-size: 1.05rem;
-  line-height: 1.7;
-  margin-bottom: 36px;
-}
-
-.btn-np-dark {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 14px 32px;
-  background: var(--brand-gradient);
-  color: #fff;
-  border-radius: 14px;
-  font-weight: 800;
-  font-size: 0.9rem;
-  text-decoration: none;
-  transition: var(--transition);
-  box-shadow: var(--shadow-glow-pink);
-}
-
-.btn-np-dark:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 12px 40px rgba(255,45,85,0.5);
-}
-
-.manifesto-visual {
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-}
-
-.manifesto-stat {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-  background: rgba(255,255,255,0.05);
-  border: 1px solid rgba(255,255,255,0.08);
-  padding: 24px 28px;
-  border-radius: var(--radius);
-  transition: var(--transition);
-}
-
-.manifesto-stat:hover {
-  background: rgba(255,255,255,0.08);
-  transform: translateX(6px);
-}
-
-.stat-icon {
-  width: 50px;
-  height: 50px;
-  border-radius: 14px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
-
-.manifesto-stat strong {
-  display: block;
-  font-size: 1rem;
-  font-weight: 800;
-  color: #fff;
-  margin-bottom: 4px;
-}
-
-.manifesto-stat span {
-  font-size: 0.85rem;
-  color: rgba(255,255,255,0.5);
-}
-
-/* ═══════════════════════════════════════════════
-   NEWSLETTER — FULL-WIDTH GRADIENT
-   ═══════════════════════════════════════════════ */
-.newsletter-fullwidth {
-  width: 100%;
-  background: var(--brand-gradient);
-  padding: 100px 0;
+/* SERVICES DARK */
+.services-dark {
+  background: var(--color-dark);
+  padding: 120px 0;
   position: relative;
   overflow: hidden;
 }
 
-.newsletter-shapes {
+.grid-bg {
   position: absolute;
   inset: 0;
-  pointer-events: none;
+  opacity: 0.05;
+  background-image: linear-gradient(white 1px, transparent 1px), linear-gradient(90deg, white 1px, transparent 1px);
+  background-size: 50px 50px;
 }
 
-.nl-shape {
-  position: absolute;
-  border-radius: 50%;
-  background: rgba(255,255,255,0.06);
-  animation: float 8s ease-in-out infinite;
+.services-header { display: flex; align-items: center; gap: 20px; margin-bottom: 60px; }
+.text-6xl { font-size: clamp(2rem, 5vw, 4rem); }
+.border-white { border-color: white !important; }
+.text-white { color: white; }
+
+.services-brutalist-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 30px;
 }
 
-.nl-s1 { width: 300px; height: 300px; top: -100px; left: -50px; }
-.nl-s2 { width: 200px; height: 200px; bottom: -50px; right: 10%; animation-delay: -3s; }
-.nl-s3 { width: 150px; height: 150px; top: 20%; right: 30%; animation-delay: -5s; }
-
-.newsletter-center {
-  text-align: center;
-  position: relative;
-  z-index: 1;
-}
-
-.newsletter-title {
-  font-size: clamp(2.3rem, 5vw, 3.8rem);
-  font-weight: 900;
-  color: #FFFFFF;
-  margin-bottom: 20px;
-  letter-spacing: -1px;
-}
-
-.newsletter-subtitle {
-  font-size: 1.2rem;
-  color: #FFFFFF;
-  max-width: 600px;
-  margin: 0 auto 48px;
-  line-height: 1.8;
-  opacity: 1;
-}
-
-.newsletter-form {
+.svc-brutalist-card {
+  background: #2a2a2a;
+  border: 4px solid rgba(255,255,255,0.1);
+  padding: 40px;
+  transition: all 0.3s;
   display: flex;
-  gap: 14px;
-  max-width: 520px;
-  margin: 0 auto;
+  flex-direction: column;
 }
 
-.newsletter-input {
-  flex: 1;
-  padding: 16px 24px;
-  border-radius: 14px;
-  border: 2px solid rgba(255,255,255,0.25);
-  background: #fff;
-  font-size: 1rem;
-  color: var(--color-graphite);
-  outline: none;
-  transition: var(--transition);
+.svc-brutalist-card:hover {
+  transform: translateY(-10px);
+  border-color: currentColor;
 }
 
-.newsletter-input:focus {
-  border-color: rgba(255,255,255,0.7);
-  box-shadow: 0 0 0 4px rgba(255,255,255,0.15);
+.svc-icon { width: 50px; height: 50px; margin-bottom: 30px; }
+.pink-text { color: var(--color-pink); }
+.lime-text { color: var(--color-lime); }
+.blue-text { color: var(--color-blue); }
+
+.svc-title { font-family: var(--font-display); font-size: 2rem; color: white; margin-bottom: 15px; }
+.svc-desc { color: rgba(255,255,255,0.7); line-height: 1.6; font-size: 0.95rem; margin-bottom: 30px; flex: 1; }
+
+.svc-footer {
+  padding-top: 20px;
+  border-top: 1px solid rgba(255,255,255,0.1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 900;
+  text-transform: uppercase;
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  color: white;
 }
 
-.newsletter-input::placeholder { color: #9CA3AF; }
-
-.newsletter-btn {
-  background: var(--color-graphite);
-  color: #fff;
-  border: none;
-  padding: 16px 36px;
-  border-radius: 14px;
-  font-weight: 800;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: var(--transition);
-  white-space: nowrap;
-}
-
-.newsletter-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(26,28,46,0.4);
-}
-
-/* ═══════════════════════════════════════════════
-   RESPONSIVE
-   ═══════════════════════════════════════════════ */
 @media (max-width: 1024px) {
-  .hero-grid { grid-template-columns: 1fr; }
-  .hero-visual { display: none; }
-  .pillars-grid-blocks { grid-template-columns: repeat(2, 1fr); }
-  .manifesto-grid { grid-template-columns: 1fr; gap: 48px; }
+  .services-brutalist-grid { grid-template-columns: 1fr; }
 }
 
-@media (max-width: 768px) {
-  .services-grid-home { grid-template-columns: 1fr; }
-  .articles-grid { grid-template-columns: 1fr 1fr; }
-  .section-header-flex { flex-direction: column; align-items: flex-start; gap: 20px; }
-  .hero-title-big { font-size: 2.6rem; }
-  .newsletter-form { flex-direction: column; }
-  .newsletter-btn { width: 100%; }
+/* NEWSLETTER */
+.newsletter-brutalist-section {
+  background: var(--color-blue);
+  padding: 100px 0;
 }
 
-@media (max-width: 480px) {
-  .pillars-grid-blocks { grid-template-columns: 1fr; }
-  .articles-grid { grid-template-columns: 1fr; }
-  .hero-buttons { flex-direction: column; }
-  .hero-buttons a { text-align: center; justify-content: center; }
+.newsletter-box {
+  background: var(--color-yellow);
+  border: 4px solid var(--color-dark);
+  padding: 60px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 60px;
+  box-shadow: 15px 15px 0 var(--color-dark);
+  position: relative;
+}
+
+.nl-kicker { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; font-weight: 900; text-transform: uppercase; font-size: 0.75rem; }
+.red-text { color: var(--color-red); fill: currentColor; }
+
+.text-5xl { font-size: 3rem; line-height: 1; }
+.nl-text { font-weight: 700; opacity: 0.8; margin-bottom: 30px; }
+
+.newsletter-action { position: relative; }
+.floating-nl-1 { position: absolute; top: -30px; right: -30px; z-index: 20; }
+.floating-nl-2 { position: absolute; bottom: -30px; left: -30px; background: var(--color-mint); }
+
+.nl-form-brutalist {
+  background: white;
+  border: 4px solid var(--color-dark);
+  padding: 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  position: relative;
+  z-index: 10;
+}
+
+.nl-input-brutalist {
+  width: 100%;
+  background: var(--color-bg);
+  border: 3px solid var(--color-dark);
+  padding: 15px 20px;
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 1.1rem;
+  outline: none;
+}
+
+.w-full { width: 100%; }
+
+@media (max-width: 992px) {
+  .newsletter-box { grid-template-columns: 1fr; gap: 40px; padding: 40px; }
+}
+
+/* GLOBAL BRUTALIST COMPONENTS (Fallback) */
+.brutalist-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 2rem;
+  font-family: var(--font-sans);
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  border: 4px solid var(--color-dark);
+  background: var(--color-yellow);
+  color: var(--color-dark);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.brutalist-button:hover {
+  transform: translate(-4px, -4px);
+  box-shadow: 6px 6px 0 var(--color-dark);
+}
+
+.brutalist-button.red { background: var(--color-red); color: white; }
+
+.brutalist-card {
+  background: white;
+  border: 4px solid var(--color-dark);
+  transition: all 0.2s;
+}
+
+.brutalist-card:hover {
+  transform: translate(-4px, -4px);
+  box-shadow: 8px 8px 0 var(--color-dark);
+}
+
+.tag {
+  display: inline-flex;
+  padding: 8px 15px;
+  font-weight: 900;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  background: var(--color-yellow);
+  color: var(--color-dark);
 }
 </style>
