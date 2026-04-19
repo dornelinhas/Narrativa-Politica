@@ -1,123 +1,9 @@
-<template>
-  <div v-if="path" class="lms-premium-layout" :class="{ 'sidebar-collapsed': isSidebarCollapsed }">
-
-    <!-- SIDEBAR DE AULAS (HOTMART STYLE) -->
-    <aside class="lms-sidebar">
-      <button class="btn-toggle-sidebar" @click="isSidebarCollapsed = !isSidebarCollapsed" :title="isSidebarCollapsed ? 'Abrir Menu' : 'Recolher Menu'">
-        <ChevronLeft v-if="!isSidebarCollapsed" :size="20" />
-        <ChevronRight v-else :size="20" />
-      </button>
-      <div class="lms-sidebar-header">
-        <router-link to="/area-do-aluno" class="btn-back-portal">
-          <ChevronLeft :size="16" /> Painel do Aluno
-        </router-link>
-        <h2>{{ path.title }}</h2>
-        <div class="lms-progress">
-          <div class="progress-info">
-            <span>Seu progresso</span>
-            <strong>{{ Math.round(progress) }}%</strong>
-          </div>
-          <div class="progress-bar-bg">
-            <div class="progress-bar-fill" :style="{ width: progress + '%' }"></div>
-          </div>
-        </div>
-      </div>
-
-      <div class="lms-module-list">
-        <div v-for="(mod, mIdx) in path.modules" :key="mod.id" class="lms-module-group">
-          <div class="module-group-header">
-            <span class="mod-num">Módulo {{ mIdx + 1 }}</span>
-            <h4>{{ mod.title }}</h4>
-          </div>
-          
-          <div v-for="(lesson, lIdx) in mod.lessons" :key="lesson.id" 
-               class="lms-lesson-item"
-               :class="{ active: activeModuleIndex === mIdx && activeLessonIndex === lIdx, completed: completedLessons.includes(lesson.id) }"
-               @click="activeModuleIndex = mIdx; activeLessonIndex = lIdx">
-            <div class="lesson-status-icon">
-              <CheckCircle v-if="completedLessons.includes(lesson.id)" :size="16" class="icon-done" />
-              <PlayCircle v-else :size="16" class="icon-pending" />
-            </div>
-            <div class="lesson-info">
-              <span class="lesson-title">{{ lesson.title }}</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </aside>
-
-    <!-- ÁREA DE CONTEÚDO CENTRAL -->
-    <main class="lms-main-content">
-      <div v-if="activeLesson" class="lms-content-wrapper">
-
-        <!-- PLAYER -->
-        <div class="lms-player-container">
-          <div v-if="activeLesson.videoUrl" class="video-aspect-ratio">
-            <iframe :src="activeLesson.videoUrl" frameborder="0" allowfullscreen></iframe>
-          </div>
-          <div v-else class="video-placeholder">
-            <div class="placeholder-msg">
-              <FileText :size="48" />
-              <p>Esta aula é composta exclusivamente por material de leitura e apoio.</p>
-            </div>
-          </div>
-        </div>
-
-        <!-- TEXTO E APOIO -->
-        <div class="lms-text-area">
-          <div class="lms-lesson-header">
-            <div class="lesson-title-meta">
-              <span class="mod-indicator-tiny">Módulo {{ activeModuleIndex + 1 }} • Aula {{ activeLessonIndex + 1 }}</span>
-              <h1>{{ activeLesson.title }}</h1>
-            </div>
-            <button @click="toggleComplete" class="btn-complete-lesson" :class="{ is_done: completedLessons.includes(activeLesson.id) }">
-              {{ completedLessons.includes(activeLesson.id) ? 'Concluída' : 'Marcar como Concluída' }}
-            </button>
-          </div>
-
-          <div class="lms-rich-content" v-html="activeLesson.content || '<p>Utilize os materiais abaixo para complementar seus estudos.</p>'"></div>
-
-          <!-- BOTÃO PRÓXIMA AULA -->
-          <div class="lms-navigation-bottom">
-            <button v-if="hasNextLesson" @click="goNextLesson" class="btn-next-lesson">
-              <span>Próxima Aula</span>
-              <ArrowRight :size="20" />
-            </button>
-            <div v-else class="congrats-msg">
-              <Award :size="24" />
-              <span>Você concluiu esta trilha! Parabéns!</span>
-            </div>
-          </div>
-
-          <!-- MATERIAIS PARA DOWNLOAD -->
-          <div class="lms-attachments" v-if="activeLesson.attachments?.some(a => a.url)">
-            <h3>Materiais de Apoio</h3>
-            <div class="attachment-grid">
-              <template v-for="(att, aIdx) in activeLesson.attachments" :key="aIdx">
-                <a v-if="att.url" :href="att.url" target="_blank" class="attachment-card">
-                  <Download :size="20" />
-                  <div class="att-info">
-                    <strong>{{ att.label || 'Material Auxiliar' }}</strong>
-                    <span>Download PDF/Link</span>
-                  </div>
-                </a>
-              </template>
-            </div>
-          </div>
-        </div>
-
-      </div>
-    </main>
-
-  </div>
-</template>
-
 <script setup>
 import { ref, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { siteContent } from '../store/content'
 import { useAuth } from '../store/auth'
-import { ChevronLeft, ChevronRight, CheckCircle, PlayCircle, FileText, Download, ArrowRight, Award } from 'lucide-vue-next'
+import { ChevronLeft, ChevronRight, CheckCircle, PlayCircle, FileText, Download, ArrowRight, Award, Layers } from 'lucide-vue-next'
 
 const route = useRoute()
 const router = useRouter()
@@ -130,51 +16,18 @@ if (path.value && path.value.isPremium && (!isAuthenticated.value || !user.value
   router.push(`/checkout/${path.value.id}`)
 }
 
-const isSidebarCollapsed = ref(false)
 const activeModuleIndex = ref(0)
 const activeLessonIndex = ref(0)
 const activeLesson = computed(() => path.value?.modules?.[activeModuleIndex.value]?.lessons?.[activeLessonIndex.value])
-
-const hasNextLesson = computed(() => {
-  const currentMod = path.value?.modules?.[activeModuleIndex.value]
-  if (!currentMod) return false
-  
-  // Tem próxima aula no mesmo módulo?
-  if (activeLessonIndex.value < currentMod.lessons.length - 1) return true
-  
-  // Tem próximo módulo com pelo menos uma aula?
-  if (activeModuleIndex.value < (path.value?.modules?.length || 0) - 1) return true
-  
-  return false
-})
-
-const goNextLesson = () => {
-  // Marcar a atual como concluída antes de pular
-  if (!completedLessons.value.includes(activeLesson.value.id)) {
-    toggleComplete()
-  }
-
-  const currentMod = path.value?.modules?.[activeModuleIndex.value]
-  
-  if (activeLessonIndex.value < currentMod.lessons.length - 1) {
-    activeLessonIndex.value++
-  } else {
-    activeModuleIndex.value++
-    activeLessonIndex.value = 0
-  }
-  
-  // Scroll para o topo
-  window.scrollTo({ top: 0, behavior: 'smooth' })
-}
+const activeTab = ref('SUMMARY')
 
 const completedLessons = ref(JSON.parse(localStorage.getItem(`np_progress_lessons_${pathId}`) || '[]'))
 
-const progress = computed(() => {
-  if (!path.value?.modules?.length) return 0
-  const totalLessons = path.value.modules.reduce((acc, mod) => acc + (mod.lessons?.length || 0), 0)
-  if (totalLessons === 0) return 0
-  return (completedLessons.value.length / totalLessons) * 100
-})
+const getModuleProgress = (mod) => {
+  if (!mod.lessons?.length) return 0
+  const completed = mod.lessons.filter(l => completedLessons.value.includes(l.id)).length
+  return Math.round((completed / mod.lessons.length) * 100)
+}
 
 const toggleComplete = () => {
   if (!activeLesson.value) return
@@ -188,200 +41,269 @@ const toggleComplete = () => {
 }
 </script>
 
+<template>
+  <div v-if="path" class="classroom-interface-page">
+    <div class="grid-overlay-light"></div>
+
+    <div class="classroom-container">
+      <!-- MAIN AREA -->
+      <main class="classroom-main">
+        <h1 class="interface-title">COURSE LEARNING PATH INTERFACE</h1>
+
+        <div class="video-player-box">
+          <div class="player-header">
+             <h2 class="current-lesson-title">{{ activeLesson?.title?.toUpperCase() || 'INTRODUÇÃO À ECONOMIA POLÍTICA GLOBAL' }}</h2>
+          </div>
+          <div class="player-body">
+             <div v-if="activeLesson?.videoUrl" class="video-ratio">
+                <iframe :src="activeLesson.videoUrl" frameborder="0" allowfullscreen></iframe>
+             </div>
+             <div v-else class="video-placeholder-thick">
+                <FileText :size="80" stroke-width="1" />
+             </div>
+          </div>
+        </div>
+
+        <!-- TABS -->
+        <div class="classroom-tabs">
+          <button @click="activeTab = 'SUMMARY'" :class="{ active: activeTab === 'SUMMARY' }" class="c-tab yellow">SUMMARY</button>
+          <button @click="activeTab = 'RESOURCES'" :class="{ active: activeTab === 'RESOURCES' }" class="c-tab pink">RESOURCES</button>
+          <button @click="activeTab = 'FORUM'" :class="{ active: activeTab === 'FORUM' }" class="c-tab blue">FORUM</button>
+        </div>
+
+        <div class="tab-content-box brutalist-card">
+           <div v-if="activeTab === 'SUMMARY'" class="rich-text-summary" v-html="activeLesson?.content || 'Utilize os materiais ao lado para complementar seus estudos.'"></div>
+           <div v-if="activeTab === 'RESOURCES'" class="resources-list">
+              <div v-for="(att, i) in activeLesson?.attachments" :key="i" class="resource-item">
+                 <Download :size="20" /> <span>{{ att.label }}</span>
+              </div>
+              <p v-if="!activeLesson?.attachments?.length">Nenhum material adicional disponível para esta aula.</p>
+           </div>
+           <div v-if="activeTab === 'FORUM'" class="forum-placeholder">
+              <p>O fórum de discussão está sendo preparado. Em breve você poderá interagir com outros alunos.</p>
+           </div>
+        </div>
+      </main>
+
+      <!-- SIDEBAR -->
+      <aside class="classroom-sidebar">
+        <div class="sidebar-header-thick">
+           <h3>LEARNING PATH</h3>
+        </div>
+
+        <div class="learning-path-flow">
+           <div class="path-vertical-line"></div>
+           <div v-for="(mod, mIdx) in path.modules" :key="mod.id" class="flow-module-item">
+              <div class="flow-icon-wrap" 
+                   :class="{ active: activeModuleIndex === mIdx }"
+                   @click="activeModuleIndex = mIdx">
+                 <div class="icon-circle">
+                    <Layers v-if="activeModuleIndex !== mIdx" :size="20" />
+                    <PlayCircle v-else :size="20" />
+                 </div>
+              </div>
+              <div class="flow-info">
+                 <span class="mod-label">MÓDULO {{ mIdx + 1 }}:</span>
+                 <h4 class="mod-name">{{ mod.title?.toUpperCase() }}</h4>
+                 <div class="mod-mini-progress">
+                    <div class="progress-bar-tiny">
+                       <div class="fill" :style="{ width: getModuleProgress(mod) + '%' }"></div>
+                    </div>
+                    <span class="percent">{{ getModuleProgress(mod) }}%</span>
+                 </div>
+              </div>
+           </div>
+        </div>
+      </aside>
+    </div>
+  </div>
+</template>
+
 <style scoped>
-.lms-premium-layout {
-  display: flex;
-  height: 100vh;
-  background: #FFFFFF;
-  overflow: hidden;
-  transition: all 0.3s ease;
+.classroom-interface-page {
+  background: #fdfdfd;
+  min-height: 100vh;
+  position: relative;
+  padding: 40px;
 }
 
-/* SIDEBAR COLLAPSE */
-.sidebar-collapsed .lms-sidebar { width: 0; padding: 0; overflow: hidden; opacity: 0; pointer-events: none; }
-.btn-toggle-sidebar {
+.grid-overlay-light {
   position: absolute;
-  top: 50%;
-  right: -20px;
-  width: 40px;
-  height: 40px;
-  background: #FF2D55;
-  color: #fff;
-  border: none;
-  border-radius: 50%;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-image: 
+    linear-gradient(rgba(0, 0, 0, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 0, 0, 0.05) 1px, transparent 1px);
+  background-size: 30px 30px;
+  pointer-events: none;
+}
+
+.classroom-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 400px;
+  gap: 40px;
+  position: relative;
+  z-index: 10;
+}
+
+.interface-title {
+  font-family: var(--font-display);
+  font-size: 3rem;
+  margin-bottom: 40px;
+  text-align: center;
+}
+
+.video-player-box {
+  background: white;
+  border: 4px solid #000;
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 30px;
+}
+
+.player-header {
+  padding: 30px;
+  border-bottom: 4px solid #000;
+}
+
+.current-lesson-title {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  line-height: 1;
+}
+
+.player-body {
+  background: #eee;
+}
+
+.video-ratio { position: relative; padding-top: 56.25%; }
+.video-ratio iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+
+.video-placeholder-thick {
+  height: 500px;
   display: flex;
   align-items: center;
   justify-content: center;
-  cursor: pointer;
-  z-index: 100;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-  transform: translateY(-50%);
+  color: #999;
 }
 
-.sidebar-collapsed .btn-toggle-sidebar { right: auto; left: 20px; position: fixed; }
+.classroom-tabs {
+  display: flex;
+  gap: 10px;
+  margin-bottom: -4px;
+  position: relative;
+  z-index: 20;
+}
+
+.c-tab {
+  flex: 1;
+  padding: 20px;
+  font-family: var(--font-sans);
+  font-weight: 900;
+  font-size: 1rem;
+  border: 4px solid #000;
+  border-bottom: none;
+  border-radius: 12px 12px 0 0;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.c-tab.yellow { background: #FFD600; }
+.c-tab.pink { background: #FF4D4D; color: white; }
+.c-tab.blue { background: #2196F3; color: white; }
+
+.c-tab:not(.active) { opacity: 0.6; transform: translateY(4px); }
+
+.tab-content-box {
+  background: white;
+  border: 4px solid #000;
+  border-radius: 0 0 12px 12px;
+  padding: 40px;
+  min-height: 300px;
+}
+
+.rich-text-summary { font-size: 1.1rem; line-height: 1.6; }
 
 /* SIDEBAR */
-.lms-sidebar {
-  width: 380px;
-  background: #111827;
-  color: #fff;
+.classroom-sidebar {
+  background: #111;
+  border: 4px solid #000;
+  border-radius: 12px;
+  color: white;
   display: flex;
   flex-direction: column;
-  flex-shrink: 0;
-  box-shadow: 10px 0 40px rgba(0,0,0,0.1);
-  z-index: 10;
-  position: relative;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.lms-sidebar-header {
-  padding: 40px 24px;
-  background: #1F2937;
-}
-
-.btn-back-portal {
-  display: flex; align-items: center; gap: 8px;
-  color: #9CA3AF; font-size: 0.85rem; font-weight: 700;
-  text-decoration: none; margin-bottom: 24px;
-  transition: color 0.2s;
-}
-
-.btn-back-portal:hover { color: #fff; }
-
-.lms-sidebar-header h2 { font-size: 1.4rem; font-weight: 900; color: #fff; margin-bottom: 24px; letter-spacing: -0.5px; }
-
-.lms-progress { }
-.progress-info { display: flex; justify-content: space-between; font-size: 0.75rem; margin-bottom: 10px; color: #9CA3AF; font-weight: 700; text-transform: uppercase; }
-.progress-bar-bg { height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px; overflow: hidden; }
-.progress-bar-fill { height: 100%; background: #FF2D55; transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
-
-.lms-module-list { flex: 1; overflow-y: auto; padding: 20px; }
-
-.lms-module-group { margin-bottom: 24px; }
-.module-group-header { margin-bottom: 12px; padding: 0 4px; }
-.mod-num { font-size: 0.7rem; font-weight: 800; color: #9CA3AF; text-transform: uppercase; letter-spacing: 1px; }
-.module-group-header h4 { font-size: 1rem; font-weight: 900; color: #F9FAFB; margin-top: 2px; }
-
-.lms-lesson-item {
-  display: flex; gap: 12px; padding: 14px 16px; border-radius: 10px;
-  cursor: pointer; transition: all 0.2s; margin-bottom: 4px;
-  border: 1px solid transparent;
-}
-
-.lms-lesson-item:hover { background: rgba(255,255,255,0.05); }
-.lms-lesson-item.active { background: rgba(255,45,85,0.15); border-color: rgba(255,45,85,0.3); }
-
-.lesson-status-icon { margin-top: 2px; }
-.icon-done { color: #10B981; }
-.icon-pending { color: #4B5563; }
-.lms-lesson-item.active .lesson-title { color: #FF2D55; font-weight: 800; }
-
-.lesson-info { display: flex; flex-direction: column; }
-.lesson-title { font-size: 0.9rem; font-weight: 600; color: #D1D5DB; }
-
-/* MAIN CONTENT */
-.lms-main-content { flex: 1; overflow-y: auto; background: #F9FAFB; }
-
-.lms-player-container {
-  background: #000;
-  width: 100%;
-  box-shadow: 0 20px 50px rgba(0,0,0,0.1);
-}
-
-.video-aspect-ratio { position: relative; padding-top: 56.25%; }
-.video-aspect-ratio iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
-
-.video-placeholder {
-  height: 480px; background: #111827; display: flex; align-items: center; justify-content: center;
-  color: #9CA3AF; text-align: center;
-}
-
-.lms-text-area { max-width: 1000px; margin: 0 auto; padding: 80px 60px; }
-
-.lms-lesson-header {
-  display: flex; justify-content: space-between; align-items: flex-start;
-  margin-bottom: 56px; gap: 32px;
-}
-
-.mod-indicator-tiny { font-size: 0.8rem; font-weight: 800; color: #FF2D55; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; display: block; }
-.lms-lesson-header h1 { font-size: 2.8rem; font-weight: 900; color: #111827; letter-spacing: -1.5px; line-height: 1.1; }
-
-.btn-complete-lesson {
-  background: #FFF; color: #111827; border: 2px solid #E5E7EB; padding: 14px 28px; border-radius: 12px;
-  font-weight: 800; cursor: pointer; white-space: nowrap; transition: all 0.2s;
-}
-
-.btn-complete-lesson:hover { border-color: #111827; }
-.btn-complete-lesson.is_done { background: #10B981; color: #fff; border-color: #10B981; }
-
-.lms-rich-content { 
-  font-family: "Inter", sans-serif;
-  font-size: 1.2rem; line-height: 1.8; color: #374151; margin-bottom: 80px; 
-}
-
-/* NAVIGATION BOTTOM */
-.lms-navigation-bottom {
-  margin-bottom: 80px;
+.sidebar-header-thick {
   padding: 40px;
-  background: #F8FAFC;
-  border-radius: 24px;
-  display: flex;
-  justify-content: center;
-  border: 2px solid #E2E8F0;
+  border-bottom: 4px solid #000;
+  text-align: center;
 }
 
-.btn-next-lesson {
-  background: #111827;
-  color: #fff;
-  border: none;
-  padding: 20px 48px;
-  border-radius: 16px;
+.sidebar-header-thick h3 {
+  font-family: var(--font-sans);
   font-weight: 900;
   font-size: 1.2rem;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  transition: all 0.3s;
+  letter-spacing: 0.1em;
 }
 
-.btn-next-lesson:hover {
-  background: #FF2D55;
-  transform: scale(1.05);
-  box-shadow: 0 10px 30px rgba(255,45,85,0.3);
-}
-
-.congrats-msg {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  color: #10B981;
-  font-weight: 900;
-  font-size: 1.3rem;
-}
-
-/* ATTACHMENTS */
-.lms-attachments {
-  background: #fff;
+.learning-path-flow {
   padding: 40px;
-  border-radius: 20px;
-  border: 1px solid #E5E7EB;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
 }
-.lms-attachments h3 { font-size: 1.3rem; font-weight: 900; margin-bottom: 24px; color: #111827; }
-.attachment-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
-.attachment-card {
-  display: flex; align-items: center; gap: 16px; padding: 20px;
-  background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 12px;
-  text-decoration: none; color: #111827; transition: all 0.2s;
-}
-.attachment-card:hover { border-color: #FF2D55; background: #FFF; transform: translateY(-2px); }
-.att-info strong { display: block; font-size: 0.95rem; font-weight: 800; }
-.att-info span { font-size: 0.8rem; color: #6B7280; font-weight: 600; }
 
-@media (max-width: 1024px) {
-  .lms-premium-layout { flex-direction: column; }
-  .lms-sidebar { width: 100%; height: auto; max-height: 40vh; }
-  .lms-main-content { height: 60vh; }
+.path-vertical-line {
+  position: absolute;
+  top: 40px; left: 65px; bottom: 40px;
+  width: 6px; background: #333;
+}
+
+.flow-module-item {
+  display: flex;
+  gap: 30px;
+  align-items: flex-start;
+  position: relative;
+  z-index: 10;
+}
+
+.flow-icon-wrap {
+  width: 50px; height: 50px;
+  flex-shrink: 0;
+  cursor: pointer;
+  position: relative;
+}
+
+.icon-circle {
+  width: 50px; height: 50px;
+  background: #333;
+  border: 3px solid #000;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.2s;
+}
+
+.flow-icon-wrap.active .icon-circle {
+  background: #FFD600;
+  color: #000;
+  box-shadow: 0 0 20px rgba(255, 214, 0, 0.5);
+  transform: scale(1.2);
+}
+
+.mod-label { font-family: var(--font-sans); font-weight: 800; font-size: 0.7rem; color: #666; }
+.mod-name { font-family: var(--font-sans); font-weight: 900; font-size: 0.9rem; margin: 4px 0 10px; }
+
+.mod-mini-progress { display: flex; align-items: center; gap: 10px; }
+.progress-bar-tiny { flex: 1; height: 6px; background: #333; border-radius: 3px; overflow: hidden; }
+.progress-bar-tiny .fill { height: 100%; background: #666; transition: width 0.3s; }
+.active .progress-bar-tiny .fill { background: #FFD600; }
+.percent { font-family: var(--font-sans); font-weight: 800; font-size: 0.7rem; color: #666; }
+
+@media (max-width: 1200px) {
+  .classroom-container { grid-template-columns: 1fr; }
+  .classroom-sidebar { margin-top: 40px; }
 }
 </style>
-

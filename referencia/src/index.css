@@ -1,0 +1,40 @@
+@import url('https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@400;600;800;900&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-display: "Archivo Black", sans-serif;
+  --font-sans: "Inter", sans-serif;
+}
+
+@layer base {
+  body {
+    @apply bg-[#F7F7F5] text-[#1C1C1C] font-sans overflow-x-hidden;
+    min-height: 100vh;
+  }
+  
+  ::selection {
+    @apply bg-[#FFE65A] text-[#1C1C1C];
+  }
+}
+
+.activist-gradient {
+  /* Mimicking the crimson to lime green to deep green gradient */
+  background: linear-gradient(110deg, #A80022 0%, #DF2028 35%, #A4CD39 75%, #1D976C 100%);
+}
+
+.activist-gradient-text {
+  background: linear-gradient(110deg, #DF2028 0%, #A4CD39 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-track {
+  @apply bg-[#F7F7F5];
+}
+::-webkit-scrollbar-thumb {
+  @apply bg-[#DF2028];
+  border-radius: 10px;
+}

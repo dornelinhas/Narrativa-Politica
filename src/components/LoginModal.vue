@@ -6,10 +6,17 @@
         
         <div class="login-modal-header">
           <div class="modal-logo">
-            <div class="logo-sq">NP</div>
+            <div class="logo-np-brutalist">
+              <div class="shape s1"></div>
+              <div class="shape s2"></div>
+              <div class="shape s3"></div>
+              <div class="shape s4"></div>
+              <div class="shape s5"></div>
+              <span class="logo-text">NP</span>
+            </div>
           </div>
-          <h2>{{ isRegisterMode ? 'Criar Conta' : 'Boas-vindas de volta' }}</h2>
-          <p>{{ isRegisterMode ? 'Junte-se à nossa comunidade de impacto social.' : 'Acesse sua conta para gerenciar conteúdos e trilhas.' }}</p>
+          <h2 class="font-display">{{ isRegisterMode ? 'Criar Conta' : 'Boas-vindas' }}</h2>
+          <p class="font-sans font-bold opacity-60">{{ isRegisterMode ? 'Junte-se à nossa comunidade de impacto social.' : 'Acesse sua conta para gerenciar conteúdos e trilhas.' }}</p>
         </div>
 
         <!-- ABAS DE NAVEGAÇÃO INTERNA -->
@@ -214,9 +221,9 @@ const handleRegister = async () => {
 .login-modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(17, 24, 39, 0.75);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  background: rgba(28, 28, 28, 0.85);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   z-index: 5000;
   display: flex;
   align-items: center;
@@ -228,53 +235,35 @@ const handleRegister = async () => {
   background: #fff;
   width: 100%;
   max-width: 480px;
-  border-radius: 32px;
+  border: 4px solid var(--color-dark);
   padding: 48px;
   position: relative;
-  box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.3);
+  box-shadow: 15px 15px 0 var(--color-dark);
   max-height: 90vh;
   overflow-y: auto;
 }
-
-/* CUSTOM SCROLLBAR FOR MODAL */
-.login-modal-card::-webkit-scrollbar { width: 6px; }
-.login-modal-card::-webkit-scrollbar-thumb { background: #E5E7EB; border-radius: 10px; }
 
 .close-modal-btn {
   position: absolute;
   top: 24px;
   right: 24px;
-  background: #F3F4F6;
-  border: none;
+  background: var(--color-bg);
+  border: 2px solid var(--color-dark);
   width: 40px;
   height: 40px;
-  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #6B7280;
+  color: var(--color-dark);
   cursor: pointer;
   transition: 0.2s;
 }
+.close-modal-btn:hover { background: var(--color-red); color: white; }
 
 .modal-logo {
   display: flex;
   justify-content: center;
-  margin-bottom: 16px;
-}
-
-.logo-sq {
-  width: 52px;
-  height: 52px;
-  background: linear-gradient(135deg, #FF2D55 0%, #8A2BE2 100%);
-  color: #fff;
-  border-radius: 14px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 900;
-  font-size: 1.3rem;
-  box-shadow: 0 8px 16px rgba(255, 45, 85, 0.2);
+  margin-bottom: 24px;
 }
 
 .login-modal-header {
@@ -283,51 +272,42 @@ const handleRegister = async () => {
 }
 
 .login-modal-header h2 {
-  font-size: 1.8rem;
-  font-weight: 900;
-  color: #111827;
-  letter-spacing: -1px;
-  margin-bottom: 8px;
-}
-
-.login-modal-header p {
-  color: #6B7280;
-  font-size: 0.95rem;
-  line-height: 1.5;
+  font-size: 2rem;
+  margin-bottom: 12px;
 }
 
 /* TABS */
 .modal-auth-tabs {
   display: flex;
-  background: #F3F4F6;
-  padding: 6px;
-  border-radius: 16px;
+  background: var(--color-bg);
+  border: 3px solid var(--color-dark);
+  padding: 4px;
   margin-bottom: 32px;
 }
 
 .modal-auth-tabs button {
   flex: 1;
-  padding: 10px;
+  padding: 12px;
   border: none;
   background: none;
-  font-weight: 800;
-  font-size: 0.9rem;
-  color: #6B7280;
+  font-family: var(--font-sans);
+  font-weight: 900;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  color: var(--color-dark);
   cursor: pointer;
-  border-radius: 12px;
   transition: all 0.3s;
 }
 
 .modal-auth-tabs button.active {
-  background: #fff;
-  color: #111827;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+  background: var(--color-dark);
+  color: white;
 }
 
 .login-modal-form {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 24px;
 }
 
 .form-row {
@@ -344,27 +324,28 @@ const handleRegister = async () => {
 
 .form-group label {
   font-size: 0.75rem;
-  font-weight: 800;
+  font-weight: 900;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
-  color: #374151;
+  letter-spacing: 0.1em;
+  color: var(--color-dark);
   text-align: left;
 }
 
 .form-group input {
   width: 100%;
-  padding: 14px 18px;
-  border: 2px solid #E5E7EB;
-  border-radius: 14px;
+  padding: 15px;
+  border: 3px solid var(--color-dark);
+  background: var(--color-bg);
+  font-family: var(--font-sans);
+  font-weight: 700;
   font-size: 1rem;
+  outline: none;
   transition: all 0.2s;
-  box-sizing: border-box;
 }
 
 .form-group input:focus {
-  border-color: #8A2BE2;
-  outline: none;
-  box-shadow: 0 0 0 4px rgba(138, 43, 226, 0.1);
+  background: white;
+  box-shadow: 4px 4px 0 var(--color-yellow);
 }
 
 .modal-check-group { 
@@ -379,54 +360,55 @@ const handleRegister = async () => {
   align-items: flex-start;
   gap: 12px;
   font-size: 0.85rem;
-  color: #6B7280;
+  font-weight: 700;
+  color: var(--color-dark);
   cursor: pointer;
   text-align: left;
 }
 
 .modal-custom-check input[type="checkbox"] {
-  width: 18px;
-  height: 18px;
-  margin-top: 2px;
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--color-dark);
   cursor: pointer;
-  flex-shrink: 0;
 }
 
-.modal-custom-check a { color: #8A2BE2; font-weight: 700; text-decoration: underline; }
+.modal-custom-check a { color: var(--color-red); text-decoration: underline; }
 
 .btn-login-modal {
-  background: linear-gradient(135deg, #FF2D55 0%, #8A2BE2 100%);
-  color: #fff;
-  border: none;
+  background: var(--color-yellow);
+  color: var(--color-dark);
+  border: 3px solid var(--color-dark);
   padding: 18px;
-  border-radius: 16px;
-  font-weight: 800;
-  font-size: 1.05rem;
+  font-family: var(--font-sans);
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-size: 1rem;
   cursor: pointer;
   transition: all 0.3s;
   margin-top: 8px;
-  box-shadow: 0 10px 20px rgba(255, 45, 85, 0.2);
 }
 
 .btn-login-modal:hover {
-  transform: translateY(-2px);
-  filter: brightness(1.05);
-  box-shadow: 0 15px 30px rgba(255, 45, 85, 0.3);
+  transform: translate(-4px, -4px);
+  box-shadow: 6px 6px 0 var(--color-dark);
 }
 
 .btn-login-modal:disabled {
   opacity: 0.6;
   cursor: not-allowed;
   transform: none;
+  box-shadow: none;
 }
 
 .login-error-msg {
-  background: #FEF2F2;
-  color: #DC2626;
+  background: #FFF;
+  color: var(--color-red);
   padding: 14px;
-  border-radius: 14px;
+  border: 2px solid var(--color-red);
   font-size: 0.85rem;
-  font-weight: 700;
+  font-weight: 900;
   display: flex;
   align-items: center;
   gap: 10px;
@@ -435,17 +417,14 @@ const handleRegister = async () => {
 .login-modal-footer {
   margin-top: 32px;
   text-align: center;
-}
-
-.login-modal-footer p {
+  font-family: var(--font-sans);
+  font-weight: 700;
   font-size: 0.9rem;
-  color: #6B7280;
 }
 
 .login-modal-footer a {
-  color: #FF2D55;
-  font-weight: 800;
-  text-decoration: none;
+  color: var(--color-red);
+  font-weight: 900;
 }
 
 @media (max-width: 480px) {
@@ -454,5 +433,5 @@ const handleRegister = async () => {
 }
 
 .fade-scale-enter-active, .fade-scale-leave-active { transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
-.fade-scale-enter-from, .fade-scale-leave-to { opacity: 0; transform: scale(0.9) translateY(20px); }
+.fade-scale-enter-from, .fade-scale-leave-to { opacity: 0; transform: translateY(20px); }
 </style>

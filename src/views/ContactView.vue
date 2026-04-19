@@ -1,195 +1,147 @@
+<script setup>
+import { ref } from 'vue'
+import { Handshake, Megaphone, MessageSquare } from 'lucide-vue-next'
+const activeType = ref('parcerias')
+const types = [
+  { key: 'parcerias', icon: Handshake, label: 'Parcerias' },
+  { key: 'imprensa', icon: Megaphone, label: 'Imprensa' },
+  { key: 'geral', icon: MessageSquare, label: 'Geral' }
+]
+</script>
+
 <template>
-  <div class="contact-brutalist">
-    <!-- HERO -->
-    <section class="contact-hero activist-gradient">
-      <div class="container hero-inner">
-        <h1 class="hero-title">FALE <br /><span class="text-yellow">CONOSCO</span></h1>
-        <p class="hero-desc">Dúvidas, propostas de parcerias ou convocações para ação? Estamos prontos para ouvir.</p>
-      </div>
-    </section>
-
-    <div class="container main-contact">
-      <div class="contact-grid-brutalist">
-        <!-- CHANNELS -->
-        <aside class="contact-sidebar-brutalist">
-          <h2 class="font-display mb-8 text-3xl">CANAIS DIRETOS</h2>
-          <div class="channel-stack">
-            <a href="mailto:contatonarrativapolitica@gmail.com" class="channel-box red-hover">
-              <Mail :size="24" />
-              <span>E-MAIL</span>
-            </a>
-            <a href="https://www.linkedin.com/company/narrativa-políticaorg" target="_blank" class="channel-box blue-hover">
-              <Linkedin :size="24" />
-              <span>LINKEDIN</span>
-            </a>
-            <a href="https://www.instagram.com/narrativapolitica/" target="_blank" class="channel-box pink-hover">
-              <Instagram :size="24" />
-              <span>INSTAGRAM</span>
-            </a>
-          </div>
-        </aside>
-
-        <!-- FORM -->
-        <main class="contact-form-area">
-          <div class="brutalist-form-card">
-            <div class="form-header-brutalist">
-              <h3 class="font-display">ENVIE UMA MENSAGEM</h3>
-              <p class="font-sans font-bold opacity-60">Retornamos em até 24 horas úteis.</p>
+  <div class="contato-page grid-dark">
+    <div class="page-content">
+      <div class="contact-wrapper">
+        <div class="contact-left">
+          <h1>Contato</h1>
+          <div class="contact-types">
+            <div v-for="t in types" :key="t.key" class="contact-type-btn" :class="{ active: activeType === t.key }" @click="activeType = t.key">
+              <span class="icon"><component :is="t.icon" :size="24" :stroke-width="2.5" /></span>
+              <div class="contact-type-label">{{ t.label }}</div>
             </div>
-            
-            <form action="https://formsubmit.co/contatonarrativapolitica@gmail.com" method="POST" class="brutalist-form">
-              <input type="hidden" name="_next" value="https://narrativapolitica.org/contatos?success=true">
-              
-              <div class="form-group-brutalist">
-                <label>NOME</label>
-                <input type="text" name="name" placeholder="Como podemos te chamar?" required />
-              </div>
-              
-              <div class="form-group-brutalist">
-                <label>SEU E-MAIL</label>
-                <input type="email" name="email" placeholder="exemplo@email.com" required />
-              </div>
-
-              <div class="form-group-brutalist">
-                <label>MENSAGEM</label>
-                <textarea name="message" rows="5" placeholder="Descreva sua dúvida ou proposta..." required></textarea>
-              </div>
-
-              <button type="submit" class="brutalist-button red w-full justify-center">
-                ENVIAR MENSAGEM <ArrowRight :size="20" />
-              </button>
-            </form>
           </div>
-        </main>
+          <div class="contact-form">
+            <div class="form-row">
+              <input type="text" class="contact-input" placeholder="Nome">
+              <input type="email" class="contact-input" placeholder="Email">
+            </div>
+            <input type="text" class="contact-input" placeholder="Assunto">
+            <textarea class="contact-textarea" placeholder="Mensagem"></textarea>
+            <button class="contact-submit">Enviar Mensagem</button>
+          </div>
+        </div>
+        <div class="geo-art">
+          <!-- Bold Pop-Art Mondrian composition with thick black strokes -->
+          <svg viewBox="0 0 420 420" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+            <!-- Base grid -->
+            <rect width="420" height="420" fill="#f0f0f0"/>
+
+            <!-- Top row blocks -->
+            <rect x="0" y="0" width="140" height="140" fill="#FF2D78" stroke="#0A0A0A" stroke-width="4"/>
+            <rect x="140" y="0" width="140" height="140" fill="#F5E000" stroke="#0A0A0A" stroke-width="4"/>
+            <rect x="280" y="0" width="140" height="140" fill="#1B8FFF" stroke="#0A0A0A" stroke-width="4"/>
+
+            <!-- Mid row blocks -->
+            <rect x="0" y="140" width="140" height="140" fill="#AAFF00" stroke="#0A0A0A" stroke-width="4"/>
+            <rect x="140" y="140" width="140" height="140" fill="#FF2D78" stroke="#0A0A0A" stroke-width="4"/>
+            <rect x="280" y="140" width="140" height="140" fill="#F5E000" stroke="#0A0A0A" stroke-width="4"/>
+
+            <!-- Bottom row blocks -->
+            <rect x="0" y="280" width="140" height="140" fill="#1B8FFF" stroke="#0A0A0A" stroke-width="4"/>
+            <rect x="140" y="280" width="140" height="140" fill="#AAFF00" stroke="#0A0A0A" stroke-width="4"/>
+            <rect x="280" y="280" width="140" height="140" fill="#FF2D78" stroke="#0A0A0A" stroke-width="4"/>
+
+            <!-- Top left: circle + triangle -->
+            <circle cx="70" cy="60" r="50" fill="#FF7A00" stroke="#0A0A0A" stroke-width="3"/>
+            <polygon points="0,140 70,20 140,140" fill="#0A0A0A" opacity="0.4"/>
+            <rect x="10" y="90" width="50" height="50" fill="#0A0A0A" opacity="0.3" stroke="#0A0A0A" stroke-width="2"/>
+
+            <!-- Top center: rectangle + triangle -->
+            <rect x="150" y="10" width="80" height="80" rx="4" fill="#0A0A0A" opacity="0.3" stroke="#0A0A0A" stroke-width="3"/>
+            <polygon points="160,130 240,50 240,130" fill="#FF2D78" stroke="#0A0A0A" stroke-width="3"/>
+            <rect x="155" y="55" width="30" height="30" fill="#AAFF00" stroke="#0A0A0A" stroke-width="2"/>
+            <!-- Stripes -->
+            <line x1="200" y1="0" x2="200" y2="140" stroke="#0A0A0A" stroke-width="6" opacity="0.2"/>
+            <line x1="215" y1="0" x2="215" y2="140" stroke="#0A0A0A" stroke-width="3" opacity="0.15"/>
+
+            <!-- Top right: circle + dot -->
+            <circle cx="350" cy="70" r="55" fill="#AAFF00" stroke="#0A0A0A" stroke-width="3"/>
+            <rect x="290" y="0" width="50" height="50" fill="#0A0A0A" opacity="0.25" stroke="#0A0A0A" stroke-width="2"/>
+            <circle cx="390" cy="12" r="25" fill="#E5292A" stroke="#0A0A0A" stroke-width="3"/>
+
+            <!-- Mid left: triangle -->
+            <polygon points="0,140 140,200 0,280" fill="#1B8FFF" stroke="#0A0A0A" stroke-width="3" opacity="0.8"/>
+            <rect x="20" y="160" width="60" height="60" fill="#0A0A0A" opacity="0.3" stroke="#0A0A0A" stroke-width="2"/>
+            <circle cx="110" cy="210" r="25" fill="#F5E000" stroke="#0A0A0A" stroke-width="3"/>
+
+            <!-- Mid center: concentric shapes -->
+            <circle cx="210" cy="210" r="50" fill="#F5E000" stroke="#0A0A0A" stroke-width="3"/>
+            <circle cx="210" cy="210" r="30" fill="#FF2D78" stroke="#0A0A0A" stroke-width="3"/>
+            <circle cx="210" cy="210" r="12" fill="#0A0A0A"/>
+            <rect x="170" y="170" width="80" height="80" rx="40" fill="none" stroke="#0A0A0A" stroke-width="5"/>
+
+            <!-- Mid right: arrow + shapes -->
+            <polygon points="280,280 420,210 420,280" fill="#1B8FFF" stroke="#0A0A0A" stroke-width="3" opacity="0.7"/>
+            <rect x="300" y="150" width="80" height="80" rx="40" fill="#0A0A0A" opacity="0.3" stroke="#0A0A0A" stroke-width="3"/>
+            <circle cx="380" cy="240" r="30" fill="#FF2D78" stroke="#0A0A0A" stroke-width="3"/>
+            <circle cx="380" cy="240" r="18" stroke="#AAFF00" stroke-width="4" fill="none"/>
+            <text x="310" y="280" font-size="36" fill="#AAFF00" font-weight="900">↗</text>
+
+            <!-- Bottom left: circles -->
+            <polygon points="0,280 140,280 0,420" fill="#F5E000" stroke="#0A0A0A" stroke-width="3" opacity="0.7"/>
+            <circle cx="60" cy="370" r="40" fill="#FF2D78" stroke="#0A0A0A" stroke-width="3"/>
+            <circle cx="60" cy="370" r="20" fill="#0A0A0A"/>
+
+            <!-- Bottom center: bullseye -->
+            <rect x="155" y="295" width="110" height="110" fill="#0A0A0A" opacity="0.2" stroke="#0A0A0A" stroke-width="2"/>
+            <circle cx="210" cy="350" r="40" fill="#1B8FFF" stroke="#0A0A0A" stroke-width="3"/>
+            <circle cx="210" cy="350" r="20" fill="#0A0A0A"/>
+            <polygon points="150,420 270,300 270,420" fill="#FF2D78" stroke="#0A0A0A" stroke-width="3" opacity="0.5"/>
+
+            <!-- Bottom right: dots -->
+            <circle cx="320" cy="310" r="25" fill="#0A0A0A" opacity="0.5"/>
+            <circle cx="390" cy="310" r="18" fill="#F5E000" stroke="#0A0A0A" stroke-width="3"/>
+            <circle cx="355" cy="375" r="30" fill="#AAFF00" stroke="#0A0A0A" stroke-width="3"/>
+            <text x="365" y="400" font-size="32" fill="#0A0A0A" font-weight="900">→</text>
+
+            <!-- Heavy grid lines -->
+            <line x1="140" y1="0" x2="140" y2="420" stroke="#0A0A0A" stroke-width="4"/>
+            <line x1="280" y1="0" x2="280" y2="420" stroke="#0A0A0A" stroke-width="4"/>
+            <line x1="0" y1="140" x2="420" y2="140" stroke="#0A0A0A" stroke-width="4"/>
+            <line x1="0" y1="280" x2="420" y2="280" stroke="#0A0A0A" stroke-width="4"/>
+          </svg>
+        </div>
       </div>
     </div>
-
-    <!-- DONATION BANNER -->
-    <section class="action-banner-brutalist">
-      <div class="container content-center-brutalist">
-        <div class="geo-shape shape-square yellow mini mb-4"></div>
-        <h2 class="font-display text-6xl text-white mb-6">APOIE A <span class="text-pink-brutalist">NARRATIVA POLÍTICA</span></h2>
-        <p class="banner-text">Sua contribuição financia a produção de dados técnicos e a formação de novas lideranças para o campo progressista.</p>
-        <router-link to="/doacao" class="brutalist-button">CONHECER FORMAS DE APOIO</router-link>
-      </div>
-    </section>
   </div>
 </template>
 
-<script setup>
-import { Mail, Linkedin, Instagram, ArrowRight } from 'lucide-vue-next'
-</script>
-
 <style scoped>
-.contact-brutalist { background: var(--color-bg); min-height: 100vh; padding-bottom: 0; }
-
-.contact-hero { padding: 180px 0 100px; border-bottom: 8px solid var(--color-dark); }
-.hero-title { font-size: clamp(3rem, 10vw, 8rem); color: white; line-height: 0.85; margin-bottom: 30px; }
-.text-yellow { color: var(--color-yellow); }
-.hero-desc { font-family: var(--font-sans); font-weight: 700; color: white; font-size: 1.2rem; max-width: 600px; opacity: 0.9; }
-
-.main-contact { margin-top: -60px; position: relative; z-index: 10; margin-bottom: 100px; }
-
-.contact-grid-brutalist { display: grid; grid-template-columns: 300px 1fr; gap: 60px; }
-
-.mb-8 { margin-bottom: 2rem; }
-.text-3xl { font-size: 2rem; line-height: 1; }
-
-.channel-stack { display: flex; flex-direction: column; gap: 20px; }
-.channel-box {
-  background: white;
-  border: 4px solid var(--color-dark);
-  padding: 25px;
-  display: flex;
-  align-items: center;
-  gap: 20px;
-  text-decoration: none;
-  color: inherit;
-  font-family: var(--font-sans);
-  font-weight: 900;
-  font-size: 0.9rem;
-  letter-spacing: 0.1em;
-  transition: all 0.2s;
-}
-
-.channel-box:hover { transform: translate(-4px, -4px); box-shadow: 8px 8px 0 var(--color-dark); }
-.red-hover:hover { box-shadow: 8px 8px 0 var(--color-red); }
-.blue-hover:hover { box-shadow: 8px 8px 0 var(--color-blue); }
-.pink-hover:hover { box-shadow: 8px 8px 0 var(--color-pink); }
-
-.brutalist-form-card {
-  background: white;
-  border: 4px solid var(--color-dark);
-  padding: 60px;
-  box-shadow: 15px 15px 0 var(--color-dark);
-}
-
-.form-header-brutalist { margin-bottom: 40px; }
-.form-header-brutalist h3 { font-size: 2.2rem; margin-bottom: 10px; line-height: 1; }
-
-.brutalist-form { display: flex; flex-direction: column; gap: 30px; }
-
-.form-group-brutalist { display: flex; flex-direction: column; gap: 10px; }
-.form-group-brutalist label { font-family: var(--font-sans); font-weight: 900; font-size: 0.75rem; letter-spacing: 0.1em; color: var(--color-dark); }
-.form-group-brutalist input, .form-group-brutalist textarea {
-  background: var(--color-bg);
-  border: 3px solid var(--color-dark);
-  padding: 15px 20px;
-  font-family: var(--font-sans);
-  font-weight: 700;
-  font-size: 1.1rem;
-  outline: none;
-}
-.form-group-brutalist input:focus, .form-group-brutalist textarea:focus { border-color: var(--color-red); background: white; }
-
-.action-banner-brutalist {
-  background: var(--color-dark);
-  padding: 120px 0;
-  text-align: center;
-  position: relative;
-  overflow: hidden;
-}
-
-.content-center-brutalist { display: flex; flex-direction: column; align-items: center; }
-.text-6xl { font-size: clamp(2rem, 5vw, 4rem); }
-.text-white { color: white; }
-.text-pink-brutalist { color: var(--color-pink); }
-.mb-6 { margin-bottom: 1.5rem; }
-.banner-text { font-family: var(--font-sans); font-weight: 600; font-size: 1.3rem; color: rgba(255,255,255,0.8); max-width: 700px; margin-bottom: 40px; line-height: 1.6; }
-
-.geo-shape.shape-square.yellow.mini { width: 30px !important; border: 3px solid white; }
-
-.w-full { width: 100%; }
-.justify-center { justify-content: center; }
-
-@media (max-width: 992px) {
-  .contact-grid-brutalist { grid-template-columns: 1fr; }
-  .contact-sidebar-brutalist .channel-stack { flex-direction: row; flex-wrap: wrap; }
-  .channel-box { flex: 1; min-width: 200px; }
-}
-
-@media (max-width: 600px) {
-  .brutalist-form-card { padding: 30px; }
-  .channel-box { width: 100%; }
-}
-
-/* GLOBAL REUSE */
-.brutalist-button {
-  display: inline-flex;
-  align-items: center;
-  gap: 1rem;
-  padding: 1.2rem 3rem;
-  font-family: var(--font-sans);
-  font-weight: 900;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  border: 4px solid var(--color-dark);
-  background: var(--color-yellow);
-  color: var(--color-dark);
-  cursor: pointer;
-  transition: all 0.2s;
-  text-decoration: none;
-}
-.brutalist-button:hover { transform: translate(-4px, -4px); box-shadow: 8px 8px 0 var(--color-dark); }
-.brutalist-button.red { background: var(--color-red); color: white; border-color: var(--color-dark); }
+@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@400;500;600;700;800;900&display=swap');
+.contato-page{background:#1f1f2e;color:#fff;min-height:100vh}
+.grid-dark{background-image:linear-gradient(rgba(255,255,255,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.03) 1px,transparent 1px);background-size:40px 40px}
+.page-content{display:flex;align-items:center;justify-content:center;padding:120px 32px 40px;min-height:calc(100vh - 56px)}
+.contact-wrapper{background:#F5E000;border-radius:8px;padding:36px 40px;max-width:832px;width:100%;display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:start}
+.contact-left h1{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:clamp(52px,7vw,88px);text-transform:uppercase;color:#0A0A0A;line-height:0.9;margin-bottom:24px}
+.contact-types{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:20px}
+.contact-type-btn{background:#fff;border:2px solid #0A0A0A;border-radius:6px;padding:14px 8px;text-align:center;cursor:pointer;transition:all 0.2s}
+.contact-type-btn:hover,.contact-type-btn.active{background:#0A0A0A;color:#fff}
+.contact-type-btn .icon{font-size:24px;margin-bottom:6px;display:block}
+.contact-type-label{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:13px;letter-spacing:1px;text-transform:uppercase;color:#0A0A0A}
+.contact-type-btn:hover .contact-type-label,.contact-type-btn.active .contact-type-label{color:#fff}
+.contact-form{background:#fff;border:2px solid #0A0A0A;border-radius:6px;padding:20px;display:flex;flex-direction:column;gap:12px}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.contact-input{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px;letter-spacing:1.5px;text-transform:uppercase;padding:12px 14px;border:2px solid #ccc;border-radius:4px;background:#fff;color:#0A0A0A;width:100%;outline:none}
+.contact-input:focus{border-color:#0A0A0A}
+.contact-input::placeholder{color:#999}
+.contact-textarea{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px;letter-spacing:1.5px;text-transform:uppercase;padding:12px 14px;border:2px solid #ccc;border-radius:4px;background:#fff;color:#0A0A0A;width:100%;min-height:130px;resize:vertical;outline:none}
+.contact-textarea:focus{border-color:#0A0A0A}
+.contact-textarea::placeholder{color:#999}
+.contact-submit{background:#E5292A;color:#fff;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:17px;letter-spacing:2px;text-transform:uppercase;padding:16px;border:none;border-radius:4px;cursor:pointer;transition:background 0.2s}
+.contact-submit:hover{background:#c0201f}
+.geo-art{border-radius:6px;overflow:hidden;background:#fff;height:100%;min-height:400px;border:3px solid #0A0A0A}
+.geo-art svg{width:100%;height:100%;display:block}
+@media(max-width:900px){.contact-wrapper{grid-template-columns:1fr}.geo-art{display:none}}
+@media(max-width:600px){.form-row{grid-template-columns:1fr}.contact-wrapper{padding:24px 20px}}
 </style>

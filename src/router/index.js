@@ -29,7 +29,8 @@ const router = createRouter({
     { path: '/contatos', name: 'contact', component: () => import('../views/ContactView.vue') },
     { path: '/sobre', name: 'about', component: () => import('../views/AboutView.vue') },
     { path: '/privacidade', name: 'privacy', component: () => import('../views/PrivacyView.vue') },
-    { path: '/oportunidades', name: 'opportunities', component: () => import('../views/OpportunitiesView.vue') }
+    { path: '/oportunidades', name: 'opportunities', component: () => import('../views/OpportunitiesView.vue') },
+    { path: '/oportunidades/:id', name: 'opportunity-detail', component: () => import('../views/OpportunityDetailView.vue') }
   ],
   scrollBehavior() { return { top: 0 } }
 })

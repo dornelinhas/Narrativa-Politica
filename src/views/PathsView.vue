@@ -1,463 +1,153 @@
+<script setup>
+import { computed } from 'vue'
+import { siteContent } from '../store/content'
+const paths = computed(() => siteContent.paths || [])
+const cardClasses = ['card-1','card-2','card-3','card-4']
+const fillClasses = ['fill-green','fill-pink','fill-blue','fill-green']
+const btnClasses = ['trilha-btn green','trilha-btn pink','trilha-btn blue','trilha-btn outline']
+</script>
+
 <template>
-  <div class="paths-np">
-    <!-- HERO -->
-    <section class="paths-hero">
-      <div class="container paths-hero-inner">
-        <div class="hero-accent" style="background: var(--color-purple, #8A2BE2);"></div>
-        <span class="hero-eyebrow">JORNADAS DE CONHECIMENTO</span>
-        <h1>Trilhas de <span class="hero-hl">Aprendizado</span></h1>
-        <p>Percorra caminhos visuais projetados para transformar conhecimento em ação estratégica de impacto.</p>
+  <div class="trilhas-page grid-pattern">
+    <div class="page-hero">
+      <h1><span class="white">Trilhas de </span><span class="green">Aprendizado</span></h1>
+    </div>
+
+    <div class="trilhas-canvas">
+      <!-- Decorative dots -->
+      <div class="deco-dot" style="width:18px;height:18px;background:#AAFF00;top:100px;left:15%"></div>
+      <div class="deco-dot" style="width:24px;height:24px;background:#FF2D78;top:280px;left:32%"></div>
+      <div class="deco-dot" style="width:16px;height:16px;background:#1B8FFF;top:60px;right:35%"></div>
+      <div class="deco-dot" style="width:22px;height:22px;background:#F5E000;top:200px;right:28%"></div>
+      <div class="deco-dot" style="width:80px;height:80px;background:#AAFF00;top:30px;right:5%;border-radius:50%"></div>
+      <div class="deco-dot" style="width:20px;height:20px;background:#FF2D78;bottom:60px;left:5%"></div>
+      <div class="deco-sq" style="width:14px;height:14px;background:#1B8FFF;top:160px;left:5%;border-radius:2px"></div>
+      <div class="deco-sq" style="width:18px;height:18px;background:#F5E000;bottom:80px;right:30%;border-radius:2px;transform:rotate(10deg)"></div>
+      <div class="deco-sq" style="width:12px;height:12px;background:#FF2D78;top:350px;right:15%;border-radius:2px"></div>
+      <!-- Arrow shape -->
+      <div style="position:absolute;top:38px;right:calc(5% + 80px);z-index:0">
+        <svg width="40" height="40" viewBox="0 0 40 40"><polygon points="0,20 20,0 40,20 30,20 30,40 10,40 10,20" fill="#FF2D78"/></svg>
       </div>
-    </section>
+      <!-- Connector lines -->
+      <svg class="connector-svg" viewBox="0 0 1060 420" preserveAspectRatio="none" style="position:absolute;inset:0;z-index:0;opacity:0.9">
+        <path d="M 215 190 Q 290 160 340 220" stroke="#FF2D78" stroke-width="3" fill="none"/>
+        <path d="M 530 160 Q 630 100 680 160" stroke="#AAFF00" stroke-width="3" fill="none"/>
+        <path d="M 790 190 Q 870 140 930 220" stroke="#1B8FFF" stroke-width="3" fill="none"/>
+        <rect x="270" y="143" width="16" height="16" rx="2" fill="#AAFF00" transform="rotate(15 270 143)"/>
+        <rect x="650" y="88" width="14" height="14" rx="2" fill="#FF2D78" transform="rotate(-10 650 88)"/>
+      </svg>
 
-    <!-- TRAILS -->
-    <section class="paths-content">
-      <div class="container">
-        <div class="paths-list">
-          <div v-for="(path, pIdx) in paths" :key="path.id"
-               class="trail-card reveal-item"
-               :class="'trail-accent-' + accentClasses[pIdx % accentClasses.length]"
-               :style="{ transitionDelay: (pIdx * 0.15) + 's' }">
-
-            <!-- TRAIL HEADER -->
-            <div class="trail-header" :style="{ background: headerColors[pIdx % headerColors.length] }">
-              <div class="trail-header-content">
-                <div class="trail-meta-badges">
-                  <span class="trail-badge-type" :class="path.isPremium ? 'premium' : 'gratuita'">{{ path.isPremium ? 'Sócio NP' : 'Gratuito' }}</span>
-                  <span class="trail-badge-level">{{ path.level }}</span>
-                </div>
-                <h2 class="trail-title">{{ path.title }}</h2>
-                <p class="trail-desc">{{ path.description }}</p>
-                
-                <div class="trail-perks">
-                  <div class="perk-item" v-if="path.hasCertificate">
-                    <CheckCircle :size="14" />
-                    Certificado Incluso
-                  </div>
-                  <div class="perk-item">
-                    <BookOpen :size="14" />
-                    {{ path.modules?.length || 0 }} Módulos
-                  </div>
-                </div>
-
-                <router-link to="/login" class="btn-trail-start">
-                  Começar Jornada
-                  <ArrowRight :size="16" />
-                </router-link>
-              </div>
-            </div>
-
-            <!-- TRAIL MODULES -->
-            <div class="trail-modules">
-              <h3 class="modules-title">Módulos da Trilha</h3>
-              <div class="modules-list">
-                <div v-for="(mod, idx) in path.modules" :key="idx"
-                     class="module-step"
-                     :style="{ transitionDelay: (idx * 0.1) + 's' }">
-                  <div class="step-number" :style="{ background: nodeColors[idx % nodeColors.length] }">
-                    {{ idx + 1 }}
-                  </div>
-                  <div class="step-info">
-                    <span class="step-label">Módulo {{ idx + 1 }} • {{ mod.lessons?.length || 0 }} aulas</span>
-                    <strong class="step-name">{{ mod.title }}</strong>
-                  </div>
-                  <div v-if="idx < path.modules.length - 1" class="step-line"></div>
-                </div>
-              </div>
-            </div>
-          </div>
+      <!-- Dynamic cards from store -->
+      <div class="trilhas-grid" v-if="paths.length">
+        <div v-for="(path, i) in paths.slice(0,4)" :key="path.id" class="trilha-card" :class="cardClasses[i % 4]">
+          <div class="trilha-title">{{ path.title }}</div>
+          <div class="trilha-modulos">{{ path.modules_count || path.modulesCount || 8 }} Módulos</div>
+          <div class="progress-bar"><div class="progress-fill" :class="fillClasses[i % 4]" :style="{ width: (path.progress || 0) + '%' }"></div></div>
+          <span class="progress-pct">{{ path.progress || 0 }}%</span>
+          <router-link :to="`/trilhas/${path.id}`" :class="btnClasses[i % 4]">{{ path.progress > 0 ? 'Continuar' : 'Começar' }}</router-link>
         </div>
       </div>
-    </section>
 
-    <!-- CTA: Login Required -->
-    <section class="paths-cta">
-      <div class="container paths-cta-inner">
-        <div class="cta-icon-wrapper">
-          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"></path><path d="M6 12v5c3 3 9 3 12 0v-5"></path></svg>
+      <!-- Static fallback -->
+      <div class="trilhas-grid" v-else>
+        <div class="trilha-card card-1">
+          <div class="trilha-title">Introdução à Política: Fundamentos e Estruturas</div>
+          <div class="trilha-modulos">8 Módulos</div>
+          <div class="progress-bar"><div class="progress-fill fill-green" style="width:0%"></div></div>
+          <span class="progress-pct">0%</span>
+          <a href="#" class="trilha-btn green">Começar</a>
         </div>
-        <h2>Pronto para começar?</h2>
-        <p>Crie sua conta gratuita para acessar as trilhas, acompanhar seu progresso e transformar conhecimento em impacto.</p>
-        <router-link to="/login" class="btn-cta-white">
-          Criar Conta Gratuita
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8H13M13 8L9 4M13 8L9 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </router-link>
+        <div class="trilha-card card-2">
+          <div class="trilha-title">Ativismo e Organização Comunitária</div>
+          <div class="trilha-modulos">12 Módulos</div>
+          <div class="progress-bar"><div class="progress-fill fill-pink" style="width:25%"></div></div>
+          <span class="progress-pct">25%</span>
+          <a href="#" class="trilha-btn pink">Continuar</a>
+        </div>
+        <div class="trilha-card card-3">
+          <div class="trilha-title">Incidência Legislativa e Campanhas</div>
+          <div class="trilha-modulos">10 Módulos</div>
+          <div class="progress-bar"><div class="progress-fill fill-blue" style="width:50%"></div></div>
+          <span class="progress-pct">50%</span>
+          <a href="#" class="trilha-btn blue">Continuar</a>
+        </div>
+        <div class="trilha-card card-4">
+          <div class="trilha-title">Comunicação Estratégica e Narrativa</div>
+          <div class="trilha-modulos">9 Módulos</div>
+          <div class="progress-bar"><div class="progress-fill fill-green" style="width:0%"></div></div>
+          <span class="progress-pct">0%</span>
+          <a href="#" class="trilha-btn outline">Começar</a>
+        </div>
       </div>
-    </section>
+    </div>
+
+    <!-- JOIN SECTION -->
+    <div class="join-section">
+      <div class="join-card">
+        <div>
+          <div class="join-label">Rede de Mobilização</div>
+          <div class="join-headline">Junte-se ao<br>Movimento</div>
+          <p class="join-sub">Receba despachos estratégicos, convocações de ação e atualizações das frentes de luta. Sem spam.</p>
+        </div>
+        <div class="join-form">
+          <input type="email" class="join-input" placeholder="Digite seu email...">
+          <button class="join-submit">Quero Fazer Parte →</button>
+        </div>
+        <div class="join-deco-circle"></div>
+        <div class="join-deco-sq"></div>
+      </div>
+    </div>
   </div>
 </template>
 
-<script setup>
-import { onMounted, computed } from 'vue'
-import { siteContent } from '../store/content'
-import { ArrowRight, CheckCircle, BookOpen } from 'lucide-vue-next'
-
-const nodeColors = ['#FF2D55', '#8A2BE2', '#00CED1', '#D4E157']
-const headerColors = ['linear-gradient(135deg, #FF2D55, #C72E70)', 'linear-gradient(135deg, #8A2BE2, #5B1FA0)']
-const accentClasses = ['pink', 'purple']
-
-const paths = computed(() => siteContent.paths)
-
-onMounted(() => {
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) entry.target.classList.add('reveal-visible')
-    })
-  }, { threshold: 0.1 })
-  document.querySelectorAll('.reveal-item').forEach(el => observer.observe(el))
-})
-</script>
-
 <style scoped>
-.reveal-item {
-  opacity: 0;
-  transform: translateY(30px);
-  transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
-}
-.reveal-visible { opacity: 1; transform: translateY(0); }
-
-/* ═══════════════════════════════════════════════
-   HERO — MINIMAL ELEGANT
-   ═══════════════════════════════════════════════ */
-.paths-hero {
-  background: #F9FAFB;
-  padding: 160px 0 80px;
-  text-align: center;
-  border-bottom: 1px solid rgba(0,0,0,0.04);
-}
-
-.paths-hero-inner {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.hero-accent {
-  width: 40px;
-  height: 4px;
-  border-radius: 2px;
-  margin-bottom: 24px;
-}
-
-.hero-eyebrow {
-  font-size: 0.7rem;
-  font-weight: 900;
-  letter-spacing: 2.5px;
-  color: var(--text-soft, #9CA3AF);
-  text-transform: uppercase;
-  margin-bottom: 16px;
-}
-
-.paths-np {
-  font-family: 'Inter', 'Poppins', sans-serif;
-}
-
-.paths-hero h1 {
-  font-size: clamp(2.4rem, 5vw, 3.5rem);
-  font-weight: 900;
-  color: var(--color-graphite, #1A1C2E);
-  margin-bottom: 16px;
-}
-
-.hero-hl {
-  color: var(--color-purple, #8A2BE2);
-}
-
-.paths-hero p {
-  font-size: 1.1rem;
-  color: var(--text-muted, #6B7280);
-  max-width: 560px;
-  line-height: 1.65;
-}
-
-/* ═══════════════════════════════════════════════
-   TRAILS CONTENT
-   ═══════════════════════════════════════════════ */
-.paths-content {
-  padding: 100px 0;
-  background: linear-gradient(180deg, rgba(138,43,226,0.03) 0%, rgba(255,45,85,0.05) 100%);
-}
-
-.paths-list {
-  display: flex;
-  flex-direction: column;
-  gap: 48px;
-}
-
-.trail-card {
-  border-radius: var(--radius-xl);
-  overflow: hidden;
-  box-shadow: var(--shadow-md);
-  display: grid;
-  grid-template-columns: 420px 1fr;
-  background: #fff;
-  transition: all 0.4s ease;
-}
-
-.trail-card:hover {
-  box-shadow: var(--shadow-lg);
-  transform: translateY(-4px);
-}
-
-.trail-accent-pink { border: 2px solid var(--color-pink-mid, #FFD6DE); }
-.trail-accent-purple { border: 2px solid var(--color-purple-mid, #D8C4F7); }
-
-/* TRAIL HEADER (colored side) */
-.trail-header {
-  padding: 48px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  color: #fff;
-}
-
-.trail-badge-type {
-  display: inline-block;
-  align-self: flex-start;
-  padding: 6px 16px;
-  border-radius: 8px;
-  font-size: 0.7rem;
-  font-weight: 900;
-  text-transform: uppercase;
-  letter-spacing: 1.5px;
-  margin-bottom: 16px;
-}
-
-.trail-badge-type.gratuita { background: rgba(255,255,255,0.15); color: #fff; }
-.trail-badge-type.premium { background: #D4E157; color: #111; }
-
-.trail-badge-level {
-  display: inline-block;
-  padding: 6px 16px;
-  border-radius: 8px;
-  font-size: 0.7rem;
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  background: rgba(255,255,255,0.1);
-  color: #fff;
-  border: 1px solid rgba(255,255,255,0.2);
-}
-
-.trail-meta-badges {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 20px;
-}
-
-.trail-perks {
-  display: flex;
-  gap: 20px;
-  margin-bottom: 32px;
-}
-
-.perk-item {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 0.85rem;
-  font-weight: 700;
-  color: rgba(255,255,255,0.9);
-}
-
-.trail-title {
-  font-size: 2.4rem;
-  font-weight: 900;
-  color: #fff;
-  line-height: 1.1;
-  margin-bottom: 12px;
-}
-
-.trail-desc {
-  font-size: 1rem;
-  color: rgba(255,255,255,0.8);
-  line-height: 1.6;
-  margin-bottom: 32px;
-}
-
-.btn-trail-start {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  background: #fff;
-  color: var(--color-graphite);
-  padding: 14px 32px;
-  border-radius: 14px;
-  font-weight: 800;
-  font-size: 0.9rem;
-  text-decoration: none;
-  transition: all 0.3s ease;
-  align-self: flex-start;
-}
-
-.btn-trail-start:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(255,255,255,0.3);
-}
-
-/* TRAIL MODULES */
-.trail-modules {
-  padding: 48px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-}
-
-.modules-title {
-  font-size: 0.75rem;
-  font-weight: 900;
-  text-transform: uppercase;
-  letter-spacing: 2px;
-  color: var(--text-soft, #9CA3AF);
-  margin-bottom: 28px;
-}
-
-.modules-list {
-  display: flex;
-  flex-direction: column;
-  gap: 0;
-}
-
-.module-step {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-  padding: 14px 0;
-  position: relative;
-  transition: transform 0.3s ease;
-}
-
-.module-step:hover { transform: translateX(8px); }
-
-.step-number {
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 900;
-  font-size: 0.95rem;
-  color: #fff;
-  flex-shrink: 0;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-  transition: transform 0.3s ease;
-}
-
-.module-step:hover .step-number { transform: scale(1.15); }
-
-.step-line {
-  position: absolute;
-  left: 21px;
-  top: 58px;
-  width: 2px;
-  height: 20px;
-  background: #e5e7eb;
-}
-
-.step-info { display: flex; flex-direction: column; }
-
-.step-label {
-  font-size: 0.65rem;
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  color: var(--text-soft, #9CA3AF);
-  margin-bottom: 2px;
-}
-
-.step-name {
-  font-size: 1.05rem;
-  font-weight: 800;
-  color: var(--color-graphite);
-}
-
-/* ═══════════════════════════════════════════════
-   CTA
-   ═══════════════════════════════════════════════ */
-.paths-cta {
-  background: linear-gradient(135deg, var(--color-petrol), var(--color-purple));
-  padding: 80px 0;
-  text-align: center;
-}
-
-.paths-cta-inner {
-  max-width: 600px;
-  margin: 0 auto;
-}
-
-.cta-icon {
-  font-size: 3rem;
-  margin-bottom: 20px;
-}
-
-.paths-cta h2 {
-  font-size: 2.4rem;
-  color: #fff;
-  margin-bottom: 16px;
-}
-
-.paths-cta p {
-  color: rgba(255,255,255,0.75);
-  font-size: 1.05rem;
-  line-height: 1.65;
-  margin-bottom: 36px;
-}
-
-.btn-cta-white {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  background: #fff;
-  color: var(--color-graphite);
-  padding: 16px 40px;
-  border-radius: 14px;
-  font-weight: 800;
-  font-size: 1rem;
-  text-decoration: none;
-  transition: all 0.3s ease;
-}
-
-.btn-cta-white:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 12px 40px rgba(255,255,255,0.25);
-}
-
-.cta-icon-wrapper {
-  width: 64px;
-  height: 64px;
-  background: rgba(255,255,255,0.1);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 0 auto 24px;
-  color: #fff;
-}
-
-.btn-text-primary {
-  display: inline-flex;
-  align-items: center;
-  font-size: 0.9rem;
-  font-weight: 800;
-  color: var(--color-purple);
-  text-decoration: none;
-  transition: color 0.2s ease;
-}
-
-.btn-text-primary:hover {
-  color: var(--color-graphite);
-}
-
-/* RESPONSIVE */
-@media (max-width: 1100px) {
-  .trail-card { grid-template-columns: 1fr; }
-}
-
-@media (max-width: 640px) {
-  .trail-header { padding: 36px; }
-  .trail-modules { padding: 36px; }
-  .trail-title { font-size: 1.8rem; }
-  .paths-hero h1 { font-size: 2.4rem; }
-}
+@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@400;500;600;700;800;900&display=swap');
+.trilhas-page{background:#1a1a1a;color:#fff;min-height:100vh}
+.grid-pattern{background-image:linear-gradient(rgba(255,255,255,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.04) 1px,transparent 1px);background-size:40px 40px}
+.page-hero{text-align:center;padding:50px 32px 20px}
+.page-hero h1{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:clamp(48px,8vw,96px);text-transform:uppercase;letter-spacing:-1px;line-height:0.95}
+.page-hero h1 .white{color:#fff}
+.page-hero h1 .green{color:#AAFF00}
+.trilhas-canvas{position:relative;max-width:1100px;margin:20px auto 0;padding:0 20px 40px;min-height:480px}
+.connector-svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+.deco-dot{position:absolute;border-radius:50%;z-index:0}
+.deco-sq{position:absolute;z-index:0}
+.trilhas-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;position:relative;z-index:1;padding:60px 0 20px}
+.trilha-card{background:#242424;border-radius:6px;padding:22px 20px;border:2px solid transparent;position:relative}
+.trilha-card.card-1{border-color:#555;margin-top:40px}
+.trilha-card.card-2{border-color:#FF2D78;margin-top:80px}
+.trilha-card.card-3{border-color:#1B8FFF;margin-top:20px}
+.trilha-card.card-4{border-color:#555;margin-top:100px}
+.trilha-title{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:20px;text-transform:uppercase;line-height:1.1;color:#fff;margin-bottom:10px}
+.trilha-modulos{font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:13px;color:rgba(255,255,255,0.5);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px}
+.progress-bar{height:6px;background:rgba(255,255,255,0.12);border-radius:3px;margin:8px 0 4px}
+.progress-fill{height:100%;border-radius:3px}
+.fill-green{background:#AAFF00}
+.fill-pink{background:#FF2D78}
+.fill-blue{background:#1B8FFF}
+.fill-yellow{background:#F5E000}
+.progress-pct{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:12px;color:rgba(255,255,255,0.5);margin-bottom:16px;display:block;text-align:right}
+.trilha-btn{display:block;width:100%;text-align:center;font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:14px;letter-spacing:2px;text-transform:uppercase;padding:12px;border:none;border-radius:4px;cursor:pointer;text-decoration:none;transition:filter 0.2s}
+.trilha-btn.green{background:#AAFF00;color:#0A0A0A}
+.trilha-btn.pink{background:#FF2D78;color:#fff}
+.trilha-btn.blue{background:#1B8FFF;color:#fff}
+.trilha-btn.outline{background:transparent;border:2px solid rgba(255,255,255,0.3);color:#fff}
+.trilha-btn:hover{filter:brightness(1.1)}
+/* JOIN SECTION */
+.join-section{max-width:1100px;margin:20px auto 40px;padding:0 20px}
+.join-card{background:#F5E000;border-radius:8px;padding:32px 40px;display:grid;grid-template-columns:1fr auto;gap:40px;align-items:center;position:relative;overflow:visible}
+.join-label{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:12px;letter-spacing:2px;text-transform:uppercase;color:#0A0A0A;margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.join-label::before{content:'⚡';font-size:14px}
+.join-headline{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:clamp(28px,4vw,44px);text-transform:uppercase;color:#0A0A0A;line-height:1;margin-bottom:8px}
+.join-sub{font-size:12px;color:rgba(0,0,0,0.65);max-width:360px;line-height:1.5}
+.join-form{display:flex;flex-direction:column;gap:10px;min-width:300px}
+.join-input{font-family:'Barlow',sans-serif;font-size:14px;padding:12px 16px;border:2px solid rgba(0,0,0,0.2);border-radius:4px;background:#fff;color:#0A0A0A;outline:none}
+.join-input:focus{border-color:#0A0A0A}
+.join-input::placeholder{color:rgba(0,0,0,0.4)}
+.join-submit{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:14px;letter-spacing:2px;text-transform:uppercase;padding:13px;background:#E5292A;color:#fff;border:none;border-radius:4px;cursor:pointer;transition:background 0.2s}
+.join-submit:hover{background:#c0201f}
+.join-deco-circle{position:absolute;width:80px;height:80px;background:#E5292A;border-radius:50%;top:-20px;right:-20px}
+.join-deco-sq{position:absolute;width:40px;height:40px;background:#AAFF00;border-radius:4px;bottom:-15px;right:240px}
+@media(max-width:900px){.trilhas-grid{grid-template-columns:repeat(2,1fr)}.join-card{grid-template-columns:1fr}}
+@media(max-width:600px){.trilhas-grid{grid-template-columns:1fr}.trilha-card{margin-top:0 !important}}
 </style>

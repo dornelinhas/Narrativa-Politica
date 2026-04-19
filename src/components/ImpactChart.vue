@@ -1,21 +1,24 @@
 <template>
-  <div class="impact-chart-vibrant">
-    <div class="chart-header-vibrant">
+  <div class="brutalist-card impact-chart-module">
+    <div class="chart-header">
       <div class="chart-info">
-        <div class="chart-icon-wrap"><TrendingUp :size="20" /></div>
+        <div class="chart-icon-wrap"><TrendingUp :size="24" /></div>
         <div class="chart-titles">
-          <h3>Projeção de Engajamento</h3>
-          <p>Métricas de alcance em tempo real</p>
+          <h3 class="font-display">Engajamento</h3>
+          <p class="font-sans font-bold opacity-60">Métricas de impacto social</p>
         </div>
       </div>
     </div>
 
-    <!-- EMPTY STATE PROFISSIONAL -->
+    <!-- EMPTY STATE BRUTALISTA -->
     <div class="chart-area-empty">
-      <div class="grid-background"></div>
+      <div class="grid-pattern"></div>
       <div class="empty-message">
-        <BarChart3 :size="48" class="empty-icon" />
-        <p>Aguardando volume de dados suficientes <br>para gerar as análises.</p>
+        <div class="geo-circle red-bg w-16 h-16 border-dark flex-center mb-6 mx-auto">
+           <BarChart3 :size="32" class="text-white" />
+        </div>
+        <p class="font-sans font-black uppercase text-sm tracking-widest">Aguardando dados estruturais</p>
+        <p class="font-sans font-bold opacity-50 text-xs mt-2">VOLUME INSUFICIENTE PARA ANÁLISE</p>
       </div>
     </div>
   </div>
@@ -26,81 +29,78 @@ import { TrendingUp, BarChart3 } from 'lucide-vue-next'
 </script>
 
 <style scoped>
-.impact-chart-vibrant {
-  background: #fff;
-  border-radius: 28px;
+.impact-chart-module {
+  background: white;
   padding: 40px;
-  color: #111827;
-  border: 1.5px solid #F1F5F9;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.02);
   height: 100%;
-  position: relative;
-  overflow: hidden;
   display: flex;
   flex-direction: column;
 }
 
-.chart-header-vibrant {
+.chart-header {
+  margin-bottom: 30px;
+}
+
+.chart-info {
   display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 24px;
+  align-items: center;
+  gap: 20px;
 }
 
 .chart-icon-wrap {
-  width: 44px;
-  height: 44px;
-  background: rgba(255,45,85,0.1);
-  color: #FF2D55;
-  border-radius: 12px;
+  width: 50px;
+  height: 50px;
+  background: var(--color-yellow);
+  border: 3px solid var(--color-dark);
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 16px;
+  color: var(--color-dark);
 }
 
-.chart-titles h3 { font-size: 1.4rem; font-weight: 900; margin-bottom: 4px; letter-spacing: -0.5px; color: #111827; }
-.chart-titles p { color: #64748B; font-size: 0.9rem; font-weight: 600; }
+.chart-titles h3 { font-size: 1.6rem; line-height: 1; margin-bottom: 5px; }
+.chart-titles p { font-size: 0.85rem; }
 
 /* EMPTY STATE */
 .chart-area-empty {
   flex: 1;
-  min-height: 250px;
+  min-height: 280px;
   position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #F9FAFB;
-  border-radius: 20px;
-  border: 1px dashed #E5E7EB;
+  background: var(--color-bg);
+  border: 4px solid var(--color-dark);
   overflow: hidden;
 }
 
-.grid-background {
+.grid-pattern {
   position: absolute;
   inset: 0;
   background-image: 
-    linear-gradient(to right, rgba(0,0,0,0.03) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(0,0,0,0.03) 1px, transparent 1px);
-  background-size: 40px 40px;
+    linear-gradient(to right, rgba(0,0,0,0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(0,0,0,0.05) 1px, transparent 1px);
+  background-size: 30px 30px;
 }
 
 .empty-message {
   position: relative;
   z-index: 2;
   text-align: center;
-  color: #94A3B8;
+  color: var(--color-dark);
 }
 
-.empty-icon {
-  margin-bottom: 16px;
-  opacity: 0.5;
-  color: #FF2D55;
-}
-
-.empty-message p {
-  font-size: 1rem;
-  font-weight: 600;
-  line-height: 1.5;
-}
+.flex-center { display: flex; align-items: center; justify-content: center; }
+.red-bg { background: var(--color-red); }
+.text-white { color: white; }
+.geo-circle { border-radius: 50%; }
+.border-dark { border: 3px solid var(--color-dark); }
+.w-16 { width: 4rem; }
+.h-16 { height: 4rem; }
+.mx-auto { margin-left: auto; margin-right: auto; }
+.mb-6 { margin-bottom: 1.5rem; }
+.mt-2 { margin-top: 0.5rem; }
+.text-sm { font-size: 0.875rem; }
+.text-xs { font-size: 0.75rem; }
+.tracking-widest { letter-spacing: 0.1em; }
 </style>

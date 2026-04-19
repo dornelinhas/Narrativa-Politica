@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Painel do Aluno – NP A Bancada de Impacto</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    body { background: #f0ede8; color: var(--black); }
+
+    .page-hero {
+      text-align: center;
+      padding: 36px 32px 20px;
+    }
+
+    .page-hero h1 {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 900;
+      font-size: clamp(36px, 5.5vw, 72px);
+      text-transform: uppercase;
+      color: var(--black);
+      letter-spacing: -1px;
+    }
+
+    .course-layout {
+      display: grid;
+      grid-template-columns: 1fr 340px;
+      gap: 20px;
+      max-width: 1140px;
+      margin: 0 auto;
+      padding: 0 24px 50px;
+    }
+
+    /* Left - Video + tabs */
+    .course-main {
+      border: 2px solid #ddd;
+      border-radius: 8px;
+      background: var(--white);
+      overflow: hidden;
+    }
+
+    .course-header {
+      padding: 24px 28px 16px;
+      border-bottom: 2px solid #eee;
+    }
+
+    .course-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 900;
+      font-size: 28px;
+      text-transform: uppercase;
+      color: var(--black);
+      line-height: 1.1;
+    }
+
+    .video-placeholder {
+      background: #d0d0d0;
+      aspect-ratio: 16/9;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .video-placeholder svg { width: 100%; height: 100%; }
+
+    .course-tabs {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      border-top: 2px solid #eee;
+    }
+
+    .course-tab {
+      padding: 18px;
+      text-align: center;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 800;
+      font-size: 15px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      cursor: pointer;
+      border-right: 2px solid #eee;
+      background: var(--white);
+      transition: all 0.2s;
+    }
+
+    .course-tab:last-child { border-right: none; }
+
+    .course-tab.yellow { background: var(--yellow); color: var(--black); }
+    .course-tab.pink { background: var(--pink); color: var(--white); }
+    .course-tab.blue { background: var(--blue); color: var(--white); }
+
+    /* Right - Learning path sidebar */
+    .learning-path {
+      border: 2px solid #ddd;
+      border-radius: 8px;
+      background: var(--dark);
+      overflow: hidden;
+    }
+
+    .lp-header {
+      background: var(--dark);
+      padding: 18px 20px;
+      text-align: center;
+      border-bottom: 2px solid rgba(255,255,255,0.1);
+    }
+
+    .lp-header h3 {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 900;
+      font-size: 18px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--white);
+    }
+
+    .lp-modules {
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* The path connector line */
+    .module-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      padding: 12px 0;
+      position: relative;
+    }
+
+    .module-item:not(:last-child)::after {
+      content: '';
+      position: absolute;
+      left: 19px;
+      top: 52px;
+      width: 3px;
+      height: calc(100% - 20px);
+      background: rgba(255,255,255,0.15);
+      z-index: 0;
+    }
+
+    .module-dot {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: 3px solid;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      font-size: 16px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .module-dot.active {
+      background: var(--yellow);
+      border-color: var(--pink);
+      box-shadow: 0 0 12px rgba(255, 45, 120, 0.6);
+    }
+
+    .module-dot.pink-dot {
+      background: var(--dark);
+      border-color: var(--pink);
+    }
+
+    .module-dot.yellow-dot {
+      background: var(--dark);
+      border-color: var(--yellow);
+    }
+
+    .module-dot.blue-dot {
+      background: var(--dark);
+      border-color: var(--blue);
+    }
+
+    .module-dot.green-dot {
+      background: var(--dark);
+      border-color: var(--green);
+    }
+
+    .module-info { flex: 1; }
+
+    .module-num {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 600;
+      font-size: 11px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.45);
+      margin-bottom: 2px;
+    }
+
+    .module-name {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 800;
+      font-size: 14px;
+      text-transform: uppercase;
+      color: var(--white);
+      line-height: 1.2;
+      margin-bottom: 6px;
+    }
+
+    .module-name.active-text { color: var(--pink); }
+
+    .module-progress-bar {
+      height: 5px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .module-progress-fill { height: 100%; border-radius: 3px; }
+    .fill-pink { background: var(--pink); }
+    .fill-yellow { background: var(--yellow); }
+    .fill-blue { background: var(--blue); }
+    .fill-green { background: var(--green); }
+
+    .module-pct {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700;
+      font-size: 11px;
+      color: rgba(255,255,255,0.4);
+      text-align: right;
+      display: block;
+      margin-top: 2px;
+    }
+  </style>
+</head>
+<body class="grid-bg-light">
+  <nav class="navbar light">
+    <a href="artigos.html" class="logo light">
+      <div class="logo-mark">
+        <svg width="52" height="44" viewBox="0 0 52 44">
+          <rect x="2" y="2" width="7" height="7" rx="1" fill="#FF2D78"/>
+          <rect x="11" y="2" width="7" height="7" rx="1" fill="#F5E000"/>
+          <rect x="2" y="11" width="7" height="7" rx="1" fill="#1B8FFF"/>
+          <rect x="43" y="2" width="7" height="7" rx="1" fill="#AAFF00"/>
+          <rect x="43" y="11" width="7" height="7" rx="1" fill="#FF7A00"/>
+          <rect x="43" y="35" width="7" height="7" rx="1" fill="#FF2D78"/>
+          <rect x="34" y="35" width="7" height="7" rx="1" fill="#F5E000"/>
+          <text x="26" y="30" font-family="'Barlow Condensed', sans-serif" font-weight="900" font-size="28" fill="#0A0A0A" text-anchor="middle">NP</text>
+        </svg>
+      </div>
+      <span class="logo-name" style="color:#0a0a0a;">A BANCADA<br>DE IMPACTO</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="trilhas.html" class="nav-link" style="color:#0a0a0a;">Movimento</a></li>
+      <li><a href="artigos.html" class="nav-link" style="color:#0a0a0a;">Artigos</a></li>
+      <li><a href="#" class="nav-link" style="color:#0a0a0a;">Radar ▾</a></li>
+      <li><a href="#" class="nav-link" style="color:#0a0a0a;">Sobre</a></li>
+    </ul>
+    <a href="apoie.html" class="nav-btn active">Envolva-se</a>
+    <a href="painel-aluno.html" class="nav-avatar" style="background:#0a0a0a;color:#fff;">A</a>
+  </nav>
+
+  <div class="page-hero">
+    <h1>Course Learning Path Interface</h1>
+  </div>
+
+  <div class="course-layout">
+    <!-- Left: Video Player -->
+    <div class="course-main">
+      <div class="course-header">
+        <div class="course-title">Introdução à Economia<br>Política Global</div>
+      </div>
+
+      <div class="video-placeholder">
+        <svg viewBox="0 0 800 450" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" style="width:100%;height:100%;display:block;">
+          <rect width="800" height="450" fill="#c8c8c8"/>
+          <!-- Video frame lines -->
+          <rect x="0" y="0" width="800" height="450" fill="#d4d4d4"/>
+          <!-- Grid lines -->
+          <line x1="0" y1="150" x2="800" y2="150" stroke="#bbb" stroke-width="1"/>
+          <line x1="0" y1="300" x2="800" y2="300" stroke="#bbb" stroke-width="1"/>
+          <line x1="267" y1="0" x2="267" y2="450" stroke="#bbb" stroke-width="1"/>
+          <line x1="533" y1="0" x2="533" y2="450" stroke="#bbb" stroke-width="1"/>
+          <!-- Play button -->
+          <circle cx="400" cy="225" r="50" fill="rgba(0,0,0,0.2)"/>
+          <polygon points="385,205 385,245 425,225" fill="rgba(255,255,255,0.8)"/>
+        </svg>
+      </div>
+
+      <div class="course-tabs">
+        <div class="course-tab yellow">Summary</div>
+        <div class="course-tab pink">Resources</div>
+        <div class="course-tab blue">Forum</div>
+      </div>
+    </div>
+
+    <!-- Right: Learning Path -->
+    <div class="learning-path">
+      <div class="lp-header">
+        <h3>Learning Path</h3>
+      </div>
+
+      <div class="lp-modules">
+
+        <!-- Module 1 - Active -->
+        <div class="module-item">
+          <div class="module-dot active">⊞</div>
+          <div class="module-info">
+            <div class="module-num">Módulo 1:</div>
+            <div class="module-name active-text">Fundamentos e Conceitos</div>
+            <div class="module-progress-bar">
+              <div class="module-progress-fill fill-pink" style="width:100%;"></div>
+            </div>
+            <span class="module-pct">Em andamento</span>
+          </div>
+        </div>
+
+        <!-- Module 2 -->
+        <div class="module-item">
+          <div class="module-dot pink-dot">◉</div>
+          <div class="module-info">
+            <div class="module-num">Módulo 2:</div>
+            <div class="module-name">Sistemas Econômicos</div>
+            <div class="module-progress-bar">
+              <div class="module-progress-fill fill-yellow" style="width:0%;"></div>
+            </div>
+            <span class="module-pct">0%</span>
+          </div>
+        </div>
+
+        <!-- Module 3 -->
+        <div class="module-item">
+          <div class="module-dot yellow-dot">◉</div>
+          <div class="module-info">
+            <div class="module-num">Módulo 3:</div>
+            <div class="module-name">Gênero e Trabalho</div>
+            <div class="module-progress-bar">
+              <div class="module-progress-fill fill-yellow" style="width:50%;"></div>
+            </div>
+            <span class="module-pct">50%</span>
+          </div>
+        </div>
+
+        <!-- Module 4 -->
+        <div class="module-item">
+          <div class="module-dot blue-dot">◼</div>
+          <div class="module-info">
+            <div class="module-num">Módulo 4:</div>
+            <div class="module-name">Comunicação e Territoria</div>
+            <div class="module-progress-bar">
+              <div class="module-progress-fill fill-blue" style="width:0%;"></div>
+            </div>
+            <span class="module-pct">0%</span>
+          </div>
+        </div>
+
+        <!-- Module 5 -->
+        <div class="module-item">
+          <div class="module-dot green-dot">◉</div>
+          <div class="module-info">
+            <div class="module-num">Módulo 5:</div>
+            <div class="module-name">Economias e Econômias</div>
+            <div class="module-progress-bar">
+              <div class="module-progress-fill fill-green" style="width:0%;"></div>
+            </div>
+            <span class="module-pct">0%</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.querySelectorAll('.course-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.course-tab').forEach(t => {
+          t.classList.remove('yellow', 'pink', 'blue');
+          t.style.background = '';
+          t.style.color = '';
+        });
+      });
+    });
+  </script>
+</body>
+</html>

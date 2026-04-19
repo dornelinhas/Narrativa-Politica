@@ -1,361 +1,86 @@
 <script setup>
-import { onMounted } from 'vue'
+import { computed } from 'vue'
 import { siteContent } from '../store/content'
-import { TrendingUp, ArrowRight } from 'lucide-vue-next'
+const projects = computed(() => siteContent.projects || [])
 
-const projects = siteContent.projects
+const staticProjects = [
+  { id: 1, title: 'Women in Leadership: Bridging the Gender Gap', desc: 'Empowering female voices in politics and business to create equitable decision-making spaces.', impact: '+500 Lideranças Formadas', tags: [{ label: 'Gender', cls: 'pt-pink' }, { label: 'Leadership', cls: 'pt-blue' }], image: '/images/projects/women-leadership.png' },
+  { id: 2, title: 'The Future of Green Economics', desc: 'Analyzing the shift towards sustainable and circular models for long-term prosperity.', impact: '3 Leis Aprovadas', tags: [{ label: 'Economy', cls: 'pt-yellow' }, { label: 'Sustainability', cls: 'pt-green' }], image: '/images/projects/green-economics.png' },
+  { id: 3, title: 'Global Diplomacy in a Multipolar World', desc: 'Examining evolving power dynamics and international cooperation strategies.', impact: '12 Acordos Internacionais', tags: [{ label: 'International Relations', cls: 'pt-blue' }, { label: 'Diplomacy', cls: 'pt-orange' }], image: '/images/projects/diplomacy.png' },
+  { id: 4, title: 'Grassroots Movements & Policy Change', desc: 'Case studies of local initiatives influencing legislative reforms.', impact: '50+ Comunidades Apoiadas', tags: [{ label: 'Social Impact', cls: 'pt-orange' }, { label: 'Policy', cls: 'pt-red' }], image: '/images/projects/grassroots.png' },
+  { id: 5, title: 'Closing the Economic Empowerment Gap', desc: 'Investigating financial inclusion and entrepreneurship programs for women.', impact: 'R$ 2M Mobilizados', tags: [{ label: 'Gender', cls: 'pt-pink' }, { label: 'Economy', cls: 'pt-yellow' }], image: '/images/projects/economic-empowerment.png' },
+  { id: 6, title: 'Trade Policies for a Connected World', desc: 'Assessing the impact of international trade agreements on developing nations.', impact: 'Publicação de 5 Manuais', tags: [{ label: 'International Relations', cls: 'pt-blue' }, { label: 'Economy', cls: 'pt-yellow' }], image: '/images/projects/trade-policies.png' }
+]
 
-const getImpactClass = (color) => {
-  return 'impact-' + (color || 'purple')
-}
-
-const getBtnClass = (color) => {
-  return 'btn-' + (color || 'purple')
-}
-
-onMounted(() => {
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) entry.target.classList.add('reveal-visible')
-    })
-  }, { threshold: 0.1 })
-  document.querySelectorAll('.reveal-item').forEach(el => observer.observe(el))
+const displayProjects = computed(() => {
+  if (projects.value.length > 0) return projects.value
+  return staticProjects
 })
 </script>
 
 <template>
-  <div class="projects-np">
-    <!-- HERO -->
-    <section class="proj-hero">
-      <div class="container proj-hero-inner">
-        <div class="hero-accent" style="background: var(--color-lime, #D4E157);"></div>
-        <span class="hero-eyebrow">LAB DE IMPACTO</span>
-        <h1>Projetos de <span class="hero-hl">Impacto Social</span></h1>
-        <p>Iniciativas estratégicas onde transformamos dados em mudança social real e tangível para lideranças femininas.</p>
-      </div>
-    </section>
-
-    <!-- PROJECTS GRID -->
-    <section class="proj-grid-section">
-      <div class="container">
-        <div v-if="projects.length" class="proj-grid">
-          <div v-for="(project, idx) in projects" :key="project.id"
-               class="proj-card reveal-item"
-               :style="{ transitionDelay: (idx * 0.15) + 's' }">
-            <div class="proj-cover">
-              <img :src="project.image" :alt="project.title" loading="lazy" />
-              <div class="proj-cover-overlay"></div>
-            </div>
-            <div class="proj-body">
-              <div class="proj-meta-tags">
-                <span class="tag-method">Case de Transformação</span>
-                <span class="tag-focus" v-if="project.category">{{ project.category }}</span>
-              </div>
-              <h3>{{ project.title }}</h3>
-              
-              <div class="case-study-split">
-                <div class="case-col">
-                  <strong>O Desafio:</strong>
-                  <p>{{ project.description }}</p>
-                </div>
-                <div class="case-col" v-if="project.solution">
-                  <strong>A Solução:</strong>
-                  <p>{{ project.solution }}</p>
-                </div>
-              </div>
-
-              <div class="proj-impact" :class="getImpactClass(project.accentColor)">
-                <div class="impact-header">
-                  <TrendingUp :size="18" />
-                  <span>IMPACTO REALIZADO</span>
-                </div>
-                <p>{{ project.impact }}</p>
-              </div>
-
-              <router-link :to="`/projetos/${project.id}`" class="btn-proj" :class="getBtnClass(project.accentColor)">
-                Ver Estudo de Caso Completo
-                <ArrowRight :size="16" />
-              </router-link>
-            </div>
+  <div class="projetos-page grid-bg-light">
+    <div class="page-hero">
+      <h1>Projects Portfolio</h1>
+    </div>
+    <div class="projects-grid">
+      <div v-for="p in displayProjects" :key="p.id" class="project-card">
+        <div class="project-img">
+          <img :src="p.image" :alt="p.title" />
+          <div class="project-overlay">
+            <div class="overlay-arrow">→</div>
+            <div>View Case Study</div>
           </div>
         </div>
-        <div v-else class="empty-state">
-          <h3>Nenhum projeto cadastrado no momento.</h3>
+        <div class="project-body">
+          <div class="project-title">{{ p.title }}</div>
+          <p class="project-desc">{{ p.desc || p.description || p.excerpt }}</p>
+          <div class="project-impact" v-if="p.impact">
+            <strong>Impacto:</strong> {{ p.impact }}
+          </div>
+          <div class="project-tags" v-if="p.tags">
+            <span v-for="(tag, ti) in p.tags" :key="ti" class="project-tag" :class="tag.cls">{{ tag.label }}</span>
+          </div>
+          <div class="project-footer">
+            <router-link v-if="p.id" :to="`/projetos/${p.id}`" class="learn-more">Learn More →</router-link>
+            <span v-if="p.id" class="edit-hint">✎ Editável no Admin</span>
+          </div>
         </div>
       </div>
-    </section>
+    </div>
   </div>
 </template>
 
 <style scoped>
-.reveal-item {
-  opacity: 0;
-  transform: translateY(30px);
-  transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
-}
-.reveal-visible { opacity: 1; transform: translateY(0); }
-
-/* ═══════════════════════════════════════════════
-   HERO — MINIMAL ELEGANT
-   ═══════════════════════════════════════════════ */
-.proj-hero {
-  background: #F9FAFB;
-  padding: 160px 0 80px;
-  text-align: center;
-  border-bottom: 1px solid rgba(0,0,0,0.04);
-}
-
-.proj-hero-inner {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.hero-accent {
-  width: 40px;
-  height: 4px;
-  border-radius: 2px;
-  margin-bottom: 24px;
-}
-
-.hero-eyebrow {
-  font-size: 0.7rem;
-  font-weight: 900;
-  letter-spacing: 2.5px;
-  color: var(--text-soft, #9CA3AF);
-  text-transform: uppercase;
-  margin-bottom: 16px;
-}
-
-.proj-hero h1 {
-  font-size: clamp(2.4rem, 5vw, 3.5rem);
-  font-weight: 900;
-  color: var(--color-graphite, #1A1C2E);
-  margin-bottom: 16px;
-}
-
-.hero-hl {
-  color: var(--color-lime, #D4E157);
-}
-
-.proj-hero p {
-  font-size: 1.1rem;
-  color: var(--text-muted, #6B7280);
-  max-width: 600px;
-  line-height: 1.65;
-}
-
-/* ═══════════════════════════════════════════════
-   PROJECTS GRID
-   ═══════════════════════════════════════════════ */
-.proj-grid-section {
-  padding: 100px 0;
-  background: #fafafa;
-}
-
-.proj-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(440px, 1fr));
-  gap: 36px;
-}
-
-.proj-card {
-  background: #fff;
-  border-radius: var(--radius-xl);
-  overflow: hidden;
-  border: 2px solid rgba(0,0,0,0.04);
-  box-shadow: var(--shadow-sm);
-  transition: all 0.4s ease;
-  display: flex;
-  flex-direction: column;
-}
-
-.proj-card:hover {
-  transform: translateY(-10px);
-  box-shadow: var(--shadow-lg);
-}
-
-.proj-cover {
-  height: 280px;
-  overflow: hidden;
-  position: relative;
-}
-
-.proj-cover img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform 0.6s ease;
-}
-
-.proj-card:hover .proj-cover img { transform: scale(1.05); }
-
-.proj-cover-overlay {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(to bottom, transparent 50%, rgba(26,28,46,0.3));
-  pointer-events: none;
-}
-
-.proj-body {
-  padding: 40px;
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-}
-
-.proj-meta-tags {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 12px;
-}
-
-.tag-method {
-  font-size: 0.65rem;
-  font-weight: 900;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  color: var(--color-pink);
-  background: var(--color-pink-soft);
-  padding: 4px 10px;
-  border-radius: 4px;
-}
-
-.tag-focus {
-  font-size: 0.65rem;
-  font-weight: 800;
-  text-transform: uppercase;
-  color: var(--color-graphite);
-  background: #f1f5f9;
-  padding: 4px 10px;
-  border-radius: 4px;
-}
-
-.proj-body h3 {
-  font-size: 1.8rem;
-  font-weight: 900;
-  color: var(--color-graphite);
-  margin-bottom: 24px;
-  line-height: 1.15;
-}
-
-.case-study-split {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  margin-bottom: 32px;
-  background: #fafafa;
-  padding: 20px;
-  border-radius: 12px;
-  border: 1px solid rgba(0,0,0,0.03);
-}
-
-.case-col strong {
-  display: block;
-  font-size: 0.85rem;
-  color: var(--color-graphite);
-  margin-bottom: 4px;
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
-
-.case-col p {
-  font-size: 0.95rem;
-  color: var(--text-muted);
-  line-height: 1.6;
-}
-
-.proj-impact {
-  padding: 24px;
-  border-radius: var(--radius);
-  margin-bottom: 28px;
-  border-left: 5px solid;
-}
-
-.impact-pink {
-  background: var(--color-pink-soft, #FFF0F3);
-  border-left-color: var(--color-pink);
-}
-
-.impact-purple {
-  background: var(--color-purple-soft, #F3EAFF);
-  border-left-color: var(--color-purple);
-}
-
-.impact-header {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 8px;
-}
-
-.impact-pink .impact-header { color: var(--color-pink); }
-.impact-purple .impact-header { color: var(--color-purple); }
-
-.impact-header span {
-  font-size: 0.65rem;
-  font-weight: 900;
-  letter-spacing: 2px;
-}
-
-.proj-impact p {
-  font-weight: 800;
-  color: var(--color-graphite);
-  font-size: 1.1rem;
-  line-height: 1.35;
-}
-
-.btn-proj {
-  width: 100%;
-  padding: 16px 28px;
-  border-radius: 14px;
-  text-align: center;
-  font-weight: 800;
-  font-size: 0.95rem;
-  color: #fff;
-  text-decoration: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  transition: all 0.3s ease;
-  margin-top: auto;
-}
-
-.btn-pink {
-  background: var(--color-pink);
-  box-shadow: 0 6px 20px rgba(255,45,85,0.25);
-}
-
-.btn-pink:hover {
-  background: #E02048;
-  transform: translateY(-2px);
-  box-shadow: 0 10px 30px rgba(255,45,85,0.4);
-}
-
-.btn-purple {
-  background: var(--color-purple);
-  box-shadow: 0 6px 20px rgba(138,43,226,0.25);
-}
-
-.btn-purple:hover {
-  background: #7522C9;
-  transform: translateY(-2px);
-  box-shadow: 0 10px 30px rgba(138,43,226,0.4);
-}
-
-.empty-state {
-  text-align: center;
-  padding: 80px 0;
-  color: var(--text-muted);
-}
-
-/* RESPONSIVE */
-@media (max-width: 768px) {
-  .proj-grid { grid-template-columns: 1fr; }
-  .proj-body { padding: 32px; }
-  .proj-hero h1 { font-size: 2.6rem; }
-  .proj-cover { height: 220px; }
-}
+@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@400;500;600;700;800;900&display=swap');
+.projetos-page{background:#f0ede8;color:#0A0A0A;min-height:100vh;padding-bottom:60px}
+.grid-bg-light{background-image:linear-gradient(rgba(0,0,0,0.06) 1px,transparent 1px),linear-gradient(90deg,rgba(0,0,0,0.06) 1px,transparent 1px);background-size:40px 40px}
+.page-hero{text-align:center;padding:140px 32px 40px}
+.page-hero h1{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:clamp(48px,8vw,96px);text-transform:uppercase;color:#0A0A0A;letter-spacing:-2px;line-height:0.95}
+.projects-grid{max-width:1140px;margin:0 auto;padding:0 24px;display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.project-card{background:#fff;border:2px solid #ddd;border-radius:6px;overflow:hidden;display:grid;grid-template-columns:200px 1fr;transition:border-color 0.2s,transform 0.2s;cursor:pointer;position:relative}
+.project-card:hover{border-color:#0A0A0A;transform:translateY(-2px)}
+.project-img{width:200px;min-height:160px;position:relative;overflow:hidden;flex-shrink:0}
+.project-img img{width:100%;height:100%;object-fit:cover;display:block}
+.project-overlay{position:absolute;inset:0;background:rgba(0,0,0,0.5);display:flex;flex-direction:column;align-items:center;justify-content:center;opacity:0;transition:opacity 0.2s;color:white;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:13px;letter-spacing:1.5px;text-transform:uppercase;gap:8px}
+.project-card:hover .project-overlay{opacity:1}
+.overlay-arrow{width:40px;height:40px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;color:#0A0A0A;font-size:20px}
+.project-body{padding:18px 18px 20px}
+.project-title{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:18px;text-transform:capitalize;color:#0A0A0A;line-height:1.15;margin-bottom:8px}
+.project-desc{font-size:12px;color:#555;line-height:1.5;margin-bottom:10px}
+.project-impact{font-size:11px;color:#0A0A0A;background:#f0ede8;padding:6px 10px;border-radius:4px;margin-bottom:12px;font-family:'Barlow',sans-serif;border-left:3px solid #E5292A;}
+.project-tags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px}
+.project-tag{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:10px;letter-spacing:1px;text-transform:uppercase;padding:3px 8px;border-radius:2px}
+.pt-pink{background:#FF2D78;color:#fff}
+.pt-green{background:#AAFF00;color:#0A0A0A}
+.pt-yellow{background:#F5E000;color:#0A0A0A}
+.pt-blue{background:#1B8FFF;color:#fff}
+.pt-red{background:#E5292A;color:#fff}
+.pt-orange{background:#FF7A00;color:#fff}
+.project-footer{display:flex;align-items:center;justify-content:space-between;margin-top:auto;}
+.edit-hint{font-size:9px;text-transform:uppercase;color:#888;letter-spacing:1px;font-weight:700;}
+.learn-more{display:inline-flex;align-items:center;gap:6px;font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:12px;letter-spacing:1.5px;text-transform:uppercase;color:#0A0A0A;text-decoration:none;border-bottom:2px solid #0A0A0A;padding-bottom:1px}
+.learn-more:hover{color:#E5292A;border-color:#E5292A}
+@media(max-width:1100px){.projects-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:700px){.projects-grid{grid-template-columns:1fr}.project-card{grid-template-columns:1fr}.project-img{width:100%;min-height:200px}}
 </style>

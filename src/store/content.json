@@ -8,152 +8,39 @@
     "linkedin": "https://www.linkedin.com/company/narrativa-políticaorg",
     "twitter": "https://twitter.com/narrativapolitica"
   },
-  "about": {
-    "name": "Seu Nome Completo",
-    "title": "Economista | Consultora de Impacto | Líder do Terceiro Setor",
-    "bio": [
-      "Economista com mais de 10 anos de experiência na interseção entre dados, políticas públicas e impacto social. Especialista em análise econômica aplicada ao terceiro setor, com foco em projetos de igualdade de gênero e desenvolvimento sustentável.",
-      "Fundadora da Narrativa Política, plataforma dedicada a transformar teoria econômica em ação concreta. Já assessorei mais de 50 organizações, formei centenas de líderes e contribuí para políticas públicas que beneficiaram milhares de pessoas.",
-      "Minha missão é simples: democratizar o conhecimento econômico e colocá-lo a serviço de quem mais precisa. Cada dado tem uma história humana por trás — e é isso que me move."
-    ],
-    "skills": ["Economia Feminista", "Análise de Impacto", "Políticas Públicas", "Gênero & Desenvolvimento", "Consultoria ONG", "Mentoria de Liderança"]
+  "home": {
+    "heroTitle": "REIVINDIQUE",
+    "heroTitleAccent": "O FUTURO.",
+    "heroDescription": "Uma plataforma para ativismo de alto impacto, análise política e mobilização comunitária. Não viemos para debater, viemos para mudar a estrutura.",
+    "heroButtonText": "AGIR AGORA",
+    "marqueeText": "POR DEMOCRACIA, TERRITÓRIO E JUSTIÇA SOCIAL",
+    "heroFontSize": "11",
+    "marqueePadding": "2.2"
   },
-  "stats": [
-    { "number": 2500, "suffix": "+", "label": "Mulheres Impactadas" },
-    { "number": 50,   "suffix": "+", "label": "Projetos Executados"  },
-    { "number": 120,  "suffix": "",  "label": "Líderes Formados"    },
-    { "number": 15,   "suffix": " anos", "label": "de Experiência"  }
-  ],
-  "services": [
-    {
-      "emoji": "🎯",
-      "title": "Mentoria Individual",
-      "desc": "Acompanhamento personalizado para profissionais que desejam atuar no terceiro setor e em políticas públicas. Desenvolvimento de carreira e posicionamento estratégico.",
-      "tag": "Vagas Abertas"
-    },
-    {
-      "emoji": "🎤",
-      "title": "Palestras & Keynotes",
-      "desc": "Conteúdo transformador sobre economia feminista, impacto social, liderança e dados para eventos corporativos, governamentais e do terceiro setor.",
-      "tag": "Solicitar Proposta"
-    },
-    {
-      "emoji": "📊",
-      "title": "Consultoria Política",
-      "desc": "Assessoria estratégica para ONGs, institutos e poder público na formulação, monitoramento e avaliação de políticas com enfoque em gênero e sustentabilidade.",
-      "tag": "Para Organizações"
-    },
-    {
-      "emoji": "🚀",
-      "title": "Programas de Liderança",
-      "desc": "Programas de formação para mulheres e jovens líderes do terceiro setor. Capacitação em advocacy, gestão de projetos e comunicação de impacto.",
-      "tag": "Turma 2025"
-    }
-  ],
-  "modules": [
-    {
-      "number": "01",
-      "title": "Fundamentos do Impacto Social",
-      "free": true,
-      "topics": [
-        "O que é e como medir impacto?",
-        "Introdução à Economia Social",
-        "Mapeamento do Terceiro Setor no Brasil",
-        "Primeiros passos no advocacy"
-      ]
-    },
-    {
-      "number": "02",
-      "title": "Dados para Transformação",
-      "free": false,
-      "topics": [
-        "Coleta e análise de dados sociais",
-        "Visualização para comunicação de impacto",
-        "Indicadores de desenvolvimento humano",
-        "Relatórios de impacto profissionais"
-      ]
-    },
-    {
-      "number": "03",
-      "title": "Gênero & Políticas Públicas",
-      "free": false,
-      "topics": [
-        "Economia feminista na prática",
-        "Orçamento público com perspectiva de gênero",
-        "Formulação de políticas inclusivas",
-        "Monitoramento e avaliação de programas"
-      ]
-    },
-    {
-      "number": "04",
-      "title": "Liderança & Sustentabilidade",
-      "free": false,
-      "topics": [
-        "Gestão estratégica de ONGs",
-        "Captação de recursos e parcerias",
-        "Comunicação de impacto e storytelling",
-        "Construção de redes e articulação política"
-      ]
-    }
-  ],
-  "posts": [
-    {
-      "emoji": "📈",
-      "category": "Economia",
-      "title": "Como o PIB não conta a história das mulheres brasileiras",
-      "excerpt": "Uma análise crítica dos indicadores econômicos tradicionais e o que eles ignoram sobre o trabalho feminino e cuidado não remunerado.",
-      "date": "12 Abr 2025",
-      "readTime": "8 min"
-    },
-    {
-      "emoji": "🌱",
-      "category": "Terceiro Setor",
-      "title": "5 métricas que toda ONG deveria acompanhar em 2025",
-      "excerpt": "Da eficiência operacional ao impacto qualitativo: os indicadores que realmente importam para provar — e melhorar — o seu impacto.",
-      "date": "28 Mar 2025",
-      "readTime": "6 min"
-    },
-    {
-      "emoji": "⚡",
-      "category": "Liderança",
-      "title": "O teto de vidro tem dados: o que a ciência diz sobre desigualdade em cargos de liderança",
-      "excerpt": "Pesquisas recentes revelam os mecanismos ocultos que perpetuam a sub-representação feminina nas lideranças — e como combatê-los.",
-      "date": "15 Mar 2025",
-      "readTime": "10 min"
-    }
-  ],
-  "opportunities": [
-    {
-      "title": "Analista de Projetos Sociais",
-      "org": "Instituto Amazônia Viva",
-      "type": "CLT",
-      "location": "Belém, PA",
-      "area": "Meio Ambiente",
-      "deadline": "Inscrições até 20 Mai"
-    },
-    {
-      "title": "Coordenadora de Políticas de Gênero",
-      "org": "ONU Mulheres Brasil",
-      "type": "Consultoria",
-      "location": "Brasília, DF",
-      "area": "Gênero",
-      "deadline": "Inscrições até 30 Abr"
-    },
-    {
-      "title": "Gestora de Programas de Impacto",
-      "org": "Fundação Avina",
-      "type": "CLT",
-      "location": "São Paulo, SP",
-      "area": "Impacto Social",
-      "deadline": "Inscrições até 15 Mai"
-    },
-    {
-      "title": "Pesquisadora em Economia Feminista",
-      "org": "IPEA — Instituto de Pesquisa Econômica Aplicada",
-      "type": "Bolsa",
-      "location": "Remoto",
-      "area": "Pesquisa",
-      "deadline": "Inscrições até 10 Mai"
-    }
-  ]
+  "about": {
+    "name": "Anne Dornelas",
+    "role": "Economista | Consultora de Impacto | Líder do Terceiro Setor",
+    "mission": "Unindo rigor técnico à urgência da mobilização. Nossa estrutura transforma dados públicos em narrativas de poder e mudança real.",
+    "bioInstitucional": "Economista com mais de 10 anos de experiência na interseção entre dados, políticas públicas e impacto social. Especialista em análise econômica aplicada ao terceiro setor, com foco em projetos de igualdade de gênero e desenvolvimento sustentável.\n\nFundadora da Narrativa Política, plataforma dedicada a transformar teoria econômica em ação concreta. Já assessorei mais de 50 organizações, formei centenas de líderes e contribuí para políticas públicas que beneficiaram milhares de pessoas.",
+    "image": "/images/anne-dornelas.png"
+  },
+  "settings": {
+    "showLogin": true,
+    "menuHome": true,
+    "menuAbout": true,
+    "menuServices": true,
+    "menuProjects": true,
+    "menuPaths": true,
+    "menuLibrary": true,
+    "menuContact": true
+  },
+  "stats": [],
+  "services": [],
+  "modules": [],
+  "posts": [],
+  "opportunities": [],
+  "projects": [],
+  "library": [],
+  "paths": [],
+  "team": []
 }

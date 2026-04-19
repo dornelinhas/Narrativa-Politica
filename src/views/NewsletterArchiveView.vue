@@ -1,144 +1,100 @@
+<script setup>
+const editions = [
+  { num: '#45', title: 'Edição #45: A Geopolítica do Gênero', date: '24 de Outubro, 2024', desc: 'Empowering female voices in politics and business to create equitable making spaces.', tag: 'Gender', tagCls: 'tag-pink', img: 'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=400&h=300&fit=crop&auto=format' },
+  { num: '#46', title: 'Edição #46: O Futuro Verde em Debate', date: '24 de Outubro, 2024', desc: 'Analyzing the shift towards models or circular models for long-term prosperity.', tag: 'Economy', tagCls: 'tag-green', img: 'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=400&h=300&fit=crop&auto=format' },
+  { num: '#41', title: 'Edição #41: Nua International Relations', date: '24 de Outubro, 2024', desc: 'Examining evolving power dynamics and international cooperation strategies.', tag: 'Diplomacy', tagCls: 'tag-pink', img: 'https://images.unsplash.com/photo-1569025690938-a00729c9e1f9?w=400&h=300&fit=crop&auto=format' },
+  { num: '#45b', title: 'Edição #45: Populismo e Democracia', date: '10 de Outubro, 2024', desc: 'Análise dos movimentos populistas e seus impactos nas democracias contemporâneas.', tag: 'Política', tagCls: 'tag-yellow', img: 'https://images.unsplash.com/photo-1591848478625-de43268e6fb8?w=400&h=300&fit=crop&auto=format' },
+  { num: '#46b', title: 'Edição #46: Crise Climática e Política', date: '10 de Outubro, 2024', desc: 'Como as políticas ambientais estão moldando as agendas eleitorais ao redor do mundo.', tag: 'Ambiente', tagCls: 'tag-green', img: 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=400&h=300&fit=crop&auto=format' },
+  { num: '#43', title: 'Edição #43: Habitação e Desigualdade', date: '1 de Outubro, 2024', desc: 'O direito à moradia como pauta central de justiça social nas cidades brasileiras.', tag: 'Social', tagCls: 'tag-blue', img: 'https://images.unsplash.com/photo-1486325212027-8081e485255e?w=400&h=300&fit=crop&auto=format' }
+]
+</script>
+
 <template>
-  <div class="archive-view">
-    <header class="archive-hero">
-      <div class="container hero-inner">
-        <span class="vault-kicker">THE VAULT</span>
-        <h1>Arquivo <span>Editorial</span></h1>
-        <p>Acesse o repositório histórico de nossas newsletters semanais. Curadoria técnica sobre economia, política e gênero.</p>
-      </div>
-    </header>
+  <div class="newsletter-page grid-bg-light">
+    <div class="page-hero">
+      <h1>Newsletter Archive</h1>
+    </div>
 
-    <section class="archive-content container">
-      <div class="vault-list">
-        <div v-for="nl in siteContent.newsletters" :key="nl.id" class="vault-item" @click="openNewsletter(nl)">
-          <div class="vault-date">
-            <template v-if="nl.date">
-              <span class="day">{{ nl.date.includes('-') ? nl.date.split('-')[2] : nl.date.split('/')[0] }}</span>
-              <span class="month">{{ 
-                new Date(nl.date.includes('-') ? nl.date : nl.date.split('/').reverse().join('-'))
-                .toLocaleDateString('pt-BR', { month: 'short' }).replace('.', '').toUpperCase() 
-              }}</span>
-            </template>
+    <!-- SUBSCRIBE WIDGET -->
+    <div class="subscribe-wrapper">
+      <div class="subscribe-card">
+        <div>
+          <div class="sub-label">Rede de Mobilização</div>
+          <div class="sub-headline">Junte-se ao<br>Movimento.</div>
+          <p class="sub-desc">Receba despachos estratégicos, convocações de ação e atualizações das frentes de luta. Sem spam.</p>
+        </div>
+        <div class="sub-form">
+          <input type="email" class="sub-input" placeholder="Digite seu email...">
+          <button class="sub-btn">Quero Fazer Parte →</button>
+        </div>
+        <div class="sub-deco-circle"></div>
+        <div class="sub-deco-sq"></div>
+      </div>
+    </div>
+
+    <!-- ARCHIVE GRID -->
+    <div class="archive-section">
+      <div class="archive-grid">
+        <div v-for="(ed, i) in editions" :key="i" class="nl-card">
+          <div class="nl-img">
+            <img :src="ed.img" :alt="ed.title" loading="lazy" />
           </div>
-          <div class="vault-info">
-            <h3 class="vault-title">{{ nl.title || nl.subject }}</h3>
-            <p class="vault-summary" v-if="nl.summary">{{ nl.summary }}</p>
-            <p class="vault-subject text-readable">{{ nl.subject }}</p>
-          </div>
-          <div class="vault-action">
-            <button class="btn-read">Ler Edição <ArrowRight :size="16" /></button>
+          <div class="nl-body">
+            <div class="nl-edition">{{ ed.title }}</div>
+            <div class="nl-date">{{ ed.date }}</div>
+            <p class="nl-desc">{{ ed.desc }}</p>
+            <div class="nl-footer">
+              <span class="tag" :class="ed.tagCls">{{ ed.tag }}</span>
+              <a href="#" class="nl-arrow">→</a>
+            </div>
           </div>
         </div>
       </div>
-    </section>
-
-    <!-- MODAL DE LEITURA IMERSIVA -->
-    <transition name="modal-fade">
-      <div v-if="selectedNl" class="vault-modal-overlay" @click.self="closeModal">
-        <div class="vault-modal-card">
-          <header class="modal-header">
-            <span class="modal-date">{{ selectedNl.date }}</span>
-            <button class="close-btn" @click="closeModal"><X :size="24" /></button>
-          </header>
-          <div class="modal-body">
-            <h2 class="modal-title">{{ selectedNl.title || selectedNl.subject }}</h2>
-            <p class="modal-summary-box" v-if="selectedNl.summary">{{ selectedNl.summary }}</p>
-            <p class="modal-subject">{{ selectedNl.subject }}</p>
-            <hr class="modal-divider" />
-            <div class="modal-html-content rich-text-styled no-copy" @contextmenu.prevent @copy.prevent v-html="selectedNl.content"></div>
-          </div>
-          <footer class="modal-footer">
-            <p>Narrativa Política • Inteligência e Estratégia</p>
-          </footer>
-        </div>
-      </div>
-    </transition>
+    </div>
   </div>
 </template>
 
-<script setup>
-import { ref } from 'vue'
-import { siteContent } from '../store/content'
-import { X, ArrowRight } from 'lucide-vue-next'
-
-const selectedNl = ref(null)
-
-const openNewsletter = (nl) => {
-  selectedNl.value = nl
-  document.body.style.overflow = 'hidden'
-}
-
-const closeModal = () => {
-  selectedNl.value = null
-  document.body.style.overflow = 'auto'
-}
-</script>
-
 <style scoped>
-.archive-view { background: #FFFFFF; min-height: 100vh; padding-top: 140px; }
-
-/* HERO */
-.archive-hero { background: #F9FAFB; padding: 100px 0; text-align: center; border-bottom: 1px solid #F1F5F9; }
-.vault-kicker { font-size: 0.75rem; font-weight: 900; color: #8A2BE2; letter-spacing: 3px; display: block; margin-bottom: 16px; }
-.archive-hero h1 { font-size: 4rem; font-weight: 900; color: #111827; letter-spacing: -2.5px; margin-bottom: 24px; }
-.archive-hero h1 span { color: #FF2D55; }
-.archive-hero p { font-size: 1.25rem; color: #374151; max-width: 650px; margin: 0 auto; line-height: 1.6; }
-
-/* LIST */
-.archive-content { padding: 80px 0; }
-.vault-list { max-width: 900px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px; }
-
-.vault-item {
-  display: grid; grid-template-columns: 100px 1fr auto; gap: 40px; align-items: center;
-  padding: 32px; background: #fff; border: 1px solid #F1F5F9; border-radius: 24px;
-  cursor: pointer; transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
-}
-.vault-item:hover { transform: scale(1.02); border-color: #8A2BE2; box-shadow: 0 20px 40px rgba(0,0,0,0.04); }
-
-.vault-date { text-align: center; display: flex; flex-direction: column; line-height: 1; }
-.vault-date .day { font-size: 1.8rem; font-weight: 900; color: #111827; }
-.vault-date .month { font-size: 0.75rem; font-weight: 800; color: #FF2D55; text-transform: uppercase; margin-top: 4px; }
-
-.vault-title { font-size: 1.4rem; font-weight: 800; color: #111827; margin-bottom: 4px; }
-.vault-summary { font-size: 0.9rem; color: #8A2BE2; font-weight: 700; margin-bottom: 8px; font-style: italic; }
-.vault-subject { font-size: 1rem; color: #374151; }
-
-.btn-read { background: none; border: none; display: flex; align-items: center; gap: 8px; color: #8A2BE2; font-weight: 800; font-size: 0.9rem; cursor: pointer; }
-
-/* MODAL */
-.vault-modal-overlay { position: fixed; inset: 0; background: rgba(17,24,39,0.9); backdrop-filter: blur(12px); z-index: 3000; display: flex; align-items: center; justify-content: center; padding: 40px; }
-.vault-modal-card { background: #fff; width: 100%; max-width: 850px; max-height: 90vh; border-radius: 40px; position: relative; overflow-y: auto; display: flex; flex-direction: column; }
-
-.modal-header { padding: 40px 60px 20px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; background: #fff; z-index: 10; }
-.modal-date { font-size: 0.85rem; font-weight: 900; color: #FF2D55; text-transform: uppercase; letter-spacing: 1px; }
-.close-btn { background: #F1F5F9; border: none; width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; color: #64748B; transition: all 0.2s; }
-.close-btn:hover { background: #FF2D55; color: #fff; }
-
-.modal-body { padding: 0 60px 60px; flex: 1; }
-.modal-title { font-size: 3rem; font-weight: 900; color: #111827; letter-spacing: -2px; line-height: 1.1; margin-bottom: 16px; }
-.modal-summary-box { font-size: 1.3rem; font-weight: 700; color: #FF2D55; margin-bottom: 16px; font-style: italic; line-height: 1.4; border-left: 4px solid #FF2D55; padding-left: 20px; }
-.modal-subject { font-size: 1.2rem; color: #64748B; font-weight: 500; margin-bottom: 40px; }
-.modal-divider { border: none; border-top: 1px solid #F1F5F9; margin-bottom: 40px; }
-
-.modal-html-content :deep(p) { font-family: "Inter", sans-serif; font-size: 1.25rem; line-height: 1.8; color: #334155; margin-bottom: 2rem; }
-.modal-html-content :deep(blockquote) { margin: 2rem 0; padding: 1.5rem 32px; border-left: 6px solid #FF2D55; background: #FDF2F5; font-size: 1.4rem; font-weight: 700; color: #111827; }
-
-.modal-footer { padding: 40px 60px; background: #F9FAFB; text-align: center; border-top: 1px solid #F1F5F9; }
-.modal-footer p { font-size: 0.85rem; font-weight: 800; color: #94A3B8; text-transform: uppercase; letter-spacing: 1px; }
-
-.no-copy { user-select: none; -webkit-user-select: none; }
-
-/* ANIMATIONS */
-.modal-fade-enter-active, .modal-fade-leave-active { transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-.modal-fade-enter-from { opacity: 0; transform: scale(0.9) translateY(40px); }
-.modal-fade-leave-to { opacity: 0; transform: scale(0.95); }
-
-@media (max-width: 768px) {
-  .vault-item { grid-template-columns: 1fr; text-align: center; gap: 20px; }
-  .vault-date { align-items: center; }
-  .vault-action { display: flex; justify-content: center; }
-  .modal-title { font-size: 2.2rem; }
-  .vault-modal-card { border-radius: 0; max-height: 100vh; }
-  .vault-modal-overlay { padding: 0; }
-}
+@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@400;500;600;700;800;900&display=swap');
+.newsletter-page{background:#f0ede8;color:#0A0A0A;min-height:100vh;padding-bottom:60px}
+.grid-bg-light{background-image:linear-gradient(rgba(0,0,0,0.06) 1px,transparent 1px),linear-gradient(90deg,rgba(0,0,0,0.06) 1px,transparent 1px);background-size:40px 40px}
+.page-hero{text-align:center;padding:36px 32px 20px}
+.page-hero h1{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:clamp(44px,8vw,110px);text-transform:uppercase;color:#0A0A0A;letter-spacing:-2px;line-height:0.9}
+.subscribe-wrapper{display:flex;justify-content:center;padding:10px 24px 32px}
+.subscribe-card{background:#F5E000;border-radius:8px;padding:28px 36px;max-width:600px;width:100%;display:grid;grid-template-columns:1fr 1fr;gap:28px;align-items:center;position:relative;overflow:visible}
+.sub-label{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#0A0A0A;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.sub-label::before{content:'⚡'}
+.sub-headline{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:clamp(22px,3vw,32px);text-transform:uppercase;color:#0A0A0A;line-height:1.05;margin-bottom:6px}
+.sub-desc{font-size:11px;color:rgba(0,0,0,0.6);line-height:1.5}
+.sub-form{display:flex;flex-direction:column;gap:10px}
+.sub-input{font-family:'Barlow',sans-serif;font-size:13px;padding:11px 14px;border:2px solid rgba(0,0,0,0.2);border-radius:4px;background:#fff;color:#0A0A0A;outline:none}
+.sub-input::placeholder{color:rgba(0,0,0,0.4)}
+.sub-input:focus{border-color:#0A0A0A}
+.sub-btn{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:13px;letter-spacing:1.5px;text-transform:uppercase;padding:12px;background:#E5292A;color:#fff;border:none;border-radius:4px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:background 0.2s}
+.sub-btn:hover{background:#c0201f}
+.sub-deco-circle{position:absolute;width:50px;height:50px;background:#E5292A;border-radius:50%;top:-14px;right:-14px}
+.sub-deco-sq{position:absolute;width:28px;height:28px;background:#AAFF00;border-radius:3px;bottom:-12px;right:160px}
+.archive-section{max-width:1140px;margin:0 auto;padding:0 24px 60px}
+.archive-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:0;border:2px solid #ddd;border-radius:6px;overflow:hidden}
+.nl-card{display:grid;grid-template-columns:160px 1fr;border-bottom:2px solid #ddd;background:#fff;transition:background 0.2s;cursor:pointer}
+.nl-card:hover{background:#fafafa}
+.nl-card:nth-child(3n+1),.nl-card:nth-child(3n+2){border-right:2px solid #ddd}
+.nl-card:nth-last-child(-n+3){border-bottom:none}
+.nl-img{width:160px;min-height:140px;overflow:hidden;flex-shrink:0;position:relative}
+.nl-img img{width:100%;height:100%;object-fit:cover;display:block;filter:grayscale(100%);transition:filter 0.3s}
+.nl-card:hover .nl-img img{filter:grayscale(60%)}
+.nl-body{padding:16px 18px}
+.nl-edition{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:16px;text-transform:uppercase;color:#0A0A0A;line-height:1.1;margin-bottom:8px}
+.nl-date{font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:11px;letter-spacing:1px;text-transform:uppercase;color:#888;margin-bottom:8px}
+.nl-desc{font-size:12px;color:#555;line-height:1.5;margin-bottom:12px}
+.nl-footer{display:flex;align-items:center;justify-content:space-between}
+.nl-arrow{display:inline-flex;align-items:center;gap:6px;font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:13px;letter-spacing:1px;text-transform:uppercase;color:#0A0A0A;text-decoration:none;transition:color 0.2s}
+.nl-arrow:hover{color:#E5292A}
+.tag{display:inline-block;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:11px;letter-spacing:1px;text-transform:uppercase;padding:4px 10px;border-radius:3px}
+.tag-yellow{background:#F5E000;color:#0A0A0A}
+.tag-pink{background:#FF2D78;color:#fff}
+.tag-green{background:#AAFF00;color:#0A0A0A}
+.tag-blue{background:#1B8FFF;color:#fff}
+@media(max-width:1000px){.archive-grid{grid-template-columns:repeat(2,1fr)}.nl-card:nth-child(3n+1),.nl-card:nth-child(3n+2){border-right:none}.nl-card:nth-child(2n+1){border-right:2px solid #ddd}}
+@media(max-width:700px){.archive-grid{grid-template-columns:1fr}.nl-card:nth-child(2n+1){border-right:none}.subscribe-card{grid-template-columns:1fr}}
 </style>

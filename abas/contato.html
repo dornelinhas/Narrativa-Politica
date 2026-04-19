@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contato – NP A Bancada de Impacto</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    body {
+      background: #1f1f2e;
+      color: var(--white);
+    }
+
+    .grid-dark {
+      background-image:
+        linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+      background-size: 40px 40px;
+    }
+
+    /* Light navbar override */
+    .navbar.light {
+      background: var(--white);
+    }
+    .navbar.light .nav-link { color: var(--black); }
+    .navbar.light .nav-btn {
+      color: var(--black);
+      border-color: var(--black);
+    }
+    .navbar.light .nav-btn:hover {
+      background: var(--black);
+      color: var(--white);
+    }
+
+    .page-content {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 32px;
+      min-height: calc(100vh - 56px);
+    }
+
+    .contact-wrapper {
+      background: var(--yellow);
+      border-radius: 8px;
+      padding: 36px 40px;
+      max-width: 1040px;
+      width: 100%;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
+      align-items: start;
+    }
+
+    .contact-left h1 {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 900;
+      font-size: clamp(52px, 7vw, 88px);
+      text-transform: uppercase;
+      color: var(--black);
+      line-height: 0.9;
+      margin-bottom: 24px;
+    }
+
+    .contact-types {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .contact-type-btn {
+      background: var(--white);
+      border: 2px solid var(--black);
+      border-radius: 6px;
+      padding: 14px 8px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .contact-type-btn:hover, .contact-type-btn.active {
+      background: var(--black);
+      color: var(--white);
+    }
+
+    .contact-type-btn .icon { font-size: 24px; margin-bottom: 6px; display: block; }
+
+    .contact-type-label {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 800;
+      font-size: 13px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--black);
+    }
+
+    .contact-type-btn:hover .contact-type-label,
+    .contact-type-btn.active .contact-type-label {
+      color: var(--white);
+    }
+
+    .contact-form {
+      background: var(--white);
+      border: 2px solid var(--black);
+      border-radius: 6px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .contact-input {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700;
+      font-size: 13px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      padding: 12px 14px;
+      border: 2px solid #ccc;
+      border-radius: 4px;
+      background: var(--white);
+      color: var(--black);
+      width: 100%;
+      outline: none;
+    }
+
+    .contact-input:focus { border-color: var(--black); }
+    .contact-input::placeholder { color: #999; }
+
+    .contact-textarea {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700;
+      font-size: 13px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      padding: 12px 14px;
+      border: 2px solid #ccc;
+      border-radius: 4px;
+      background: var(--white);
+      color: var(--black);
+      width: 100%;
+      min-height: 130px;
+      resize: vertical;
+      outline: none;
+    }
+
+    .contact-textarea:focus { border-color: var(--black); }
+    .contact-textarea::placeholder { color: #999; }
+
+    .contact-submit {
+      background: var(--red);
+      color: var(--white);
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 900;
+      font-size: 17px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      padding: 16px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .contact-submit:hover { background: #c0201f; }
+
+    /* Geometric art panel */
+    .geo-art {
+      border-radius: 6px;
+      overflow: hidden;
+      background: #fff;
+      height: 100%;
+      min-height: 400px;
+    }
+
+    .geo-art svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+  </style>
+</head>
+<body class="grid-dark">
+  <nav class="navbar light">
+    <a href="artigos.html" class="logo light">
+      <div class="logo-mark">
+        <svg width="52" height="44" viewBox="0 0 52 44">
+          <rect x="2" y="2" width="7" height="7" rx="1" fill="#FF2D78"/>
+          <rect x="11" y="2" width="7" height="7" rx="1" fill="#F5E000"/>
+          <rect x="2" y="11" width="7" height="7" rx="1" fill="#1B8FFF"/>
+          <rect x="43" y="2" width="7" height="7" rx="1" fill="#AAFF00"/>
+          <rect x="43" y="11" width="7" height="7" rx="1" fill="#FF7A00"/>
+          <rect x="43" y="35" width="7" height="7" rx="1" fill="#FF2D78"/>
+          <rect x="34" y="35" width="7" height="7" rx="1" fill="#F5E000"/>
+          <text x="26" y="30" font-family="'Barlow Condensed', sans-serif" font-weight="900" font-size="28" fill="#0A0A0A" text-anchor="middle">NP</text>
+        </svg>
+      </div>
+      <span class="logo-name" style="color:#0a0a0a;">A BANCADA<br>DE IMPACTO</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="trilhas.html" class="nav-link">Movimento</a></li>
+      <li><a href="artigos.html" class="nav-link">Artigos</a></li>
+      <li><a href="#" class="nav-link">Radar ▾</a></li>
+      <li><a href="#" class="nav-link">Sobre</a></li>
+    </ul>
+    <a href="apoie.html" class="nav-btn">Envolva-se</a>
+    <a href="painel-aluno.html" class="nav-avatar" style="background:#0a0a0a;color:#fff;">A</a>
+  </nav>
+
+  <div class="page-content">
+    <div class="contact-wrapper">
+      <div class="contact-left">
+        <h1>Contato</h1>
+
+        <div class="contact-types">
+          <div class="contact-type-btn active">
+            <span class="icon">🤝</span>
+            <div class="contact-type-label">Parcerias</div>
+          </div>
+          <div class="contact-type-btn">
+            <span class="icon">📢</span>
+            <div class="contact-type-label">Imprensa</div>
+          </div>
+          <div class="contact-type-btn">
+            <span class="icon">💬</span>
+            <div class="contact-type-label">Geral</div>
+          </div>
+        </div>
+
+        <div class="contact-form">
+          <div class="form-row">
+            <input type="text" class="contact-input" placeholder="Nome">
+            <input type="email" class="contact-input" placeholder="Email">
+          </div>
+          <input type="text" class="contact-input" placeholder="Assunto">
+          <textarea class="contact-textarea" placeholder="Mensagem"></textarea>
+          <button class="contact-submit">Enviar Mensagem</button>
+        </div>
+      </div>
+
+      <div class="geo-art">
+        <svg viewBox="0 0 420 420" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+          <!-- Background sections -->
+          <rect width="420" height="420" fill="#f0f0f0"/>
+
+          <!-- Top row -->
+          <rect x="0" y="0" width="140" height="140" fill="#FF2D78"/>
+          <rect x="140" y="0" width="140" height="140" fill="#F5E000"/>
+          <rect x="280" y="0" width="140" height="140" fill="#1B8FFF"/>
+
+          <!-- Mid row -->
+          <rect x="0" y="140" width="140" height="140" fill="#AAFF00"/>
+          <rect x="140" y="140" width="140" height="140" fill="#FF2D78"/>
+          <rect x="280" y="140" width="140" height="140" fill="#F5E000"/>
+
+          <!-- Bottom row -->
+          <rect x="0" y="280" width="140" height="140" fill="#1B8FFF"/>
+          <rect x="140" y="280" width="140" height="140" fill="#AAFF00"/>
+          <rect x="280" y="280" width="140" height="140" fill="#FF2D78"/>
+
+          <!-- Geometric overlays -->
+          <!-- Top left: triangle + circle -->
+          <circle cx="70" cy="60" r="50" fill="#FF7A00" opacity="0.9"/>
+          <polygon points="0,140 70,20 140,140" fill="#0A0A0A" opacity="0.5"/>
+          <rect x="10" y="90" width="50" height="50" fill="#0A0A0A" opacity="0.3"/>
+
+          <!-- Top center: geometric shapes -->
+          <rect x="150" y="10" width="80" height="80" rx="4" fill="#0A0A0A" opacity="0.25"/>
+          <polygon points="160,130 240,50 240,130" fill="#FF2D78" opacity="0.8"/>
+          <rect x="155" y="55" width="30" height="30" fill="#AAFF00"/>
+          <!-- Striped pattern -->
+          <line x1="200" y1="0" x2="200" y2="140" stroke="#0A0A0A" stroke-width="8" opacity="0.15"/>
+          <line x1="215" y1="0" x2="215" y2="140" stroke="#0A0A0A" stroke-width="4" opacity="0.1"/>
+          <line x1="225" y1="0" x2="225" y2="140" stroke="#0A0A0A" stroke-width="4" opacity="0.1"/>
+
+          <!-- Top right: circle -->
+          <circle cx="350" cy="70" r="55" fill="#AAFF00" opacity="0.9"/>
+          <rect x="290" y="0" width="50" height="50" fill="#0A0A0A" opacity="0.2"/>
+          <circle cx="390" cy="10" r="25" fill="#E5292A"/>
+          <!-- Horizontal lines in circle area -->
+          <line x1="280" y1="100" x2="420" y2="100" stroke="#0A0A0A" stroke-width="3" opacity="0.2"/>
+          <line x1="280" y1="110" x2="420" y2="110" stroke="#0A0A0A" stroke-width="3" opacity="0.2"/>
+          <line x1="280" y1="120" x2="420" y2="120" stroke="#0A0A0A" stroke-width="3" opacity="0.2"/>
+
+          <!-- Mid left: shapes -->
+          <polygon points="0,140 140,200 0,280" fill="#1B8FFF" opacity="0.7"/>
+          <rect x="20" y="160" width="60" height="60" fill="#0A0A0A" opacity="0.25"/>
+          <circle cx="110" cy="210" r="25" fill="#F5E000"/>
+
+          <!-- Mid center: complex -->
+          <polygon points="140,140 280,140 280,280 140,280" fill="#FF2D78"/>
+          <polygon points="140,140 280,210 140,280" fill="#0A0A0A" opacity="0.3"/>
+          <circle cx="210" cy="210" r="50" fill="#F5E000" opacity="0.85"/>
+          <circle cx="210" cy="210" r="30" fill="#FF2D78" opacity="0.7"/>
+          <rect x="170" y="170" width="80" height="80" rx="40" fill="none" stroke="#0A0A0A" stroke-width="4"/>
+
+          <!-- Mid right: arrow + shapes -->
+          <polygon points="280,280 420,210 420,280" fill="#1B8FFF" opacity="0.6"/>
+          <rect x="300" y="150" width="80" height="80" rx="40" fill="#0A0A0A" opacity="0.3"/>
+          <circle cx="380" cy="240" r="30" fill="#FF2D78" opacity="0.9"/>
+          <circle cx="380" cy="240" r="20" stroke="#AAFF00" stroke-width="4" fill="none"/>
+          <!-- Arrow -->
+          <text x="310" y="280" font-size="32" fill="#AAFF00" opacity="0.9">↗</text>
+
+          <!-- Bottom left: diagonal stripes -->
+          <polygon points="0,280 140,280 0,420" fill="#F5E000" opacity="0.6"/>
+          <polygon points="140,420 0,360 140,280" fill="#0A0A0A" opacity="0.3"/>
+          <circle cx="60" cy="370" r="40" fill="#FF2D78" opacity="0.8"/>
+          <circle cx="60" cy="370" r="20" fill="#0A0A0A"/>
+
+          <!-- Bottom center: geometric grid -->
+          <rect x="155" y="295" width="110" height="110" fill="#0A0A0A" opacity="0.2"/>
+          <circle cx="210" cy="350" r="40" fill="#1B8FFF" opacity="0.85"/>
+          <circle cx="210" cy="350" r="20" fill="#0A0A0A"/>
+          <polygon points="150,420 270,300 270,420" fill="#FF2D78" opacity="0.5"/>
+
+          <!-- Bottom right: dots + arrow -->
+          <circle cx="320" cy="310" r="25" fill="#0A0A0A" opacity="0.4"/>
+          <circle cx="390" cy="310" r="18" fill="#F5E000"/>
+          <circle cx="355" cy="375" r="30" fill="#AAFF00" opacity="0.8"/>
+          <text x="365" y="400" font-size="28" fill="#0A0A0A">→</text>
+
+          <!-- Grid overlay lines for depth -->
+          <line x1="140" y1="0" x2="140" y2="420" stroke="#0A0A0A" stroke-width="2" opacity="0.4"/>
+          <line x1="280" y1="0" x2="280" y2="420" stroke="#0A0A0A" stroke-width="2" opacity="0.4"/>
+          <line x1="0" y1="140" x2="420" y2="140" stroke="#0A0A0A" stroke-width="2" opacity="0.4"/>
+          <line x1="0" y1="280" x2="420" y2="280" stroke="#0A0A0A" stroke-width="2" opacity="0.4"/>
+        </svg>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.querySelectorAll('.contact-type-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.contact-type-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+      });
+    });
+  </script>
+</body>
+</html>
