@@ -518,13 +518,16 @@ onMounted(() => {
         </button>
         <button class="nav-btn" :class="{ active: activeTab === 'configuracoes' }" @click="activeTab = 'configuracoes'">
           <Settings :size="18" /> CONFIGURAÇÕES
+        </button>
         <button class="nav-btn" :class="{ active: activeTab === 'doacao' }" @click="activeTab = 'doacao'">
           <Heart :size="18" /> DOAÇÕES
         </button>
         <button class="nav-btn" :class="{ active: activeTab === 'visibilidade' }" @click="activeTab = 'visibilidade'">
           <Eye :size="18" /> MÓDULOS
         </button>
-      </nav>      <div class="sidebar-footer mt-auto">
+      </nav>
+      
+      <div class="sidebar-footer mt-auto">
         <button class="btn-logout-white" @click="handleLogout">
           <LogOut :size="18" /> SAIR DO PAINEL
         </button>
