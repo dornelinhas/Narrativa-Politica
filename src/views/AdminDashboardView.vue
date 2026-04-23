@@ -1791,34 +1791,41 @@ onMounted(() => {
           <p class="mb-6 text-sm" style="font-family: 'Inter'; font-weight: 700;">Ative ou desative páginas e botões no menu principal da plataforma.</p>
           
           <div class="form-grid-2">
-             <div class="input-group" style="flex-direction: row; align-items: center; gap: 10px;">
-                <input type="checkbox" v-model="siteContent.settings.menuHome" style="width: 24px; height: 24px; flex-shrink: 0;" />
-                <label style="margin: 0;">Página Inicial (Movimento)</label>
-             </div>
-             <div class="input-group" style="flex-direction: row; align-items: center; gap: 10px;">
-                <input type="checkbox" v-model="siteContent.settings.menuArticles" style="width: 24px; height: 24px; flex-shrink: 0;" />
-                <label style="margin: 0;">Artigos</label>
-             </div>
-             <div class="input-group" style="flex-direction: row; align-items: center; gap: 10px;">
-                <input type="checkbox" v-model="siteContent.settings.menuOpportunities" style="width: 24px; height: 24px; flex-shrink: 0;" />
-                <label style="margin: 0;">Oportunidades</label>
-             </div>
-             <div class="input-group" style="flex-direction: row; align-items: center; gap: 10px;">
-                <input type="checkbox" v-model="siteContent.settings.menuPaths" style="width: 24px; height: 24px; flex-shrink: 0;" />
-                <label style="margin: 0;">Trilhas (LMS)</label>
-             </div>
-             <div class="input-group" style="flex-direction: row; align-items: center; gap: 10px;">
-                <input type="checkbox" v-model="siteContent.settings.menuServices" style="width: 24px; height: 24px; flex-shrink: 0;" />
-                <label style="margin: 0;">Serviços</label>
-             </div>
-             <div class="input-group" style="flex-direction: row; align-items: center; gap: 10px;">
-                <input type="checkbox" v-model="siteContent.settings.menuLibrary" style="width: 24px; height: 24px; flex-shrink: 0;" />
-                <label style="margin: 0;">Biblioteca</label>
-             </div>
-             <div class="input-group" style="flex-direction: row; align-items: center; gap: 10px;">
-                <input type="checkbox" v-model="siteContent.settings.menuAbout" style="width: 24px; height: 24px; flex-shrink: 0;" />
-                <label style="margin: 0;">Sobre Mim</label>
-             </div>
+             <label class="toggle-brutal-container">
+                <input type="checkbox" v-model="siteContent.settings.menuHome" />
+                <span class="toggle-slider"></span>
+                <span class="toggle-label">Página Inicial (Movimento)</span>
+             </label>
+             <label class="toggle-brutal-container">
+                <input type="checkbox" v-model="siteContent.settings.menuArticles" />
+                <span class="toggle-slider"></span>
+                <span class="toggle-label">Artigos (Hub Editorial)</span>
+             </label>
+             <label class="toggle-brutal-container">
+                <input type="checkbox" v-model="siteContent.settings.menuOpportunities" />
+                <span class="toggle-slider"></span>
+                <span class="toggle-label">Oportunidades (Vagas)</span>
+             </label>
+             <label class="toggle-brutal-container">
+                <input type="checkbox" v-model="siteContent.settings.menuPaths" />
+                <span class="toggle-slider"></span>
+                <span class="toggle-label">Trilhas (LMS)</span>
+             </label>
+             <label class="toggle-brutal-container">
+                <input type="checkbox" v-model="siteContent.settings.menuServices" />
+                <span class="toggle-slider"></span>
+                <span class="toggle-label">Serviços / Eixos</span>
+             </label>
+             <label class="toggle-brutal-container">
+                <input type="checkbox" v-model="siteContent.settings.menuLibrary" />
+                <span class="toggle-slider"></span>
+                <span class="toggle-label">Biblioteca Técnica</span>
+             </label>
+             <label class="toggle-brutal-container">
+                <input type="checkbox" v-model="siteContent.settings.menuAbout" />
+                <span class="toggle-slider"></span>
+                <span class="toggle-label">Sobre Mim</span>
+             </label>
           </div>
         </div>
 
@@ -1826,14 +1833,16 @@ onMounted(() => {
           <h2 class="card-label-black mb-8">ÁREA DO USUÁRIO</h2>
           <p class="mb-6 text-sm" style="font-family: 'Inter'; font-weight: 700;">Controle se as pessoas podem acessar a área do aluno ou criar novas contas.</p>
           <div class="form-grid-2">
-             <div class="input-group" style="flex-direction: row; align-items: center; gap: 10px;">
-                <input type="checkbox" v-model="siteContent.settings.showLogin" style="width: 24px; height: 24px; flex-shrink: 0;" />
-                <label style="margin: 0;">Exibir botão de LOGIN no topo</label>
-             </div>
-             <div class="input-group" style="flex-direction: row; align-items: center; gap: 10px;">
-                <input type="checkbox" v-model="siteContent.settings.allowRegistration" style="width: 24px; height: 24px; flex-shrink: 0;" />
-                <label style="margin: 0;">Permitir Criar Nova Conta</label>
-             </div>
+             <label class="toggle-brutal-container">
+                <input type="checkbox" v-model="siteContent.settings.showLogin" />
+                <span class="toggle-slider"></span>
+                <span class="toggle-label">Exibir botão de LOGIN no topo</span>
+             </label>
+             <label class="toggle-brutal-container">
+                <input type="checkbox" v-model="siteContent.settings.allowRegistration" />
+                <span class="toggle-slider"></span>
+                <span class="toggle-label">Permitir Criar Nova Conta</span>
+             </label>
           </div>
         </div>
 
@@ -1961,6 +1970,16 @@ onMounted(() => {
 .checkmark:after { content: ""; position: absolute; display: none; left: 8px; top: 3px; width: 6px; height: 12px; border: solid #1C1C1C; border-width: 0 3px 3px 0; transform: rotate(45deg); }
 .checkbox-container input:checked ~ .checkmark:after { display: block; }
 .check-label { font-weight: 900; font-size: 13px; color: #1C1C1C; font-family: "Inter"; text-transform: uppercase; }
+
+/* TOGGLE BRUTAL (ON/OFF) */
+.toggle-brutal-container { display: flex; align-items: center; gap: 15px; cursor: pointer; background: #F1F5F9; padding: 15px 20px; border-radius: 12px; border: 3px solid #1C1C1C; box-shadow: 4px 4px 0px rgba(0,0,0,0.05); transition: all 0.2s; margin-bottom: 5px; }
+.toggle-brutal-container:hover { box-shadow: 6px 6px 0px #1C1C1C; transform: translate(-2px, -2px); }
+.toggle-brutal-container input { position: absolute; opacity: 0; width: 0; }
+.toggle-slider { width: 54px; height: 30px; background-color: #FFF; border: 3px solid #1C1C1C; border-radius: 30px; position: relative; transition: 0.3s; flex-shrink: 0; }
+.toggle-slider::before { content: ""; position: absolute; height: 18px; width: 18px; left: 4px; bottom: 3px; background-color: #1C1C1C; border-radius: 50%; transition: 0.3s; }
+.toggle-brutal-container input:checked + .toggle-slider { background-color: #A4CD39; border-color: #1C1C1C; }
+.toggle-brutal-container input:checked + .toggle-slider::before { transform: translateX(24px); }
+.toggle-label { font-weight: 900; font-family: "Inter", sans-serif; font-size: 0.95rem; color: #1C1C1C; }
 
 /* BOTÕES DE AÇÃO BRUTALISTAS */
 .btn-save-brutal { 
