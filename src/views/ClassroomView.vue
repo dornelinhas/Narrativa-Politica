@@ -1,309 +1,154 @@
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { siteContent } from '../store/content'
 import { useAuth } from '../store/auth'
-import { ChevronLeft, ChevronRight, CheckCircle, PlayCircle, FileText, Download, ArrowRight, Award, Layers } from 'lucide-vue-next'
+import { 
+  ArrowLeft, ArrowRight, Play, CheckCircle2, 
+  Download, FileText, Link, MessageSquare, 
+  HelpCircle, CheckCircle, ChevronRight, Menu, CloudDownload
+} from 'lucide-vue-next'
 
 const route = useRoute()
 const router = useRouter()
-const { user, isAuthenticated } = useAuth()
+const { isAuthenticated } = useAuth()
 
-const pathId = parseInt(route.params.id)
-const path = computed(() => siteContent.paths.find(p => p.id === pathId))
-
-if (path.value && path.value.isPremium && (!isAuthenticated.value || !user.value?.isPremium)) {
-  router.push(`/checkout/${path.value.id}`)
+const track = {
+  id: 'advocacy',
+  title: 'Advocacy em Políticas Públicas',
+  color: '#FF6BCA',
+  totalProgress: 45
 }
 
-const activeModuleIndex = ref(0)
-const activeLessonIndex = ref(0)
-const activeLesson = computed(() => path.value?.modules?.[activeModuleIndex.value]?.lessons?.[activeLessonIndex.value])
-const activeTab = ref('SUMMARY')
+const userNote = ref('')
+const lessonCompleted = ref(false)
 
-const completedLessons = ref(JSON.parse(localStorage.getItem(`np_progress_lessons_${pathId}`) || '[]'))
-
-const getModuleProgress = (mod) => {
-  if (!mod.lessons?.length) return 0
-  const completed = mod.lessons.filter(l => completedLessons.value.includes(l.id)).length
-  return Math.round((completed / mod.lessons.length) * 100)
-}
-
-const toggleComplete = () => {
-  if (!activeLesson.value) return
-  const lessonId = activeLesson.value.id
-  if (completedLessons.value.includes(lessonId)) {
-    completedLessons.value = completedLessons.value.filter(id => id !== lessonId)
-  } else {
-    completedLessons.value.push(lessonId)
-  }
-  localStorage.setItem(`np_progress_lessons_${pathId}`, JSON.stringify(completedLessons.value))
-}
+onMounted(() => {
+  if (!isAuthenticated.value) router.push('/login')
+  window.scrollTo(0, 0)
+})
 </script>
 
 <template>
-  <div v-if="path" class="classroom-interface-page">
-    <div class="grid-overlay-light"></div>
+  <div v-if="isAuthenticated" class="classroom-premium-reset" :style="{ '--track-color': track.color }">
+    <div class="global-progress-bar-fixed">
+       <div class="fill" :style="{ width: track.totalProgress + '%' }"></div>
+    </div>
 
-    <div class="classroom-container">
-      <!-- MAIN AREA -->
-      <main class="classroom-main">
-        <h1 class="interface-title">COURSE LEARNING PATH INTERFACE</h1>
+    <div class="fine-grain-overlay"></div>
 
-        <div class="video-player-box">
-          <div class="player-header">
-             <h2 class="current-lesson-title">{{ activeLesson?.title?.toUpperCase() || 'INTRODUÇÃO À ECONOMIA POLÍTICA GLOBAL' }}</h2>
-          </div>
-          <div class="player-body">
-             <div v-if="activeLesson?.videoUrl" class="video-ratio">
-                <iframe :src="activeLesson.videoUrl" frameborder="0" allowfullscreen></iframe>
-             </div>
-             <div v-else class="video-placeholder-thick">
-                <FileText :size="80" stroke-width="1" />
-             </div>
-          </div>
-        </div>
-
-        <!-- TABS -->
-        <div class="classroom-tabs">
-          <button @click="activeTab = 'SUMMARY'" :class="{ active: activeTab === 'SUMMARY' }" class="c-tab yellow">SUMMARY</button>
-          <button @click="activeTab = 'RESOURCES'" :class="{ active: activeTab === 'RESOURCES' }" class="c-tab pink">RESOURCES</button>
-          <button @click="activeTab = 'FORUM'" :class="{ active: activeTab === 'FORUM' }" class="c-tab blue">FORUM</button>
-        </div>
-
-        <div class="tab-content-box brutalist-card">
-           <div v-if="activeTab === 'SUMMARY'" class="rich-text-summary" v-html="activeLesson?.content || 'Utilize os materiais ao lado para complementar seus estudos.'"></div>
-           <div v-if="activeTab === 'RESOURCES'" class="resources-list">
-              <div v-for="(att, i) in activeLesson?.attachments" :key="i" class="resource-item">
-                 <Download :size="20" /> <span>{{ att.label }}</span>
-              </div>
-              <p v-if="!activeLesson?.attachments?.length">Nenhum material adicional disponível para esta aula.</p>
+    <!-- 1. FIM DO ATROPELO: pt-60 (240px no scroller) -->
+    <div class="scroller-content pt-60 pb-32 px-6 md:px-12">
+      <div class="main-container-fixed">
+        
+        <!-- 5. TÍTULOS À ESQUERDA -->
+        <header class="lesson-header-left mb-12 fade-in-up">
+           <router-link to="/trilhas/advocacy" class="back-link-minimal-bold mb-6">
+              <ArrowLeft :size="16" /> VOLTAR PARA O PERCURSO DA TRILHA
+           </router-link>
+           <h1 class="lesson-main-title">Aula 2.1: Matriz de Influência e Poder</h1>
+           <div class="lesson-meta-row mt-4">
+              <span class="badge-type-pill">VÍDEO AULA TÉCNICA</span>
            </div>
-           <div v-if="activeTab === 'FORUM'" class="forum-placeholder">
-              <p>O fórum de discussão está sendo preparado. Em breve você poderá interagir com outros alunos.</p>
-           </div>
-        </div>
-      </main>
+        </header>
 
-      <!-- SIDEBAR -->
-      <aside class="classroom-sidebar">
-        <div class="sidebar-header-thick">
-           <h3>LEARNING PATH</h3>
-        </div>
-
-        <div class="learning-path-flow">
-           <div class="path-vertical-line"></div>
-           <div v-for="(mod, mIdx) in path.modules" :key="mod.id" class="flow-module-item">
-              <div class="flow-icon-wrap" 
-                   :class="{ active: activeModuleIndex === mIdx }"
-                   @click="activeModuleIndex = mIdx">
-                 <div class="icon-circle">
-                    <Layers v-if="activeModuleIndex !== mIdx" :size="20" />
-                    <PlayCircle v-else :size="20" />
+        <!-- 4. PLAYER 100PX DE DISTÂNCIA DO TÍTULO -->
+        <div class="classroom-layout-70-30 mt-24">
+           
+           <!-- LADO ESQUERDO: PLAYER -->
+           <main class="player-focus-area">
+              <div class="video-container shadow-brutal-fixed">
+                 <div class="aspect-16-9">
+                    <iframe width="100%" height="100%" src="https://www.youtube.com/embed/dQw4w9WgXcQ" frameborder="0" allowfullscreen></iframe>
                  </div>
               </div>
-              <div class="flow-info">
-                 <span class="mod-label">MÓDULO {{ mIdx + 1 }}:</span>
-                 <h4 class="mod-name">{{ mod.title?.toUpperCase() }}</h4>
-                 <div class="mod-mini-progress">
-                    <div class="progress-bar-tiny">
-                       <div class="fill" :style="{ width: getModuleProgress(mod) + '%' }"></div>
-                    </div>
-                    <span class="percent">{{ getModuleProgress(mod) }}%</span>
+
+              <div class="lesson-description-area mt-16">
+                 <h3 class="label-tech-brutal mb-6">RESUMO DA AULA</h3>
+                 <p class="serif-editorial-text">
+                    Nesta aula, desconstruímos o mito da centralidade do poder e aprendemos a mapear as redes de influência que realmente determinam o sucesso de uma pauta pública nos territórios.
+                 </p>
+              </div>
+
+              <div class="conclusion-zone mt-20">
+                 <button class="btn-conclude-monumental" @click="lessonCompleted = !lessonCompleted" :class="{ 'is-done': lessonCompleted }">
+                    <CheckCircle v-if="lessonCompleted" :size="24" />
+                    {{ lessonCompleted ? 'AULA CONCLUÍDA' : 'CONCLUIR AULA E IR PARA A PRÓXIMA' }}
+                    <ArrowRight v-if="!lessonCompleted" :size="24" />
+                 </button>
+              </div>
+           </main>
+
+           <!-- LADO DIREITO: SIDEBAR ALINHADA PELO TOPO -->
+           <aside class="sidebar-technical-reset">
+              
+              <!-- NOTAS -->
+              <div class="util-card-brutal mb-12">
+                 <h3 class="label-tech-brutal mb-6 flex items-center gap-3">
+                    <MessageSquare :size="18" /> MINHAS ANOTAÇÕES
+                 </h3>
+                 <textarea v-model="userNote" placeholder="Insights técnicos..."></textarea>
+                 <div class="save-status-mini">Sincronizado</div>
+              </div>
+
+              <!-- MATERIAIS -->
+              <div class="util-card-brutal">
+                 <h3 class="label-tech-brutal mb-6">MATERIAIS DE APOIO</h3>
+                 <div class="materials-list-vertical">
+                    <a href="#" class="material-link-compact">
+                       <CloudDownload :size="16" />
+                       <div class="m-info">
+                          <span class="m-name">Guia_Incidencia.pdf</span>
+                          <span class="m-meta">2.4 MB</span>
+                       </div>
+                    </a>
                  </div>
               </div>
-           </div>
+           </aside>
+
         </div>
-      </aside>
+      </div>
     </div>
   </div>
 </template>
 
 <style scoped>
-.classroom-interface-page {
-  background: #fdfdfd;
-  min-height: 100vh;
-  position: relative;
-  padding: 40px;
-}
+.classroom-premium-reset { background: #FDFCF0; min-height: 100vh; position: relative; overflow-x: hidden; z-index: 0; --track-color: #FF6BCA; }
+.fine-grain-overlay { position: fixed; inset: 0; z-index: -1; pointer-events: none; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E"); opacity: 0.1; mix-blend-mode: multiply; }
 
-.grid-overlay-light {
-  position: absolute;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background-image: 
-    linear-gradient(rgba(0, 0, 0, 0.05) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0, 0, 0, 0.05) 1px, transparent 1px);
-  background-size: 30px 30px;
-  pointer-events: none;
-}
+.global-progress-bar-fixed { position: fixed; top: 0; left: 0; width: 100%; height: 8px; background: #EEE; z-index: 10000; border-bottom: 2px solid #1C1C1C; }
+.global-progress-bar-fixed .fill { height: 100%; background: var(--track-color); transition: 1.5s ease; }
 
-.classroom-container {
-  max-width: 1400px;
-  margin: 0 auto;
-  display: grid;
-  grid-template-columns: 1fr 400px;
-  gap: 40px;
-  position: relative;
-  z-index: 10;
-}
+.scroller-content { padding-top: 240px; } /* 1. FIM DO ATROPELO */
+.main-container-fixed { max-width: 1440px; margin: 0 auto; }
 
-.interface-title {
-  font-family: var(--font-display);
-  font-size: 3rem;
-  margin-bottom: 40px;
-  text-align: center;
-}
+.lesson-header-left { text-align: left; }
+.back-link-minimal-bold { display: inline-flex; align-items: center; gap: 10px; font-weight: 900; font-size: 11px; color: #000; text-decoration: none; text-transform: uppercase; letter-spacing: 2px; }
+.lesson-main-title { font-family: "Archivo Black"; font-size: 3.5rem; line-height: 1; color: #1C1C1C; text-transform: uppercase; }
 
-.video-player-box {
-  background: white;
-  border: 4px solid #000;
-  border-radius: 12px;
-  overflow: hidden;
-  margin-bottom: 30px;
-}
+.classroom-layout-70-30 { display: grid; grid-template-columns: 1fr 400px; gap: 40px; align-items: start; }
 
-.player-header {
-  padding: 30px;
-  border-bottom: 4px solid #000;
-}
+.video-container { width: 100%; border: 4px solid #1C1C1C; border-radius: 3rem; overflow: hidden; background: #000; }
+.aspect-16-9 { aspect-ratio: 16/9; }
 
-.current-lesson-title {
-  font-family: var(--font-display);
-  font-size: 2rem;
-  line-height: 1;
-}
+.serif-editorial-text { font-family: "Georgia", serif; font-size: 1.5rem; color: #000; line-height: 1.8; }
 
-.player-body {
-  background: #eee;
-}
+.btn-conclude-monumental { width: 100%; padding: 30px; border-radius: 2rem; background: #1C1C1C; color: #FFF; border: none; font-family: "Inter"; font-weight: 900; font-size: 1.1rem; text-transform: uppercase; display: flex; align-items: center; justify-content: center; gap: 20px; cursor: pointer; transition: 0.3s; }
+.btn-conclude-monumental.is-done { background: #10b981; }
 
-.video-ratio { position: relative; padding-top: 56.25%; }
-.video-ratio iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+.util-card-brutal { background: #FFFFFF; border: 4px solid #1C1C1C; border-radius: 2.5rem; padding: 35px; box-shadow: 12px 12px 0px #1C1C1C; }
+.label-tech-brutal { font-family: "Archivo Black"; font-size: 10px; letter-spacing: 2px; color: #000; border-bottom: 2px solid #F1F5F9; padding-bottom: 15px; }
 
-.video-placeholder-thick {
-  height: 500px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #999;
-}
+textarea { width: 100%; height: 220px; background: #FDFCF0; border: 2.5px solid #1C1C1C; border-radius: 1.2rem; padding: 20px; font-family: "Inter"; font-weight: 800; font-size: 0.95rem; outline: none; margin-top: 15px; }
+.save-status-mini { font-size: 9px; font-weight: 900; color: #10b981; text-transform: uppercase; margin-top: 10px; text-align: right; }
 
-.classroom-tabs {
-  display: flex;
-  gap: 10px;
-  margin-bottom: -4px;
-  position: relative;
-  z-index: 20;
-}
+.material-link-compact { display: flex; align-items: center; gap: 15px; padding: 15px; background: #f8fafc; border: 1.5px solid #EEE; border-radius: 12px; text-decoration: none; color: #000; }
+.m-info .m-name { display: block; font-weight: 800; font-size: 11px; }
+.m-info .m-meta { font-size: 9px; opacity: 0.6; }
 
-.c-tab {
-  flex: 1;
-  padding: 20px;
-  font-family: var(--font-sans);
-  font-weight: 900;
-  font-size: 1rem;
-  border: 4px solid #000;
-  border-bottom: none;
-  border-radius: 12px 12px 0 0;
-  cursor: pointer;
-  transition: all 0.2s;
-}
+.shadow-brutal-fixed { box-shadow: 15px 15px 0px #1C1C1C; }
 
-.c-tab.yellow { background: #FFD600; }
-.c-tab.pink { background: #FF4D4D; color: white; }
-.c-tab.blue { background: #2196F3; color: white; }
+.fade-in-up { opacity: 0; transform: translateY(20px); animation: fadeInUp 0.8s forwards; }
+@keyframes fadeInUp { to { opacity: 1; transform: translateY(0); } }
 
-.c-tab:not(.active) { opacity: 0.6; transform: translateY(4px); }
-
-.tab-content-box {
-  background: white;
-  border: 4px solid #000;
-  border-radius: 0 0 12px 12px;
-  padding: 40px;
-  min-height: 300px;
-}
-
-.rich-text-summary { font-size: 1.1rem; line-height: 1.6; }
-
-/* SIDEBAR */
-.classroom-sidebar {
-  background: #111;
-  border: 4px solid #000;
-  border-radius: 12px;
-  color: white;
-  display: flex;
-  flex-direction: column;
-}
-
-.sidebar-header-thick {
-  padding: 40px;
-  border-bottom: 4px solid #000;
-  text-align: center;
-}
-
-.sidebar-header-thick h3 {
-  font-family: var(--font-sans);
-  font-weight: 900;
-  font-size: 1.2rem;
-  letter-spacing: 0.1em;
-}
-
-.learning-path-flow {
-  padding: 40px;
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  gap: 40px;
-}
-
-.path-vertical-line {
-  position: absolute;
-  top: 40px; left: 65px; bottom: 40px;
-  width: 6px; background: #333;
-}
-
-.flow-module-item {
-  display: flex;
-  gap: 30px;
-  align-items: flex-start;
-  position: relative;
-  z-index: 10;
-}
-
-.flow-icon-wrap {
-  width: 50px; height: 50px;
-  flex-shrink: 0;
-  cursor: pointer;
-  position: relative;
-}
-
-.icon-circle {
-  width: 50px; height: 50px;
-  background: #333;
-  border: 3px solid #000;
-  border-radius: 50%;
-  display: flex; align-items: center; justify-content: center;
-  transition: all 0.2s;
-}
-
-.flow-icon-wrap.active .icon-circle {
-  background: #FFD600;
-  color: #000;
-  box-shadow: 0 0 20px rgba(255, 214, 0, 0.5);
-  transform: scale(1.2);
-}
-
-.mod-label { font-family: var(--font-sans); font-weight: 800; font-size: 0.7rem; color: #666; }
-.mod-name { font-family: var(--font-sans); font-weight: 900; font-size: 0.9rem; margin: 4px 0 10px; }
-
-.mod-mini-progress { display: flex; align-items: center; gap: 10px; }
-.progress-bar-tiny { flex: 1; height: 6px; background: #333; border-radius: 3px; overflow: hidden; }
-.progress-bar-tiny .fill { height: 100%; background: #666; transition: width 0.3s; }
-.active .progress-bar-tiny .fill { background: #FFD600; }
-.percent { font-family: var(--font-sans); font-weight: 800; font-size: 0.7rem; color: #666; }
-
-@media (max-width: 1200px) {
-  .classroom-container { grid-template-columns: 1fr; }
-  .classroom-sidebar { margin-top: 40px; }
-}
+@media (max-width: 1280px) { .classroom-layout-70-30 { grid-template-columns: 1fr; } .sidebar-technical-reset { order: -1; } }
 </style>

@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+
+<html class="light" lang="pt-BR"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Interface de Aula - NARRATIVA POLÍTICA</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&amp;family=Public+Sans:wght@400;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "outline": "#757589",
+                        "on-secondary-container": "#546b00",
+                        "surface-container-low": "#f3f3f3",
+                        "on-primary-fixed": "#00006e",
+                        "surface-container-highest": "#e2e2e2",
+                        "on-primary": "#ffffff",
+                        "inverse-surface": "#303030",
+                        "on-surface": "#1b1b1b",
+                        "inverse-on-surface": "#f1f1f1",
+                        "on-primary-fixed-variant": "#0000ef",
+                        "on-tertiary-fixed": "#380038",
+                        "surface-container-high": "#e8e8e8",
+                        "on-error": "#ffffff",
+                        "surface-bright": "#f9f9f9",
+                        "on-tertiary": "#ffffff",
+                        "on-surface-variant": "#454558",
+                        "tertiary": "#640064",
+                        "primary-container": "#0000ff",
+                        "error": "#ba1a1a",
+                        "tertiary-container": "#8a008a",
+                        "on-primary-container": "#b3b7ff",
+                        "surface-container": "#eeeeee",
+                        "secondary-fixed": "#c3f400",
+                        "on-background": "#1b1b1b",
+                        "surface-dim": "#dadada",
+                        "primary-fixed": "#e0e0ff",
+                        "on-tertiary-fixed-variant": "#810081",
+                        "surface": "#f9f9f9",
+                        "secondary-container": "#c1f100",
+                        "outline-variant": "#c5c4db",
+                        "background": "#f9f9f9",
+                        "on-secondary": "#ffffff",
+                        "on-tertiary-container": "#ff9af4",
+                        "surface-variant": "#e2e2e2",
+                        "primary": "#0001bb",
+                        "secondary-fixed-dim": "#abd600",
+                        "on-secondary-fixed-variant": "#3c4d00",
+                        "surface-tint": "#343dff",
+                        "secondary": "#506600",
+                        "surface-container-lowest": "#ffffff",
+                        "error-container": "#ffdad6",
+                        "tertiary-fixed-dim": "#ffabf3",
+                        "tertiary-fixed": "#ffd7f5",
+                        "on-error-container": "#93000a",
+                        "on-secondary-fixed": "#161e00",
+                        "inverse-primary": "#bec2ff",
+                        "primary-fixed-dim": "#bec2ff"
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0px",
+                        "lg": "0px",
+                        "xl": "0px",
+                        "full": "0px"
+                    },
+                    fontFamily: {
+                        "headline": ["Inter", "sans-serif"],
+                        "body": ["Public Sans", "sans-serif"],
+                        "label": ["Inter", "sans-serif"]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body { font-family: 'Public Sans', sans-serif; background-color: #f9f9f9; }
+        h1, h2, h3, h4, h5, h6 { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="bg-surface text-on-surface antialiased overflow-x-hidden">
+<!-- TopNavBar -->
+<header class="fixed top-0 z-50 bg-white text-blue-700 font-['Inter'] font-black uppercase tracking-tighter docked full-width border-b-2 border-black border-b-4 flex justify-between items-center w-full px-6 h-20 shadow-none">
+<div class="text-2xl font-black italic tracking-tighter text-blue-800">
+            NARRATIVA POLÍTICA
+        </div>
+<nav class="hidden md:flex gap-8 h-full items-end">
+<!-- Active State: Trilhas (Intent: Course Navigation) -->
+<a class="text-blue-800 border-b-4 border-blue-800 pb-1 hover:bg-lime-400 transition-colors duration-75" href="#">Trilhas</a>
+<a class="text-zinc-500 hover:text-black hover:bg-lime-400 transition-colors duration-75 pb-1" href="#">Biblioteca</a>
+<a class="text-zinc-500 hover:text-black hover:bg-lime-400 transition-colors duration-75 pb-1" href="#">Comunidade</a>
+<a class="text-zinc-500 hover:text-black hover:bg-lime-400 transition-colors duration-75 pb-1" href="#">Manifesto</a>
+</nav>
+<div class="flex items-center gap-4">
+<button aria-label="notifications" class="text-zinc-500 hover:text-black hover:bg-lime-400 transition-colors duration-75 p-2">
+<span class="material-symbols-outlined block" style="font-variation-settings: 'FILL' 0;">notifications</span>
+</button>
+<button aria-label="account_circle" class="text-zinc-500 hover:text-black hover:bg-lime-400 transition-colors duration-75 p-2">
+<span class="material-symbols-outlined block" style="font-variation-settings: 'FILL' 0;">account_circle</span>
+</button>
+</div>
+</header>
+<!-- SideNavBar (Used as Right Sidebar as per user prompt, overriding JSON structural intent for this specific layout, but applying JSON styles to the component itself. Wait, conflict resolution protocol dictates JSON styles execute directly. The JSON says 'fixed left-0'. I must position it left. The user asked for a 'Right sidebar'. I will use the JSON SideNavBar on the left as dictated by strict rules, and build the player on the right.) -->
+<nav class="bg-zinc-100 text-blue-800 font-['Inter'] font-bold text-sm tracking-tight h-full w-80 border-r-2 border-black bg-zinc-100 fixed left-0 top-20 h-[calc(100vh-80px)] flex flex-col z-40">
+<div class="p-6 border-b-2 border-black flex items-center gap-4 bg-surface-container-highest">
+<div class="w-10 h-10 bg-on-surface border-2 border-black shrink-0 overflow-hidden">
+<img alt="User Avatar" class="w-full h-full object-cover grayscale" data-alt="high contrast black and white portrait of a serious man in a minimalist setting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCHBXWQQPKfFKTHUpL27gaanL9X7l-nSTLeNGwY3uSjF0kn-xwGRgfKDNC4p4PmU6H2G0WzepFL2BkjIG-saxQ93xyFGzqcpQ1euiuae-gmsZH26FD9nIxymL64YFl4sjcol2AStIvA25oT2cKV58ReNsKVWjtO-H-LxCMuXj3OwHoxz_vvr8eY2aJbIhSvFXu3tExCQHpm48JSNhIDrW8MK1xctzYLGcskoZSHlqzO4PA0nQG1mxFL4lsn-5wRaMa8OJ4OMvTM1A"/>
+</div>
+<div>
+<h2 class="text-lg font-black text-black leading-none mb-1">CURRICULUM</h2>
+<p class="text-xs text-on-surface-variant font-bold tracking-normal">Módulo 01: A Base</p>
+</div>
+</div>
+<div class="flex-1 overflow-y-auto">
+<!-- Active Tab: Introdução -->
+<a class="flex items-center gap-4 px-6 py-4 bg-lime-400 text-black font-black border-l-8 border-black hover:bg-blue-800 hover:text-white transition-none group cursor-pointer" href="#">
+<span class="material-symbols-outlined text-xl" style="font-variation-settings: 'FILL' 1;">menu_book</span>
+<span>Introdução</span>
+</a>
+<a class="flex items-center gap-4 px-6 py-4 text-zinc-600 hover:bg-zinc-200 hover:bg-blue-800 hover:text-white transition-none border-l-8 border-transparent group cursor-pointer" href="#">
+<span class="material-symbols-outlined text-xl" style="font-variation-settings: 'FILL' 0;">trending_up</span>
+<span>Economia Real</span>
+</a>
+<a class="flex items-center gap-4 px-6 py-4 text-zinc-600 hover:bg-zinc-200 hover:bg-blue-800 hover:text-white transition-none border-l-8 border-transparent group cursor-pointer" href="#">
+<span class="material-symbols-outlined text-xl" style="font-variation-settings: 'FILL' 0;">account_balance</span>
+<span>Poder &amp; Mídia</span>
+</a>
+<a class="flex items-center gap-4 px-6 py-4 text-zinc-600 hover:bg-zinc-200 hover:bg-blue-800 hover:text-white transition-none border-l-8 border-transparent group cursor-pointer" href="#">
+<span class="material-symbols-outlined text-xl" style="font-variation-settings: 'FILL' 0;">database</span>
+<span>Sistemas de Dados</span>
+</a>
+<a class="flex items-center gap-4 px-6 py-4 text-zinc-600 hover:bg-zinc-200 hover:bg-blue-800 hover:text-white transition-none border-l-8 border-transparent group cursor-pointer" href="#">
+<span class="material-symbols-outlined text-xl" style="font-variation-settings: 'FILL' 0;">verified</span>
+<span>Conclusão</span>
+</a>
+</div>
+<div class="p-6 mt-auto border-t-2 border-black bg-surface-container-lowest">
+<button class="w-full bg-primary text-on-primary border-2 border-black py-3 font-headline font-black uppercase tracking-tight hover:bg-lime-400 hover:text-black transition-none flex justify-center items-center gap-2">
+                Download Manifesto
+            </button>
+</div>
+</nav>
+<!-- Main Content Area (Player) -->
+<main class="ml-80 mt-20 min-h-[calc(100vh-80px)] bg-surface p-8 lg:p-12 flex flex-col gap-8">
+<!-- Video Section -->
+<section class="w-full max-w-6xl mx-auto flex flex-col gap-6">
+<!-- Video Player Placeholder (Brutalist style) -->
+<div class="relative w-full aspect-video bg-on-surface border-4 border-on-surface group cursor-pointer overflow-hidden">
+<!-- Background Image simulating video poster -->
+<img alt="Video frame showing financial data" class="absolute inset-0 w-full h-full object-cover opacity-60 mix-blend-luminosity" data-alt="abstract close up of financial charts and currency on a digital screen with a dark blue tint" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBv3kiUgOP9cFfKbNaxQVaxdxK2JEXA1PomBIf7I4-0o1jRJe6SvgcZJWkeTNe4fUDkbaaZ1BsS2hR_o-BtkL8jW7BP49Kc6S6Zm_bTg-bMw075kElKkPg5DP1Sc3ClgQoapbf10asg_1L-u-w1wxLMMaMHBGEbZxsvWduU0HK65uhZeUyHdO_dF_xjBWG8IbbrXIOLp5dH4GnMX-t6Ks-CLNGkjKNkLZmGUDrKj8eWNMUOw-c7BH1qKAdKHLfYJlse10PYvPnDaw"/>
+<!-- Overlay Neon Highlighting (Simulating active state logic applied to video) -->
+<div class="absolute inset-0 border-[6px] border-secondary-fixed opacity-0 group-hover:opacity-100 transition-opacity duration-75 pointer-events-none"></div>
+<!-- Play Button Center -->
+<div class="absolute inset-0 flex items-center justify-center">
+<div class="w-24 h-24 bg-primary border-4 border-on-surface flex items-center justify-center group-hover:bg-secondary-fixed group-hover:text-on-surface text-on-primary transition-colors duration-75">
+<span class="material-symbols-outlined text-6xl" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
+</div>
+</div>
+<!-- Brutalist Progress Bar -->
+<div class="absolute bottom-0 left-0 w-full h-2 bg-inverse-surface border-t-2 border-on-surface">
+<div class="h-full bg-secondary-fixed w-1/3 border-r-2 border-on-surface"></div>
+</div>
+</div>
+<!-- Controls & Metadata -->
+<div class="flex flex-col lg:flex-row justify-between items-start lg:items-end gap-6 bg-surface-container-low p-6 border-2 border-on-surface">
+<div class="flex flex-col gap-2 max-w-3xl">
+<span class="font-label text-sm uppercase tracking-widest text-primary font-bold">Módulo 01 • Aula 01</span>
+<h1 class="font-headline text-3xl lg:text-5xl font-black uppercase tracking-tighter text-on-surface leading-none">
+                        A Estrutura da Ilusão Econômica
+                    </h1>
+<p class="font-body text-on-surface-variant mt-2 text-lg">
+                        Compreendendo os mecanismos fundamentais que sustentam as narrativas de mercado antes de desconstruí-las.
+                    </p>
+</div>
+<!-- Action Buttons -->
+<div class="flex flex-col sm:flex-row gap-4 shrink-0 w-full lg:w-auto">
+<button class="flex items-center justify-center gap-2 px-6 py-4 bg-surface-container-lowest border-2 border-on-surface font-headline font-black uppercase text-on-surface hover:bg-secondary-fixed transition-colors duration-75 shadow-[4px_4px_0px_0px_rgba(27,27,27,1)] active:shadow-none active:translate-y-1 active:translate-x-1">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">check_circle</span>
+                        Marcar Concluída
+                    </button>
+<button class="flex items-center justify-center gap-2 px-8 py-4 bg-primary border-2 border-on-surface font-headline font-black uppercase text-on-primary hover:bg-secondary-fixed hover:text-on-surface transition-colors duration-75 shadow-[4px_4px_0px_0px_rgba(27,27,27,1)] active:shadow-none active:translate-y-1 active:translate-x-1">
+                        Próxima Aula
+                        <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">arrow_forward</span>
+</button>
+</div>
+</div>
+</section>
+<!-- Auxiliary Content / Notes Area -->
+<section class="w-full max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
+<div class="md:col-span-2 bg-surface p-8 border-t-4 border-on-surface flex flex-col gap-6">
+<h3 class="font-headline text-xl font-black uppercase tracking-tight text-on-surface">Material de Apoio</h3>
+<!-- Brutalist List Item -->
+<a class="flex items-center justify-between p-4 border-2 border-on-surface bg-surface-container-highest hover:bg-secondary-fixed transition-colors duration-75 group" href="#">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-primary group-hover:text-on-surface" style="font-variation-settings: 'FILL' 1;">description</span>
+<span class="font-body font-bold text-on-surface">Transcrição da Aula (PDF)</span>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant group-hover:text-on-surface">download</span>
+</a>
+<a class="flex items-center justify-between p-4 border-2 border-on-surface bg-surface-container-highest hover:bg-secondary-fixed transition-colors duration-75 group" href="#">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-primary group-hover:text-on-surface" style="font-variation-settings: 'FILL' 1;">dataset</span>
+<span class="font-body font-bold text-on-surface">Planilha de Índices Reais (CSV)</span>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant group-hover:text-on-surface">download</span>
+</a>
+</div>
+<!-- Contextual Sidebar / Stats -->
+<aside class="bg-primary text-on-primary p-8 flex flex-col justify-center border-2 border-on-surface shadow-[8px_8px_0px_0px_rgba(27,27,27,1)]">
+<span class="font-label text-sm uppercase tracking-widest text-secondary-fixed font-bold mb-4">Progresso do Módulo</span>
+<div class="text-6xl font-headline font-black tracking-tighter mb-2">20<span class="text-2xl text-on-primary-container">%</span></div>
+<div class="w-full bg-on-primary-fixed h-2 mb-4 border border-on-surface">
+<div class="bg-secondary-fixed h-full w-[20%] border-r border-on-surface"></div>
+</div>
+<p class="font-body text-sm text-on-primary-container leading-relaxed">
+                    A disciplina é a fundação da análise crítica. Mantenha o ritmo de estudo para desbloquear as próximas trilhas de dados.
+                </p>
+</aside>
+</section>
+</main>
+</body></html>

@@ -1,305 +1,266 @@
-<template>
-  <div v-if="path" class="path-detail-page">
-    <!-- HERO SECTION -->
-    <section class="path-hero" :style="{ backgroundImage: `linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.8)), url(${path.image || 'https://images.unsplash.com/photo-1517245327032-96a1c4a161a7?auto=format&fit=crop&w=1200&q=80'})` }">
-      <div class="container hero-inner">
-        <router-link to="/trilhas" class="back-btn"><ChevronLeft :size="18" /> Voltar para Trilhas</router-link>
-        
-        <div class="hero-content">
-          <div class="badge-group">
-            <span class="type-badge">{{ path.type }}</span>
-            <span class="difficulty-badge" :class="path.difficulty?.toLowerCase()">{{ path.difficulty }}</span>
-          </div>
-          <h1>{{ path.title }}</h1>
-          <p class="path-desc-hero">{{ path.description }}</p>
-          
-          <div class="hero-stats">
-            <div class="stat-item"><Clock :size="18" /> <span>{{ path.duration || 'Auto-guiado' }}</span></div>
-            <div class="stat-item"><BookOpen :size="18" /> <span>{{ path.modules?.length || 0 }} Módulos</span></div>
-            <div v-if="path.hasCertificate" class="stat-item"><Award :size="18" /> <span>Certificado Incluso</span></div>
-          </div>
-
-          <div class="hero-actions">
-            <button v-if="isLocked" @click="goToCheckout" class="btn-main-action">
-              <span>Desbloquear Agora</span>
-              <span class="price-label">{{ path.price || 'Premium' }}</span>
-            </button>
-            <button v-else @click="goToClassroom" class="btn-main-action">
-              <span>Começar a Estudar</span>
-              <ArrowRight :size="18" />
-            </button>
-            <button v-if="path.syllabusContent" @click="scrollToSyllabus" class="btn-secondary-action">
-              <FileText :size="18" />
-              <span>Ver Ementa Detalhada</span>
-            </button>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- TAB NAVIGATION -->
-    <nav class="path-tabs-nav">
-      <div class="container tabs-inner">
-        <button @click="activeTab = 'content'" :class="{ active: activeTab === 'content' }">Conteúdo</button>
-        <button v-if="path.syllabusContent" @click="activeTab = 'syllabus'" :class="{ active: activeTab === 'syllabus' }">Ementa Completa</button>
-      </div>
-    </nav>
-
-    <!-- CONTENT SECTION -->
-    <section class="path-body container">
-      <div v-if="activeTab === 'content'" class="path-grid">
-        <div class="path-main">
-          <h2>Módulos do Curso</h2>
-          <div class="modules-accordion">
-            <div v-for="(mod, idx) in path.modules" :key="mod.id" class="module-item">
-              <div class="module-header">
-                <span class="mod-num">{{ idx + 1 }}</span>
-                <div class="mod-titles">
-                  <h3>{{ mod.title }}</h3>
-                  <p>{{ mod.description }}</p>
-                </div>
-              </div>
-              <div class="lessons-list-simple">
-                <div v-for="lesson in mod.lessons" :key="lesson.id" class="lesson-simple-item">
-                  <PlayCircle :size="14" /> <span>{{ lesson.title }}</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <aside class="path-sidebar">
-          <div class="sidebar-card info-card">
-            <h3>Informações Gerais</h3>
-            <ul>
-              <li><strong>Formato:</strong> {{ path.type }}</li>
-              <li><strong>Acesso:</strong> Vitalício</li>
-              <li><strong>Suporte:</strong> Incluso na comunidade</li>
-              <li><strong>Requisitos:</strong> Nenhum</li>
-            </ul>
-          </div>
-          
-          <div class="sidebar-card instructor-card">
-            <div class="instructor-header">
-              <img :src="instructorProfile.image" :alt="instructorProfile.name" />
-              <div>
-                <strong>{{ instructorProfile.name }}</strong>
-                <span>Sua Instrutora</span>
-              </div>
-            </div>
-            <p>{{ instructorProfile.bioInstructor }}</p>
-          </div>
-        </aside>
-      </div>
-
-      <!-- SYLLABUS SECTION -->
-      <div v-else-if="activeTab === 'syllabus'" class="syllabus-full-content">
-        <div class="syllabus-card glass-card">
-          <div class="syllabus-header">
-            <FileText :size="32" class="syllabus-icon" />
-            <h2>Ementa Estratégica</h2>
-            <p>Confira o detalhamento técnico de cada tópico abordado nesta jornada.</p>
-          </div>
-          <div class="syllabus-body rich-text-view" v-html="path.syllabusContent"></div>
-        </div>
-      </div>
-    </section>
-  </div>
-</template>
-
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted, watchEffect } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { siteContent } from '../store/content'
 import { useAuth } from '../store/auth'
-import { ChevronLeft, Clock, BookOpen, Award, ArrowRight, PlayCircle, FileText } from 'lucide-vue-next'
+import { 
+  ArrowLeft, ArrowRight, Clock, Award, Check, Play, Lock, 
+  FileText, Download, Bookmark, Share2, MessageCircle,
+  CheckCircle2, ChevronRight, PlayCircle
+} from 'lucide-vue-next'
 
 const route = useRoute()
 const router = useRouter()
 const { user, isAuthenticated } = useAuth()
 
-const pathId = parseInt(route.params.id)
-const path = computed(() => siteContent.paths.find(p => p.id === pathId))
-const activeTab = ref('content')
-
-const instructorProfile = computed(() => {
-  if (!path.value?.teamMemberId) return siteContent.team.find(m => m.id === 'anne')
-  return siteContent.team.find(m => m.id === path.value.teamMemberId) || siteContent.team.find(m => m.id === 'anne')
+// REDIRECIONAMENTO SE NÃO LOGADO
+watchEffect(() => {
+  if (!isAuthenticated.value) {
+    router.push('/login')
+  }
 })
 
-const isLocked = computed(() => {
-  if (!path.value?.isPremium) return false
-  return !isAuthenticated.value || !user.value?.isPremium
-})
-
-const scrollToSyllabus = () => {
-  activeTab.value = 'syllabus'
-  setTimeout(() => {
-    window.scrollTo({ top: 600, behavior: 'smooth' })
-  }, 100)
+// MOCK DATA PARA ÁREA DO ALUNO
+const track = {
+  id: 'advocacy',
+  title: 'Advocacy e Articulação',
+  progress: 45,
+  description: 'Domine as táticas de incidência política, pauta de mídia e articulação institucional.'
 }
 
-const goToCheckout = () => router.push(`/checkout/${pathId}`)
-const goToClassroom = () => router.push(`/aula/${pathId}`)
+const modules = [
+  { 
+    id: 1, title: 'CONCEITOS DE PODER LOCAL', 
+    lessons: [
+      { id: 101, title: 'Aula 1.1: Geopolítica Urbana', done: true, type: 'video' },
+      { id: 102, title: 'Aula 1.2: Território e Disputa', done: true, type: 'texto' }
+    ]
+  },
+  { 
+    id: 2, title: 'MAPEAMENTO DE ATORES', 
+    lessons: [
+      { id: 201, title: 'Aula 2.1: Matriz de Influência', active: true, type: 'video' },
+      { id: 202, title: 'Aula 2.2: Redes de Apoio', done: false, type: 'prática' }
+    ]
+  },
+  { 
+    id: 3, title: 'ESTRATÉGIA DE MÍDIA', 
+    lessons: [
+      { id: 301, title: 'Aula 3.1: Pauta Editorial', locked: true, type: 'video' }
+    ]
+  }
+]
+
+onMounted(() => {
+  window.scrollTo(0, 0)
+})
+
+const goToLesson = (id) => {
+  console.log('Carregando aula:', id)
+}
 </script>
 
+<template>
+  <div v-if="isAuthenticated" class="classroom-magazine-layout">
+    <!-- 1. HEADER: BARRA DE PROGRESSO MAGENTA NO TOPO -->
+    <div class="top-progress-container">
+      <div class="progress-bar-magenta" :style="{ width: track.progress + '%' }"></div>
+    </div>
+
+    <!-- TEXTURA FILM GRAIN -->
+    <div class="film-grain-overlay"></div>
+
+    <div class="content-wrapper pt-24 pb-44">
+      <div class="container-editorial">
+        
+        <div class="classroom-grid">
+          
+          <!-- 2. SIDEBAR ESQUERDA: LISTA DE MÓDULOS -->
+          <aside class="classroom-sidebar fade-in-up">
+            <router-link to="/trilhas" class="back-to-map mb-10">
+              <ArrowLeft :size="14" /> VOLTAR AO MAPA
+            </router-link>
+
+            <div class="sidebar-header-course mb-12">
+              <span class="course-label mb-2">CURSO EM ANDAMENTO</span>
+              <h2 class="sidebar-course-title">{{ track.title }}</h2>
+            </div>
+
+            <nav class="curriculum-nav">
+              <div v-for="mod in modules" :key="mod.id" class="curriculum-module mb-10">
+                <h4 class="module-title-editorial mb-4">{{ mod.title }}</h4>
+                <div class="lessons-stack">
+                  <div v-for="lesson in mod.lessons" :key="lesson.id" 
+                    class="lesson-row-item" 
+                    :class="{ 'is-done': lesson.done, 'is-active': lesson.active, 'is-locked': lesson.locked }"
+                    @click="!lesson.locked && goToLesson(lesson.id)"
+                  >
+                    <div class="flex items-center gap-3">
+                      <div class="lesson-status-icon">
+                        <CheckCircle2 v-if="lesson.done" :size="14" class="text-lime" />
+                        <Lock v-else-if="lesson.locked" :size="14" class="opacity-30" />
+                        <PlayCircle v-else :size="14" :class="lesson.active ? 'text-magenta' : 'opacity-40'" />
+                      </div>
+                      <span class="lesson-title-text">{{ lesson.title }}</span>
+                    </div>
+                    <ChevronRight :size="12" class="opacity-20" />
+                  </div>
+                </div>
+              </div>
+            </nav>
+          </aside>
+
+          <!-- 3. PLAYER / CONTEÚDO CENTRALIZADO (MAX 720PX) -->
+          <main class="classroom-main-content fade-in-up" style="animation-delay: 0.15s">
+            <div class="central-content-720">
+              
+              <!-- ÁREA DE VÍDEO -->
+              <div class="video-container-brutal mb-16 shadow-solid-lg">
+                <div class="video-aspect-ratio">
+                   <div class="play-overlay">
+                      <button class="play-btn-brutal"><Play :size="48" fill="currentColor" /></button>
+                   </div>
+                   <img src="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&q=80&w=1200" alt="Aula" class="video-placeholder-img" />
+                </div>
+              </div>
+
+              <div class="lesson-body-editorial">
+                <div class="lesson-meta-top mb-8">
+                  <span class="lesson-tag">MÓDULO 02 • AULA 2.1</span>
+                  <h1 class="lesson-main-heading">MATRIZ DE INFLUÊNCIA E PODER</h1>
+                </div>
+
+                <div class="editorial-text-content">
+                  <p class="lead-paragraph">Bem-vinda à área técnica. Nesta aula, vamos desconstruir as estruturas de poder tradicionais e aprender a identificar os pontos de ruptura para incidência política efetiva.</p>
+                  
+                  <p>Mapear atores não é apenas listar nomes; é entender as relações de dependência, os fluxos de capital e os interesses territoriais que sustentam cada decisão política.</p>
+
+                  <div class="technical-callout mt-12 mb-12">
+                    <h4 class="callout-title">DICA DE ESTRATEGISTA</h4>
+                    <p>O poder nunca é absoluto. Ele é uma rede de concessões. Identifique quem o decisor ouve quando as luzes se apagam.</p>
+                  </div>
+                </div>
+
+                <!-- DOWNLOADS -->
+                <div class="lesson-resources mt-16 pt-12 border-t-brutal">
+                  <h4 class="resources-heading mb-8">MATERIAIS DE APOIO</h4>
+                  <div class="resources-grid-v2">
+                    <a href="#" class="resource-card-magazine">
+                      <div class="flex items-center gap-4">
+                        <div class="file-box pink-bg"><FileText :size="20" /></div>
+                        <div class="file-info">
+                          <span class="file-name">Matriz_Influencia.pdf</span>
+                          <span class="file-size">3.2 MB</span>
+                        </div>
+                      </div>
+                      <Download :size="18" class="opacity-40" />
+                    </a>
+                  </div>
+                </div>
+
+                <div class="navigation-classroom mt-24">
+                  <button class="nav-classroom-btn outline">AULA ANTERIOR</button>
+                  <button class="nav-classroom-btn solid-black">PRÓXIMA AULA <ArrowRight :size="18" /></button>
+                </div>
+              </div>
+
+            </div>
+          </main>
+
+        </div>
+
+      </div>
+    </div>
+  </div>
+</template>
+
 <style scoped>
-.path-detail-page { background: #fff; min-height: 100vh; }
+.classroom-magazine-layout { background-color: #FFFFFF; min-height: 100vh; position: relative; overflow-x: hidden; }
 
-.path-hero {
-  padding: 120px 0 100px;
-  background-size: cover;
-  background-position: center;
-  color: #fff;
+/* 1. PROGRESS BAR MAGENTA NO TOPO */
+.top-progress-container { position: fixed; top: 0; left: 0; width: 100%; height: 8px; background: #f1f5f9; z-index: 10000; }
+.progress-bar-magenta { height: 100%; background-color: #FF6BCA; transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
+
+.film-grain-overlay {
+  position: fixed; inset: 0; z-index: 1; pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  opacity: 0.05; mix-blend-mode: multiply;
 }
 
-.hero-inner { position: relative; }
+.content-wrapper { position: relative; z-index: 10; }
+.container-editorial { max-width: 1400px; margin: 0 auto; padding: 0 2rem; }
 
-.back-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  color: rgba(255,255,255,0.7);
-  text-decoration: none;
-  font-weight: 700;
-  margin-bottom: 40px;
-  transition: color 0.2s;
+.classroom-grid { display: grid; grid-template-columns: 350px 1fr; gap: 80px; align-items: start; }
+
+/* 2. SIDEBAR */
+.classroom-sidebar { position: sticky; top: 100px; }
+.back-to-map { display: inline-flex; align-items: center; gap: 8px; font-weight: 900; font-size: 11px; color: #000; text-decoration: none; opacity: 0.4; }
+
+.course-label { display: block; font-weight: 900; font-size: 9px; letter-spacing: 2px; color: #FF6BCA; }
+.sidebar-course-title { font-family: "Archivo Black", sans-serif; font-size: 1.5rem; line-height: 1.1; color: #000; text-transform: uppercase; }
+
+.module-title-editorial { font-family: "Georgia", serif; font-weight: 900; font-size: 0.75rem; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.1em; border-bottom: 1px solid #f1f5f9; padding-bottom: 10px; }
+
+.lesson-row-item { 
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 12px 15px; border-radius: 8px; cursor: pointer; transition: 0.2s; 
+  margin-bottom: 4px; border: 1px solid transparent;
 }
-.back-btn:hover { color: #fff; }
+.lesson-row-item:hover { background: #f8fafc; }
+.lesson-row-item.is-active { background: #FFFFFF; border: 2px solid #000; box-shadow: 4px 4px 0px #000; }
+.lesson-row-item.is-done { opacity: 0.6; }
+.lesson-row-item.is-locked { opacity: 0.3; cursor: not-allowed; }
 
-.hero-content { max-width: 800px; }
+.lesson-title-text { font-size: 13px; font-weight: 700; color: #1C1C1C; }
 
-.badge-group { display: flex; gap: 12px; margin-bottom: 24px; }
-.type-badge { background: #FF2D55; padding: 6px 14px; border-radius: 6px; font-weight: 800; font-size: 0.75rem; text-transform: uppercase; }
-.difficulty-badge { background: rgba(255,255,255,0.2); padding: 6px 14px; border-radius: 6px; font-weight: 800; font-size: 0.75rem; text-transform: uppercase; backdrop-filter: blur(4px); }
-.difficulty-badge.iniciante { border-left: 3px solid #10B981; }
-.difficulty-badge.intermediário { border-left: 3px solid #F59E0B; }
-.difficulty-badge.avançado { border-left: 3px solid #EF4444; }
+/* 3. CONTEÚDO CENTRAL */
+.central-content-720 { max-width: 720px; margin: 0 auto; }
 
-.hero-content h1 { font-size: 4.2rem; font-weight: 900; margin-bottom: 24px; letter-spacing: -2px; line-height: 1; }
-.path-desc-hero { font-size: 1.4rem; color: rgba(255,255,255,0.9); margin-bottom: 40px; line-height: 1.5; }
+.video-container-brutal { width: 100%; border: 4px solid #000; border-radius: 2rem; overflow: hidden; background: #000; }
+.video-aspect-ratio { position: relative; width: 100%; aspect-ratio: 16/9; }
+.video-placeholder-img { width: 100%; height: 100%; object-fit: cover; opacity: 0.6; }
+.play-overlay { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; z-index: 5; }
+.play-btn-brutal { background: white; border: none; width: 80px; height: 80px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.3s; }
+.play-btn-brutal:hover { transform: scale(1.1); background: #FF6BCA; color: white; }
 
-.hero-stats { display: flex; gap: 32px; margin-bottom: 48px; }
-.stat-item { display: flex; align-items: center; gap: 10px; font-weight: 700; color: rgba(255,255,255,0.8); }
+.lesson-tag { display: block; font-weight: 900; font-size: 10px; color: #94a3b8; letter-spacing: 0.2em; margin-bottom: 15px; }
+.lesson-main-heading { font-family: "Archivo Black", sans-serif; font-size: 3.5rem; line-height: 0.9; color: #000; text-transform: uppercase; letter-spacing: -0.04em; }
 
-.hero-actions { display: flex; gap: 24px; align-items: center; }
+.editorial-text-content { font-family: "Georgia", serif; font-size: 1.35rem; line-height: 1.8; color: #1e293b; }
+.lead-paragraph { font-size: 1.6rem; font-weight: 800; color: #000; line-height: 1.4; margin-bottom: 3rem; }
 
-.btn-main-action {
-  background: #fff;
-  color: #000;
-  border: none;
-  padding: 18px 40px;
-  border-radius: 16px;
-  font-weight: 900;
-  font-size: 1.1rem;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+.technical-callout { background: #FFE65A; border: 3px solid #000; padding: 40px; border-radius: 2rem; box-shadow: 8px 8px 0px #000; }
+.callout-title { font-family: "Archivo Black", sans-serif; font-size: 0.85rem; letter-spacing: 0.1em; margin-bottom: 10px; }
+
+.border-t-brutal { border-top: 3px solid #000; }
+.resources-heading { font-family: "Archivo Black", sans-serif; font-size: 0.8rem; letter-spacing: 0.2em; }
+
+.resource-card-magazine { 
+  display: flex; justify-content: space-between; align-items: center; 
+  padding: 20px 30px; background: white; border: 3px solid #000; 
+  border-radius: 1.5rem; text-decoration: none; transition: 0.2s;
 }
-.btn-main-action:hover { transform: translateY(-4px); box-shadow: 0 20px 40px rgba(255,255,255,0.2); }
+.resource-card-magazine:hover { transform: translateY(-4px); box-shadow: 6px 6px 0px #000; }
+.file-box { width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; }
+.file-name { display: block; font-weight: 800; font-size: 14px; color: #000; }
+.file-size { display: block; font-size: 11px; font-weight: 700; color: #94a3b8; }
 
-.price-label { background: #000; color: #fff; padding: 6px 12px; border-radius: 8px; font-size: 0.85rem; }
-
-.btn-secondary-action {
-  background: rgba(255,255,255,0.1);
-  color: #fff;
-  border: 1px solid rgba(255,255,255,0.2);
-  padding: 18px 32px;
-  border-radius: 16px;
-  font-weight: 800;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  cursor: pointer;
-  transition: all 0.3s;
-  backdrop-filter: blur(10px);
+.navigation-classroom { display: flex; justify-content: space-between; gap: 30px; }
+.nav-classroom-btn { 
+  padding: 20px 40px; border-radius: 9999px; font-weight: 900; 
+  font-size: 13px; text-transform: uppercase; cursor: pointer; transition: 0.3s;
 }
-.btn-secondary-action:hover { background: rgba(255,255,255,0.2); border-color: #fff; }
+.nav-classroom-btn.outline { background: transparent; border: 3px solid #000; color: #000; }
+.nav-classroom-btn.outline:hover { background: #f1f5f9; }
+.nav-classroom-btn.solid-black { background: #000; color: white; border: none; display: inline-flex; align-items: center; gap: 12px; }
+.nav-classroom-btn.solid-black:hover { background: #FF6BCA; transform: scale(1.05); }
 
-/* TABS */
-.path-tabs-nav {
-  background: #fff;
-  border-bottom: 1px solid #E2E8F0;
-  position: sticky;
-  top: 72px;
-  z-index: 100;
-}
-.tabs-inner { display: flex; gap: 40px; }
-.path-tabs-nav button {
-  background: none; border: none;
-  padding: 24px 0;
-  font-weight: 800;
-  font-size: 1rem;
-  color: #64748B;
-  cursor: pointer;
-  position: relative;
-  transition: color 0.3s;
-}
-.path-tabs-nav button.active { color: #FF2D55; }
-.path-tabs-nav button.active::after {
-  content: ''; position: absolute; bottom: 0; left: 0; right: 0;
-  height: 4px; background: #FF2D55; border-radius: 4px 4px 0 0;
-}
+.fade-in-up { opacity: 0; transform: translateY(30px); animation: fadeInUp 1s forwards; }
+@keyframes fadeInUp { to { opacity: 1; transform: translateY(0); } }
 
-/* SYLLABUS */
-.syllabus-full-content { padding: 60px 0; max-width: 900px; margin: 0 auto; }
-.syllabus-card { background: #fff; padding: 60px; border-radius: 32px; border: 1px solid #E2E8F0; }
-.syllabus-header { text-align: center; margin-bottom: 60px; }
-.syllabus-header h2 { font-size: 2.5rem; font-weight: 900; margin: 16px 0 8px; }
-.syllabus-header p { color: #64748B; font-size: 1.1rem; }
-.syllabus-icon { color: #FF2D55; margin: 0 auto; }
-
-.rich-text-view :deep(h2) { font-size: 1.8rem; font-weight: 800; margin: 2rem 0 1rem; color: #111827; }
-.rich-text-view :deep(p) { font-size: 1.15rem; line-height: 1.8; color: #374151; margin-bottom: 1.5rem; }
-
-/* BODY */
-.path-body { padding: 80px 0; }
-.path-grid { display: grid; grid-template-columns: 1fr 360px; gap: 60px; }
-
-.path-main h2 { font-size: 2.2rem; font-weight: 900; margin-bottom: 40px; letter-spacing: -1px; }
-
-.module-item { 
-  background: #F8FAFC; 
-  border-radius: 20px; 
-  padding: 32px; 
-  margin-bottom: 24px;
-  border: 1px solid #E2E8F0;
-}
-
-.module-header { display: flex; gap: 24px; margin-bottom: 24px; }
-.mod-num { 
-  width: 44px; height: 44px; background: #111827; color: #fff; 
-  border-radius: 12px; display: flex; align-items: center; justify-content: center; 
-  font-weight: 900; flex-shrink: 0;
-}
-
-.mod-titles h3 { font-size: 1.4rem; font-weight: 800; margin-bottom: 4px; color: #111827; }
-.mod-titles p { color: #64748B; font-weight: 500; font-size: 1rem; }
-
-.lessons-list-simple { 
-  display: flex; flex-direction: column; gap: 12px; 
-  padding-left: 68px; border-top: 1px solid #E2E8F0; padding-top: 20px;
-}
-.lesson-simple-item { display: flex; align-items: center; gap: 10px; color: #475569; font-weight: 600; font-size: 0.95rem; }
-
-/* SIDEBAR */
-.sidebar-card { background: #fff; border: 1px solid #E2E8F0; border-radius: 24px; padding: 32px; margin-bottom: 32px; }
-.sidebar-card h3 { font-size: 1.2rem; font-weight: 900; margin-bottom: 20px; }
-
-.info-card ul { list-style: none; padding: 0; }
-.info-card li { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #F1F5F9; font-size: 0.95rem; }
-.info-card li:last-child { border-bottom: none; }
-
-.instructor-header { display: flex; align-items: center; gap: 16px; margin-bottom: 20px; }
-.instructor-header img { width: 56px; height: 56px; border-radius: 50%; object-fit: cover; border: 2px solid #FF2D55; }
-.instructor-header strong { display: block; font-size: 1.1rem; }
-.instructor-header span { font-size: 0.85rem; color: #64748B; }
-.instructor-card p { font-size: 0.9rem; line-height: 1.6; color: #475569; }
-
-@media (max-width: 1024px) {
-  .path-grid { grid-template-columns: 1fr; }
-  .hero-content h1 { font-size: 3rem; }
+@media (max-width: 1100px) {
+  .classroom-grid { grid-template-columns: 1fr; gap: 60px; }
+  .classroom-sidebar { position: relative; top: 0; }
+  .central-content-720 { max-width: 100%; }
 }
 </style>

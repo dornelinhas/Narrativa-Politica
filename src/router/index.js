@@ -1,5 +1,11 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
+import ArticlesView from '../views/ArticlesView.vue'
+import ArticleDetailView from '../views/ArticleDetailView.vue'
+import OpportunitiesView from '../views/OpportunitiesView.vue'
+import OpportunityDetailView from '../views/OpportunityDetailView.vue'
+import PathsView from '../views/PathsView.vue'
+import PathDetailView from '../views/PathDetailView.vue'
 import { useAuth } from '../store/auth'
 
 const router = createRouter({
@@ -11,26 +17,27 @@ const router = createRouter({
       path: '/admin', 
       name: 'admin', 
       component: () => import('../views/AdminDashboardView.vue'),
-      meta: { requiresAdmin: true } 
+      meta: { requiresAdmin: true, hideHeader: true } 
     },
-    { path: '/conteudo', name: 'content-list', component: () => import('../views/ArticlesView.vue') },
-    { path: '/conteudo/:id', name: 'content-detail', component: () => import('../views/ArticleDetailView.vue') },
+    { path: '/conteudo', name: 'content-list', component: ArticlesView },
+    { path: '/conteudo/:id', name: 'content-detail', component: ArticleDetailView },
     { path: '/servicos', name: 'services-list', component: () => import('../views/ServicesView.vue') },
     { path: '/servicos/:id', name: 'service-detail', component: () => import('../views/ServiceDetailView.vue') },
     { path: '/projetos', name: 'projects-list', component: () => import('../views/ProjectsView.vue') },
     { path: '/doacao', name: 'donate', component: () => import('../views/DonateView.vue') },
     { path: '/biblioteca', name: 'library', component: () => import('../views/LibraryView.vue') },
-    { path: '/trilhas', name: 'paths-list', component: () => import('../views/PathsView.vue') },
-    { path: '/trilhas/:id', name: 'path-detail', component: () => import('../views/PathDetailView.vue') },
-    { path: '/aula/:id', name: 'classroom', component: () => import('../views/ClassroomView.vue'), meta: { requiresAuth: true } },
+    { path: '/trilhas', name: 'paths-list', component: PathsView },
+    { path: '/trilhas/:id', name: 'track-detail', component: () => import('../views/TrackDetailView.vue') },
+    { path: '/aula/:id', name: 'lesson', component: () => import('../views/LessonView.vue'), meta: { requiresAuth: true } },
     { path: '/area-do-aluno', name: 'user-dashboard', component: () => import('../views/UserDashboardView.vue'), meta: { requiresAuth: true } },
     { path: '/arquivo-newsletter', name: 'newsletter-archive', component: () => import('../views/NewsletterArchiveView.vue') },
+    { path: '/arquivo-newsletter/:id', name: 'newsletter-detail', component: () => import('../views/NewsletterDetailView.vue') },
     { path: '/checkout/:id', name: 'checkout', component: () => import('../views/CheckoutView.vue') },
     { path: '/contatos', name: 'contact', component: () => import('../views/ContactView.vue') },
     { path: '/sobre', name: 'about', component: () => import('../views/AboutView.vue') },
     { path: '/privacidade', name: 'privacy', component: () => import('../views/PrivacyView.vue') },
-    { path: '/oportunidades', name: 'opportunities', component: () => import('../views/OpportunitiesView.vue') },
-    { path: '/oportunidades/:id', name: 'opportunity-detail', component: () => import('../views/OpportunityDetailView.vue') }
+    { path: '/oportunidades', name: 'opportunities', component: OpportunitiesView },
+    { path: '/oportunidades/:id', name: 'opportunity-detail', component: OpportunityDetailView }
   ],
   scrollBehavior() { return { top: 0 } }
 })

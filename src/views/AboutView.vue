@@ -1,132 +1,256 @@
 <template>
-  <div class="page-brutalist">
-    <section class="page-hero activist-gradient">
-      <div class="geo-decor pill-y yellow-bg"></div>
-      <div class="container hero-inner">
-        <span class="eyebrow">SOBRE MIM</span>
-        <h1 class="hero-title">IDEIAS QUE<br/><span class="text-yellow">MOVEM ESTRUTURAS</span></h1>
-        <p class="hero-subtitle">{{ siteContent.about.mission }}</p>
-      </div>
-    </section>
+  <div class="about-premium-page">
+    <!-- TEXTURA FILM GRAIN (AUMENTADA CONFORME PEDIDO) -->
+    <div class="film-grain-heavy-bg"></div>
+    <div class="soft-mesh-accents"></div>
 
-    <section class="dashboard-section">
-      <div class="container about-grid">
-        <aside class="profile-sidebar">
-          <div class="profile-card brutalist-card">
-            <div class="profile-img">
-              <img :src="siteContent.about.image || '/images/anne-dornelas.png'" alt="Perfil" />
+    <div class="content-wrapper">
+      
+      <!-- 1. HERO & TÍTULO (REDUZIDO E ALINHADO) -->
+      <header class="editorial-hero-top fade-in-up">
+        <h1 class="solid-impact-title">
+          {{ siteContent.about.heroTitlePart1 || 'IDEIAS QUE' }} <br/>
+          <span class="text-red-solid">{{ siteContent.about.heroTitlePart2 || 'MOVEM ESTRUTURAS' }}</span>
+        </h1>
+        <p class="serif-editorial-subtitle-aligned">
+          {{ siteContent.about.subtitle || 'Estratégia focada em traduzir teoria econômica para a ação política.' }}
+        </p>
+      </header>
+
+      <div class="container-editorial dossier-grid">
+        
+        <!-- ALINHAMENTO DO DOSSIÊ: FOTO -->
+        <aside class="sidebar-profile-dossier fade-in-up" style="animation-delay: 0.2s">
+          <div class="profile-card-anchored">
+            <div class="photo-frame-matte-thick">
+              <img :src="siteContent.about.image || '/images/anne-dornelas.png'" alt="Anne Dornelas" />
             </div>
-            <div class="profile-info">
-              <h2>{{ siteContent.about.name }}</h2>
-              <p class="role">{{ siteContent.about.role }}</p>
-              <div class="social-stack">
-                <a href="https://www.linkedin.com/company/narrativa-políticaorg" target="_blank" class="social-btn">LINKEDIN</a>
-                <a href="mailto:contatonarrativapolitica@gmail.com" class="social-btn">E-MAIL</a>
-              </div>
-              <div class="edit-hint-box">
-                <span class="edit-hint">✎ Perfil editável no Admin</span>
+            <div class="profile-meta-minimal">
+              <h2 class="name-black-archivo">{{ siteContent.about.name || 'ANNE DORNELAS' }}</h2>
+              <p class="role-sans-bold">{{ siteContent.about.role || 'Estrategista Política & Administradora' }}</p>
+              
+              <div class="social-row-editorial mt-6">
+                <a href="#" class="s-icon-colored linkedin"><Linkedin :size="20" /></a>
+                <a href="#" class="s-icon-colored instagram"><Instagram :size="20" /></a>
+                <a href="#" class="s-icon-colored mail"><Mail :size="20" /></a>
               </div>
             </div>
           </div>
         </aside>
 
-        <main class="trajectory-main">
-          <div class="brutalist-card trajectory-card">
-            <div class="card-accent red"></div>
-            <h3>TRAJETÓRIA & VISÃO</h3>
-            <div class="rich-text" v-html="formatBio(siteContent.about.bioInstitucional || defaultBio)"></div>
-            
-            <div class="metrics-grid mt-8">
-              <div class="metric-box">
-                <span class="metric-num">{{ siteContent.about.metric1 || '+10' }}</span>
-                <span class="metric-label">Anos de Atuação</span>
-              </div>
-              <div class="metric-box">
-                <span class="metric-num">{{ siteContent.about.metric2 || '50+' }}</span>
-                <span class="metric-label">Projetos Liderados</span>
-              </div>
-              <div class="metric-box">
-                <span class="metric-num">{{ siteContent.about.metric3 || 'R$ 5M' }}</span>
-                <span class="metric-label">Impacto Gerado</span>
-              </div>
-            </div>
-          </div>
+        <!-- ALINHAMENTO DO DOSSIÊ: CAIXAS -->
+        <main class="editorial-boxes-column">
+          
+          <!-- CAIXA TRAJETÓRIA -->
+          <section class="yellow-box-editorial-anchored fade-in-up" style="animation-delay: 0.4s">
+            <h3 class="box-label-black">TRAJETÓRIA & VISÃO</h3>
+            <div class="serif-content-black" v-html="formatBio(siteContent.about.bioInstitucional || defaultBio)"></div>
+          </section>
 
-          <div class="brutalist-card expertise-card">
-            <div class="card-accent lime"></div>
-            <h3 class="text-lime">ÁREAS DE ATUAÇÃO</h3>
-            <div class="expertise-grid">
-              <div v-for="skill in expertise" :key="skill" class="skill-item">
-                <Zap :size="18" class="text-yellow" /><span>{{ skill }}</span>
+          <!-- CAIXA ATUAÇÃO (HABILIDADES COMO CARDS COLORIDOS COM MARGEM E PADDING) -->
+          <section class="yellow-box-editorial-anchored fade-in-up" style="animation-delay: 0.6s">
+            <h3 class="box-label-black">ÁREAS DE ATUAÇÃO</h3>
+            <div class="expertise-multi-grid">
+              <div v-for="(skill, index) in expertiseList" :key="skill" 
+                class="skill-card-colored"
+                :class="dotColors[index % 4]"
+              >
+                <span>{{ skill }}</span>
               </div>
             </div>
-            <button class="brutalist-button full mt-12" @click="$router.push('/contatos')">SOLICITAR CONSULTORIA</button>
-          </div>
+          </section>
         </main>
       </div>
-    </section>
+
+      <!-- 2. CTA FINAL (ESTILO NEWSLETTER DA HOME) -->
+      <section class="cta-newsletter-zone fade-in-up" style="animation-delay: 0.8s">
+        <div class="cta-container-brutalist">
+          <div class="cta-text-content">
+            <div class="inline-flex-center gap-2 mb-4">
+               <Zap class="text-red-icon" />
+               <span class="eyebrow-news">{{ siteContent.about.ctaEyebrow || 'Conexão de Impacto' }}</span>
+            </div>
+            <h2 class="cta-title-home" v-html="siteContent.about.ctaTitle || 'VAMOS MONTAR OU <br /> CRIAR ALGO JUNTOS?'"></h2>
+            <p class="cta-desc-home">
+              {{ siteContent.about.ctaDesc || 'Construímos tecnologias sociais e infraestruturas estratégicas que permitem aos movimentos pautarem o debate público com total autonomia.' }}
+            </p>
+          </div>
+          
+          <div class="cta-action-side">
+            <router-link to="/contatos" class="btn-black-pill-giant">
+              {{ siteContent.about.ctaBtn || 'FALAR AGORA' }}
+            </router-link>
+          </div>
+        </div>
+      </section>
+
+    </div>
   </div>
 </template>
 
 <script setup>
+import { computed, onMounted } from 'vue'
 import { siteContent } from '../store/content'
-import { Zap } from 'lucide-vue-next'
-const expertise = ['Análise Econométrica', 'Advocacy de Gênero', 'Estratégia de Impacto Social', 'Articulação Política', 'Comunicação Estratégica', 'Pesquisa de Território']
-const defaultBio = "Sou uma estrategista focada em traduzir teoria econômica para a ação política. Nos últimos anos, dediquei minha carreira a construir pontes entre dados quantitativos rigorosos e as necessidades urgentes de movimentos sociais e formuladores de políticas.\n\nAcredito que o ativismo sem dados é cego, e os dados sem ativismo são estéreis. Minha missão é armar a base com as ferramentas necessárias para disputar o poder de forma qualificada e definitiva."
-const formatBio = (text) => { if (!text) return ''; return text.split('\n\n').map(p => `<p>${p}</p>`).join('') }
+import { Linkedin, Instagram, Mail, Zap } from 'lucide-vue-next'
+
+const dotColors = ['bg-magenta', 'bg-blue', 'bg-lime', 'bg-yellow-dark']
+const defaultExpertise = ['Análise Econométrica', 'Advocacy de Gênero', 'Estratégia de Impacto Social', 'Articulação Política', 'Comunicação Estratégica', 'Pesquisa de Território']
+const expertiseList = computed(() => siteContent.about.expertise?.split(',').map(s => s.trim()) || defaultExpertise)
+
+const defaultBio = "Sou uma estrategista focada em traduzir teoria econômica para a ação política. Nos últimos anos, dediquei minha carreira a construir pontes entre dados quantitativos rigorosos e as necessidades urgentes de movimentos sociais."
+const formatBio = (text) => text.split('\n\n').map(p => `<p class="paragraph-serif">${p}</p>`).join('')
+
+onMounted(() => window.scrollTo(0, 0))
 </script>
 
 <style scoped>
-.page-brutalist { background: var(--color-bg); min-height: 100vh; }
-.page-hero { position: relative; padding: 220px 0 100px; border-bottom: 8px solid var(--color-dark); overflow: hidden; }
-.hero-inner { position: relative; z-index: 10; }
-.eyebrow { font-family: var(--font-sans); font-weight: 900; letter-spacing: 0.4em; font-size: 0.8rem; color: white; display: block; margin-bottom: 20px; opacity: 0.8; }
-.hero-title { font-family: var(--font-display); font-size: clamp(3rem, 10vw, 7rem); color: white; line-height: 0.85; margin-bottom: 30px; text-transform: uppercase; letter-spacing: -0.04em; }
-.text-yellow { color: var(--color-yellow); }
-.text-lime { color: var(--color-lime); }
-.hero-subtitle { font-family: var(--font-sans); font-weight: 700; font-size: 1.3rem; color: white; max-width: 700px; line-height: 1.5; opacity: 0.9; }
-.geo-decor { position: absolute; border: 4px solid var(--color-dark); z-index: 1; }
-.geo-decor.pill-y { width: 80px; height: 160px; border-radius: 100px; background: var(--color-yellow); top: 10%; right: 5%; transform: rotate(15deg); }
+.about-premium-page { background-color: #FFFFFF; min-height: 100vh; position: relative; overflow-x: hidden; }
 
-.dashboard-section { padding: 80px 0; margin-top: -60px; position: relative; z-index: 20; }
-.about-grid { display: grid; grid-template-columns: 320px 1fr; gap: 60px; }
+/* TEXTURA FILM GRAIN (AUMENTADA) */
+.film-grain-heavy-bg {
+  position: fixed; inset: 0; z-index: 5; pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+  opacity: 0.15; /* TEXTURA MAIS FORTE */
+  mix-blend-mode: multiply;
+}
 
-.profile-card { padding: 0; overflow: hidden; }
-.profile-card:hover { transform: none; box-shadow: none; }
-.profile-img { height: 350px; border-bottom: 4px solid var(--color-dark); overflow: hidden; }
-.profile-img img { width: 100%; height: 100%; object-fit: cover; }
-.profile-info { padding: 30px; }
-.profile-info h2 { font-family: var(--font-display); font-size: 1.5rem; margin-bottom: 8px; text-transform: uppercase; letter-spacing: -0.04em; }
-.role { font-weight: 700; opacity: 0.6; font-size: 0.875rem; margin-bottom: 24px; }
-.social-stack { display: flex; flex-direction: column; gap: 10px; }
-.social-btn { font-family: var(--font-sans); font-weight: 900; font-size: 0.7rem; color: var(--color-dark); text-decoration: none; padding: 10px; border: 2px solid var(--color-dark); text-align: center; transition: all 0.2s; }
-.social-btn:hover { background: var(--color-red); color: white; transform: translate(-3px, -3px); box-shadow: 4px 4px 0 var(--color-dark); }
+.soft-mesh-accents {
+  position: fixed; inset: 0; z-index: 1;
+  background: radial-gradient(at 0% 0%, rgba(255, 107, 202, 0.03) 0%, transparent 40%),
+              radial-gradient(at 100% 0%, rgba(164, 205, 57, 0.03) 0%, transparent 40%);
+}
 
-.trajectory-card, .expertise-card { padding: 50px; margin-bottom: 32px; }
-.trajectory-card:hover, .expertise-card:hover { transform: none; box-shadow: none; }
-.card-accent { height: 10px; border-bottom: 4px solid var(--color-dark); margin: -50px -50px 30px; }
-.card-accent.red { background: var(--color-red); }
-.card-accent.lime { background: var(--color-lime); }
-.trajectory-card h3, .expertise-card h3 { font-family: var(--font-display); font-size: 2rem; margin-bottom: 32px; text-transform: uppercase; letter-spacing: -0.04em; }
+.content-wrapper { position: relative; z-index: 10; max-width: 1200px; margin: 0 auto; padding: 0 40px; }
 
-.expertise-card { background: var(--color-dark); color: white; }
-.expertise-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-.skill-item { display: flex; align-items: center; gap: 15px; font-weight: 800; font-size: 0.9rem; padding: 15px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); }
+/* 1. HERO & TÍTULO (pt-60 = 240px) */
+.editorial-hero-top { padding-top: 240px; margin-bottom: 60px; text-align: left; }
 
-.rich-text :deep(p) { font-family: var(--font-sans); font-weight: 500; line-height: 1.8; color: rgba(28,28,28,0.7); margin-bottom: 1.5rem; }
+.solid-impact-title {
+  font-family: "Archivo Black", sans-serif;
+  font-size: clamp(2.5rem, 5vw, 4.5rem); /* REDUZIDO CONFORME PEDIDO */
+  line-height: 0.85;
+  text-transform: uppercase;
+  color: #000;
+  letter-spacing: -0.05em;
+}
 
-.full { width: 100%; justify-content: center; }
-.mt-8 { margin-top: 32px; }
-.mt-12 { margin-top: 48px; }
+.text-red-solid { color: #DF2028; } /* VERMELHO ATIVISTA SÓLIDO */
 
-.edit-hint-box { margin-top: 20px; padding-top: 20px; border-top: 2px dashed rgba(28,28,28,0.2); text-align: center; }
-.edit-hint { font-size: 10px; text-transform: uppercase; color: rgba(28,28,28,0.5); font-weight: 800; letter-spacing: 1px; }
+.serif-editorial-subtitle-aligned {
+  font-family: "Georgia", serif;
+  font-size: 1.1rem; /* SUBTÍTULO PEQUENO */
+  color: #1C1C1C;
+  margin-top: 20px;
+  max-width: 450px;
+  line-height: 1.5;
+}
 
-.metrics-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
-.metric-box { background: var(--color-bg); border: 2px solid var(--color-dark); padding: 20px 15px; text-align: center; display: flex; flex-direction: column; gap: 5px; }
-.metric-num { font-family: var(--font-display); font-size: 2rem; color: var(--color-red); line-height: 1; }
-.metric-label { font-family: var(--font-sans); font-weight: 800; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.5px; opacity: 0.8; }
+/* ALINHAMENTO DO DOSSIÊ */
+.dossier-grid { display: grid; grid-template-columns: 350px 1fr; gap: 80px; align-items: start; margin-bottom: 120px; }
 
-@media (max-width: 1024px) { .about-grid { grid-template-columns: 1fr; } .profile-sidebar { max-width: 400px; margin: 0 auto; } }
-@media (max-width: 600px) { .expertise-grid { grid-template-columns: 1fr; } .trajectory-card, .expertise-card { padding: 30px; } .card-accent { margin: -30px -30px 20px; } }
+.sidebar-profile-dossier { position: sticky; top: 140px; }
+.photo-frame-matte-thick { border-radius: 2.5rem; overflow: hidden; border: 3px solid #000; box-shadow: 0 20px 40px rgba(0,0,0,0.05); margin-bottom: 30px; }
+.photo-frame-matte-thick img { width: 100%; height: 100%; object-fit: cover; }
+
+.name-black-archivo { font-family: "Archivo Black", sans-serif; font-weight: 900; font-size: 1.8rem; color: #000; text-transform: uppercase; }
+.role-sans-bold { font-family: "Inter", sans-serif; font-weight: 800; color: #64748b; font-size: 0.85rem; text-transform: uppercase; }
+
+.social-row-editorial { display: flex; gap: 15px; }
+.s-icon-colored { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; transition: 0.3s; }
+.s-icon-colored:hover { transform: translateY(-5px); }
+.linkedin { color: #0077B5; }
+.instagram { color: #E1306C; }
+.mail { color: #DF2028; }
+
+/* CAIXAS AMARELAS */
+.editorial-boxes-column { display: flex; flex-direction: column; gap: 40px; }
+.yellow-box-editorial-anchored {
+  background-color: #FFDE59;
+  border: 4px solid #000;
+  padding: 60px;
+  box-shadow: 12px 12px 0px #000;
+}
+
+.box-label-black { font-family: "Archivo Black", sans-serif; font-size: 0.9rem; color: #000; letter-spacing: 0.2em; margin-bottom: 35px; }
+.serif-content-black { font-family: "Georgia", serif; font-size: 1.45rem; line-height: 1.8; color: #000; }
+.paragraph-serif { margin-bottom: 2rem; }
+
+/* HABILIDADES (CARDS COLORIDOS COM MARGEM E PADDING) */
+.expertise-multi-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.skill-card-colored { 
+  display: flex; align-items: center; justify-content: center; text-align: center;
+  font-family: "Inter", sans-serif; font-weight: 800; font-size: 0.85rem; text-transform: uppercase; 
+  padding: 20px 25px; /* PADDING GENEROSO */
+  border-radius: 1.5rem; border: 3px solid #1C1C1C; box-shadow: 6px 6px 0px #1C1C1C;
+  transition: 0.2s;
+}
+.skill-card-colored:hover { transform: translate(-3px, -3px); box-shadow: 9px 9px 0px #1C1C1C; }
+
+/* CORES DOS CARDS DE HABILIDADE */
+.bg-magenta { background: #FF6BCA; color: #FFF; }
+.bg-blue { background: #3D78E0; color: #FFF; }
+.bg-lime { background: #A4CD39; color: #1C1C1C; }
+.bg-yellow-dark { background: #FFFFFF; color: #1C1C1C; }
+
+/* 2. CTA FINAL (ESTILO NEWSLETTER DA HOME) */
+.cta-newsletter-zone { margin: 120px 0 176px; width: 100%; display: flex; justify-content: center; }
+.cta-container-brutalist {
+  width: 100%; max-width: 1100px;
+  background-color: #FFE65A; /* AMARELO NEWSLETTER */
+  border: 4px solid #1C1C1C;
+  padding: 80px;
+  display: flex;
+  gap: 60px;
+  align-items: center;
+  box-shadow: 15px 15px 0px #1C1C1C;
+}
+
+.cta-text-content { flex: 1.5; }
+.cta-action-side { flex: 1; display: flex; justify-content: flex-end; }
+
+.inline-flex-center { display: flex; align-items: center; }
+.text-red-icon { fill: #DF2028; color: #DF2028; width: 28px; height: 28px; margin-right: 10px; }
+.eyebrow-news { font-family: "Inter", sans-serif; font-weight: 900; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.15em; color: #1C1C1C; }
+
+.cta-title-home {
+  font-family: "Archivo Black", sans-serif;
+  font-size: 3.2rem;
+  text-transform: uppercase;
+  line-height: 1;
+  color: #1C1C1C;
+  margin-bottom: 20px;
+}
+
+.cta-desc-home { font-family: "Inter", sans-serif; font-weight: 700; color: rgba(28,28,28,0.8); line-height: 1.5; font-size: 1.1rem; }
+
+.btn-black-pill-giant {
+  background: #1C1C1C;
+  color: #FFFFFF !important;
+  padding: 24px 64px;
+  border-radius: 9999px;
+  font-family: "Inter", sans-serif; font-weight: 900; font-size: 1.1rem; text-transform: uppercase;
+  text-decoration: none; transition: all 0.3s;
+  border: none;
+  text-align: center;
+}
+
+.btn-black-pill-giant:hover {
+  background: #000000;
+  transform: scale(1.05);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+}
+
+.fade-in-up { opacity: 0; transform: translateY(30px); animation: fadeInUp 1s forwards; }
+@keyframes fadeInUp { to { opacity: 1; transform: translateY(0); } }
+
+@media (max-width: 1100px) {
+  .editorial-hero-top { padding-top: 180px; }
+  .dossier-grid { grid-template-columns: 1fr; }
+  .sidebar-profile-dossier { position: relative; top: 0; margin-bottom: 60px; text-align: center; }
+  .social-row-editorial { justify-content: center; }
+  .expertise-multi-grid { grid-template-columns: 1fr; }
+  .cta-container-brutalist { flex-direction: column; padding: 50px; text-align: center; }
+  .cta-action-side { justify-content: center; width: 100%; }
+  .cta-title-home { font-size: 2.2rem; }
+}
 </style>

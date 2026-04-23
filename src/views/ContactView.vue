@@ -1,115 +1,114 @@
 <script setup>
 import { ref } from 'vue'
-import { Handshake, Megaphone, MessageSquare } from 'lucide-vue-next'
+import { Handshake, Megaphone, MessageSquare, CheckCircle, ArrowRight } from 'lucide-vue-next'
+
 const activeType = ref('parcerias')
 const types = [
-  { key: 'parcerias', icon: Handshake, label: 'Parcerias' },
-  { key: 'imprensa', icon: Megaphone, label: 'Imprensa' },
-  { key: 'geral', icon: MessageSquare, label: 'Geral' }
+  { key: 'parcerias', icon: Handshake, label: 'Parcerias', color: '#FF6BCA' },
+  { key: 'imprensa', icon: Megaphone, label: 'Imprensa', color: '#A4CD39' },
+  { key: 'geral', icon: MessageSquare, label: 'Geral', color: '#DF2028' }
 ]
+
+const isSubmitted = ref(false)
+const isLoading = ref(false)
+
+const handleSubmit = () => {
+  isLoading.value = true
+  // Simulação de envio para a API
+  setTimeout(() => {
+    isLoading.value = false
+    isSubmitted.value = true
+  }, 800)
+}
+
+const resetForm = () => {
+  isSubmitted.value = false
+}
 </script>
 
 <template>
-  <div class="contato-page grid-dark">
-    <div class="page-content">
+  <div class="contato-page grid-pattern">
+    
+    <!-- MODAL DE SUCESSO (UX PREMIUM) -->
+    <transition name="modal-fade">
+      <div v-if="isSubmitted" class="success-modal-overlay">
+        <div class="success-card shadow-brutal-20">
+          <div class="success-icon-box">
+            <CheckCircle :size="48" class="text-dark" />
+          </div>
+          <h2 class="success-title">MENSAGEM<br/>RECEBIDA!</h2>
+          <p class="success-desc">Nossa equipe estratégica analisará sua solicitação e entrará em contato em breve.</p>
+          <button @click="resetForm" class="btn-black-pill mt-8">
+            VOLTAR AO CONTATO <ArrowRight :size="18" />
+          </button>
+        </div>
+      </div>
+    </transition>
+
+    <div class="page-content" :class="{ 'blur-bg': isSubmitted }">
       <div class="contact-wrapper">
         <div class="contact-left">
           <h1>Contato</h1>
           <div class="contact-types">
             <div v-for="t in types" :key="t.key" class="contact-type-btn" :class="{ active: activeType === t.key }" @click="activeType = t.key">
-              <span class="icon"><component :is="t.icon" :size="24" :stroke-width="2.5" /></span>
+              <span class="icon" :style="{ color: t.color }"><component :is="t.icon" :size="32" :stroke-width="3" /></span>
               <div class="contact-type-label">{{ t.label }}</div>
             </div>
           </div>
-          <div class="contact-form">
+          
+          <form class="contact-form" @submit.prevent="handleSubmit">
             <div class="form-row">
-              <input type="text" class="contact-input" placeholder="Nome">
-              <input type="email" class="contact-input" placeholder="Email">
+              <input type="text" placeholder="Nome" required>
+              <input type="email" placeholder="Email" required>
             </div>
-            <input type="text" class="contact-input" placeholder="Assunto">
-            <textarea class="contact-textarea" placeholder="Mensagem"></textarea>
-            <button class="contact-submit">Enviar Mensagem</button>
-          </div>
+            <input type="text" placeholder="Assunto" required>
+            <textarea placeholder="Mensagem" required></textarea>
+            
+            <button type="submit" class="contact-submit" :disabled="isLoading">
+              {{ isLoading ? 'ENVIANDO...' : 'ENVIAR MENSAGEM' }}
+            </button>
+          </form>
         </div>
+
         <div class="geo-art">
-          <!-- Bold Pop-Art Mondrian composition with thick black strokes -->
-          <svg viewBox="0 0 420 420" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
-            <!-- Base grid -->
-            <rect width="420" height="420" fill="#f0f0f0"/>
+          <!-- ARTE 100% PREENCHIDA - COMPOSIÇÃO POP-ART PREMIUM -->
+          <svg viewBox="0 0 420 700" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" class="full-svg">
+            <!-- GRID DE CORES SÓLIDAS -->
+            <rect x="0" y="0" width="210" height="175" fill="#FF6BCA" stroke="#1C1C1C" stroke-width="8"/>
+            <rect x="210" y="0" width="210" height="175" fill="#FFE65A" stroke="#1C1C1C" stroke-width="8"/>
+            <rect x="0" y="175" width="210" height="175" fill="#3D78E0" stroke="#1C1C1C" stroke-width="8"/>
+            <rect x="210" y="175" width="210" height="175" fill="#A4CD39" stroke="#1C1C1C" stroke-width="8"/>
+            <rect x="0" y="350" width="210" height="175" fill="#DF2028" stroke="#1C1C1C" stroke-width="8"/>
+            <rect x="210" y="350" width="210" height="175" fill="#FF6BCA" stroke="#1C1C1C" stroke-width="8"/>
+            <rect x="0" y="525" width="210" height="175" fill="#FFE65A" stroke="#1C1C1C" stroke-width="8"/>
+            <rect x="210" y="525" width="210" height="175" fill="#3D78E0" stroke="#1C1C1C" stroke-width="8"/>
 
-            <!-- Top row blocks -->
-            <rect x="0" y="0" width="140" height="140" fill="#FF2D78" stroke="#0A0A0A" stroke-width="4"/>
-            <rect x="140" y="0" width="140" height="140" fill="#F5E000" stroke="#0A0A0A" stroke-width="4"/>
-            <rect x="280" y="0" width="140" height="140" fill="#1B8FFF" stroke="#0A0A0A" stroke-width="4"/>
+            <!-- ELEMENTOS DE DESIGN REFINADOS -->
+            <circle cx="105" cy="87" r="55" fill="#FFE65A" stroke="#1C1C1C" stroke-width="4"/>
+            <rect x="90" y="72" width="30" height="30" fill="#1C1C1C" transform="rotate(45, 105, 87)"/>
 
-            <!-- Mid row blocks -->
-            <rect x="0" y="140" width="140" height="140" fill="#AAFF00" stroke="#0A0A0A" stroke-width="4"/>
-            <rect x="140" y="140" width="140" height="140" fill="#FF2D78" stroke="#0A0A0A" stroke-width="4"/>
-            <rect x="280" y="140" width="140" height="140" fill="#F5E000" stroke="#0A0A0A" stroke-width="4"/>
+            <polygon points="210,0 420,175 210,175" fill="#DF2028" stroke="#1C1C1C" stroke-width="6"/>
+            <circle cx="350" cy="60" r="30" fill="#3D78E0" stroke="#1C1C1C" stroke-width="4"/>
 
-            <!-- Bottom row blocks -->
-            <rect x="0" y="280" width="140" height="140" fill="#1B8FFF" stroke="#0A0A0A" stroke-width="4"/>
-            <rect x="140" y="280" width="140" height="140" fill="#AAFF00" stroke="#0A0A0A" stroke-width="4"/>
-            <rect x="280" y="280" width="140" height="140" fill="#FF2D78" stroke="#0A0A0A" stroke-width="4"/>
+            <rect x="20" y="210" width="170" height="100" rx="50" fill="#FFFFFF" stroke="#1C1C1C" stroke-width="4"/>
+            <rect x="50" y="245" width="110" height="30" rx="15" fill="#FF6BCA" stroke="#1C1C1C" stroke-width="2"/>
 
-            <!-- Top left: circle + triangle -->
-            <circle cx="70" cy="60" r="50" fill="#FF7A00" stroke="#0A0A0A" stroke-width="3"/>
-            <polygon points="0,140 70,20 140,140" fill="#0A0A0A" opacity="0.4"/>
-            <rect x="10" y="90" width="50" height="50" fill="#0A0A0A" opacity="0.3" stroke="#0A0A0A" stroke-width="2"/>
+            <circle cx="315" cy="262" r="65" fill="#FF6BCA" stroke="#1C1C1C" stroke-width="5"/>
+            <circle cx="315" cy="262" r="35" fill="#FFE65A" stroke="#1C1C1C" stroke-width="3"/>
+            <circle cx="315" cy="262" r="12" fill="#1C1C1C"/>
 
-            <!-- Top center: rectangle + triangle -->
-            <rect x="150" y="10" width="80" height="80" rx="4" fill="#0A0A0A" opacity="0.3" stroke="#0A0A0A" stroke-width="3"/>
-            <polygon points="160,130 240,50 240,130" fill="#FF2D78" stroke="#0A0A0A" stroke-width="3"/>
-            <rect x="155" y="55" width="30" height="30" fill="#AAFF00" stroke="#0A0A0A" stroke-width="2"/>
-            <!-- Stripes -->
-            <line x1="200" y1="0" x2="200" y2="140" stroke="#0A0A0A" stroke-width="6" opacity="0.2"/>
-            <line x1="215" y1="0" x2="215" y2="140" stroke="#0A0A0A" stroke-width="3" opacity="0.15"/>
+            <rect x="40" y="390" width="130" height="95" fill="#FFE65A" stroke="#1C1C1C" stroke-width="4"/>
+            <rect x="65" y="415" width="80" height="45" fill="#3D78E0" stroke="#1C1C1C" stroke-width="2"/>
 
-            <!-- Top right: circle + dot -->
-            <circle cx="350" cy="70" r="55" fill="#AAFF00" stroke="#0A0A0A" stroke-width="3"/>
-            <rect x="290" y="0" width="50" height="50" fill="#0A0A0A" opacity="0.25" stroke="#0A0A0A" stroke-width="2"/>
-            <circle cx="390" cy="12" r="25" fill="#E5292A" stroke="#0A0A0A" stroke-width="3"/>
+            <circle cx="315" cy="437" r="70" fill="#3D78E0" stroke="#1C1C1C" stroke-width="5"/>
+            <text x="282" y="465" font-size="80" fill="#FFFFFF" font-weight="900" transform="rotate(-10, 315, 437)">★</text>
 
-            <!-- Mid left: triangle -->
-            <polygon points="0,140 140,200 0,280" fill="#1B8FFF" stroke="#0A0A0A" stroke-width="3" opacity="0.8"/>
-            <rect x="20" y="160" width="60" height="60" fill="#0A0A0A" opacity="0.3" stroke="#0A0A0A" stroke-width="2"/>
-            <circle cx="110" cy="210" r="25" fill="#F5E000" stroke="#0A0A0A" stroke-width="3"/>
+            <polygon points="105,525 210,700 0,700" fill="#A4CD39" stroke="#1C1C1C" stroke-width="6"/>
+            <circle cx="105" cy="640" r="35" fill="#DF2028" stroke="#1C1C1C" stroke-width="4"/>
 
-            <!-- Mid center: concentric shapes -->
-            <circle cx="210" cy="210" r="50" fill="#F5E000" stroke="#0A0A0A" stroke-width="3"/>
-            <circle cx="210" cy="210" r="30" fill="#FF2D78" stroke="#0A0A0A" stroke-width="3"/>
-            <circle cx="210" cy="210" r="12" fill="#0A0A0A"/>
-            <rect x="170" y="170" width="80" height="80" rx="40" fill="none" stroke="#0A0A0A" stroke-width="5"/>
-
-            <!-- Mid right: arrow + shapes -->
-            <polygon points="280,280 420,210 420,280" fill="#1B8FFF" stroke="#0A0A0A" stroke-width="3" opacity="0.7"/>
-            <rect x="300" y="150" width="80" height="80" rx="40" fill="#0A0A0A" opacity="0.3" stroke="#0A0A0A" stroke-width="3"/>
-            <circle cx="380" cy="240" r="30" fill="#FF2D78" stroke="#0A0A0A" stroke-width="3"/>
-            <circle cx="380" cy="240" r="18" stroke="#AAFF00" stroke-width="4" fill="none"/>
-            <text x="310" y="280" font-size="36" fill="#AAFF00" font-weight="900">↗</text>
-
-            <!-- Bottom left: circles -->
-            <polygon points="0,280 140,280 0,420" fill="#F5E000" stroke="#0A0A0A" stroke-width="3" opacity="0.7"/>
-            <circle cx="60" cy="370" r="40" fill="#FF2D78" stroke="#0A0A0A" stroke-width="3"/>
-            <circle cx="60" cy="370" r="20" fill="#0A0A0A"/>
-
-            <!-- Bottom center: bullseye -->
-            <rect x="155" y="295" width="110" height="110" fill="#0A0A0A" opacity="0.2" stroke="#0A0A0A" stroke-width="2"/>
-            <circle cx="210" cy="350" r="40" fill="#1B8FFF" stroke="#0A0A0A" stroke-width="3"/>
-            <circle cx="210" cy="350" r="20" fill="#0A0A0A"/>
-            <polygon points="150,420 270,300 270,420" fill="#FF2D78" stroke="#0A0A0A" stroke-width="3" opacity="0.5"/>
-
-            <!-- Bottom right: dots -->
-            <circle cx="320" cy="310" r="25" fill="#0A0A0A" opacity="0.5"/>
-            <circle cx="390" cy="310" r="18" fill="#F5E000" stroke="#0A0A0A" stroke-width="3"/>
-            <circle cx="355" cy="375" r="30" fill="#AAFF00" stroke="#0A0A0A" stroke-width="3"/>
-            <text x="365" y="400" font-size="32" fill="#0A0A0A" font-weight="900">→</text>
-
-            <!-- Heavy grid lines -->
-            <line x1="140" y1="0" x2="140" y2="420" stroke="#0A0A0A" stroke-width="4"/>
-            <line x1="280" y1="0" x2="280" y2="420" stroke="#0A0A0A" stroke-width="4"/>
-            <line x1="0" y1="140" x2="420" y2="140" stroke="#0A0A0A" stroke-width="4"/>
-            <line x1="0" y1="280" x2="420" y2="280" stroke="#0A0A0A" stroke-width="4"/>
+            <path d="M 240 670 A 70 70 0 0 1 390 670 L 390 700 L 240 700 Z" fill="#FF6BCA" stroke="#1C1C1C" stroke-width="4"/>
+            <circle cx="315" cy="620" r="40" fill="#A4CD39" stroke="#1C1C1C" stroke-width="4"/>
+            <rect x="305" y="610" width="20" height="20" fill="#1C1C1C"/>
           </svg>
         </div>
       </div>
@@ -118,30 +117,71 @@ const types = [
 </template>
 
 <style scoped>
-@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@400;500;600;700;800;900&display=swap');
-.contato-page{background:#1f1f2e;color:#fff;min-height:100vh}
-.grid-dark{background-image:linear-gradient(rgba(255,255,255,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.03) 1px,transparent 1px);background-size:40px 40px}
-.page-content{display:flex;align-items:center;justify-content:center;padding:120px 32px 40px;min-height:calc(100vh - 56px)}
-.contact-wrapper{background:#F5E000;border-radius:8px;padding:36px 40px;max-width:832px;width:100%;display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:start}
-.contact-left h1{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:clamp(52px,7vw,88px);text-transform:uppercase;color:#0A0A0A;line-height:0.9;margin-bottom:24px}
-.contact-types{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:20px}
-.contact-type-btn{background:#fff;border:2px solid #0A0A0A;border-radius:6px;padding:14px 8px;text-align:center;cursor:pointer;transition:all 0.2s}
-.contact-type-btn:hover,.contact-type-btn.active{background:#0A0A0A;color:#fff}
-.contact-type-btn .icon{font-size:24px;margin-bottom:6px;display:block}
-.contact-type-label{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:13px;letter-spacing:1px;text-transform:uppercase;color:#0A0A0A}
-.contact-type-btn:hover .contact-type-label,.contact-type-btn.active .contact-type-label{color:#fff}
-.contact-form{background:#fff;border:2px solid #0A0A0A;border-radius:6px;padding:20px;display:flex;flex-direction:column;gap:12px}
-.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.contact-input{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px;letter-spacing:1.5px;text-transform:uppercase;padding:12px 14px;border:2px solid #ccc;border-radius:4px;background:#fff;color:#0A0A0A;width:100%;outline:none}
-.contact-input:focus{border-color:#0A0A0A}
-.contact-input::placeholder{color:#999}
-.contact-textarea{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px;letter-spacing:1.5px;text-transform:uppercase;padding:12px 14px;border:2px solid #ccc;border-radius:4px;background:#fff;color:#0A0A0A;width:100%;min-height:130px;resize:vertical;outline:none}
-.contact-textarea:focus{border-color:#0A0A0A}
-.contact-textarea::placeholder{color:#999}
-.contact-submit{background:#E5292A;color:#fff;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:17px;letter-spacing:2px;text-transform:uppercase;padding:16px;border:none;border-radius:4px;cursor:pointer;transition:background 0.2s}
-.contact-submit:hover{background:#c0201f}
-.geo-art{border-radius:6px;overflow:hidden;background:#fff;height:100%;min-height:400px;border:3px solid #0A0A0A}
-.geo-art svg{width:100%;height:100%;display:block}
-@media(max-width:900px){.contact-wrapper{grid-template-columns:1fr}.geo-art{display:none}}
-@media(max-width:600px){.form-row{grid-template-columns:1fr}.contact-wrapper{padding:24px 20px}}
+.contato-page { background: #3D78E0; min-height: 100vh; width: 100%; position: relative; }
+.grid-pattern { background-image: linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px); background-size: 40px 40px; }
+
+/* BLUR EFFECT QUANDO MODAL ATIVO */
+.blur-bg { filter: blur(8px); pointer-events: none; transition: 0.4s; }
+
+/* MODAL DE SUCESSO */
+.success-modal-overlay {
+  position: fixed; inset: 0; z-index: 10000;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(61, 120, 224, 0.4);
+  backdrop-filter: blur(4px);
+}
+
+.success-card {
+  background: #A4CD39; /* Verde Lima */
+  border: 4px solid #1C1C1C;
+  border-radius: 3rem;
+  padding: 60px;
+  max-width: 500px;
+  text-align: center;
+  display: flex; flex-direction: column; align-items: center;
+}
+
+.shadow-brutal-20 { box-shadow: 16px 16px 0px #1C1C1C; }
+
+.success-icon-box {
+  width: 80px; height: 80px; background: #FFFFFF; border: 3px solid #1C1C1C;
+  border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  margin-bottom: 30px; box-shadow: 4px 4px 0px #1C1C1C;
+}
+
+.success-title { font-family: "Archivo Black", sans-serif; font-size: 2.5rem; color: #1C1C1C; line-height: 1; margin-bottom: 20px; }
+.success-desc { font-family: "Georgia", serif; font-size: 1.2rem; color: #1e293b; line-height: 1.6; }
+
+.btn-black-pill {
+  background: #1C1C1C; color: #FFF; padding: 20px 40px; border-radius: 9999px;
+  font-family: "Inter", sans-serif; font-weight: 900; font-size: 0.85rem; text-transform: uppercase;
+  border: none; cursor: pointer; display: inline-flex; align-items: center; gap: 10px; transition: 0.3s;
+}
+.btn-black-pill:hover { background: #FFFFFF; color: #1C1C1C; border: 3px solid #1C1C1C; transform: scale(1.05); }
+
+/* ANIMAÇÃO DO MODAL */
+.modal-fade-enter-active, .modal-fade-leave-active { transition: opacity 0.4s, transform 0.4s; }
+.modal-fade-enter-from, .modal-fade-leave-to { opacity: 0; transform: scale(0.9) translateY(20px); }
+
+.page-content { display: flex; align-items: center; justify-content: center; padding: 160px 32px 80px; transition: 0.4s; }
+.contact-wrapper { background: #FFE65A; border-radius: 40px; padding: 64px; max-width: 1200px; width: 100%; display: grid; grid-template-columns: 1fr 1fr; gap: 64px; border: 4px solid #1C1C1C; box-shadow: 16px 16px 0 #1C1C1C; }
+.contact-left h1 { font-family: 'Archivo Black', sans-serif; font-size: clamp(40px, 6vw, 80px); text-transform: uppercase; color: #1C1C1C; margin-bottom: 40px; }
+.contact-types { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 40px; }
+.contact-type-btn { background: white; border: 4px solid #1C1C1C; border-radius: 20px; padding: 24px 12px; text-align: center; cursor: pointer; transition: 0.3s; }
+.contact-type-btn.active { background: #1C1C1C; }
+.contact-type-btn.active .contact-type-label { color: white; }
+.contact-type-label { font-family: 'Inter', sans-serif; font-weight: 900; font-size: 0.75rem; text-transform: uppercase; color: #1C1C1C; }
+.contact-form { display: flex; flex-direction: column; gap: 16px; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+input, textarea { font-family: 'Inter', sans-serif; font-weight: 700; padding: 20px; border: 4px solid #1C1C1C; border-radius: 12px; outline: none; transition: 0.2s; }
+input:focus, textarea:focus { box-shadow: 4px 4px 0px #1C1C1C; transform: translate(-2px, -2px); }
+.contact-textarea { min-height: 180px; }
+.contact-submit { background: #DF2028; color: white; font-family: 'Archivo Black', sans-serif; text-transform: uppercase; padding: 24px; border: 4px solid #1C1C1C; border-radius: 12px; cursor: pointer; font-size: 1rem; letter-spacing: 0.1em; transition: 0.3s; }
+.contact-submit:hover:not(:disabled) { background: #1C1C1C; transform: translateY(-4px); box-shadow: 8px 8px 0 rgba(0,0,0,0.2); }
+.contact-submit:disabled { opacity: 0.7; cursor: not-allowed; }
+.geo-art { border: 4px solid #1C1C1C; border-radius: 20px; overflow: hidden; height: 100%; min-height: 600px; }
+.full-svg { width: 100%; height: 100%; display: block; }
+
+@media (max-width: 900px) { .contact-wrapper { grid-template-columns: 1fr; padding: 40px; } .geo-art { display: none; } }
+@media (max-width: 600px) { .form-row { grid-template-columns: 1fr; } .contact-types { grid-template-columns: 1fr; } }
 </style>

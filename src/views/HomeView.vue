@@ -32,15 +32,28 @@
     </div>
 
     <!-- FEATURED WRITING (Radar Editorial) -->
-    <section id="essays" class="pt-6 pb-32 px-6 md-px-12 bg-light text-dark relative overflow-hidden">
+    <section id="essays" class="pt-6 pb-32 px-6 md-px-12 bg-light text-dark relative overflow-hidden" style="z-index: 10; position: relative;">
       
       <div class="absolute inset-0 grid-pattern-light pointer-events-none z-0"></div>
       <div class="max-w-7xl mx-auto relative z-10">
-        <div class="mb-10 flex flex-col items-center">
-          <h2 class="font-display text-5xl md-text-7xl uppercase tracking-tighter leading-none inline-block transform md:-translateX-12">
-            {{ siteContent.home.radarEditorialTitle || 'Radar' }} <br /> 
-            <span class="activist-gradient-text block mt-2 padding-left-step">{{ siteContent.home.radarEditorialSubtitle || 'Editorial' }}</span>
+        <div class="mb-16 flex flex-col items-center">
+          <h2 class="font-display text-5xl md-text-7xl uppercase tracking-tighter leading-none inline-block transform md:-translateX-12 text-center text-dark">
+            {{ siteContent.home.radarEditorialTitle || 'Conteúdos e' }} <br /> 
+            <span class="activist-gradient-text block mt-2 padding-left-step">{{ siteContent.home.radarEditorialSubtitle || 'Artigos' }}</span>
           </h2>
+          
+          <!-- FUNCTIONAL TABS SYSTEM (Medium-like Brutalist) -->
+          <div class="flex gap-8 mt-12 border-b-dark w-full justify-center overflow-x-auto no-scrollbar">
+            <button 
+              v-for="tab in ['TODOS', 'MOBILIZAÇÃO', 'EDUCAÇÃO', 'CLIMA', 'DADOS']" 
+              :key="tab"
+              class="tab-medium-brutalist" 
+              :class="{ 'active-tab': selectedTab === tab }"
+              @click="selectedTab = tab"
+            >
+              {{ tab }}
+            </button>
+          </div>
         </div>
 
         <div class="grid-writing gap-8">
@@ -49,59 +62,59 @@
             <div class="flex-center-left gap-3 mb-4">
               <div class="geo-circle pink-bg border-dark" style="width: 24px; height: 24px; flex-shrink: 0;"></div>
               <div class="font-sans font-black text-xs uppercase opacity-60" style="letter-spacing: 0.15em;">
-                Mais Recente
+                {{ selectedTab === 'TODOS' ? 'Mais Recente' : selectedTab }}
               </div>
             </div>
             
-            <div v-if="featuredArticle" class="large-card group cursor-pointer border-dark bg-white flex-col md-flex-row flex-1" @click="$router.push(`/conteudo/${featuredArticle.id}`)">
-              <div class="large-card-img-wrapper relative border-b-dark md-border-r-dark w-full md-w-half h-64 md-h-auto">
+            <router-link v-if="filteredPosts.length > 0" :to="`/conteudo/${filteredPosts[0].id}`" class="large-card group cursor-pointer border-dark bg-white flex-col md-flex-row flex-1 no-underline text-dark" style="max-height: 500px; display: flex;">
+              <div class="large-card-img-wrapper relative border-b-dark md-border-r-dark w-full md-w-half h-48 md-h-auto">
                 <img 
-                  :src="featuredArticle.image || 'https://images.unsplash.com/photo-1541844053589-346841d0b34c?auto=format&fit=crop&q=80&w=800'" 
+                  :src="filteredPosts[0].image || 'https://images.unsplash.com/photo-1541844053589-346841d0b34c?auto=format&fit=crop&q=80&w=800'" 
                   class="full-img object-cover grayscale mix-blend-multiply opacity-80 transition-all duration-500 w-full h-full" 
-                  :alt="featuredArticle.title"
+                  :alt="filteredPosts[0].title"
                 />
                 <div class="img-overlay bg-lime-20 transition-colors absolute inset-0"></div>
                 <div class="absolute top-4 left-4">
-                  <div class="tag yellow-bg text-dark font-sans font-bold uppercase tracking-widest">{{ featuredArticle.category || 'Editorial' }}</div>
+                  <div class="tag yellow-bg text-dark font-sans font-bold uppercase tracking-widest">{{ filteredPosts[0].category || 'Editorial' }}</div>
                 </div>
               </div>
-              <div class="large-card-content w-full md-w-half p-8 lg-p-12 flex-col justify-center">
-                <h3 class="font-display text-3xl md-text-4xl uppercase tracking-tighter leading-tight mb-6">
-                  {{ featuredArticle.title }}
+              <div class="large-card-content w-full md-w-half p-6 lg-p-8 flex-col justify-center">
+                <h3 class="font-display text-2xl md-text-3xl uppercase tracking-tighter leading-tight mb-4 text-dark">
+                  {{ filteredPosts[0].title }}
                 </h3>
-                <p class="font-sans text-sm font-medium opacity-80 leading-relaxed mb-8">
-                  {{ featuredArticle.excerpt || featuredArticle.subtitle || 'Sem descrição.' }}
+                <p class="font-sans text-xs font-medium opacity-80 leading-relaxed mb-6 text-dark">
+                  {{ filteredPosts[0].excerpt || filteredPosts[0].subtitle || 'Sem descrição.' }}
                 </p>
                 <div class="mt-auto">
-                  <span class="read-more font-sans font-black text-xs uppercase tracking-widest flex-center-left gap-2 transition-colors">
+                  <span class="read-more font-sans font-black text-xs uppercase tracking-widest flex-center-left gap-2 transition-colors text-dark">
                     Ler Ensaio Completo <ArrowRight class="w-4 h-4" />
                   </span>
                 </div>
               </div>
-            </div>
+            </router-link>
             <div v-else class="large-card group border-dark bg-white flex-col p-12 justify-center items-center flex-1">
-              <p class="font-sans font-bold text-dark opacity-60">Nenhum ensaio publicado no momento.</p>
+              <p class="font-sans font-bold text-dark opacity-60">Nenhum ensaio publicado nesta categoria.</p>
             </div>
           </div>
 
-          <!-- Coluna Menor (Mais Lidos) -->
-          <div class="flex-col h-full" v-if="secondaryArticles.length > 0">
+          <!-- Coluna Menor (Mais Lidos / Outros) -->
+          <div class="flex-col h-full" v-if="filteredPosts.length > 1">
             <div class="flex-center-left gap-3 mb-4">
               <div class="geo-circle blue-bg border-dark" style="width: 24px; height: 24px; flex-shrink: 0;"></div>
               <div class="font-sans font-black text-xs uppercase opacity-60" style="letter-spacing: 0.15em;">
-                Mais Lidos
+                Próximas Leituras
               </div>
             </div>
             <div class="flex-col gap-8 flex-1">
-              <div v-for="(article, idx) in secondaryArticles" :key="article.id" class="small-card group cursor-pointer border-dark p-8 bg-white transition-all h-full flex-col" @click="$router.push(`/conteudo/${article.id}`)">
+              <router-link v-for="(article, idx) in filteredPosts.slice(1, 3)" :key="article.id" :to="`/conteudo/${article.id}`" class="small-card group cursor-pointer border-dark p-8 bg-white transition-all h-full flex-col no-underline text-dark" style="display: flex;">
                 <div class="flex-between items-start mb-6">
                   <div class="tag text-white font-sans font-bold uppercase tracking-widest" :class="idx === 0 ? 'pink-bg rounded-full' : 'blue-bg'">{{ article.category || 'News' }}</div>
-                  <ArrowRight class="w-6 h-6 opacity-30 transition-all card-arrow" />
+                  <ArrowRight class="w-6 h-6 opacity-30 transition-all card-arrow text-dark" />
                 </div>
-                <h4 class="font-display text-2xl uppercase tracking-tighter leading-tight mt-auto">
+                <h4 class="font-display text-2xl uppercase tracking-tighter leading-tight mt-auto text-dark">
                   {{ article.title }}
                 </h4>
-              </div>
+              </router-link>
             </div>
           </div>
         </div>
@@ -109,87 +122,78 @@
     </section>
 
     <!-- OPPORTUNITIES -->
-    <section id="opportunities" class="bg-lime py-24 px-6 md-px-12 border-y-dark relative">
+    <section id="opportunities" class="bg-lime py-24 px-6 md-px-12 border-y-dark relative" style="z-index: 10;">
       <div class="max-w-7xl mx-auto grid-opps gap-12 relative z-10">
         <div class="flex-col justify-start">
           <div class="mb-8">
             <div class="inline-flex-center gap-3 mb-6">
               <div class="geo-square red-bg border-dark" style="width: 20px; height: 20px; flex-shrink: 0;"></div>
-              <span class="font-sans font-black text-sm uppercase tracking-widest text-dark">O Radar Ativista</span>
+              <span class="font-sans font-black text-sm uppercase tracking-widest text-dark">{{ siteContent.home?.opportunitiesEyebrow || 'O Radar Ativista' }}</span>
             </div>
             <h2 class="font-display text-4xl md-text-5xl lg-text-6xl leading-none tracking-tighter uppercase mb-6 text-dark" style="letter-spacing: -0.06em; word-break: keep-all; white-space: nowrap;">
-              Oportunidades
+              {{ siteContent.home?.opportunitiesTitle || 'Oportunidades' }}
             </h2>
           </div>
           <p class="font-sans font-semibold text-lg text-dark mb-8 bg-white p-6 border-dark-4 shadow-solid">
-            Vagas, subsídios e bolsas para lideranças que constroem a base e não apenas a marca. Atualizado pela nossa rede.
+            {{ siteContent.home?.opportunitiesDesc || 'Vagas, subsídios e bolsas para lideranças que constroem a base e não apenas a marca. Atualizado pela nossa rede.' }}
           </p>
         </div>
         
-        <div class="flex-col gap-6">
-          <div v-for="opp in displayOpportunities" :key="opp.id" class="opp-item group bg-white border-dark-4 transition-all p-6 md-p-8 flex-col sm-flex-row justify-between items-start sm-items-center gap-6 cursor-pointer">
-            <div>
-              <div class="flex-center-left gap-3 mb-3">
-                <div class="geo-circle pink-bg border-dark" style="width: 24px; height: 24px; flex-shrink: 0;"></div>
-                <span class="font-sans font-black text-xs uppercase tracking-widest">{{ opp.category }}</span>
+        <div class="grid-opps-list gap-6 flex-col">
+          <router-link v-for="(opp, idx) in displayOpportunities" :key="opp.id" :to="`/oportunidades/${opp.id}`" class="opp-item-brutalist group border-dark bg-white flex-col sm-flex-row justify-between no-underline transition-all" style="display: flex;">
+            <div class="opp-content p-6 md-p-8 flex-1">
+              <div class="flex-center-left gap-3 mb-4">
+                <div class="tag text-dark font-sans font-bold uppercase tracking-widest" :class="idx % 2 === 0 ? 'pink-bg rounded-full' : 'blue-bg'">{{ opp.category }}</div>
               </div>
-              <h4 class="font-display text-2xl uppercase tracking-tighter leading-tight bg-gradient-hover transition-all">{{ opp.title }}</h4>
-              <p class="font-sans font-semibold mt-2 opacity-70">{{ opp.description }}</p>
+              <h4 class="font-display text-3xl uppercase tracking-tighter leading-tight text-dark mb-2 group-hover:text-red transition-colors">{{ opp.title }}</h4>
+              <p class="font-sans font-semibold mt-2 opacity-80 text-dark">{{ opp.description }}</p>
             </div>
-            <div class="opp-deadline text-center font-sans font-black text-sm uppercase tracking-widest border-dark-2 px-6 py-4 bg-light transition-colors">
-              PRAZO:<br/>{{ opp.deadline }}
+            <div class="opp-action flex-col items-center justify-center border-t-dark sm-border-t-0 sm-border-l-dark p-6 md-p-8 bg-light group-hover:bg-yellow transition-colors shrink-0" style="display: flex;">
+              <div class="font-sans font-black text-xs uppercase tracking-widest text-dark mb-2 opacity-60">PRAZO</div>
+              <div class="font-display text-xl uppercase text-dark text-center">{{ opp.deadline }}</div>
+              <div class="mt-4 text-dark opacity-0 group-hover:opacity-100 transition-opacity flex items-center font-black text-xs uppercase">
+                Ver Detalhes <ArrowRight :size="16" class="ml-1" />
+              </div>
             </div>
-          </div>
+          </router-link>
         </div>
       </div>
     </section>
 
-    <!-- SERVICES -->
-    <section id="services" class="bg-dark py-24 px-6 md-px-12 text-light relative overflow-hidden">
+    <!-- SERVICES / EIXOS DE AÇÃO (PREMIUM DARK UI) -->
+    <section id="services" class="bg-dark py-48 px-6 md-px-12 text-light relative overflow-hidden" style="z-index: 10;">
       <!-- Grid Background -->
-      <div class="absolute inset-0 opacity-5 grid-pattern-bg"></div>
+      <div class="absolute inset-0 opacity-10 grid-pattern-bg"></div>
       
       <div class="max-w-7xl mx-auto relative z-10">
-        <div class="flex-col md-flex-row items-center gap-6 mb-16">
-          <div class="geo-circle red-bg w-12 h-12 border-white-2"></div>
-          <h2 class="font-display text-5xl md-text-6xl uppercase tracking-tighter">
-            Nossos <span class="text-yellow">Eixos de Ação</span>
+        <div class="mb-32 flex flex-col items-center">
+          <h2 class="font-display text-5xl md-text-7xl uppercase tracking-tighter leading-none inline-block text-center text-white">
+            {{ siteContent.home?.eixosTitle || 'NOSSOS' }} <span class="text-yellow">{{ siteContent.home?.eixosSubtitle || 'EIXOS DE AÇÃO' }}</span>
           </h2>
         </div>
-        
-        <div class="grid-services gap-8">
-          <div class="svc-card group p-8 bg-gray-dark border-white-20 transition-all border-hover-pink">
-            <Users class="w-12 h-12 text-pink mb-8" :stroke-width="2.5" />
-            <h3 class="font-display text-3xl uppercase tracking-tighter mb-4 text-white">Escola de Formação</h3>
-            <p class="font-sans font-medium opacity-80 leading-relaxed min-h-5rem text-sm md-text-base">Cursos e materiais para desenvolvimento de novas lideranças comunitárias.</p>
-            <div class="svc-footer mt-8 pt-6 border-t-white-10 font-sans font-black text-xs uppercase tracking-widest flex-between">
-              <span>Conheça os Projetos</span><ArrowRight class="w-4 h-4" />
+
+        <!-- BRUTALIST 3-GRID -->
+        <div class="grid-services-brutalist mb-24">
+          <router-link 
+            v-for="(service, idx) in displayServices.slice(0, 3)" 
+            :key="idx" 
+            :to="service.link || '/servicos'" 
+            :class="['service-card-brutalist group', idx === 0 ? 'card-pink' : idx === 1 ? 'card-lime' : 'card-blue']"
+          >
+            <div class="service-icon-box mb-8 transition-colors" :class="service.textClass"><component :is="service.icon" :size="48" /></div>
+            <h3 class="font-display text-3xl md-text-4xl uppercase mb-6 leading-none text-white transition-colors">{{ service.title }}</h3>
+            <p class="font-sans font-bold opacity-80 text-base leading-relaxed mb-10 text-white transition-colors">{{ service.description }}</p>
+            <div class="brutalist-link-action mt-auto flex-between items-center text-white opacity-60 transition-all font-sans font-black text-sm uppercase tracking-widest">
+              <span>EXPLORAR</span>
+              <ArrowRight :size="24" class="transform group-hover:translate-x-2 transition-transform" />
             </div>
-          </div>
-          
-          <div class="svc-card group p-8 bg-gray-dark border-white-20 transition-all border-hover-lime">
-            <Globe class="w-12 h-12 text-lime mb-8" :stroke-width="2.5" />
-            <h3 class="font-display text-3xl uppercase tracking-tighter mb-4 text-white">Incidência Política</h3>
-            <p class="font-sans font-medium opacity-80 leading-relaxed min-h-5rem text-sm md-text-base">Acompanhamento legislativo e construção de campanhas de pressão pública.</p>
-            <div class="svc-footer mt-8 pt-6 border-t-white-10 font-sans font-black text-xs uppercase tracking-widest flex-between">
-              <span>Conheça os Projetos</span><ArrowRight class="w-4 h-4" />
-            </div>
-          </div>
-          
-          <div class="svc-card group p-8 bg-gray-dark border-white-20 transition-all border-hover-blue">
-            <Zap class="w-12 h-12 text-blue mb-8" :stroke-width="2.5" />
-            <h3 class="font-display text-3xl uppercase tracking-tighter mb-4 text-white">Apoio a Territórios</h3>
-            <p class="font-sans font-medium opacity-80 leading-relaxed min-h-5rem text-sm md-text-base">Suporte logístico e intelectual para movimentos sociais na linha de frente.</p>
-            <div class="svc-footer mt-8 pt-6 border-t-white-10 font-sans font-black text-xs uppercase tracking-widest flex-between">
-              <span>Conheça os Projetos</span><ArrowRight class="w-4 h-4" />
-            </div>
-          </div>
+          </router-link>
         </div>
       </div>
     </section>
 
     <!-- NEWSLETTER -->
-    <section class="bg-blue-primary py-24 px-6 md-px-12 border-b-dark">
+    <section class="bg-blue-primary py-24 px-6 md-px-12" style="z-index: 10; position: relative;">
       <div class="max-w-5xl mx-auto bg-yellow border-dark-4 p-8 md-p-16 flex-col md-flex-row gap-12 items-center shadow-solid-lg relative">
         <div class="flex-1">
           <div class="inline-flex-center gap-2 mb-4">
@@ -203,14 +207,26 @@
         </div>
         
         <div class="flex-1 w-full relative">
-          <form @submit.prevent class="flex-col gap-4 relative z-10 bg-white border-dark-4" style="padding: 2.5rem;">
+          <form @submit.prevent="handleNewsletter" class="flex-col gap-4 relative z-10 bg-white border-dark-4" style="padding: 2.5rem;">
+             <div v-if="nlSuccess" class="bg-lime p-4 border-dark-4 text-center font-black text-dark mb-4 uppercase tracking-widest text-xs">
+               Você agora receberá nossas atualizações!
+             </div>
              <input 
                type="email" 
+               v-model="nlEmail"
+               required
                :placeholder="siteContent.home?.newsletterPlaceholder || 'Digite seu email...'" 
                class="w-full bg-light px-6 py-4 font-sans font-bold text-lg text-dark focus-outline transition-colors nl-input"
                style="border: 4px solid #1C1C1C;"
              />
-             <button class="btn-red w-full" style="border: 4px solid #1C1C1C; padding: 1rem 1.5rem; justify-content: flex-start; font-size: 1rem;">{{ siteContent.home?.newsletterButton || 'QUERO FAZER PARTE' }}</button>
+             <button type="submit" class="btn-red w-full" style="border: 4px solid #1C1C1C; padding: 1rem 1.5rem; justify-content: flex-start; font-size: 1rem;">{{ siteContent.home?.newsletterButton || 'QUERO FAZER PARTE' }}</button>
+             
+             <!-- FRASE CLICÁVEL -->
+             <div class="mt-6 text-center">
+                <router-link to="/arquivo-newsletter" class="nl-archive-link">
+                   Quer ler nossas últimas edições antes de assinar? <span class="underline">Clique aqui →</span>
+                </router-link>
+             </div>
           </form>
         </div>
       </div>
@@ -220,9 +236,23 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
-import { ArrowRight, Globe, Users, Zap, Sun } from 'lucide-vue-next'
+import { computed, ref } from 'vue'
+import { ArrowRight, Globe, Users, Zap, Sun, Database, ShieldCheck, Mic2, Cpu } from 'lucide-vue-next'
 import { siteContent } from '../store/content'
+
+const servicesIcons = { Globe, Users, Zap, Database, ShieldCheck, Mic2, Cpu }
+
+const nlSuccess = ref(false)
+const nlEmail = ref('')
+const selectedTab = ref('TODOS')
+
+const handleNewsletter = () => {
+  if (nlEmail.value) {
+    nlSuccess.value = true
+    nlEmail.value = ''
+    setTimeout(() => { nlSuccess.value = false }, 5000)
+  }
+}
 
 const heroFontSize = computed(() => {
   const size = siteContent.home.heroFontSize || '11'
@@ -259,7 +289,7 @@ const mockPosts = [
     id: 1,
     title: "Por que o ativismo corporativo fracassa.",
     excerpt: "Um mergulho profundo na cooptação de movimentos radicais e o que o impacto autêntico exige dos organizadores comunitários no cenário atual.",
-    category: "Mobilização",
+    category: "MOBILIZAÇÃO",
     image: "https://images.unsplash.com/photo-1541844053589-346841d0b34c?auto=format&fit=crop&q=80&w=800",
     date: "2026-04-18"
   },
@@ -267,7 +297,7 @@ const mockPosts = [
     id: 2,
     title: "Como estruturar um sindicato local no modelo 2026",
     excerpt: "A nova onda de sindicalismo que está transformando a relação entre capital e trabalho nas cidades.",
-    category: "Educação",
+    category: "EDUCAÇÃO",
     image: "",
     date: "2026-04-15"
   },
@@ -275,7 +305,7 @@ const mockPosts = [
     id: 3,
     title: "A geopolítica da descarbonização nos países em desenvolvimento",
     excerpt: "Como o sul global está liderando e sofrendo com a transição energética global.",
-    category: "Clima",
+    category: "CLIMA",
     image: "",
     date: "2026-04-10"
   }
@@ -285,6 +315,11 @@ const displayPosts = computed(() => {
   return siteContent.posts && siteContent.posts.length > 0 ? siteContent.posts : mockPosts
 })
 
+const filteredPosts = computed(() => {
+  if (selectedTab.value === 'TODOS') return displayPosts.value
+  return displayPosts.value.filter(post => post.category?.toUpperCase() === selectedTab.value)
+})
+
 const featuredArticle = computed(() => {
   return displayPosts.value.length > 0 ? displayPosts.value[0] : null
 })
@@ -292,6 +327,14 @@ const featuredArticle = computed(() => {
 const secondaryArticles = computed(() => {
   return displayPosts.value.length > 1 ? displayPosts.value.slice(1, 3) : []
 })
+
+const defaultServices = [
+  { title: 'Escola de Formação', description: 'Cursos e materiais para desenvolvimento de novas lideranças comunitárias.', icon: Users, textClass: 'text-pink', link: '/trilhas' },
+  { title: 'Incidência Política', description: 'Acompanhamento legislativo e construção de campanhas de pressão pública.', icon: Globe, textClass: 'text-lime', link: '/oportunidades' },
+  { title: 'Apoio a Territórios', description: 'Suporte logístico e intelectual para movimentos sociais na linha de frente.', icon: Zap, textClass: 'text-blue', link: '/servicos' },
+  { title: 'Pesquisa & Dados', description: 'Produção de conhecimento estratégico, mapeamento de atores e análise de conjuntura.', icon: Database, textClass: 'text-yellow', link: '/biblioteca' }
+]
+const displayServices = computed(() => siteContent.services?.length ? siteContent.services : defaultServices)
 </script>
 
 <style scoped>
@@ -330,12 +373,15 @@ const secondaryArticles = computed(() => {
 .h-full { height: 100%; }
 .mx-auto { margin-left: auto; margin-right: auto; }
 .py-24 { padding-top: 6rem; padding-bottom: 6rem; }
+.py-32 { padding-top: 8rem; padding-bottom: 8rem; }
 .py-5 { padding-top: 1.25rem; padding-bottom: 1.25rem; }
 .px-6 { padding-left: 1.5rem; padding-right: 1.5rem; }
 .p-8 { padding: 2rem; }
 .p-6 { padding: 1.5rem; }
 .pb-32 { padding-bottom: 8rem; }
 .mb-16 { margin-bottom: 4rem; }
+.mb-24 { margin-bottom: 6rem; }
+.mb-12 { margin-bottom: 3rem; }
 .mb-8 { margin-bottom: 2rem; }
 .mb-6 { margin-bottom: 1.5rem; }
 .mb-4 { margin-bottom: 1rem; }
@@ -389,6 +435,7 @@ const secondaryArticles = computed(() => {
 .font-medium { font-weight: 500; }
 .font-black { font-weight: 900; }
 .text-5xl { font-size: 3rem; }
+.text-7xl { font-size: 4.5rem; }
 .text-4xl { font-size: 2.25rem; }
 .text-3xl { font-size: 1.875rem; }
 .text-2xl { font-size: 1.5rem; }
@@ -435,31 +482,29 @@ const secondaryArticles = computed(() => {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding-top: 6rem;
+  padding-top: 0;
   padding-bottom: 0;
-  padding-left: 1.5rem;
-  padding-right: 1.5rem;
   overflow: hidden;
 }
 .activist-gradient { background: linear-gradient(110deg, #A80022 0%, #DF2028 35%, #A4CD39 75%, #1D976C 100%); }
 .border-hero-bottom { border-bottom: 6px solid #1C1C1C; }
 
 .hero-content {
-  display: flex; flex-direction: column; align-items: center; /* Centraliza a caixa de conteúdo */
+  display: flex; flex-direction: column; align-items: center;
   justify-content: center;
   flex-grow: 1; max-width: 80rem; margin: 0 auto; width: 100%;
 }
 .hero-title { 
   font-size: 16vw; 
-  line-height: 1.1; /* Espaçamento real para evitar a colisão do Q */
+  line-height: 1.1;
   margin-bottom: 1.5rem; 
   text-align: left;
   transform: translate(-10%, -15%);
 }
 .hero-title span {
   display: block;
-  margin-top: 0.1em; /* Espaço positivo para separar as linhas */
-  padding-left: 0.8em; /* Puxa a segunda linha mais para a direita, criando o efeito degrau conceitual */
+  margin-top: 0.1em;
+  padding-left: 0.8em;
 }
 @media (min-width: 768px) { 
   .hero-title { 
@@ -468,15 +513,9 @@ const secondaryArticles = computed(() => {
     transform: translate(-15%, -20%);
   } 
   .hero-title span {
-    padding-left: 1.2em; /* No desktop o efeito degrau é mais acentuado */
+    padding-left: 1.2em;
   }
 }
-.hero-box {
-  display: flex; flex-direction: column; align-items: flex-start; gap: 2rem; margin-top: 2rem;
-  background: rgba(255,255,255,0.1); padding: 1.5rem; border-radius: 1.5rem; border: 2px solid rgba(255,255,255,0.3);
-}
-@media (min-width: 768px) { .hero-box { flex-direction: row; align-items: center; gap: 3rem; } }
-.hero-desc { max-width: 28rem; }
 
 /* GEOMETRIC SHAPES */
 .geo-circle { border-radius: 50%; aspect-ratio: 1/1; }
@@ -499,17 +538,8 @@ const secondaryArticles = computed(() => {
 @keyframes float-1 { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }
 @keyframes float-2 { 0%, 100% { transform: translateY(0) rotate(12deg); } 50% { transform: translateY(30px) rotate(12deg); } }
 @keyframes pulse-1 { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1); } }
-@keyframes pulse-fast { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.3); opacity: 0.6; } }
-.animate-pulse-fast { animation: pulse-fast 1.5s ease-in-out infinite; }
 
 /* BUTTONS */
-.btn-primary {
-  display: inline-flex; align-items: center; gap: 1rem; padding: 1rem 2rem;
-  font-family: "Inter", sans-serif; text-transform: uppercase; font-weight: 900;
-  letter-spacing: 0.1em; font-size: 0.875rem; border: 2px solid #1C1C1C;
-  background-color: #FFE65A; color: #1C1C1C; transition: all 0.3s; cursor: pointer;
-}
-.btn-primary:hover { transform: translateY(-4px); box-shadow: 4px 4px 0px #1C1C1C; }
 .btn-red {
   display: inline-flex; align-items: center; gap: 1rem; padding: 1rem 2rem;
   font-family: "Inter", sans-serif; text-transform: uppercase; font-weight: 900;
@@ -522,7 +552,7 @@ const secondaryArticles = computed(() => {
 .marquee-wrapper { 
   display: flex; 
   overflow-x: hidden; 
-  padding: 2.2rem 0; /* Alongada, mas não tanto */
+  padding: 2.2rem 0;
 }
 .border-marquee-bottom { border-bottom: 6px solid #1C1C1C; }
 .marquee-track { display: flex; white-space: nowrap; animation: marquee-scroll 25s linear infinite; }
@@ -530,14 +560,14 @@ const secondaryArticles = computed(() => {
   display: inline-flex; 
   align-items: center; 
   padding-left: 2rem; 
-  padding-right: 4rem; /* Espaço total reservado para o sol e margens */
+  padding-right: 4rem;
   white-space: nowrap; 
   position: relative;
 }
 .sun-container-abs {
   position: absolute;
   right: 0;
-  width: 4rem; /* Mesma largura do padding-right para centralizar o sol dentro dela */
+  width: 4rem;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -570,7 +600,6 @@ const secondaryArticles = computed(() => {
 .small-card:hover .card-arrow { opacity: 1; transform: rotate(-45deg); }
 
 /* OPPORTUNITIES */
-.bottom-left-shape { bottom: -5rem; left: -5rem; width: 16rem; height: 16rem; border: 4px solid #1C1C1C; }
 .grid-opps { display: grid; grid-template-columns: 1fr; }
 @media (min-width: 1024px) { .grid-opps { grid-template-columns: repeat(12, minmax(0, 1fr)); } .grid-opps > div:first-child { grid-column: span 4 / span 4; } .grid-opps > div:last-child { grid-column: span 8 / span 8; } }
 .opp-item:hover { transform: translateY(-4px); box-shadow: 8px 8px 0px #1C1C1C; }
@@ -578,29 +607,126 @@ const secondaryArticles = computed(() => {
 .opp-item:hover .bg-gradient-hover { background-image: linear-gradient(to right, #FFE65A, #FFE65A); }
 .opp-item:hover .opp-deadline { background-color: #1C1C1C; color: #FFFFFF; }
 
-/* SERVICES */
-.grid-pattern-light {
-  background-image: linear-gradient(rgba(0, 0, 0, 0.05) 1px, transparent 1px),
-                    linear-gradient(90deg, rgba(0, 0, 0, 0.05) 1px, transparent 1px);
-  background-size: 40px 40px;
+/* MEDIUM-LIKE BRUTALIST TABS */
+.tab-medium-brutalist {
+  background: transparent;
+  border: none;
+  font-family: "Inter", sans-serif;
+  font-weight: 800;
+  font-size: 0.85rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: #1C1C1C;
+  opacity: 0.4;
+  cursor: pointer;
+  padding: 0.5rem 1rem 1rem 1rem;
+  position: relative;
+  transition: all 0.2s;
+  white-space: nowrap;
 }
-.grid-pattern-bg { background-image: linear-gradient(#F7F7F5 2px, transparent 2px), linear-gradient(90deg, #F7F7F5 2px, transparent 2px); background-size: 60px 60px; }
-.grid-services { display: grid; grid-template-columns: 1fr; }
-@media (min-width: 768px) { .grid-services { grid-template-columns: repeat(3, 1fr); } }
-.svc-card:hover { transform: translateY(-8px); }
-.border-hover-pink:hover { border-color: #FF6BCA; }
-.border-hover-lime:hover { border-color: #A4CD39; }
-.border-hover-blue:hover { border-color: #3D78E0; }
-.svc-card:hover .svc-footer { border-color: currentColor; }
+.tab-medium-brutalist:hover { opacity: 0.8; }
+.tab-medium-brutalist.active-tab { opacity: 1; }
+.tab-medium-brutalist.active-tab::after {
+  content: '';
+  position: absolute;
+  bottom: -4px; /* matches border-b-dark */
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: #1C1C1C;
+}
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* SERVICES BRUTALIST 3 GRID */
+.grid-services-brutalist {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+}
+@media (min-width: 1024px) {
+  .grid-services-brutalist { grid-template-columns: repeat(3, 1fr); }
+}
+.service-card-brutalist {
+  background: transparent;
+  padding: 3rem;
+  display: flex;
+  flex-direction: column;
+  transition: all 0.3s;
+  text-decoration: none;
+  border: 1px solid rgba(255,255,255,0.2);
+}
+
+/* BACKGROUND PATTERNS */
+.grid-pattern-bg {
+  background-image: linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px),
+                    linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px);
+  background-size: 40px 40px;
+  background-position: center center;
+}
+
+.grid-pattern-light {
+  background-image: radial-gradient(circle at center, rgba(0,0,0,0.08) 2px, transparent 2px);
+  background-size: 24px 24px;
+}
+
+/* Card Specific Colors */
+.card-pink { border-color: #FF6BCA; }
+.card-pink:hover { background-color: #FF6BCA; }
+
+.card-lime { border-color: #A4CD39; }
+.card-lime:hover { background-color: #A4CD39; }
+
+.card-blue { border-color: #3D78E0; }
+.card-blue:hover { background-color: #3D78E0; }
+
+.service-card-brutalist:hover h3, 
+.service-card-brutalist:hover p, 
+.service-card-brutalist:hover .brutalist-link-action,
+.service-card-brutalist:hover .service-icon-box {
+  color: #1C1C1C !important;
+  opacity: 1;
+}
+
+/* OPPORTUNITIES REWORK */
+.opp-item-brutalist:hover {
+  transform: translateY(-4px);
+  box-shadow: 8px 8px 0px #1C1C1C;
+}
+.group-hover\:text-red:hover { color: #DF2028; }
+.group-hover\:bg-yellow:hover { background-color: #FFE65A; }
+.group-hover\:opacity-100:hover { opacity: 1; }
+.sm-border-l-dark { border-left: none; }
+.sm-border-t-0 { border-top: 4px solid #1C1C1C; }
+@media (min-width: 640px) {
+  .sm-border-l-dark { border-left: 4px solid #1C1C1C; }
+  .sm-border-t-0 { border-top: none; }
+}
 
 /* NEWSLETTER */
-.nl-shape-top { top: -1.5rem; right: -1.5rem; }
-.nl-shape-bottom { bottom: -1.5rem; left: -1.5rem; }
+.nl-input { border: 4px solid #1C1C1C; }
+.nl-archive-link {
+  font-family: 'Inter', sans-serif;
+  font-weight: 800;
+  font-size: 13px;
+  color: #1C1C1C;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  text-decoration: none;
+  opacity: 0.7;
+  transition: 0.2s;
+  display: inline-block;
+  cursor: pointer;
+}
+.nl-archive-link:hover {
+  opacity: 1;
+  color: #DF2028;
+  transform: scale(1.02);
+}
 .focus-outline:focus { outline: none; background-color: #FFFFFF; }
 
 /* RESPONSIVE UTILS */
 @media (max-width: 768px) {
-  .hidden-mobile { display: none; }
   .md-flex-row { flex-direction: column; }
   .md-w-half { width: 100%; }
   .md-h-auto { height: 16rem; }
@@ -613,7 +739,6 @@ const secondaryArticles = computed(() => {
   .md-text-6xl { font-size: 3.75rem; }
   .md-text-5xl { font-size: 3rem; }
   .md-text-4xl { font-size: 2.25rem; }
-  .md-text-base { font-size: 1rem; }
   .md-flex-row { flex-direction: row; }
   .md-w-half { width: 50%; }
   .md-h-auto { height: auto; }

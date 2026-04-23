@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+
+<html class="light" lang="pt-BR"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Trilha de Aprendizado - NARRATIVA POLÍTICA</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&amp;family=Public+Sans:wght@400;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "outline": "#757589",
+                        "on-secondary-container": "#546b00",
+                        "surface-container-low": "#f3f3f3",
+                        "on-primary-fixed": "#00006e",
+                        "surface-container-highest": "#e2e2e2",
+                        "on-primary": "#ffffff",
+                        "inverse-surface": "#303030",
+                        "on-surface": "#1b1b1b",
+                        "inverse-on-surface": "#f1f1f1",
+                        "on-primary-fixed-variant": "#0000ef",
+                        "on-tertiary-fixed": "#380038",
+                        "surface-container-high": "#e8e8e8",
+                        "on-error": "#ffffff",
+                        "surface-bright": "#f9f9f9",
+                        "on-tertiary": "#ffffff",
+                        "on-surface-variant": "#454558",
+                        "tertiary": "#640064",
+                        "primary-container": "#0000ff",
+                        "error": "#ba1a1a",
+                        "tertiary-container": "#8a008a",
+                        "on-primary-container": "#b3b7ff",
+                        "surface-container": "#eeeeee",
+                        "secondary-fixed": "#c3f400",
+                        "on-background": "#1b1b1b",
+                        "surface-dim": "#dadada",
+                        "primary-fixed": "#e0e0ff",
+                        "on-tertiary-fixed-variant": "#810081",
+                        "surface": "#f9f9f9",
+                        "secondary-container": "#c1f100",
+                        "outline-variant": "#c5c4db",
+                        "background": "#f9f9f9",
+                        "on-secondary": "#ffffff",
+                        "on-tertiary-container": "#ff9af4",
+                        "surface-variant": "#e2e2e2",
+                        "primary": "#0001bb",
+                        "secondary-fixed-dim": "#abd600",
+                        "on-secondary-fixed-variant": "#3c4d00",
+                        "surface-tint": "#343dff",
+                        "secondary": "#506600",
+                        "surface-container-lowest": "#ffffff",
+                        "error-container": "#ffdad6",
+                        "tertiary-fixed-dim": "#ffabf3",
+                        "tertiary-fixed": "#ffd7f5",
+                        "on-error-container": "#93000a",
+                        "on-secondary-fixed": "#161e00",
+                        "inverse-primary": "#bec2ff",
+                        "primary-fixed-dim": "#bec2ff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {},
+                    "fontFamily": {
+                        "headline": ["Inter", "sans-serif"],
+                        "body": ["Public Sans", "sans-serif"],
+                        "label": ["Inter", "sans-serif"]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 1, 'wght' 700, 'GRAD' 0, 'opsz' 24;
+        }
+        /* Custom grid pattern for background as requested */
+        .bg-brutalist-grid {
+            background-color: #1b1b1b;
+            background-image: 
+                linear-gradient(to right, #303030 1px, transparent 1px),
+                linear-gradient(to bottom, #303030 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface font-body selection:bg-secondary-fixed selection:text-on-surface">
+<!-- TopNavBar (Web) -->
+<nav class="hidden md:flex bg-white dark:bg-zinc-950 font-['Inter'] font-black uppercase tracking-tighter docked full-width top-0 border-b-2 border-black dark:border-white border-b-4 border-black dark:border-zinc-800 flat no shadows flex justify-between items-center w-full px-6 h-20 fixed z-50">
+<div class="flex items-center gap-8">
+<span class="text-2xl font-black italic tracking-tighter text-blue-800 dark:text-blue-400">NARRATIVA POLÍTICA</span>
+<div class="flex gap-6 h-full items-end pt-4">
+<!-- Active Item -->
+<a class="text-blue-800 border-b-4 border-blue-800 dark:text-lime-400 dark:border-lime-400 pb-1 Active elements use 0px radius and high-contrast state shifts" href="#">Trilhas</a>
+<!-- Inactive Items -->
+<a class="text-zinc-500 dark:text-zinc-400 hover:text-black dark:hover:text-white hover:bg-lime-400 dark:hover:bg-lime-500 transition-colors duration-75 pb-1" href="#">Biblioteca</a>
+<a class="text-zinc-500 dark:text-zinc-400 hover:text-black dark:hover:text-white hover:bg-lime-400 dark:hover:bg-lime-500 transition-colors duration-75 pb-1" href="#">Comunidade</a>
+<a class="text-zinc-500 dark:text-zinc-400 hover:text-black dark:hover:text-white hover:bg-lime-400 dark:hover:bg-lime-500 transition-colors duration-75 pb-1" href="#">Manifesto</a>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 text-zinc-500 dark:text-zinc-400 hover:text-black dark:hover:text-white hover:bg-lime-400 dark:hover:bg-lime-500 transition-colors duration-75 flex items-center justify-center">
+<span class="material-symbols-outlined" data-icon="search" data-weight="fill">search</span>
+</button>
+<button class="p-2 text-zinc-500 dark:text-zinc-400 hover:text-black dark:hover:text-white hover:bg-lime-400 dark:hover:bg-lime-500 transition-colors duration-75 flex items-center justify-center">
+<span class="material-symbols-outlined" data-icon="notifications" data-weight="fill">notifications</span>
+</button>
+<button class="p-2 text-zinc-500 dark:text-zinc-400 hover:text-black dark:hover:text-white hover:bg-lime-400 dark:hover:bg-lime-500 transition-colors duration-75 flex items-center justify-center">
+<span class="material-symbols-outlined" data-icon="account_circle" data-weight="fill">account_circle</span>
+</button>
+</div>
+</nav>
+<!-- Main Content Canvas -->
+<main class="min-h-screen pt-0 md:pt-20 pb-16 md:pb-0 bg-brutalist-grid text-surface relative overflow-hidden">
+<div class="relative z-10 container mx-auto px-4 md:px-8 py-12 max-w-7xl">
+<header class="mb-16">
+<h1 class="font-headline text-5xl md:text-7xl font-black tracking-tighter uppercase text-secondary-fixed leading-none">
+                    Trilhas de<br/>Aprendizado
+                </h1>
+<p class="font-body text-xl text-surface-dim mt-4 max-w-2xl border-l-4 border-secondary-fixed pl-4">
+                    Sua rota através da narrativa sistêmica. Selecione um vetor de estudo e analise os fluxos estruturais em tempo real.
+                </p>
+</header>
+<div class="grid grid-cols-1 xl:grid-cols-12 gap-8 items-start">
+<!-- Left Column: Path Cards -->
+<div class="xl:col-span-8 flex flex-col gap-8">
+<!-- Card 1: Economia Política -->
+<article class="bg-surface text-on-surface border-4 border-on-surface p-6 md:p-10 rounded-none relative group hover:-translate-y-1 transition-transform duration-200">
+<!-- Accent Block -->
+<div class="absolute top-0 right-0 w-16 h-16 bg-primary flex items-center justify-center border-l-4 border-b-4 border-on-surface">
+<span class="material-symbols-outlined text-on-primary text-3xl">trending_up</span>
+</div>
+<div class="uppercase font-headline font-bold text-sm tracking-widest text-primary mb-2">Vetor 01</div>
+<h2 class="font-headline text-4xl md:text-5xl font-black tracking-tighter uppercase mb-4 w-5/6">Economia Política</h2>
+<p class="font-body text-lg md:text-xl mb-10 max-w-2xl text-on-surface-variant">
+                            Uma desconstrução das narrativas hegemônicas. Entenda os fluxos de capital e as estruturas de poder que definem a realidade social atual.
+                        </p>
+<!-- Progress Section -->
+<div class="bg-surface-container p-6 border-2 border-on-surface mb-8">
+<div class="flex justify-between font-headline font-bold text-sm uppercase mb-3">
+<span class="text-on-surface">Status do Módulo</span>
+<span class="text-secondary">45% Concluído</span>
+</div>
+<!-- Brutalist Progress Bar -->
+<div class="h-6 w-full bg-surface border-2 border-on-surface relative">
+<div class="absolute top-0 left-0 h-full bg-secondary-fixed border-r-2 border-on-surface w-[45%]"></div>
+<!-- Grid markers for progress bar -->
+<div class="absolute inset-0 flex justify-between pointer-events-none opacity-20">
+<div class="h-full border-r border-on-surface w-1/4"></div>
+<div class="h-full border-r border-on-surface w-1/4"></div>
+<div class="h-full border-r border-on-surface w-1/4"></div>
+</div>
+</div>
+</div>
+<div class="flex flex-col sm:flex-row gap-4">
+<button class="bg-primary text-on-primary font-headline font-black uppercase tracking-tighter px-8 py-4 border-4 border-on-surface hover:bg-secondary-fixed hover:text-on-surface transition-colors duration-75 flex-grow sm:flex-grow-0">
+                                Retomar Análise
+                            </button>
+<button class="bg-surface-container-lowest text-on-surface font-headline font-black uppercase tracking-tighter px-8 py-4 border-4 border-on-surface hover:bg-surface-variant transition-colors duration-75 flex items-center justify-center gap-2">
+<span class="material-symbols-outlined">description</span>
+                                Ver Ementa
+                            </button>
+</div>
+</article>
+<!-- Card 2: Advocacia Social -->
+<article class="bg-surface text-on-surface border-4 border-on-surface p-6 md:p-10 rounded-none relative group hover:-translate-y-1 transition-transform duration-200">
+<div class="absolute top-0 right-0 w-16 h-16 bg-tertiary flex items-center justify-center border-l-4 border-b-4 border-on-surface">
+<span class="material-symbols-outlined text-on-primary text-3xl">gavel</span>
+</div>
+<div class="uppercase font-headline font-bold text-sm tracking-widest text-tertiary mb-2">Vetor 02</div>
+<h2 class="font-headline text-4xl md:text-5xl font-black tracking-tighter uppercase mb-4 w-5/6">Advocacia Social</h2>
+<p class="font-body text-lg md:text-xl mb-10 max-w-2xl text-on-surface-variant">
+                            Estratégias de mobilização e táticas legais para impacto sistêmico. Do planejamento da campanha à execução tática nas estruturas governamentais.
+                        </p>
+<!-- Progress Section -->
+<div class="bg-surface-container p-6 border-2 border-on-surface mb-8">
+<div class="flex justify-between font-headline font-bold text-sm uppercase mb-3">
+<span class="text-on-surface">Status do Módulo</span>
+<span class="text-tertiary">12% Concluído</span>
+</div>
+<div class="h-6 w-full bg-surface border-2 border-on-surface relative">
+<div class="absolute top-0 left-0 h-full bg-tertiary-fixed border-r-2 border-on-surface w-[12%]"></div>
+<div class="absolute inset-0 flex justify-between pointer-events-none opacity-20">
+<div class="h-full border-r border-on-surface w-1/4"></div>
+<div class="h-full border-r border-on-surface w-1/4"></div>
+<div class="h-full border-r border-on-surface w-1/4"></div>
+</div>
+</div>
+</div>
+<button class="bg-primary text-on-primary font-headline font-black uppercase tracking-tighter px-8 py-4 border-4 border-on-surface hover:bg-tertiary-fixed hover:text-on-surface transition-colors duration-75 w-full sm:w-auto">
+                            Iniciar Módulo
+                        </button>
+</article>
+</div>
+<!-- Right Column: Visual Map Preview -->
+<div class="xl:col-span-4 h-full">
+<aside class="bg-surface-container-low text-on-surface border-4 border-on-surface p-6 rounded-none flex flex-col h-full min-h-[500px] xl:sticky xl:top-28">
+<div class="flex justify-between items-end mb-6">
+<h3 class="font-headline text-2xl font-black tracking-tighter uppercase">Mapa<br/>Sistêmico</h3>
+<span class="material-symbols-outlined text-3xl text-primary">hub</span>
+</div>
+<!-- Map Container -->
+<div class="flex-grow relative border-4 border-on-surface bg-inverse-surface overflow-hidden group">
+<!-- Background Image from Prompt -->
+<div class="absolute inset-0 w-full h-full bg-on-surface mix-blend-multiply group-hover:mix-blend-normal transition-all duration-500 z-0">
+<img class="w-full h-full object-cover opacity-60 grayscale group-hover:grayscale-0 transition-all duration-500" data-alt="Abstract brutalist data map with glowing geometric neon pink and green nodes connected by sharp structural lines against a deep dark background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAAEozoGg3XvyFDXdOEx83ZxVFL4L3-pMz3VUZAzJHK3Mud4UzrLmyK1xydYMQDtbKH-3xAmcbMMX0nzCpYqYzCtAe4fPb4ZUKgGyw07MOPDx0MiC54PnsfMuL9t5ATvmhQixlVMq4caEkwOFXGg6MGs3TL4gtgZwBGKHQ3r46njVmKeqKdYi-j0I2110C3XeRv2OR7-mqkgxdbTGEGV8Vn20fqqk0iPNhqwuAnBGgF6MJYS2YmEN6BQVimWODK-N103NzSZCECTg"/>
+</div>
+<!-- Overlay UI elements for the map -->
+<div class="absolute inset-0 z-10 pointer-events-none p-4 flex flex-col justify-between">
+<div class="text-[10px] font-headline font-bold text-secondary-fixed uppercase tracking-widest">Live Node View</div>
+<div class="w-full h-full relative mt-4">
+<!-- Node 1 -->
+<div class="absolute top-[20%] left-[30%] flex flex-col items-center">
+<div class="w-4 h-4 bg-secondary-fixed border-2 border-on-surface shadow-[0_0_15px_#c3f400]"></div>
+<span class="text-[9px] font-headline font-black text-on-primary uppercase mt-1 bg-on-surface px-1">EP-01</span>
+</div>
+<!-- Node 2 -->
+<div class="absolute top-[60%] left-[60%] flex flex-col items-center">
+<div class="w-5 h-5 bg-tertiary-fixed border-2 border-on-surface shadow-[0_0_20px_#ffd7f5]"></div>
+<span class="text-[9px] font-headline font-black text-on-primary uppercase mt-1 bg-on-surface px-1">AS-01</span>
+</div>
+<!-- Node 3 (Inactive) -->
+<div class="absolute bottom-[20%] left-[20%] flex flex-col items-center opacity-50">
+<div class="w-3 h-3 bg-surface border-2 border-on-surface"></div>
+</div>
+<!-- Connecting Lines (SVG) -->
+<svg class="absolute inset-0 w-full h-full -z-10" xmlns="http://www.w3.org/2000/svg">
+<line stroke="#c3f400" stroke-dasharray="4 4" stroke-width="2" x1="30%" x2="60%" y1="20%" y2="60%"></line>
+<line stroke="#757589" stroke-width="1" x1="60%" x2="20%" y1="60%" y2="80%"></line>
+</svg>
+</div>
+</div>
+</div>
+<div class="mt-6">
+<button class="bg-on-surface text-surface font-headline font-black uppercase tracking-tighter px-6 py-4 border-4 border-on-surface hover:bg-secondary-fixed hover:text-on-surface transition-colors duration-75 w-full flex justify-between items-center">
+<span>Expandir Topologia</span>
+<span class="material-symbols-outlined">open_in_full</span>
+</button>
+</div>
+</aside>
+</div>
+</div>
+</div>
+</main>
+<!-- BottomNavBar (Mobile) -->
+<nav class="md:hidden bg-white dark:bg-zinc-950 font-['Inter'] font-black text-[10px] uppercase fixed bottom-0 w-full border-t-4 border-black dark:border-white heavy top border flat fixed bottom-0 w-full z-50 grid grid-cols-4 h-16 tactile high-contrast feedback">
+<!-- Active Item -->
+<a class="bg-lime-400 text-black flex flex-col items-center justify-center pt-2 pb-1 tactile high-contrast feedback" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="map" data-weight="fill">map</span>
+<span>Trilhas</span>
+</a>
+<!-- Inactive Items -->
+<a class="text-zinc-500 dark:text-zinc-400 flex flex-col items-center justify-center pt-2 pb-1 hover:bg-zinc-200 dark:hover:bg-zinc-800 tactile high-contrast feedback" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="search">search</span>
+<span>Busca</span>
+</a>
+<a class="text-zinc-500 dark:text-zinc-400 flex flex-col items-center justify-center pt-2 pb-1 hover:bg-zinc-200 dark:hover:bg-zinc-800 tactile high-contrast feedback" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="analytics">analytics</span>
+<span>Progresso</span>
+</a>
+<a class="text-zinc-500 dark:text-zinc-400 flex flex-col items-center justify-center pt-2 pb-1 hover:bg-zinc-200 dark:hover:bg-zinc-800 tactile high-contrast feedback" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="person">person</span>
+<span>Perfil</span>
+</a>
+</nav>
+</body></html>

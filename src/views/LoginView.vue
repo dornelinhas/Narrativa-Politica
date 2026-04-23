@@ -1,125 +1,244 @@
+<script setup>
+import { ref, onMounted, computed } from 'vue'
+import { useRouter } from 'vue-router'
+import { useAuth } from '../store/auth'
+import { siteContent } from '../store/content'
+import { Mail, Lock, Eye, EyeOff, ArrowRight, User } from 'lucide-vue-next'
+
+const router = useRouter()
+const { login } = useAuth()
+
+const email = ref(localStorage.getItem('np_remember_email') || '')
+const password = ref('')
+const nome = ref('')
+const showPassword = ref(false)
+const rememberMe = ref(!!localStorage.getItem('np_remember_email'))
+const acceptPrivacy = ref(false)
+const acceptNewsletter = ref(false)
+const loading = ref(false)
+const error = ref('')
+
+const isRegistering = ref(false)
+const allowRegistration = computed(() => siteContent.settings?.allowRegistration)
+
+const handleSubmit = async () => {
+  loading.value = true
+  error.value = ''
+  
+  if (isRegistering.value) {
+    if (!acceptPrivacy.value) {
+      error.value = 'Você precisa aceitar a Política de Privacidade.'
+      loading.value = false
+      return
+    }
+    if (!nome.value || !email.value || !password.value) {
+      error.value = 'Preencha todos os campos.'
+      loading.value = false
+      return
+    }
+    // TODO: Connect to actual register function in Supabase/Auth store
+    setTimeout(() => {
+      alert('Cadastro realizado com sucesso! Bem-vindo(a) à Narrativa Política.')
+      isRegistering.value = false
+      loading.value = false
+    }, 800)
+  } else {
+    const result = await login(email.value, password.value)
+    if (result.success) {
+      if (rememberMe.value) localStorage.setItem('np_remember_email', email.value)
+      else localStorage.removeItem('np_remember_email')
+      
+      if (result.user?.role === 'admin') {
+        router.push('/admin')
+      } else {
+        router.push('/area-do-aluno')
+      }
+    } else {
+      error.value = 'Credenciais inválidas.'
+    }
+    loading.value = false
+  }
+}
+
+onMounted(() => window.scrollTo(0, 0))
+</script>
+
 <template>
-  <div class="login-brutalist">
-    <div class="login-box">
-      <!-- TABS -->
-      <div class="auth-tabs">
-        <button @click="authMode = 'login'" :class="{ active: authMode === 'login' }">Login</button>
-        <button @click="authMode = 'register'" :class="{ active: authMode === 'register' }">Criar Conta</button>
-      </div>
+  <div class="login-premium-page">
+    <div class="paper-noise-bg"></div>
 
-      <div class="auth-header">
-        <h1>{{ authMode === 'login' ? 'ACESSO RESTRITO' : 'CRIAR CONTA' }}</h1>
-        <p>{{ authMode === 'login' ? 'Entre para gerenciar conteúdos ou materiais exclusivos.' : 'Junte-se à nossa comunidade de impacto social.' }}</p>
-      </div>
+    <div class="login-wrapper-compact">
+      <!-- CARD COMPACTO INTEGRADO -->
+      <div class="login-card-brutal-compact">
+        <header class="login-header mb-10">
+          <h1 class="login-title-small">{{ isRegistering ? 'CRIAR CONTA' : 'ACESSO' }}</h1>
+          <p class="login-subtitle-small">
+            {{ isRegistering ? 'Faça parte da nossa rede de mobilização.' : 'Continue sua jornada estratégica.' }}
+          </p>
+        </header>
 
-      <!-- LOGIN FORM -->
-      <form v-if="authMode === 'login'" @submit.prevent="handleLogin" class="auth-form">
-        <div class="form-group"><label>E-MAIL</label><input type="email" v-model="email" placeholder="seu@email.com" required></div>
-        <div class="form-group"><label>SENHA</label><input type="password" v-model="password" placeholder="••••••••" required></div>
-        <div v-if="error" class="error-box">{{ error }}</div>
-        <button type="submit" class="brutalist-button red full" :disabled="loading">{{ loading ? 'Autenticando...' : 'ACESSAR CONTA' }}</button>
-      </form>
+        <form @submit.prevent="handleSubmit" class="login-form">
+          <div v-if="isRegistering" class="input-group-compact mb-6">
+            <label class="input-label-mini">NOME COMPLETO</label>
+            <div class="input-inner">
+              <User class="icon-sm" :size="16" />
+              <input v-model="nome" type="text" placeholder="Seu nome" required />
+            </div>
+          </div>
 
-      <!-- REGISTER FORM -->
-      <form v-else @submit.prevent="handleRegister" class="auth-form">
-        <div class="form-row">
-          <div class="form-group"><label>NOME</label><input type="text" v-model="regForm.name" placeholder="Nome" required></div>
-          <div class="form-group"><label>SOBRENOME</label><input type="text" v-model="regForm.lastName" placeholder="Sobrenome" required></div>
-        </div>
-        <div class="form-group"><label>E-MAIL</label><input type="email" v-model="regForm.email" placeholder="seu@email.com" required></div>
-        <div class="form-group"><label>SENHA</label><input type="password" v-model="regForm.password" placeholder="Mínimo 6 caracteres" required></div>
-        <div class="check-group">
-          <label class="custom-check"><input type="checkbox" v-model="regForm.privacy" required><span>Aceito os termos de <router-link to="/privacidade" target="_blank">privacidade</router-link>.</span></label>
-          <label class="custom-check"><input type="checkbox" v-model="regForm.newsletter"><span>Quero receber novidades por e-mail.</span></label>
-        </div>
-        <div v-if="error" class="error-box">{{ error }}</div>
-        <button type="submit" class="brutalist-button red full" :disabled="loading">{{ loading ? 'Criando conta...' : 'CONCLUIR CADASTRO' }}</button>
-      </form>
+          <div class="input-group-compact mb-6">
+            <label class="input-label-mini">E-MAIL INSTITUCIONAL</label>
+            <div class="input-inner">
+              <Mail class="icon-sm" :size="16" />
+              <input v-model="email" type="email" placeholder="seu@email.com" required />
+            </div>
+          </div>
 
-      <div class="auth-footer">
-        <p>Problemas? <router-link to="/contatos">Fale com o suporte</router-link>.</p>
-        <div v-if="authMode === 'login'" class="auth-hints">
-          <span><strong>Admin:</strong> contatonarrativapolitica@gmail.com / admin123</span>
-        </div>
+          <div class="input-group-compact mb-8">
+            <label class="input-label-mini">CHAVE DE ACESSO</label>
+            <div class="input-inner">
+              <Lock class="icon-sm" :size="16" />
+              <input v-model="password" :type="showPassword ? 'text' : 'password'" placeholder="••••••••" required />
+              <button type="button" @click="showPassword = !showPassword" class="toggle-eye">
+                <Eye v-if="!showPassword" :size="16" />
+                <EyeOff v-else :size="16" />
+              </button>
+            </div>
+          </div>
+
+          <div v-if="!isRegistering" class="options-row flex-between items-center mb-14 mt-10">
+            <label class="custom-check-sm">
+              <input type="checkbox" v-model="rememberMe" />
+              <span class="box-sq"></span>
+              <span class="txt">LEMBRAR MEU ACESSO</span>
+            </label>
+            <a href="#" class="forgot-txt">ESQUECI A SENHA</a>
+          </div>
+
+          <div v-else class="options-column mb-10 mt-6">
+            <label class="custom-check-sm mb-4">
+              <input type="checkbox" v-model="acceptPrivacy" required />
+              <span class="box-sq"></span>
+              <span class="txt">ACEITO A <router-link to="/privacidade" target="_blank" style="color: #DF2028;">POLÍTICA DE PRIVACIDADE</router-link></span>
+            </label>
+            <label class="custom-check-sm">
+              <input type="checkbox" v-model="acceptNewsletter" />
+              <span class="box-sq"></span>
+              <span class="txt">QUERO RECEBER A NEWSLETTER E CONVOCAÇÕES</span>
+            </label>
+          </div>
+
+          <div v-if="error" class="error-sm mb-4" style="color: #DF2028; font-weight: bold; font-size: 12px; text-align: center;">{{ error }}</div>
+
+          <button type="submit" class="btn-action-red-brutal" :disabled="loading">
+            {{ loading ? 'PROCESSANDO...' : (isRegistering ? 'FINALIZAR CADASTRO' : 'ENTRAR NA PLATAFORMA') }}
+            <ArrowRight v-if="!loading" :size="18" />
+          </button>
+        </form>
+
+        <!-- LINKS DE VOLTA PARA DENTRO DO CARD -->
+        <footer class="login-footer-internal mt-12">
+          <div class="divider-thin"></div>
+          
+          <template v-if="!isRegistering && allowRegistration">
+            <span class="lbl-small">NÃO POSSUI CONTA?</span>
+            <button @click="isRegistering = true; error = ''" class="link-bold-red" style="background: none; border: none; cursor: pointer;">CRIAR UMA CONTA AGORA</button>
+          </template>
+          
+          <template v-else-if="isRegistering">
+            <span class="lbl-small">JÁ POSSUI CONTA?</span>
+            <button @click="isRegistering = false; error = ''" class="link-bold-red" style="background: none; border: none; cursor: pointer;">FAZER LOGIN</button>
+          </template>
+
+          <template v-if="!allowRegistration && !isRegistering">
+             <span class="lbl-small">NOVOS CADASTROS ESTÃO TEMPORARIAMENTE FECHADOS.</span>
+             <router-link to="/trilhas" class="link-bold-red mt-2">VEJA AS TRILHAS ABERTAS</router-link>
+          </template>
+        </footer>
       </div>
     </div>
   </div>
 </template>
 
-<script setup>
-import { ref, reactive } from 'vue'
-import { useRouter } from 'vue-router'
-import { useAuth } from '../store/auth'
-import { siteContent, saveContent } from '../store/content'
-
-const router = useRouter()
-const { login, register } = useAuth()
-const authMode = ref('login')
-const email = ref('')
-const password = ref('')
-const error = ref('')
-const loading = ref(false)
-const regForm = reactive({ name: '', lastName: '', email: '', password: '', privacy: false, newsletter: false })
-
-const handleLogin = async () => {
-  loading.value = true; error.value = ''
-  try {
-    const result = await login(email.value, password.value)
-    if (result.success) { result.role === 'admin' ? router.push('/admin') : router.push('/area-do-aluno') }
-    else { error.value = result.message }
-  } catch (e) { error.value = 'Erro ao tentar entrar.' }
-  finally { loading.value = false }
-}
-
-const handleRegister = async () => {
-  loading.value = true; error.value = ''
-  if (regForm.password.length < 6) { error.value = 'Senha: mín. 6 caracteres.'; loading.value = false; return }
-  try {
-    const result = await register({ name: `${regForm.name} ${regForm.lastName}`, email: regForm.email, password: regForm.password, newsletter: regForm.newsletter })
-    if (result.success) {
-      if (regForm.newsletter) {
-        if (!siteContent.subscribers) siteContent.subscribers = []
-        if (!siteContent.subscribers.find(s => s.email === regForm.email)) {
-          siteContent.subscribers.push({ email: regForm.email, date: new Date().toLocaleDateString('pt-BR') })
-          saveContent()
-        }
-      }
-      router.push('/area-do-aluno')
-    } else { error.value = result.message }
-  } catch (e) { error.value = 'Erro ao criar conta.' }
-  finally { loading.value = false }
-}
-</script>
-
 <style scoped>
-.login-brutalist { min-height: 100vh; display: flex; align-items: center; justify-content: center; background: var(--color-bg); padding: 100px 20px; background-image: linear-gradient(var(--color-bg) 2px, transparent 2px), linear-gradient(90deg, var(--color-bg) 2px, transparent 2px); background-size: 60px 60px; }
-.login-box { max-width: 520px; width: 100%; padding: 48px; background: white; border: 4px solid var(--color-dark); box-shadow: 12px 12px 0 var(--color-dark); }
+.login-premium-page { background: #FFFFFF; min-height: 100vh; display: flex; align-items: center; justify-content: center; position: relative; overflow-y: auto; padding: 40px 20px; }
+.paper-noise-bg { position: fixed; inset: 0; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E"); opacity: 0.05; pointer-events: none; }
 
-.auth-tabs { display: flex; margin-bottom: 40px; border: 3px solid var(--color-dark); }
-.auth-tabs button { flex: 1; padding: 14px; border: none; background: white; font-family: var(--font-sans); font-weight: 900; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.1em; cursor: pointer; transition: all 0.2s; color: var(--color-dark); }
-.auth-tabs button.active { background: var(--color-dark); color: white; }
+.login-wrapper-compact { width: 100%; max-width: 420px; z-index: 10; }
 
-.auth-header { margin-bottom: 32px; }
-.auth-header h1 { font-family: var(--font-display); font-size: 2rem; margin-bottom: 12px; text-transform: uppercase; letter-spacing: -0.04em; line-height: 1; }
-.auth-header p { color: rgba(28,28,28,0.6); font-weight: 600; }
+.login-card-brutal-compact { 
+  background: #FFFFFF; border: 4px solid #1C1C1C; border-radius: 2.5rem; 
+  padding: 40px 40px; box-shadow: 12px 12px 0px #1C1C1C;
+}
 
-.auth-form { display: flex; flex-direction: column; gap: 20px; }
-.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-.form-group { display: flex; flex-direction: column; gap: 8px; }
-.form-group label { font-family: var(--font-sans); font-weight: 900; font-size: 0.7rem; letter-spacing: 0.1em; color: var(--color-dark); }
-.form-group input { width: 100%; padding: 14px 18px; border: 3px solid var(--color-dark); font-family: var(--font-sans); font-weight: 700; font-size: 1rem; background: var(--color-bg); outline: none; transition: all 0.2s; }
-.form-group input:focus { border-color: var(--color-red); background: white; }
+.login-title-small { 
+  font-family: "Archivo Black", sans-serif; 
+  font-size: 2.5rem; line-height: 1; color: #1C1C1C; 
+  text-transform: uppercase; margin-bottom: 12px; text-align: center; 
+  letter-spacing: -0.02em; /* Tracking ajustado */
+}
+.login-subtitle-small { 
+  font-family: "Georgia", serif; font-size: 1rem; color: #000; 
+  text-align: center; margin-bottom: 35px; opacity: 0.8; 
+  letter-spacing: 0.01em;
+}
 
-.check-group { display: flex; flex-direction: column; gap: 12px; }
-.custom-check { display: flex; align-items: flex-start; gap: 12px; cursor: pointer; font-size: 0.85rem; font-weight: 600; color: rgba(28,28,28,0.7); }
-.custom-check a { color: var(--color-red); font-weight: 800; }
+.input-label-mini { 
+  display: block; font-weight: 900; font-size: 9px; color: #000; 
+  letter-spacing: 2px; /* Tracking ampliado */
+  margin-bottom: 10px; 
+}
+.input-inner { position: relative; display: flex; align-items: center; }
+.icon-sm { position: absolute; left: 15px; color: #000; }
+input { 
+  width: 100%; padding: 18px 15px 18px 45px; border: 3px solid #1C1C1C; 
+  border-radius: 12px; font-family: "Inter", sans-serif; font-weight: 800; 
+  font-size: 0.9rem; outline: none; color: #000; 
+  letter-spacing: 0.02em;
+}
+input:focus { border-color: #DF2028; box-shadow: 6px 6px 0px rgba(223, 32, 40, 0.1); }
 
-.brutalist-button.full { width: 100%; justify-content: center; padding: 18px; font-size: 0.9rem; }
-.error-box { background: rgba(223,32,40,0.1); color: var(--color-red); padding: 12px; border: 2px solid var(--color-red); font-size: 0.85rem; font-weight: 700; text-align: center; }
+.toggle-eye { position: absolute; right: 15px; background: none; border: none; cursor: pointer; color: #000; }
 
-.auth-footer { margin-top: 32px; border-top: 4px solid var(--color-dark); padding-top: 24px; text-align: center; font-size: 0.85rem; color: rgba(28,28,28,0.6); }
-.auth-footer a { font-weight: 800; color: var(--color-red); }
-.auth-hints { margin-top: 16px; opacity: 0.4; font-size: 0.7rem; }
+.options-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 35px;    /* AUMENTADO: Afasta dos balões */
+  margin-bottom: 45px; /* AUMENTADO: Afasta do botão vermelho */
+  width: 100%;
+}
 
-@media (max-width: 600px) { .login-box { padding: 32px 24px; } .form-row { grid-template-columns: 1fr; } }
+/* CHECKBOX COMPACTO */
+.custom-check-sm { display: flex; align-items: center; gap: 10px; cursor: pointer; }
+.custom-check-sm input { position: absolute; opacity: 0; width: 0; }
+.box-sq { height: 18px; width: 18px; background-color: #FFF; border: 2.5px solid #1C1C1C; border-radius: 4px; position: relative; }
+.custom-check-sm input:checked ~ .box-sq { background-color: #1C1C1C; }
+.box-sq:after { content: ""; position: absolute; display: none; left: 5px; top: 1px; width: 4px; height: 9px; border: solid white; border-width: 0 3px 3px 0; transform: rotate(45deg); }
+.custom-check-sm input:checked ~ .box-sq:after { display: block; }
+.txt { font-weight: 900; font-size: 9px; color: #000; letter-spacing: 1px; }
+
+.forgot-txt { font-weight: 900; font-size: 9px; color: #000; text-decoration: none; border-bottom: 1.5px solid #EEE; letter-spacing: 1px; }
+
+/* BOTÃO COMPACTO */
+.btn-action-red-brutal { 
+  width: 100%; padding: 20px; background: #DF2028; color: #FFF; border: 3px solid #1C1C1C; border-radius: 9999px; 
+  font-family: "Inter", sans-serif; font-weight: 900; font-size: 0.85rem; text-transform: uppercase; 
+  display: flex; align-items: center; justify-content: center; gap: 12px; cursor: pointer; transition: 0.3s; 
+  box-shadow: 6px 6px 0px #1C1C1C; letter-spacing: 1.5px; /* Tracking ampliado */
+}
+.btn-action-red-brutal:hover { transform: translate(-3px, -3px); box-shadow: 9px 9px 0px #1C1C1C; background: #000; }
+
+/* FOOTER INTERNO REDUZIDO */
+.login-footer-internal { text-align: center; display: flex; flex-direction: column; gap: 8px; }
+.divider-thin { width: 40px; height: 3px; background: #1C1C1C; margin: 0 auto 18px; }
+.lbl-small { font-weight: 900; font-size: 9px; color: #000; opacity: 0.6; letter-spacing: 1.5px; }
+.link-bold-red { color: #DF2028; font-weight: 900; font-size: 11px; text-decoration: none; text-transform: uppercase; border-bottom: 1.5px solid transparent; letter-spacing: 1px; }
+.link-bold-red:hover { border-bottom-color: #DF2028; }
+
+@media (max-height: 700px) {
+  .login-premium-page { padding-top: 100px; }
+  .login-card-brutal-compact { padding: 30px; }
+  .login-title-small { font-size: 2.2rem; }
+}
 </style>

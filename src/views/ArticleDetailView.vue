@@ -1,220 +1,289 @@
 <template>
-  <div v-if="post" class="article-detail-premium selection-custom">
+  <div v-if="post" class="article-page">
+
     <!-- PROGRESS BAR -->
-    <div class="reading-progress-container">
-      <div class="progress-bar" :style="{ width: scrollProgress + '%' }"></div>
+    <div class="art-progress"><div class="art-progress__fill" :style="{ width: scrollProgress + '%' }"></div></div>
+
+    <!-- HERO IMAGE (Full Width) -->
+    <div class="art-hero">
+      <img :src="post.image || 'https://images.unsplash.com/photo-1541844053589-346841d0b34c?w=1400&q=80'" :alt="post.title" class="art-hero__img" />
+      <div class="art-hero__overlay"></div>
     </div>
 
-    <!-- HEADER AREA (CLEAN & BLACK TEXT) -->
-    <header class="article-header-premium bg-light border-b-dark">
-      <div class="container-narrow pt-56 pb-24">
-        <router-link to="/conteudo" class="back-link-brutalist mb-16 inline-flex items-center gap-3">
-          <ArrowLeft :size="18" /> VOLTAR AO RADAR EDITORIAL
+    <!-- ARTICLE CONTAINER -->
+    <div class="art-container">
+
+      <!-- META BAR -->
+      <div class="art-meta">
+        <router-link to="/conteudo" class="art-meta__back">
+          <ArrowLeft :size="16" /> {{ siteContent.articlesConfig?.backButtonText || 'Voltar ao Radar' }}
         </router-link>
-        
-        <div class="header-meta mb-10">
-          <span class="cat-tag-brutalist">{{ post.category }}</span>
-          <span class="reading-time-brutalist font-sans font-black opacity-40">{{ readingTime }} MIN DE LEITURA</span>
+        <div class="art-meta__tags">
+          <span class="art-tag">{{ post.category }}</span>
+          <span class="art-tag art-tag--muted">{{ post.type || 'Artigo' }}</span>
         </div>
+      </div>
 
-        <h1 class="font-display text-5xl md-text-7xl leading-none tracking-tighter text-dark mb-12" style="color: #1C1C1C !important;">
-          {{ post.title }}
-        </h1>
-        
-        <p class="font-sans text-xl md-text-2xl font-semibold text-dark opacity-60 leading-tight mb-16 max-w-4xl">
-          {{ post.excerpt }}
-        </p>
-        
-        <div class="author-top-row border-t-dark pt-12">
-          <div class="author-avatar-brutalist">
+      <!-- HEADLINE -->
+      <h1 class="art-title">{{ post.title }}</h1>
+      <p v-if="post.excerpt" class="art-excerpt">{{ post.excerpt }}</p>
+
+      <!-- AUTHOR ROW -->
+      <div class="art-author-row">
+        <div class="art-author-row__left">
+          <div class="art-avatar">
             <img v-if="authorProfile.image" :src="authorProfile.image" :alt="authorProfile.name" />
-            <div v-else class="avatar-fallback-brutalist">{{ authorProfile.name?.charAt(0) }}</div>
+            <span v-else class="art-avatar__fallback">{{ authorProfile.name?.charAt(0) }}</span>
           </div>
-          <div class="author-meta-brutalist">
-            <span class="author-name-thick text-dark">{{ authorProfile.name }}</span>
-            <span class="publish-date-brutalist font-sans">{{ formatDate(post.date) }}</span>
-          </div>
-        </div>
-      </div>
-    </header>
-
-    <!-- CONTENT AREA -->
-    <div class="article-main-wrapper bg-white">
-      <div class="container-narrow py-32">
-        
-        <!-- MAIN IMAGE -->
-        <figure class="featured-image-brutalist mb-24 shadow-solid">
-          <img :src="post.image || 'https://images.unsplash.com/photo-1541844053589-346841d0b34c?auto=format&fit=crop&q=80&w=1200'" :alt="post.title" />
-        </figure>
-
-        <!-- SHARING BAR -->
-        <div class="sharing-horizontal mb-20 border-y-dark py-8 flex-center-left gap-10">
-          <span class="font-sans font-black text-xs uppercase tracking-widest text-dark opacity-30">Compartilhar:</span>
-          <div class="flex gap-6">
-             <a :href="shareLinks.linkedin" target="_blank" class="share-icon-btn"><Linkedin :size="20" /></a>
-             <a :href="shareLinks.whatsapp" target="_blank" class="share-icon-btn"><MessageCircle :size="20" /></a>
-             <button @click="copyLink" class="share-icon-btn"><LinkIcon :size="20" /></button>
+          <div class="art-author-info">
+            <span class="art-author-info__name">{{ authorProfile.name }}</span>
+            <span class="art-author-info__date">{{ formatDate(post.date) }} · {{ readingTime }} min de leitura</span>
           </div>
         </div>
-
-        <article class="article-rich-text font-sans text-dark" v-html="post.content"></article>
-
-        <!-- AUTHOR BIO BOX -->
-        <section class="author-bio-footer mt-48 mb-32">
-          <div class="bio-card-brutalist">
-            <div class="bio-avatar-large">
-              <img v-if="authorProfile.image" :src="authorProfile.image" :alt="authorProfile.name" />
-              <div v-else class="avatar-fallback-xl">{{ authorProfile.name?.charAt(0) }}</div>
-            </div>
-            <div class="bio-info-box">
-              <h4 class="font-display text-4xl uppercase tracking-tighter text-dark mb-6">{{ authorProfile.name }}</h4>
-              <p class="font-sans text-xl font-medium text-dark opacity-70 leading-relaxed">
-                {{ authorProfile.bio || authorProfile.bioAuthor || 'Escritora, estrategista e ativista na Narrativa Política, transformando teoria econômica em impacto real nos territórios.' }}
-              </p>
-            </div>
-          </div>
-        </section>
-
-        <!-- RADAR EDITORIAL SECTION (MINIMALIST) -->
-        <section class="radar-footer-section pt-32 border-t-dark">
-          <h3 class="font-display text-5xl uppercase tracking-tighter text-dark mb-16">
-            Radar <span class="text-red">Editorial</span>
-          </h3>
-          <div class="radar-mini-grid">
-             <router-link v-for="p in relatedPosts" :key="p.id" :to="`/conteudo/${p.id}`" class="radar-mini-card group">
-                <div class="mini-thumb-box mb-8 border-dark">
-                   <img :src="p.image || 'https://images.unsplash.com/photo-1541844053589-346841d0b34c?auto=format&fit=crop&q=80&w=400'" />
-                </div>
-                <h5 class="font-display text-2xl uppercase tracking-tighter leading-tight text-dark group-hover:text-red transition-colors">
-                  {{ p.title }}
-                </h5>
-             </router-link>
-          </div>
-        </section>
+        <div class="art-share-row">
+          <a :href="shareLinks.linkedin" target="_blank" rel="noopener" class="art-share-btn" title="LinkedIn"><Linkedin :size="18" /></a>
+          <a :href="shareLinks.whatsapp" target="_blank" rel="noopener" class="art-share-btn" title="WhatsApp"><MessageCircle :size="18" /></a>
+          <button @click="copyLink" class="art-share-btn" title="Copiar link"><LinkIcon :size="18" /></button>
+        </div>
       </div>
+
+      <hr class="art-divider" />
+
+      <!-- ARTICLE BODY -->
+      <article class="art-body" v-html="post.content"></article>
+
+      <!-- REFERENCES -->
+      <section v-if="post.refs || post.references" class="art-references">
+        <h3 class="art-references__title">Referências</h3>
+        <div class="art-references__content" v-html="post.refs || post.references"></div>
+      </section>
+
+      <hr class="art-divider" />
+
+      <!-- AUTHOR BIO -->
+      <section class="art-bio">
+        <div class="art-bio__avatar">
+          <img v-if="authorProfile.image" :src="authorProfile.image" :alt="authorProfile.name" />
+          <span v-else class="art-avatar__fallback art-avatar__fallback--lg">{{ authorProfile.name?.charAt(0) }}</span>
+        </div>
+        <div class="art-bio__info">
+          <span class="art-bio__label">Escrito por</span>
+          <h4 class="art-bio__name">{{ authorProfile.name }}</h4>
+          <p class="art-bio__text">{{ authorProfile.bio || 'Estrategista e ativista na Narrativa Política.' }}</p>
+        </div>
+      </section>
+
+      <!-- SHARE BOTTOM -->
+      <div class="art-share-bottom">
+        <span class="art-share-bottom__label">Compartilhar este artigo</span>
+        <div class="art-share-row">
+          <a :href="shareLinks.linkedin" target="_blank" rel="noopener" class="art-share-btn"><Linkedin :size="18" /></a>
+          <a :href="shareLinks.whatsapp" target="_blank" rel="noopener" class="art-share-btn"><MessageCircle :size="18" /></a>
+          <button @click="copyLink" class="art-share-btn"><LinkIcon :size="18" /></button>
+        </div>
+      </div>
+
+      <hr class="art-divider" />
+
+      <!-- CONTINUE READING -->
+      <section v-if="relatedPosts.length" class="art-related">
+        <h3 class="art-related__title">{{ siteContent.articlesConfig?.relatedTitle || 'Continue Explorando' }}</h3>
+        <div class="art-related__grid">
+          <router-link v-for="p in relatedPosts" :key="p.id" :to="`/conteudo/${p.id}`" class="art-card">
+            <div class="art-card__img-wrap">
+              <img :src="p.image || 'https://images.unsplash.com/photo-1541844053589-346841d0b34c?w=400'" :alt="p.title" />
+            </div>
+            <div class="art-card__body">
+              <span class="art-card__cat">{{ p.category }}</span>
+              <h4 class="art-card__title">{{ p.title }}</h4>
+              <p class="art-card__excerpt">{{ p.excerpt }}</p>
+            </div>
+          </router-link>
+        </div>
+      </section>
+
     </div>
+
+    <!-- ZEN MODE -->
+    <button @click="isZenMode = !isZenMode" class="art-zen" :title="isZenMode ? 'Sair do Modo Foco' : 'Modo Foco'">
+      <Maximize v-if="!isZenMode" :size="20" /><Minimize v-else :size="20" />
+    </button>
+
+    <!-- TOAST -->
+    <transition name="toast">
+      <div v-if="showToast" class="art-toast">Link copiado!</div>
+    </transition>
+  </div>
+
+  <!-- LOADING / NOT FOUND -->
+  <div v-else class="art-empty">
+    <h2>Artigo não encontrado</h2>
+    <router-link to="/conteudo" class="brutalist-button dark">Voltar ao Radar</router-link>
   </div>
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { siteContent } from '../store/content'
-import { 
-  Linkedin, MessageCircle, Link as LinkIcon, ArrowLeft, ArrowRight
-} from 'lucide-vue-next'
+import { Linkedin, MessageCircle, Link as LinkIcon, ArrowLeft, Maximize, Minimize } from 'lucide-vue-next'
 
 const route = useRoute()
 const scrollProgress = ref(0)
+const isZenMode = ref(false)
+const showToast = ref(false)
 
 const post = computed(() => siteContent.posts?.find(p => p.id === parseInt(route.params.id)))
-
 const authorProfile = computed(() => {
   const authorId = post.value?.authorId || 'anne'
   return siteContent.authors?.find(a => a.id === authorId) || siteContent.authors?.[0] || { name: 'Anne Dornelas' }
 })
-
-const relatedPosts = computed(() => {
-  return siteContent.posts?.filter(p => p.id !== post.value?.id).slice(0, 3) || []
-})
-
+const relatedPosts = computed(() => siteContent.posts?.filter(p => p.id !== post.value?.id).slice(0, 3) || [])
 const readingTime = computed(() => {
   if (!post.value?.content) return 1
-  const words = post.value.content.replace(/<[^>]*>?/gm, '').split(/\s+/).length
-  return Math.ceil(words / 200)
+  return Math.ceil(post.value.content.replace(/<[^>]*>?/gm, '').split(/\s+/).length / 200)
 })
-
 const shareLinks = computed(() => {
   const url = encodeURIComponent(window.location.href)
-  const title = encodeURIComponent(post.value?.title || 'Narrativa Política')
+  const title = encodeURIComponent(post.value?.title || '')
   return {
     linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${url}`,
     whatsapp: `https://api.whatsapp.com/send?text=${title}%20${url}`
   }
 })
-
-const handleScroll = () => {
-  const winScroll = document.body.scrollTop || document.documentElement.scrollTop
-  const height = document.documentElement.scrollHeight - document.documentElement.clientHeight
-  scrollProgress.value = (winScroll / height) * 100
-}
-
-const formatDate = (dateStr) => {
-  if (!dateStr) return ''
-  return new Date(dateStr).toLocaleDateString('pt-BR', { day: 'numeric', month: 'long', year: 'numeric' }).toUpperCase()
-}
-
+const formatDate = (d) => d ? new Date(d).toLocaleDateString('pt-BR', { day: 'numeric', month: 'long', year: 'numeric' }) : ''
 const copyLink = () => {
   navigator.clipboard.writeText(window.location.href)
-  alert('Link copiado!')
+  showToast.value = true
+  setTimeout(() => showToast.value = false, 2000)
 }
-
-onMounted(() => {
-  window.scrollTo(0, 0)
-  window.addEventListener('scroll', handleScroll)
-})
+const handleScroll = () => {
+  const h = document.documentElement.scrollHeight - document.documentElement.clientHeight
+  scrollProgress.value = h > 0 ? (window.scrollY / h) * 100 : 0
+}
+onMounted(() => { window.scrollTo(0, 0); window.addEventListener('scroll', handleScroll) })
 onUnmounted(() => window.removeEventListener('scroll', handleScroll))
 </script>
 
 <style scoped>
-.article-detail-premium { background: #F7F7F5; }
-.container-narrow { max-width: 900px; margin: 0 auto; padding: 0 2.5rem; }
-.bg-light { background-color: #F7F7F5; }
-.text-dark { color: #1C1C1C !important; }
-.text-red { color: #DF2028; }
-.border-b-dark { border-bottom: 6px solid #1C1C1C; }
-.border-t-dark { border-top: 6px solid #1C1C1C; }
-.border-y-dark { border-top: 3px solid #1C1C1C; border-bottom: 3px solid #1C1C1C; }
-.shadow-solid { box-shadow: 15px 15px 0px #1C1C1C; }
+/* ── PAGE ───────────────────────────────────── */
+.article-page { min-height: 100vh; padding-bottom: 80px; }
 
-/* PROGRESS BAR */
-.reading-progress-container { position: fixed; top: 0; left: 0; width: 100%; height: 8px; z-index: 4000; background: rgba(0,0,0,0.05); }
-.progress-bar { height: 100%; background: #DF2028; transition: width 0.1s; }
+/* ── PROGRESS ───────────────────────────────── */
+.art-progress { position: fixed; top: 0; left: 0; width: 100%; height: 4px; z-index: 9999; background: rgba(0,0,0,.06); }
+.art-progress__fill { height: 100%; background: var(--color-red, #DF2028); transition: width .12s ease-out; }
 
-.back-link-brutalist { 
-  font-family: "Inter", sans-serif; font-weight: 900; font-size: 0.8rem; 
-  letter-spacing: 0.15em; text-decoration: none; color: #1C1C1C; opacity: 0.4;
-  transition: all 0.2s;
-}
-.back-link-brutalist:hover { opacity: 1; color: #DF2028; transform: translateX(-5px); }
+/* ── HERO IMAGE ─────────────────────────────── */
+.art-hero { position: relative; width: 100%; max-height: 520px; overflow: hidden; }
+.art-hero__img { width: 100%; height: 520px; object-fit: cover; display: block; }
+.art-hero__overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,.25) 0%, transparent 50%); }
 
-.cat-tag-brutalist {
-  background: #FF6BCA; color: white; padding: 0.6rem 1.2rem; border: 3px solid #1C1C1C;
-  font-family: "Inter", sans-serif; font-weight: 900; font-size: 0.8rem; text-transform: uppercase;
-  margin-right: 2rem;
-}
+/* ── CONTAINER ──────────────────────────────── */
+.art-container { max-width: 720px; margin: 0 auto; padding: 0 24px; }
 
-.author-top-row { display: flex; align-items: center; gap: 2rem; }
-.author-avatar-brutalist { width: 70px; height: 70px; border-radius: 50%; overflow: hidden; border: 3px solid #1C1C1C; }
-.author-avatar-brutalist img { width: 100%; height: 100%; object-fit: cover; }
-.author-meta-brutalist { display: flex; flex-direction: column; }
-.author-name-thick { font-family: "Inter", sans-serif; font-weight: 900; font-size: 1.25rem; }
-.publish-date-brutalist { font-size: 0.85rem; font-weight: 800; opacity: 0.4; text-transform: uppercase; margin-top: 4px; }
+/* ── META BAR ───────────────────────────────── */
+.art-meta { display: flex; justify-content: space-between; align-items: center; padding: 28px 0 20px; flex-wrap: wrap; gap: 12px; }
+.art-meta__back { display: inline-flex; align-items: center; gap: 6px; font-family: var(--font-sans, 'Inter', sans-serif); font-weight: 700; font-size: .8rem; color: var(--color-dark, #1C1C1C); text-transform: uppercase; letter-spacing: .06em; opacity: .55; transition: opacity .2s; text-decoration: none; }
+.art-meta__back:hover { opacity: 1; }
+.art-meta__tags { display: flex; gap: 8px; }
+.art-tag { display: inline-block; padding: 5px 14px; font-family: var(--font-sans); font-weight: 800; font-size: .7rem; text-transform: uppercase; letter-spacing: .08em; background: var(--color-red, #DF2028); color: #fff; border-radius: 3px; }
+.art-tag--muted { background: var(--color-bg, #F7F7F5); color: var(--color-dark, #1C1C1C); }
 
-.article-rich-text { font-size: 1.45rem; line-height: 1.8; color: #1C1C1C; font-weight: 500; }
-.article-rich-text :deep(p) { margin-bottom: 3rem; }
-.article-rich-text :deep(h2) { font-family: "Archivo Black", sans-serif; font-size: 3rem; margin: 5rem 0 2rem; line-height: 1; letter-spacing: -0.05em; }
+/* ── TITLE ──────────────────────────────────── */
+.art-title { font-family: var(--font-display, 'Archivo Black', sans-serif); font-size: clamp(2rem, 5vw, 3.2rem); line-height: 1.08; letter-spacing: -1.5px; color: var(--color-dark); margin: 8px 0 20px; text-transform: none; }
+.art-excerpt { font-family: var(--font-sans); font-size: 1.25rem; line-height: 1.55; color: #555; margin: 0 0 28px; font-weight: 400; }
 
-.share-icon-btn {
-  width: 50px; height: 50px; border: 3px solid #1C1C1C; display: flex; align-items: center; justify-content: center;
-  background: white; color: #1C1C1C; transition: all 0.2s;
-}
-.share-icon-btn:hover { transform: translate(-5px, -5px); box-shadow: 5px 5px 0 #1C1C1C; background: #FFE65A; }
+/* ── AUTHOR ROW ─────────────────────────────── */
+.art-author-row { display: flex; justify-content: space-between; align-items: center; padding: 0 0 24px; flex-wrap: wrap; gap: 16px; }
+.art-author-row__left { display: flex; align-items: center; gap: 14px; }
+.art-avatar { width: 48px; height: 48px; border-radius: 50%; overflow: hidden; background: var(--color-dark); flex-shrink: 0; }
+.art-avatar img { width: 100%; height: 100%; object-fit: cover; }
+.art-avatar__fallback { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-family: var(--font-display); color: #fff; font-size: 1.2rem; background: var(--color-dark); }
+.art-avatar__fallback--lg { font-size: 2rem; }
+.art-author-info { display: flex; flex-direction: column; }
+.art-author-info__name { font-family: var(--font-sans); font-weight: 700; font-size: .95rem; color: var(--color-dark); }
+.art-author-info__date { font-family: var(--font-sans); font-size: .82rem; color: #888; margin-top: 2px; }
 
-.bio-card-brutalist { display: flex; gap: 4rem; background: #F7F7F5; border: 6px solid #1C1C1C; padding: 4rem; align-items: center; }
-.bio-avatar-large { width: 150px; height: 150px; border-radius: 50%; overflow: hidden; border: 4px solid #1C1C1C; flex-shrink: 0; box-shadow: 10px 10px 0 rgba(0,0,0,0.05); }
-.bio-avatar-large img { width: 100%; height: 100%; object-fit: cover; }
+/* ── SHARE BUTTONS ──────────────────────────── */
+.art-share-row { display: flex; gap: 8px; }
+.art-share-btn { width: 40px; height: 40px; border-radius: 50%; border: 1.5px solid #ddd; background: #fff; display: flex; align-items: center; justify-content: center; color: #555; cursor: pointer; transition: all .2s; }
+.art-share-btn:hover { border-color: var(--color-dark); color: var(--color-dark); background: var(--color-bg, #F7F7F5); }
 
-.radar-mini-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 3.5rem; margin-bottom: 15rem; }
-.mini-thumb-box { aspect-ratio: 16/9; overflow: hidden; border: 4px solid #1C1C1C; transition: all 0.4s; }
-.mini-thumb-box img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(100%); transition: all 0.4s; }
-.radar-mini-card:hover .mini-thumb-box { transform: translate(-8px, -8px); box-shadow: 8px 8px 0 #1C1C1C; }
-.radar-mini-card:hover img { filter: grayscale(0%); }
+/* ── DIVIDER ────────────────────────────────── */
+.art-divider { border: none; border-top: 1px solid #e6e6e6; margin: 0; }
 
+/* ── ARTICLE BODY ───────────────────────────── */
+.art-body { font-family: 'Georgia', 'Times New Roman', serif; font-size: 1.22rem; line-height: 1.85; color: #222; padding: 36px 0; }
+.art-body :deep(p) { margin: 0 0 1.75rem; }
+.art-body :deep(h2) { font-family: var(--font-display); font-size: 1.8rem; margin: 3rem 0 1rem; line-height: 1.15; color: var(--color-dark); text-transform: none; letter-spacing: -.5px; }
+.art-body :deep(h3) { font-family: var(--font-sans); font-size: 1.35rem; font-weight: 800; margin: 2.5rem 0 .8rem; color: var(--color-dark); text-transform: none; line-height: 1.3; }
+.art-body :deep(blockquote) { margin: 2rem 0; padding: 1.5rem 0 1.5rem 1.8rem; border-left: 3px solid var(--color-dark); font-style: italic; font-size: 1.3rem; color: #333; line-height: 1.6; background: none; }
+.art-body :deep(ul), .art-body :deep(ol) { margin: 0 0 1.75rem; padding-left: 1.5rem; }
+.art-body :deep(li) { margin-bottom: .6rem; }
+.art-body :deep(a) { color: var(--color-red, #DF2028); text-decoration: underline; text-underline-offset: 3px; }
+.art-body :deep(img) { width: 100%; border-radius: 4px; margin: 2rem 0; }
+.art-body :deep(figcaption) { font-family: var(--font-sans); font-size: .85rem; color: #888; text-align: center; margin-top: -1rem; margin-bottom: 2rem; }
+
+/* ── REFERENCES ─────────────────────────────── */
+.art-references { background: var(--color-bg, #F7F7F5); border-radius: 8px; padding: 28px 32px; margin: 8px 0 32px; }
+.art-references__title { font-family: var(--font-sans); font-weight: 800; font-size: .9rem; text-transform: uppercase; letter-spacing: .1em; color: var(--color-dark); margin: 0 0 14px; }
+.art-references__content { font-family: var(--font-sans); font-size: .9rem; line-height: 1.7; color: #555; }
+.art-references__content :deep(a) { color: var(--color-red); text-decoration: underline; }
+.art-references__content :deep(p) { margin: 0 0 .6rem; }
+
+/* ── AUTHOR BIO ─────────────────────────────── */
+.art-bio { display: flex; gap: 24px; align-items: flex-start; padding: 40px 0; }
+.art-bio__avatar { width: 72px; height: 72px; border-radius: 50%; overflow: hidden; flex-shrink: 0; background: var(--color-dark); }
+.art-bio__avatar img { width: 100%; height: 100%; object-fit: cover; }
+.art-bio__label { font-family: var(--font-sans); font-size: .75rem; text-transform: uppercase; letter-spacing: .12em; color: #999; font-weight: 700; }
+.art-bio__name { font-family: var(--font-display); font-size: 1.3rem; color: var(--color-dark); margin: 4px 0 8px; text-transform: none; line-height: 1.2; }
+.art-bio__text { font-family: var(--font-sans); font-size: .95rem; line-height: 1.6; color: #555; margin: 0; }
+
+/* ── SHARE BOTTOM ───────────────────────────── */
+.art-share-bottom { display: flex; align-items: center; justify-content: space-between; padding: 24px 0; flex-wrap: wrap; gap: 12px; }
+.art-share-bottom__label { font-family: var(--font-sans); font-weight: 700; font-size: .85rem; color: var(--color-dark); }
+
+/* ── RELATED / CONTINUE READING ─────────────── */
+.art-related { padding: 48px 0 0; }
+.art-related__title { font-family: var(--font-display); font-size: 1.6rem; color: var(--color-dark); margin: 0 0 28px; text-transform: none; line-height: 1; }
+.art-related__grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+.art-card { text-decoration: none; color: inherit; border-radius: 8px; overflow: hidden; transition: transform .25s ease, box-shadow .25s ease; border: 2px solid #e6e6e6; }
+.art-card:hover { transform: translateY(-4px); box-shadow: 0 12px 32px rgba(0,0,0,.1); }
+.art-card__img-wrap { aspect-ratio: 16/10; overflow: hidden; }
+.art-card__img-wrap img { width: 100%; height: 100%; object-fit: cover; transition: transform .4s ease; }
+.art-card:hover .art-card__img-wrap img { transform: scale(1.05); }
+.art-card__body { padding: 16px 18px 20px; }
+.art-card__cat { font-family: var(--font-sans); font-size: .68rem; font-weight: 800; text-transform: uppercase; letter-spacing: .08em; color: var(--color-red); }
+.art-card__title { font-family: var(--font-display); font-size: 1rem; line-height: 1.2; margin: 6px 0 8px; color: var(--color-dark); text-transform: none; }
+.art-card__excerpt { font-family: var(--font-sans); font-size: .82rem; line-height: 1.5; color: #777; margin: 0; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+
+/* ── ZEN MODE ────────────────────────────────── */
+.art-zen { position: fixed; bottom: 32px; right: 32px; z-index: 5000; width: 52px; height: 52px; border-radius: 50%; border: none; background: var(--color-dark, #1C1C1C); color: #fff; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 4px 16px rgba(0,0,0,.2); transition: all .2s; }
+.art-zen:hover { transform: scale(1.1); background: var(--color-red); }
+
+/* ── TOAST ───────────────────────────────────── */
+.art-toast { position: fixed; bottom: 100px; right: 32px; z-index: 6000; background: var(--color-dark); color: #fff; padding: 12px 24px; border-radius: 8px; font-family: var(--font-sans); font-size: .85rem; font-weight: 600; box-shadow: 0 8px 24px rgba(0,0,0,.2); }
+.toast-enter-active { animation: toastIn .3s ease; }
+.toast-leave-active { animation: toastOut .3s ease forwards; }
+@keyframes toastIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes toastOut { from { opacity: 1; } to { opacity: 0; transform: translateY(-10px); } }
+
+/* ── EMPTY STATE ────────────────────────────── */
+.art-empty { min-height: 60vh; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 24px; padding: 120px 24px; text-align: center; }
+.art-empty h2 { font-family: var(--font-display); font-size: 2rem; color: var(--color-dark); }
+
+/* ── RESPONSIVE ─────────────────────────────── */
 @media (max-width: 900px) {
-  .radar-mini-grid { grid-template-columns: 1fr; }
-  .bio-card-brutalist { flex-direction: column; text-align: center; padding: 3rem; }
-  .article-rich-text { font-size: 1.25rem; }
-  .pt-56 { padding-top: 10rem; }
+  .art-related__grid { grid-template-columns: 1fr; }
+  .art-hero__img { height: 320px; }
+}
+@media (max-width: 600px) {
+  .art-container { padding: 0 18px; }
+  .art-title { font-size: 1.7rem; letter-spacing: -.5px; }
+  .art-excerpt { font-size: 1.05rem; }
+  .art-body { font-size: 1.08rem; }
+  .art-bio { flex-direction: column; align-items: center; text-align: center; }
+  .art-hero__img { height: 240px; }
+  .art-references { padding: 20px; }
 }
 </style>

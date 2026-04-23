@@ -1,153 +1,176 @@
 <script setup>
-import { computed } from 'vue'
+import { ref, onMounted, computed } from 'vue'
+import { useRouter } from 'vue-router'
+import { useAuth } from '../store/auth'
+import { Clock, ArrowRight } from 'lucide-vue-next'
 import { siteContent } from '../store/content'
-const paths = computed(() => siteContent.paths || [])
-const cardClasses = ['card-1','card-2','card-3','card-4']
-const fillClasses = ['fill-green','fill-pink','fill-blue','fill-green']
-const btnClasses = ['trilha-btn green','trilha-btn pink','trilha-btn blue','trilha-btn outline']
+
+const router = useRouter()
+const { user, isAuthenticated } = useAuth()
+
+const tracks = computed(() => siteContent.tracks || [])
+
+const handleAction = (track) => {
+  if (!isAuthenticated.value) {
+    router.push('/login')
+    return
+  }
+  if (track.status === 'PREMIUM' && !user.value?.isPremium) {
+    router.push(`/checkout/${track.id}`)
+    return
+  }
+  router.push('/area-do-aluno')
+}
+
+onMounted(() => window.scrollTo(0, 0))
 </script>
 
 <template>
-  <div class="trilhas-page grid-pattern">
-    <div class="page-hero">
-      <h1><span class="white">Trilhas de </span><span class="green">Aprendizado</span></h1>
+  <div class="journey-white-editorial-page">
+    <div class="background-master-layer">
+       <div class="paper-texture"></div>
+       <div class="watermarks-bg">
+          <div class="w-shape circle"></div>
+          <div class="w-shape square"></div>
+          <div class="w-shape star">★</div>
+       </div>
     </div>
 
-    <div class="trilhas-canvas">
-      <!-- Decorative dots -->
-      <div class="deco-dot" style="width:18px;height:18px;background:#AAFF00;top:100px;left:15%"></div>
-      <div class="deco-dot" style="width:24px;height:24px;background:#FF2D78;top:280px;left:32%"></div>
-      <div class="deco-dot" style="width:16px;height:16px;background:#1B8FFF;top:60px;right:35%"></div>
-      <div class="deco-dot" style="width:22px;height:22px;background:#F5E000;top:200px;right:28%"></div>
-      <div class="deco-dot" style="width:80px;height:80px;background:#AAFF00;top:30px;right:5%;border-radius:50%"></div>
-      <div class="deco-dot" style="width:20px;height:20px;background:#FF2D78;bottom:60px;left:5%"></div>
-      <div class="deco-sq" style="width:14px;height:14px;background:#1B8FFF;top:160px;left:5%;border-radius:2px"></div>
-      <div class="deco-sq" style="width:18px;height:18px;background:#F5E000;bottom:80px;right:30%;border-radius:2px;transform:rotate(10deg)"></div>
-      <div class="deco-sq" style="width:12px;height:12px;background:#FF2D78;top:350px;right:15%;border-radius:2px"></div>
-      <!-- Arrow shape -->
-      <div style="position:absolute;top:38px;right:calc(5% + 80px);z-index:0">
-        <svg width="40" height="40" viewBox="0 0 40 40"><polygon points="0,20 20,0 40,20 30,20 30,40 10,40 10,20" fill="#FF2D78"/></svg>
-      </div>
-      <!-- Connector lines -->
-      <svg class="connector-svg" viewBox="0 0 1060 420" preserveAspectRatio="none" style="position:absolute;inset:0;z-index:0;opacity:0.9">
-        <path d="M 215 190 Q 290 160 340 220" stroke="#FF2D78" stroke-width="3" fill="none"/>
-        <path d="M 530 160 Q 630 100 680 160" stroke="#AAFF00" stroke-width="3" fill="none"/>
-        <path d="M 790 190 Q 870 140 930 220" stroke="#1B8FFF" stroke-width="3" fill="none"/>
-        <rect x="270" y="143" width="16" height="16" rx="2" fill="#AAFF00" transform="rotate(15 270 143)"/>
-        <rect x="650" y="88" width="14" height="14" rx="2" fill="#FF2D78" transform="rotate(-10 650 88)"/>
-      </svg>
+    <div class="page-main-scroller">
+      <header class="journey-header-central fade-in-up">
+        <h1 class="stencil-title-main">
+          MAPA DA <br/><span class="text-gradient">JORNADA</span>
+        </h1>
+        <p class="subtitle-editorial-center">
+          PERCURSOS TÉCNICOS E DIDÁTICOS PROJETADOS PARA QUEM DISPUTA O PODER E CONSTRÓI AUTONOMIA TERRITORIAL.
+        </p>
+        <div class="divider-center"></div>
+      </header>
 
-      <!-- Dynamic cards from store -->
-      <div class="trilhas-grid" v-if="paths.length">
-        <div v-for="(path, i) in paths.slice(0,4)" :key="path.id" class="trilha-card" :class="cardClasses[i % 4]">
-          <div class="trilha-title">{{ path.title }}</div>
-          <div class="trilha-modulos">{{ path.modules_count || path.modulesCount || 8 }} Módulos</div>
-          <div class="progress-bar"><div class="progress-fill" :class="fillClasses[i % 4]" :style="{ width: (path.progress || 0) + '%' }"></div></div>
-          <span class="progress-pct">{{ path.progress || 0 }}%</span>
-          <router-link :to="`/trilhas/${path.id}`" :class="btnClasses[i % 4]">{{ path.progress > 0 ? 'Continuar' : 'Começar' }}</router-link>
+      <div class="cards-section-container">
+        <div class="map-path-complex-layer">
+          <svg width="100%" height="100%" viewBox="0 0 1200 1400" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M0 150 C 150 150, 200 350, 300 350" stroke="#FF6BCA" stroke-width="8" stroke-dasharray="15 15" />
+            <path d="M300 350 C 500 350, 700 350, 900 350" stroke="#20B2AA" stroke-width="8" stroke-dasharray="15 15" />
+            <path d="M900 350 C 1100 550, 100 750, 300 1050" stroke="#3D78E0" stroke-width="8" stroke-dasharray="15 15" />
+            <path d="M300 1050 C 500 1050, 700 1050, 900 1050" stroke="#FFE65A" stroke-width="8" stroke-dasharray="15 15" />
+          </svg>
         </div>
-      </div>
 
-      <!-- Static fallback -->
-      <div class="trilhas-grid" v-else>
-        <div class="trilha-card card-1">
-          <div class="trilha-title">Introdução à Política: Fundamentos e Estruturas</div>
-          <div class="trilha-modulos">8 Módulos</div>
-          <div class="progress-bar"><div class="progress-fill fill-green" style="width:0%"></div></div>
-          <span class="progress-pct">0%</span>
-          <a href="#" class="trilha-btn green">Começar</a>
-        </div>
-        <div class="trilha-card card-2">
-          <div class="trilha-title">Ativismo e Organização Comunitária</div>
-          <div class="trilha-modulos">12 Módulos</div>
-          <div class="progress-bar"><div class="progress-fill fill-pink" style="width:25%"></div></div>
-          <span class="progress-pct">25%</span>
-          <a href="#" class="trilha-btn pink">Continuar</a>
-        </div>
-        <div class="trilha-card card-3">
-          <div class="trilha-title">Incidência Legislativa e Campanhas</div>
-          <div class="trilha-modulos">10 Módulos</div>
-          <div class="progress-bar"><div class="progress-fill fill-blue" style="width:50%"></div></div>
-          <span class="progress-pct">50%</span>
-          <a href="#" class="trilha-btn blue">Continuar</a>
-        </div>
-        <div class="trilha-card card-4">
-          <div class="trilha-title">Comunicação Estratégica e Narrativa</div>
-          <div class="trilha-modulos">9 Módulos</div>
-          <div class="progress-bar"><div class="progress-fill fill-green" style="width:0%"></div></div>
-          <span class="progress-pct">0%</span>
-          <a href="#" class="trilha-btn outline">Começar</a>
-        </div>
-      </div>
-    </div>
+        <div class="grid-layout-2x2">
+          <section v-for="(track, index) in tracks" :key="track.id" 
+            class="track-magazine-card-fixed fade-in-up"
+            :style="{ animationDelay: `${index * 0.15}s` }"
+          >
+            <header class="card-meta">
+              <div class="pill-group">
+                <!-- BADGES LADO A LADO COM LETRA BRANCA -->
+                <span class="badge-pill" :style="{ backgroundColor: track.color }">{{ track.status }}</span>
+                <div v-if="track.hasCertificate" class="badge-pill cert-green">CERTIFICADO</div>
+              </div>
+              <div class="time-info"><Clock :size="16" /> {{ track.hours }}</div>
+            </header>
 
-    <!-- JOIN SECTION -->
-    <div class="join-section">
-      <div class="join-card">
-        <div>
-          <div class="join-label">Rede de Mobilização</div>
-          <div class="join-headline">Junte-se ao<br>Movimento</div>
-          <p class="join-sub">Receba despachos estratégicos, convocações de ação e atualizações das frentes de luta. Sem spam.</p>
+            <div class="card-content-fixed">
+              <div class="title-container-fixed">
+                <h2 class="track-name">{{ track.name }}</h2>
+              </div>
+              
+              <div class="desc-container-fixed">
+                <p class="track-description">{{ track.description }}</p>
+              </div>
+
+              <div class="learning-path">
+                <h4 class="path-label">O QUE VOCÊ VAI APRENDER:</h4>
+                <div class="steps-stack">
+                  <div v-for="(mod, mIdx) in track.topics" :key="mIdx" class="step-row">
+                    <div class="step-bullet" :style="{ backgroundColor: track.color, color: track.id === 'economia' || track.id === 'genero' ? '#000' : '#FFF' }">{{ mIdx + 1 }}</div>
+                    <span class="step-name">{{ mod }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <footer class="card-action">
+              <button @click="handleAction(track)" class="pill-btn-action" :style="{ backgroundColor: track.color, color: track.id === 'economia' || track.id === 'genero' ? '#000' : '#FFF' }">
+                INICIAR JORNADA <ArrowRight :size="18" />
+              </button>
+            </footer>
+          </section>
         </div>
-        <div class="join-form">
-          <input type="email" class="join-input" placeholder="Digite seu email...">
-          <button class="join-submit">Quero Fazer Parte →</button>
-        </div>
-        <div class="join-deco-circle"></div>
-        <div class="join-deco-sq"></div>
       </div>
+      <div class="footer-spacer"></div>
     </div>
   </div>
 </template>
 
 <style scoped>
-@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@400;500;600;700;800;900&display=swap');
-.trilhas-page{background:#1a1a1a;color:#fff;min-height:100vh}
-.grid-pattern{background-image:linear-gradient(rgba(255,255,255,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.04) 1px,transparent 1px);background-size:40px 40px}
-.page-hero{text-align:center;padding:50px 32px 20px}
-.page-hero h1{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:clamp(48px,8vw,96px);text-transform:uppercase;letter-spacing:-1px;line-height:0.95}
-.page-hero h1 .white{color:#fff}
-.page-hero h1 .green{color:#AAFF00}
-.trilhas-canvas{position:relative;max-width:1100px;margin:20px auto 0;padding:0 20px 40px;min-height:480px}
-.connector-svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
-.deco-dot{position:absolute;border-radius:50%;z-index:0}
-.deco-sq{position:absolute;z-index:0}
-.trilhas-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;position:relative;z-index:1;padding:60px 0 20px}
-.trilha-card{background:#242424;border-radius:6px;padding:22px 20px;border:2px solid transparent;position:relative}
-.trilha-card.card-1{border-color:#555;margin-top:40px}
-.trilha-card.card-2{border-color:#FF2D78;margin-top:80px}
-.trilha-card.card-3{border-color:#1B8FFF;margin-top:20px}
-.trilha-card.card-4{border-color:#555;margin-top:100px}
-.trilha-title{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:20px;text-transform:uppercase;line-height:1.1;color:#fff;margin-bottom:10px}
-.trilha-modulos{font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:13px;color:rgba(255,255,255,0.5);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px}
-.progress-bar{height:6px;background:rgba(255,255,255,0.12);border-radius:3px;margin:8px 0 4px}
-.progress-fill{height:100%;border-radius:3px}
-.fill-green{background:#AAFF00}
-.fill-pink{background:#FF2D78}
-.fill-blue{background:#1B8FFF}
-.fill-yellow{background:#F5E000}
-.progress-pct{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:12px;color:rgba(255,255,255,0.5);margin-bottom:16px;display:block;text-align:right}
-.trilha-btn{display:block;width:100%;text-align:center;font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:14px;letter-spacing:2px;text-transform:uppercase;padding:12px;border:none;border-radius:4px;cursor:pointer;text-decoration:none;transition:filter 0.2s}
-.trilha-btn.green{background:#AAFF00;color:#0A0A0A}
-.trilha-btn.pink{background:#FF2D78;color:#fff}
-.trilha-btn.blue{background:#1B8FFF;color:#fff}
-.trilha-btn.outline{background:transparent;border:2px solid rgba(255,255,255,0.3);color:#fff}
-.trilha-btn:hover{filter:brightness(1.1)}
-/* JOIN SECTION */
-.join-section{max-width:1100px;margin:20px auto 40px;padding:0 20px}
-.join-card{background:#F5E000;border-radius:8px;padding:32px 40px;display:grid;grid-template-columns:1fr auto;gap:40px;align-items:center;position:relative;overflow:visible}
-.join-label{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:12px;letter-spacing:2px;text-transform:uppercase;color:#0A0A0A;margin-bottom:10px;display:flex;align-items:center;gap:8px}
-.join-label::before{content:'⚡';font-size:14px}
-.join-headline{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:clamp(28px,4vw,44px);text-transform:uppercase;color:#0A0A0A;line-height:1;margin-bottom:8px}
-.join-sub{font-size:12px;color:rgba(0,0,0,0.65);max-width:360px;line-height:1.5}
-.join-form{display:flex;flex-direction:column;gap:10px;min-width:300px}
-.join-input{font-family:'Barlow',sans-serif;font-size:14px;padding:12px 16px;border:2px solid rgba(0,0,0,0.2);border-radius:4px;background:#fff;color:#0A0A0A;outline:none}
-.join-input:focus{border-color:#0A0A0A}
-.join-input::placeholder{color:rgba(0,0,0,0.4)}
-.join-submit{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:14px;letter-spacing:2px;text-transform:uppercase;padding:13px;background:#E5292A;color:#fff;border:none;border-radius:4px;cursor:pointer;transition:background 0.2s}
-.join-submit:hover{background:#c0201f}
-.join-deco-circle{position:absolute;width:80px;height:80px;background:#E5292A;border-radius:50%;top:-20px;right:-20px}
-.join-deco-sq{position:absolute;width:40px;height:40px;background:#AAFF00;border-radius:4px;bottom:-15px;right:240px}
-@media(max-width:900px){.trilhas-grid{grid-template-columns:repeat(2,1fr)}.join-card{grid-template-columns:1fr}}
-@media(max-width:600px){.trilhas-grid{grid-template-columns:1fr}.trilha-card{margin-top:0 !important}}
+.journey-white-editorial-page { background-color: #FFFFFF; min-height: 100vh; position: relative; overflow-x: hidden; }
+.background-master-layer { position: fixed; inset: 0; z-index: 1; pointer-events: none; }
+.paper-texture { position: absolute; inset: 0; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E"); opacity: 0.08; mix-blend-mode: multiply; }
+.watermarks-bg .w-shape { position: absolute; opacity: 0.06; font-family: "Archivo Black"; color: #000; }
+.w-shape.circle { width: 400px; height: 400px; border: 40px solid #3D78E0; border-radius: 50%; top: -100px; left: -100px; }
+.w-shape.square { width: 300px; height: 300px; border: 35px solid #20B2AA; bottom: 10%; right: -50px; transform: rotate(15deg); }
+.w-shape.star { font-size: 500px; top: 15%; left: 65%; color: #FF6BCA; }
+/* HEADER */
+.journey-header-central { padding-top: 180px; padding-bottom: 60px; text-align: center; }
+.stencil-title-main { font-family: "Archivo Black", sans-serif; font-size: clamp(3rem, 8vw, 6rem); line-height: 0.85; text-transform: uppercase; color: #1C1C1C; letter-spacing: -0.05em; }
+.text-gradient { background: linear-gradient(90deg, #FF6BCA, #3D78E0, #A4CD39); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.subtitle-editorial-center { font-family: "Inter", sans-serif; font-weight: 800; font-size: 1.1rem; color: #000; max-width: 650px; margin: 30px auto 0; line-height: 1.4; text-transform: uppercase; }
+.divider-center { width: 140px; height: 12px; background: #000; margin: 40px auto 0; }
+
+.cards-section-container { max-width: 1300px; margin: 0 auto; position: relative; padding: 0 40px; }
+.map-path-complex-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; opacity: 0.08; }
+
+.grid-layout-2x2 { position: relative; z-index: 10; display: grid; grid-template-columns: repeat(2, 460px); gap: 3rem; justify-content: center; }
+
+.track-magazine-card-fixed {
+  width: 460px; height: 620px; 
+  background: #FFFFFF; border: 4px solid #1C1C1C; border-radius: 4rem;
+  padding: 40px; box-shadow: 12px 12px 0px #1C1C1C;
+  display: flex; flex-direction: column; transition: 0.3s; overflow: hidden;
+}
+.track-magazine-card-fixed:hover { transform: translate(-4px, -4px); box-shadow: 18px 18px 0px #1C1C1C; }
+
+/* HIERARQUIA INTERNA E BADGES LADO A LADO */
+.card-meta { display: flex; justify-content: space-between; align-items: center; margin-bottom: 35px; }
+.pill-group { display: flex; flex-direction: row; align-items: center; gap: 8px; flex-wrap: nowrap; }
+
+.badge-pill { 
+  display: inline-flex; align-items: center; justify-content: center;
+  padding: 6px 16px; border-radius: 9999px; 
+  font-weight: 900; font-size: 10px; 
+  border: 2px solid #1C1C1C; text-transform: uppercase; 
+  color: #FFFFFF !important; height: 32px; 
+}
+.cert-green { background: #10b981; }
+
+.time-info { font-weight: 900; font-size: 13px; color: #000; display: flex; align-items: center; gap: 6px; }
+
+.card-content-fixed { flex-grow: 1; display: flex; flex-direction: column; }
+.title-container-fixed { min-height: 80px; display: flex; align-items: center; }
+.track-name { font-family: "Archivo Black", sans-serif; font-size: 1.8rem; line-height: 1.1; color: #000; text-transform: uppercase; }
+
+.desc-container-fixed { min-height: 80px; margin-bottom: 20px; }
+.track-description { font-family: "Georgia", serif; font-size: 1.05rem; color: #000; line-height: 1.5; }
+
+.path-label { font-family: "Archivo Black", sans-serif; font-weight: 900; font-size: 10px; color: #000; letter-spacing: 2px; margin-bottom: 15px; }
+.steps-stack { display: flex; flex-direction: column; gap: 12px; }
+.step-row { display: flex; align-items: center; gap: 12px; }
+.step-bullet { width: 32px; height: 32px; border-radius: 50%; border: 2px solid #1C1C1C; display: flex; align-items: center; justify-content: center; font-family: "Archivo Black"; font-size: 12px; flex-shrink: 0; }
+.step-name { font-family: "Inter", sans-serif; font-weight: 800; font-size: 0.9rem; text-transform: uppercase; color: #000; }
+
+.card-action { margin-top: auto; display: flex; justify-content: center; padding-top: 20px; }
+.pill-btn-action { width: 100%; max-width: 320px; padding: 18px; border-radius: 9999px; border: 3px solid #1C1C1C; font-family: "Inter", sans-serif; font-weight: 900; font-size: 0.9rem; text-transform: uppercase; display: inline-flex; align-items: center; justify-content: center; gap: 10px; cursor: pointer; transition: 0.3s; box-shadow: 4px 4px 0px #1C1C1C; }
+.pill-btn-action:hover { transform: scale(1.05); box-shadow: 0px 0px 0px #1C1C1C; }
+
+.footer-spacer { height: 200px; }
+.fade-in-up { opacity: 0; transform: translateY(30px); animation: fadeInUp 1s forwards; }
+@keyframes fadeInUp { to { opacity: 1; transform: translateY(0); } }
+
+@media (max-width: 1100px) {
+  .grid-layout-2x2 { grid-template-columns: 1fr; width: 100%; max-width: 460px; }
+  .track-magazine-card-fixed { height: auto; min-height: 620px; }
+  .map-path-complex-layer { display: none; }
+}
 </style>

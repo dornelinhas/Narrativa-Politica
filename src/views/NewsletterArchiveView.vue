@@ -1,100 +1,540 @@
 <script setup>
-const editions = [
-  { num: '#45', title: 'Edição #45: A Geopolítica do Gênero', date: '24 de Outubro, 2024', desc: 'Empowering female voices in politics and business to create equitable making spaces.', tag: 'Gender', tagCls: 'tag-pink', img: 'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=400&h=300&fit=crop&auto=format' },
-  { num: '#46', title: 'Edição #46: O Futuro Verde em Debate', date: '24 de Outubro, 2024', desc: 'Analyzing the shift towards models or circular models for long-term prosperity.', tag: 'Economy', tagCls: 'tag-green', img: 'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=400&h=300&fit=crop&auto=format' },
-  { num: '#41', title: 'Edição #41: Nua International Relations', date: '24 de Outubro, 2024', desc: 'Examining evolving power dynamics and international cooperation strategies.', tag: 'Diplomacy', tagCls: 'tag-pink', img: 'https://images.unsplash.com/photo-1569025690938-a00729c9e1f9?w=400&h=300&fit=crop&auto=format' },
-  { num: '#45b', title: 'Edição #45: Populismo e Democracia', date: '10 de Outubro, 2024', desc: 'Análise dos movimentos populistas e seus impactos nas democracias contemporâneas.', tag: 'Política', tagCls: 'tag-yellow', img: 'https://images.unsplash.com/photo-1591848478625-de43268e6fb8?w=400&h=300&fit=crop&auto=format' },
-  { num: '#46b', title: 'Edição #46: Crise Climática e Política', date: '10 de Outubro, 2024', desc: 'Como as políticas ambientais estão moldando as agendas eleitorais ao redor do mundo.', tag: 'Ambiente', tagCls: 'tag-green', img: 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=400&h=300&fit=crop&auto=format' },
-  { num: '#43', title: 'Edição #43: Habitação e Desigualdade', date: '1 de Outubro, 2024', desc: 'O direito à moradia como pauta central de justiça social nas cidades brasileiras.', tag: 'Social', tagCls: 'tag-blue', img: 'https://images.unsplash.com/photo-1486325212027-8081e485255e?w=400&h=300&fit=crop&auto=format' }
-]
+import { ref, onMounted, computed } from 'vue'
+import { siteContent } from '../store/content'
+import { supabase } from '../lib/supabase'
+import { Zap, ArrowRight, Mail } from 'lucide-vue-next'
+
+const config = computed(() => siteContent.newsletterArchiveConfig || {})
+const email = ref('')
+const isSubscribing = ref(false)
+const newsletters = ref([])
+const subscribeStatus = ref(null)
+
+onMounted(async () => {
+  if (siteContent.newsletters && siteContent.newsletters.length > 0) {
+    newsletters.value = siteContent.newsletters
+  } else {
+    const { data } = await supabase
+      .from('newsletters')
+      .select('*')
+      .order('enviado_em', { ascending: false })
+    if (data) newsletters.value = data
+  }
+  window.scrollTo(0, 0)
+})
+
+const subscribe = async () => {
+  if (!email.value) return
+  isSubscribing.value = true
+  try {
+    const { error } = await supabase
+      .from('subscribers')
+      .insert([{ email: email.value }])
+    
+    if (error) {
+      if (error.code === '23505') alert('Este e-mail já está inscrito!')
+      else throw error
+    } else {
+      subscribeStatus.value = 'success'
+      email.value = ''
+      setTimeout(() => { subscribeStatus.value = null }, 4000)
+    }
+  } catch (e) {
+    console.error(e)
+    alert('Erro ao se inscrever. Tente novamente.')
+  } finally {
+    isSubscribing.value = false
+  }
+}
 </script>
 
 <template>
-  <div class="newsletter-page grid-bg-light">
-    <div class="page-hero">
-      <h1>Newsletter Archive</h1>
-    </div>
+  <div class="newsletter-archive-page">
+    <div class="grid-pattern-bg"></div>
 
-    <!-- SUBSCRIBE WIDGET -->
-    <div class="subscribe-wrapper">
-      <div class="subscribe-card">
-        <div>
-          <div class="sub-label">Rede de Mobilização</div>
-          <div class="sub-headline">Junte-se ao<br>Movimento.</div>
-          <p class="sub-desc">Receba despachos estratégicos, convocações de ação e atualizações das frentes de luta. Sem spam.</p>
-        </div>
-        <div class="sub-form">
-          <input type="email" class="sub-input" placeholder="Digite seu email...">
-          <button class="sub-btn">Quero Fazer Parte →</button>
-        </div>
-        <div class="sub-deco-circle"></div>
-        <div class="sub-deco-sq"></div>
-      </div>
-    </div>
+    <div class="content-wrapper">
+      <!-- HERO -->
+      <header class="archive-hero fade-in-up">
+        <h1 class="archive-title">
+          {{ config.heroTitle1 || 'ACERVO DE' }} <br/> <span class="text-red">{{ config.heroTitle2 || 'EDIÇÕES' }}</span>
+        </h1>
+        <p class="archive-subtitle">
+          {{ config.heroSubtitle || 'Explore as análises, despachos e convocações enviadas anteriormente para a nossa base.' }}
+        </p>
+      </header>
 
-    <!-- ARCHIVE GRID -->
-    <div class="archive-section">
-      <div class="archive-grid">
-        <div v-for="(ed, i) in editions" :key="i" class="nl-card">
-          <div class="nl-img">
-            <img :src="ed.img" :alt="ed.title" loading="lazy" />
-          </div>
-          <div class="nl-body">
-            <div class="nl-edition">{{ ed.title }}</div>
-            <div class="nl-date">{{ ed.date }}</div>
-            <p class="nl-desc">{{ ed.desc }}</p>
-            <div class="nl-footer">
-              <span class="tag" :class="ed.tagCls">{{ ed.tag }}</span>
-              <a href="#" class="nl-arrow">→</a>
+      <!-- SUBSCRIBE CARD (AMARELINHO) -->
+      <section class="subscribe-section fade-in-up" style="animation-delay: 0.2s">
+        <div class="newsletter-container-brutalist">
+          <div class="newsletter-text">
+            <div class="inline-flex-center gap-2 mb-4">
+              <Zap class="text-red-icon" />
+              <span class="eyebrow-news">{{ config.cardEyebrow || 'Assinatura Mensal' }}</span>
             </div>
+            <h2 class="newsletter-title-home">
+              {{ config.cardTitle || 'Gostou das últimas edições?' }}
+            </h2>
+            <p class="newsletter-desc-home">
+              {{ config.cardDesc || 'Receba nossos despachos estratégicos mensalmente na sua caixa de entrada. Junte-se à nossa rede de mobilização. Sem spam.' }}
+            </p>
+          </div>
+          
+          <div class="newsletter-form-container">
+            <form @submit.prevent="subscribe" class="newsletter-form-brutalist">
+              <div v-if="subscribeStatus === 'success'" class="success-banner">
+                Você agora receberá nossas atualizações!
+              </div>
+              <input 
+                type="email" 
+                v-model="email"
+                required
+                placeholder="Digite seu email..." 
+                class="nl-input-brutalist"
+              />
+              <button type="submit" class="btn-red-brutalist" :disabled="isSubscribing">
+                {{ isSubscribing ? 'ENVIANDO...' : (config.cardBtn || 'QUERO RECEBER') }} <ArrowRight v-if="!isSubscribing" :size="18" class="ml-2" />
+              </button>
+            </form>
           </div>
         </div>
-      </div>
+      </section>
+
+      <!-- GRID DE ARQUIVO -->
+      <section class="archive-grid-section fade-in-up" style="animation-delay: 0.4s">
+        <div class="section-divider">
+          <h3 class="divider-title">EDIÇÕES ANTERIORES</h3>
+        </div>
+
+        <div v-if="newsletters.length > 0" class="archive-grid">
+          <router-link 
+            v-for="(ed, i) in newsletters" 
+            :key="i" 
+            :to="'/arquivo-newsletter/' + ed.id" 
+            class="nl-card-brutal shadow-solid"
+          >
+            <div class="nl-img-wrapper">
+              <img :src="ed.capa_url || 'https://images.unsplash.com/photo-1585829365234-781fcdb4c8ef?w=800&h=600&fit=crop'" :alt="ed.titulo" loading="lazy" />
+              <div class="nl-img-overlay"></div>
+              <div class="nl-tag">
+                <Mail :size="14" /> {{ ed.tag || 'Newsletter' }}
+              </div>
+            </div>
+            <div class="nl-content">
+              <div class="nl-date">{{ new Date(ed.enviado_em).toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' }) }}</div>
+              <h3 class="nl-title">{{ ed.titulo }}</h3>
+              <p class="nl-desc">{{ ed.descricao }}</p>
+              <div class="nl-action">
+                <span>LER EDIÇÃO</span>
+                <ArrowRight :size="18" class="arrow-icon" />
+              </div>
+            </div>
+          </router-link>
+        </div>
+        
+        <div v-else class="empty-state-brutal">
+          <p>{{ config.emptyState || 'Nenhuma edição encontrada no arquivo.' }}</p>
+        </div>
+      </section>
     </div>
   </div>
 </template>
 
 <style scoped>
-@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@400;500;600;700;800;900&display=swap');
-.newsletter-page{background:#f0ede8;color:#0A0A0A;min-height:100vh;padding-bottom:60px}
-.grid-bg-light{background-image:linear-gradient(rgba(0,0,0,0.06) 1px,transparent 1px),linear-gradient(90deg,rgba(0,0,0,0.06) 1px,transparent 1px);background-size:40px 40px}
-.page-hero{text-align:center;padding:36px 32px 20px}
-.page-hero h1{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:clamp(44px,8vw,110px);text-transform:uppercase;color:#0A0A0A;letter-spacing:-2px;line-height:0.9}
-.subscribe-wrapper{display:flex;justify-content:center;padding:10px 24px 32px}
-.subscribe-card{background:#F5E000;border-radius:8px;padding:28px 36px;max-width:600px;width:100%;display:grid;grid-template-columns:1fr 1fr;gap:28px;align-items:center;position:relative;overflow:visible}
-.sub-label{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#0A0A0A;margin-bottom:8px;display:flex;align-items:center;gap:6px}
-.sub-label::before{content:'⚡'}
-.sub-headline{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:clamp(22px,3vw,32px);text-transform:uppercase;color:#0A0A0A;line-height:1.05;margin-bottom:6px}
-.sub-desc{font-size:11px;color:rgba(0,0,0,0.6);line-height:1.5}
-.sub-form{display:flex;flex-direction:column;gap:10px}
-.sub-input{font-family:'Barlow',sans-serif;font-size:13px;padding:11px 14px;border:2px solid rgba(0,0,0,0.2);border-radius:4px;background:#fff;color:#0A0A0A;outline:none}
-.sub-input::placeholder{color:rgba(0,0,0,0.4)}
-.sub-input:focus{border-color:#0A0A0A}
-.sub-btn{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:13px;letter-spacing:1.5px;text-transform:uppercase;padding:12px;background:#E5292A;color:#fff;border:none;border-radius:4px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:background 0.2s}
-.sub-btn:hover{background:#c0201f}
-.sub-deco-circle{position:absolute;width:50px;height:50px;background:#E5292A;border-radius:50%;top:-14px;right:-14px}
-.sub-deco-sq{position:absolute;width:28px;height:28px;background:#AAFF00;border-radius:3px;bottom:-12px;right:160px}
-.archive-section{max-width:1140px;margin:0 auto;padding:0 24px 60px}
-.archive-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:0;border:2px solid #ddd;border-radius:6px;overflow:hidden}
-.nl-card{display:grid;grid-template-columns:160px 1fr;border-bottom:2px solid #ddd;background:#fff;transition:background 0.2s;cursor:pointer}
-.nl-card:hover{background:#fafafa}
-.nl-card:nth-child(3n+1),.nl-card:nth-child(3n+2){border-right:2px solid #ddd}
-.nl-card:nth-last-child(-n+3){border-bottom:none}
-.nl-img{width:160px;min-height:140px;overflow:hidden;flex-shrink:0;position:relative}
-.nl-img img{width:100%;height:100%;object-fit:cover;display:block;filter:grayscale(100%);transition:filter 0.3s}
-.nl-card:hover .nl-img img{filter:grayscale(60%)}
-.nl-body{padding:16px 18px}
-.nl-edition{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:16px;text-transform:uppercase;color:#0A0A0A;line-height:1.1;margin-bottom:8px}
-.nl-date{font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:11px;letter-spacing:1px;text-transform:uppercase;color:#888;margin-bottom:8px}
-.nl-desc{font-size:12px;color:#555;line-height:1.5;margin-bottom:12px}
-.nl-footer{display:flex;align-items:center;justify-content:space-between}
-.nl-arrow{display:inline-flex;align-items:center;gap:6px;font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:13px;letter-spacing:1px;text-transform:uppercase;color:#0A0A0A;text-decoration:none;transition:color 0.2s}
-.nl-arrow:hover{color:#E5292A}
-.tag{display:inline-block;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:11px;letter-spacing:1px;text-transform:uppercase;padding:4px 10px;border-radius:3px}
-.tag-yellow{background:#F5E000;color:#0A0A0A}
-.tag-pink{background:#FF2D78;color:#fff}
-.tag-green{background:#AAFF00;color:#0A0A0A}
-.tag-blue{background:#1B8FFF;color:#fff}
-@media(max-width:1000px){.archive-grid{grid-template-columns:repeat(2,1fr)}.nl-card:nth-child(3n+1),.nl-card:nth-child(3n+2){border-right:none}.nl-card:nth-child(2n+1){border-right:2px solid #ddd}}
-@media(max-width:700px){.archive-grid{grid-template-columns:1fr}.nl-card:nth-child(2n+1){border-right:none}.subscribe-card{grid-template-columns:1fr}}
+/* ESTRUTURA BASE */
+.newsletter-archive-page {
+  min-height: 100vh;
+  background-color: #F7F7F5; /* Fundo base claro */
+  color: #1C1C1C;
+  position: relative;
+  overflow-x: hidden;
+}
+
+.content-wrapper {
+  position: relative;
+  z-index: 10;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 160px 40px 100px;
+}
+
+.grid-pattern-bg {
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(rgba(28,28,28,0.1) 1px, transparent 1px);
+  background-size: 30px 30px;
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* HERO */
+.archive-hero {
+  text-align: center;
+  margin-bottom: 80px;
+}
+
+.archive-title {
+  font-family: "Archivo Black", sans-serif;
+  font-size: clamp(3rem, 6vw, 5rem);
+  line-height: 1;
+  text-transform: uppercase;
+  letter-spacing: -0.04em;
+  margin-bottom: 20px;
+  color: #1C1C1C;
+}
+
+.text-red { color: #DF2028; }
+
+.archive-subtitle {
+  font-family: "Inter", sans-serif;
+  font-weight: 600;
+  font-size: 1.25rem;
+  color: #475569;
+  max-width: 600px;
+  margin: 0 auto;
+  line-height: 1.5;
+}
+
+/* SUBSCRIBE CARD (AMARELINHO) */
+.subscribe-section {
+  margin-bottom: 100px;
+}
+
+.newsletter-container-brutalist {
+  background-color: #FFE65A;
+  border: 4px solid #1C1C1C;
+  padding: 60px;
+  display: flex;
+  gap: 60px;
+  align-items: center;
+  box-shadow: 16px 16px 0px #1C1C1C;
+}
+
+.newsletter-text {
+  flex: 1.2;
+}
+
+.newsletter-form-container {
+  flex: 1;
+}
+
+.inline-flex-center {
+  display: inline-flex;
+  align-items: center;
+}
+
+.text-red-icon {
+  fill: #DF2028;
+  color: #DF2028;
+}
+
+.eyebrow-news {
+  font-family: "Inter", sans-serif;
+  font-weight: 900;
+  text-transform: uppercase;
+  font-size: 0.8rem;
+  letter-spacing: 0.1em;
+  color: #1C1C1C;
+}
+
+.newsletter-title-home {
+  font-family: "Archivo Black", sans-serif;
+  font-size: 2.5rem;
+  text-transform: uppercase;
+  line-height: 1.1;
+  color: #1C1C1C;
+  margin-bottom: 16px;
+  letter-spacing: -0.02em;
+}
+
+.newsletter-desc-home {
+  font-family: "Inter", sans-serif;
+  font-weight: 600;
+  font-size: 1.1rem;
+  color: rgba(28,28,28,0.85);
+  line-height: 1.5;
+}
+
+.newsletter-form-brutalist {
+  background: white;
+  border: 4px solid #1C1C1C;
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.nl-input-brutalist {
+  width: 100%;
+  border: 4px solid #1C1C1C;
+  padding: 16px 20px;
+  font-family: "Inter", sans-serif;
+  font-weight: 700;
+  font-size: 1rem;
+  outline: none;
+  background: #F7F7F5;
+  transition: all 0.2s;
+}
+
+.nl-input-brutalist:focus {
+  background: #FFF;
+  box-shadow: 4px 4px 0 #1C1C1C;
+}
+
+.btn-red-brutalist {
+  background: #DF2028;
+  color: white;
+  border: 4px solid #1C1C1C;
+  padding: 18px;
+  font-family: "Inter", sans-serif;
+  font-weight: 900;
+  font-size: 1rem;
+  text-transform: uppercase;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: all 0.2s;
+}
+
+.btn-red-brutalist:hover:not(:disabled) {
+  background: #1C1C1C;
+  color: #FFE65A;
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0px #DF2028;
+}
+
+.btn-red-brutalist:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.ml-2 { margin-left: 8px; }
+
+.success-banner {
+  background: #A4CD39;
+  border: 4px solid #1C1C1C;
+  padding: 16px;
+  text-align: center;
+  font-family: "Inter", sans-serif;
+  font-weight: 900;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+/* SECTION DIVIDER */
+.section-divider {
+  border-bottom: 4px solid #1C1C1C;
+  margin-bottom: 40px;
+  padding-bottom: 10px;
+}
+
+.divider-title {
+  font-family: "Archivo Black", sans-serif;
+  font-size: 1.5rem;
+  color: #1C1C1C;
+  margin: 0;
+}
+
+/* ARCHIVE GRID */
+.archive-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 40px;
+}
+
+.nl-card-brutal {
+  background: #FFF;
+  border: 4px solid #1C1C1C;
+  display: flex;
+  flex-direction: column;
+  text-decoration: none;
+  color: inherit;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.shadow-solid {
+  box-shadow: 8px 8px 0px #1C1C1C;
+}
+
+.nl-card-brutal:hover {
+  transform: translate(-6px, -6px);
+  box-shadow: 14px 14px 0px #1C1C1C;
+  border-color: #3D78E0;
+}
+
+.nl-img-wrapper {
+  position: relative;
+  height: 200px;
+  border-bottom: 4px solid #1C1C1C;
+  overflow: hidden;
+}
+
+.nl-img-wrapper img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: grayscale(100%);
+  transition: all 0.5s ease;
+}
+
+.nl-card-brutal:hover .nl-img-wrapper img {
+  filter: grayscale(0%);
+  transform: scale(1.05);
+}
+
+.nl-img-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, transparent, rgba(0,0,0,0.5));
+}
+
+.nl-tag {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  background: #FF6BCA;
+  color: #FFF;
+  padding: 6px 12px;
+  border: 2px solid #1C1C1C;
+  font-family: "Inter", sans-serif;
+  font-weight: 900;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  z-index: 2;
+}
+
+.nl-content {
+  padding: 30px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.nl-date {
+  font-family: "Inter", sans-serif;
+  font-weight: 800;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  color: #DF2028;
+  margin-bottom: 12px;
+  letter-spacing: 0.1em;
+}
+
+.nl-title {
+  font-family: "Archivo Black", sans-serif;
+  font-size: 1.5rem;
+  line-height: 1.1;
+  text-transform: uppercase;
+  margin-bottom: 16px;
+}
+
+.nl-desc {
+  font-family: "Inter", sans-serif;
+  font-weight: 500;
+  font-size: 0.95rem;
+  color: #475569;
+  line-height: 1.5;
+  margin-bottom: 24px;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.nl-action {
+  margin-top: auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-family: "Inter", sans-serif;
+  font-weight: 900;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  color: #1C1C1C;
+  padding-top: 20px;
+  border-top: 2px dashed #CBD5E1;
+  transition: color 0.2s;
+}
+
+.nl-card-brutal:hover .nl-action {
+  color: #DF2028;
+  border-top-color: #1C1C1C;
+}
+
+.arrow-icon {
+  transition: transform 0.2s;
+}
+
+.nl-card-brutal:hover .arrow-icon {
+  transform: translateX(4px);
+}
+
+.empty-state-brutal {
+  padding: 60px;
+  text-align: center;
+  background: white;
+  border: 4px dashed #1C1C1C;
+  font-family: "Archivo Black", sans-serif;
+  font-size: 1.25rem;
+  color: #475569;
+  text-transform: uppercase;
+}
+
+/* ANIMAÇÕES */
+.fade-in-up {
+  opacity: 0;
+  transform: translateY(30px);
+  animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes fadeInUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* RESPONSIVO */
+@media (max-width: 900px) {
+  .newsletter-container-brutalist {
+    flex-direction: column;
+    padding: 40px;
+    gap: 40px;
+  }
+  
+  .newsletter-text {
+    text-align: center;
+  }
+  
+  .inline-flex-center {
+    justify-content: center;
+    width: 100%;
+  }
+}
+
+@media (max-width: 600px) {
+  .content-wrapper {
+    padding: 120px 20px 80px;
+  }
+  
+  .archive-title {
+    font-size: 2.5rem;
+  }
+  
+  .newsletter-container-brutalist {
+    padding: 30px 20px;
+  }
+  
+  .newsletter-form-brutalist {
+    padding: 24px;
+  }
+  
+  .archive-grid {
+    grid-template-columns: 1fr;
+  }
+}
 </style>

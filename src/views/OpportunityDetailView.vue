@@ -1,65 +1,96 @@
 <template>
-  <div v-if="op" class="opportunity-detail-premium selection-custom">
-    <!-- HEADER AREA -->
-    <header class="op-header-premium bg-light border-b-dark">
-      <div class="container-narrow pt-48 pb-20">
-        <router-link to="/oportunidades" class="back-link-brutalist mb-12 inline-flex items-center gap-2">
-          <ArrowLeft :size="16" /> VOLTAR AO PORTAL
+  <div v-if="op" class="op-magazine-layout">
+    <!-- FUNDO TEXTURIZADO PREMIUM -->
+    <div class="film-grain-overlay"></div>
+
+    <div class="container-mag">
+      
+      <header class="detail-top-nav">
+        <router-link to="/oportunidades" class="back-link-mag">
+          <ArrowLeft :size="16" /> {{ siteContent.opportunitiesConfig?.detailBackBtn || 'PORTAL DE TALENTOS' }}
         </router-link>
-        
-        <div class="header-meta mb-8">
-          <span class="cat-tag-brutalist" :class="getTagColor(op.category)">{{ op.category }}</span>
-          <span class="reading-time-brutalist">PRAZO: {{ op.deadline }}</span>
-        </div>
+      </header>
 
-        <h1 class="font-display text-4xl md-text-7xl leading-none tracking-tighter text-dark mb-10">
-          {{ op.title }}
-        </h1>
+      <div class="magazine-columns-grid">
         
-        <p class="font-sans text-xl md-text-2xl font-semibold opacity-70 leading-tight max-w-3xl">
-          {{ op.description }}
-        </p>
-      </div>
-    </header>
+        <!-- CONTEÚDO -->
+        <main class="content-area fade-in-up">
+          <div class="cat-header mb-8">
+            <span class="cat-pill" :style="{ backgroundColor: getCategoryColor(op.category) }">
+              {{ op.category }}
+            </span>
+          </div>
 
-    <!-- CONTENT AREA -->
-    <div class="op-main-wrapper bg-white">
-      <div class="container-custom py-24">
-        <div class="op-layout-grid">
-          <!-- MAIN CONTENT -->
-          <main class="op-main-content">
-            <div class="rich-text-brutalist font-sans" v-html="op.fullDescription || op.description"></div>
+          <h1 class="huge-magazine-title mb-16">
+            {{ op.title.toUpperCase() }}
+          </h1>
+          
+          <div class="serif-magazine-desc">
+            <div v-if="op.fullDescription" v-html="op.fullDescription"></div>
+            <div v-else class="placeholder-content">
+              <p class="editorial-intro">Convocatória estratégica para lideranças territoriais.</p>
+              
+              <div class="content-block-editorial">
+                <h2 class="title-brutal">MISSÃO E IMPACTO</h2>
+                <p>Infraestruturas para movimentos sociais que pautam o debate público com autonomia.</p>
+              </div>
+
+              <div class="content-block-editorial">
+                <h2 class="title-brutal">RESPONSABILIDADES</h2>
+                <ul class="mag-list">
+                  <li>Advocacy regional e articulação de redes.</li>
+                  <li>Relatórios técnicos de incidência.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-20">
+            <a :href="op.link || '#'" target="_blank" class="pill-btn-black-matte">
+              {{ siteContent.opportunitiesConfig?.detailApplyBtn || 'ACESSAR OPORTUNIDADE' }} <ExternalLink :size="18" />
+            </a>
+          </div>
+        </main>
+
+        <!-- SIDEBAR COM ÁREA DE CONTRATO (CARDS COLORIDOS) -->
+        <aside class="sidebar-area fade-in-up" style="animation-delay: 0.2s">
+          <div class="sticky-info-card-brutal">
+            <div class="status-indicator-lime">
+              <div class="pulse"></div>
+              <span>{{ siteContent.opportunitiesConfig?.detailStatusBadge || 'INSCRIÇÕES ABERTAS' }}</span>
+            </div>
+
+            <!-- ÁREA DE CONTRATO COM CARDS SEPARADOS -->
+            <div class="contract-info-cards mt-8">
+              <div class="info-mini-card pink-card">
+                <span class="l">PRAZO</span>
+                <span class="v text-red">{{ op.deadline }}</span>
+              </div>
+              <div class="info-mini-card blue-card">
+                <span class="l">LOCAL</span>
+                <span class="v">{{ op.location || 'Nacional' }}</span>
+              </div>
+              <div class="info-mini-card yellow-card">
+                <span class="l">MODELO</span>
+                <span class="v">Híbrido / CLT</span>
+              </div>
+            </div>
             
-            <div class="mt-16 pt-12 border-t-dark">
-              <a :href="op.link" target="_blank" class="btn-apply-main">
-                CANDIDATAR-SE AGORA <ExternalLink :size="20" />
-              </a>
-            </div>
-          </main>
+            <a :href="op.link || '#'" target="_blank" class="btn-action-brutal mt-10">
+              {{ siteContent.opportunitiesConfig?.detailApplyBtn || 'CANDIDATAR-SE' }}
+            </a>
+          </div>
 
-          <!-- SIDEBAR -->
-          <aside class="op-sidebar">
-            <div class="sidebar-card-brutalist bg-yellow mb-8">
-              <h3 class="font-display text-2xl mb-6 uppercase tracking-tighter">Detalhes</h3>
-              <div class="detail-item mb-4">
-                <span class="detail-label">CATEGORIA</span>
-                <span class="detail-value">{{ op.category }}</span>
-              </div>
-              <div class="detail-item">
-                <span class="detail-label">FECHAMENTO</span>
-                <span class="detail-value">{{ op.deadline }}</span>
-              </div>
+          <div class="share-box-mag text-center">
+            <span class="s-label">{{ siteContent.opportunitiesConfig?.detailShareTitle || 'COMPARTILHAR' }}</span>
+            <div class="s-row">
+              <button class="circle-s-btn" @click="copyLink"><Link :size="14" /></button>
+              <button class="circle-s-btn"><Linkedin :size="14" /></button>
+              <button class="circle-s-btn"><MessageCircle :size="14" /></button>
             </div>
+          </div>
+        </aside>
 
-            <div class="sidebar-card-brutalist bg-dark text-white">
-              <h3 class="font-display text-2xl mb-4 uppercase tracking-tighter">Compartilhe</h3>
-              <div class="share-row flex gap-4">
-                <button @click="copyLink" class="share-btn-square"><LinkIcon :size="20" /></button>
-                <a :href="whatsappLink" target="_blank" class="share-btn-square"><MessageCircle :size="20" /></a>
-              </div>
-            </div>
-          </aside>
-        </div>
       </div>
     </div>
   </div>
@@ -69,98 +100,74 @@
 import { computed } from 'vue'
 import { useRoute } from 'vue-router'
 import { siteContent } from '../store/content'
-import { ArrowLeft, ExternalLink, Link as LinkIcon, MessageCircle } from 'lucide-vue-next'
+import { ArrowLeft, ExternalLink, Linkedin, MessageCircle, Link } from 'lucide-vue-next'
 
 const route = useRoute()
-const op = computed(() => siteContent.opportunities?.find(o => o.id === parseInt(route.params.id)))
-
-const getTagColor = (cat) => {
-  const map = {
-    'Bolsas': 'bg-lime text-dark',
-    'Vagas de Emprego': 'bg-pink text-white',
-    'Chamada para Artigos': 'bg-blue text-white',
-    'Editais': 'bg-yellow text-dark'
-  }
-  return map[cat] || 'bg-dark text-white'
-}
-
-const whatsappLink = computed(() => {
-  const text = encodeURIComponent(`Oportunidade na Narrativa Política: ${op.value?.title} - ${window.location.href}`)
-  return `https://api.whatsapp.com/send?text=${text}`
+const op = computed(() => siteContent.opportunities?.find(o => String(o.id) === String(route.params.id)) || {
+  id: 1, title: 'Bolsa de Pesquisa', category: 'Bolsas', deadline: '25 MAI', location: 'Remoto'
 })
 
-const copyLink = () => {
-  navigator.clipboard.writeText(window.location.href)
-  alert('Link copiado!')
-}
+const getCategoryColor = (cat) => ({ 'Gênero': '#FF6BCA', 'Clima': '#A4CD39', 'Internacional': '#3D78E0', 'Editais': '#FFE65A', 'Urgente': '#DF2028', 'Vagas de Emprego': '#FFE65A', 'Vagas': '#FFE65A' }[cat] || '#FFE65A')
+const copyLink = () => { navigator.clipboard.writeText(window.location.href); alert('Link copiado!') }
 </script>
 
 <style scoped>
-.opportunity-detail-premium { background: #F7F7F5; }
-.container-custom { max-width: 80rem; margin: 0 auto; padding: 0 1.5rem; }
-.container-narrow { max-width: 800px; margin: 0 auto; padding: 0 1.5rem; }
-.bg-light { background-color: #F7F7F5; }
-.text-dark { color: #1C1C1C; }
-.border-b-dark { border-bottom: 6px solid #1C1C1C; }
-.border-t-dark { border-top: 6px solid #1C1C1C; }
+.op-magazine-layout { min-height: 100vh; background-color: #FFFFFF; position: relative; overflow-x: hidden; }
 
-.back-link-brutalist { 
-  font-family: "Inter", sans-serif; font-weight: 900; font-size: 0.75rem; 
-  letter-spacing: 0.1em; text-decoration: none; color: #1C1C1C; opacity: 0.5;
-  transition: opacity 0.2s;
-}
-.back-link-brutalist:hover { opacity: 1; color: #DF2028; }
-
-.cat-tag-brutalist {
-  padding: 0.5rem 1rem; border: 3px solid #1C1C1C;
-  font-family: "Inter", sans-serif; font-weight: 900; font-size: 0.75rem; text-transform: uppercase;
-  margin-right: 1.5rem;
-}
-.reading-time-brutalist { font-family: "Inter", sans-serif; font-weight: 900; font-size: 0.75rem; opacity: 0.4; }
-
-.op-layout-grid {
-  display: grid;
-  grid-template-columns: 1fr 350px;
-  gap: 5rem;
+.film-grain-overlay {
+  position: fixed; inset: 0; z-index: 5; pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  opacity: 0.1;
 }
 
-.rich-text-brutalist { font-size: 1.25rem; line-height: 1.8; color: #1C1C1C; font-weight: 500; }
-.rich-text-brutalist :deep(p) { margin-bottom: 2rem; }
-.rich-text-brutalist :deep(h2) { font-family: "Archivo Black", sans-serif; font-size: 2rem; margin: 3rem 0 1.5rem; }
+.container-mag { max-width: 1200px; margin: 0 auto; padding: 180px 2rem 140px 2rem; position: relative; z-index: 10; }
+.back-link-mag { display: inline-flex; align-items: center; gap: 8px; font-weight: 900; font-size: 11px; color: #000; text-decoration: none; opacity: 0.4; margin-bottom: 40px; }
 
-.btn-apply-main {
-  display: inline-flex;
-  align-items: center;
-  gap: 1rem;
-  background: #DF2028;
-  color: white;
-  padding: 1.5rem 3rem;
-  font-family: "Inter", sans-serif;
-  font-weight: 900;
-  text-decoration: none;
-  border: 4px solid #1C1C1C;
-  transition: all 0.2s;
-}
-.btn-apply-main:hover { transform: translate(-8px, -8px); box-shadow: 12px 12px 0 #1C1C1C; }
+.magazine-columns-grid { display: grid; grid-template-columns: 1fr 380px; gap: 100px; }
+.sidebar-area { position: sticky; top: 140px; align-self: start; }
 
-.sidebar-card-brutalist { padding: 2.5rem; border: 4px solid #1C1C1C; }
-.bg-yellow { background-color: #FFE65A; }
-.bg-dark { background-color: #1C1C1C; }
-.bg-lime { background-color: #A4CD39; }
-.bg-pink { background-color: #FF6BCA; }
-.bg-blue { background-color: #3D78E0; }
+.cat-pill { padding: 8px 18px; font-weight: 900; font-size: 11px; border-radius: 6px; text-transform: uppercase; color: #000 !important; border: 2px solid #000; box-shadow: 3px 3px 0px #000; }
+.huge-magazine-title { font-family: "Archivo Black", sans-serif; font-size: clamp(3rem, 6vw, 5.5rem); line-height: 0.9; color: #000; letter-spacing: -0.05em; }
 
-.detail-label { display: block; font-family: "Inter", sans-serif; font-weight: 900; font-size: 0.65rem; opacity: 0.5; margin-bottom: 0.5rem; }
-.detail-value { font-family: "Inter", sans-serif; font-weight: 900; font-size: 1.1rem; color: #1C1C1C; }
+.serif-magazine-desc { font-family: "Georgia", serif; font-size: 1.35rem; line-height: 1.8; color: #1e293b; }
+.editorial-intro { font-size: 1.6rem; font-weight: 800; color: #000; margin-bottom: 4rem; border-left: 6px solid #A4CD39; padding-left: 2.5rem; }
 
-.share-btn-square {
-  width: 50px; height: 50px; background: white; border: 3px solid #1C1C1C; color: #1C1C1C;
-  display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s;
-}
-.share-btn-square:hover { transform: translate(-4px, -4px); box-shadow: 4px 4px 0 #1C1C1C; background: #DF2028; color: white; }
+.content-block-editorial { margin-bottom: 4rem; }
+.title-brutal { font-family: "Archivo Black", sans-serif; font-size: 1.25rem; margin-bottom: 1.5rem; text-transform: uppercase; }
+.mag-list { list-style: none; padding: 0; }
+.mag-list li { position: relative; padding-left: 2.5rem; margin-bottom: 1.5rem; font-weight: 600; font-size: 1.2rem; }
+.mag-list li::before { content: "→"; position: absolute; left: 0; color: #FF6BCA; font-weight: 900; }
 
-@media (max-width: 1024px) {
-  .op-layout-grid { grid-template-columns: 1fr; }
-  .op-sidebar { order: -1; }
-}
+.pill-btn-black-matte { display: inline-flex; align-items: center; gap: 15px; background: #1C1C1C; color: #FFF; padding: 1.5rem 3.5rem; border-radius: 9999px; font-weight: 900; font-size: 14px; text-decoration: none; text-transform: uppercase; transition: 0.3s; }
+.pill-btn-black-matte:hover { background: #DF2028; transform: scale(1.05); }
+
+.sticky-info-card-brutal { background: white; border: 4px solid #000; border-radius: 3rem; padding: 3rem; box-shadow: 12px 12px 0px #000; }
+
+/* BADGE LIMA VIBRANTE */
+.status-indicator-lime { display: flex; align-items: center; gap: 10px; background: #A4CD39; color: #000; padding: 12px 20px; border-radius: 9999px; font-weight: 900; font-size: 11px; justify-content: center; border: 2px solid #000; }
+.pulse { width: 10px; height: 10px; background: #000; border-radius: 50%; animation: pulse 2s infinite; }
+
+/* CARDS DE CONTRATO COLORIDOS */
+.contract-info-cards { display: flex; flex-direction: column; gap: 20px; margin-top: 32px; margin-bottom: 40px; }
+.info-mini-card { padding: 15px 20px; border: 3px solid #1C1C1C; border-radius: 1.2rem; display: flex; flex-direction: column; }
+.info-mini-card .l { font-size: 9px; font-weight: 900; color: #1C1C1C; opacity: 0.6; letter-spacing: 0.1em; }
+.info-mini-card .v { font-family: "Archivo Black", sans-serif; font-size: 1.2rem; }
+.pink-card { background: #FF6BCA22; border-color: #FF6BCA; }
+.blue-card { background: #3D78E022; border-color: #3D78E0; }
+.yellow-card { background: #FFE65A22; border-color: #FFE65A; }
+
+.btn-action-brutal { display: flex; align-items: center; justify-content: center; background: #000; color: white; padding: 1.5rem; border-radius: 9999px; font-weight: 900; font-size: 14px; text-decoration: none; text-transform: uppercase; transition: 0.3s; width: 100%; border: none; cursor: pointer; }
+.btn-action-brutal:hover { background: #FF6BCA; transform: translateY(-4px); }
+
+/* COMPARTILHAMENTO */
+.share-box-mag { margin-top: 60px; text-align: center; }
+.s-label { display: block; font-family: "Archivo Black", sans-serif; font-size: 12px; letter-spacing: 0.1em; color: #000; margin-bottom: 20px; }
+.s-row { display: flex; justify-content: center; align-items: center; gap: 16px; }
+
+.circle-s-btn { width: 48px; height: 48px; border-radius: 50%; border: 3px solid #000; background: white; display: flex; align-items: center; justify-content: center; cursor: pointer; color: #000; transition: 0.3s; }
+.circle-s-btn:hover { transform: translateY(-4px); box-shadow: 4px 4px 0px #000; background: #FF6BCA; color: white; }
+
+@keyframes pulse { 0% { transform: scale(0.95); opacity: 1; } 70% { transform: scale(1.2); opacity: 0.5; } 100% { transform: scale(0.95); opacity: 1; } }
+
+@media (max-width: 1024px) { .magazine-columns-grid { grid-template-columns: 1fr; } .sidebar-area { order: -1; } }
 </style>
