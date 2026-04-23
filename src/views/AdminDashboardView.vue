@@ -156,9 +156,10 @@ const exportarInscritos = () => {
 const saveNewsletterArchiveConfig = async () => {
   isSaving.value = true
   try {
-    Object.keys(newsletterArchiveConfigData.value).forEach(k => {
-      siteContent.newsletterArchiveConfig[k] = newsletterArchiveConfigData.value[k]
-    })
+    Object.assign(siteContent.newsletterArchiveConfig, newsletterArchiveConfigData.value)
+    if (supabase) {
+      await supabase.from('site_settings').upsert({ key: 'newsletterArchiveConfig', value: newsletterArchiveConfigData.value })
+    }
     setTimeout(() => { isSaving.value = false; alert('Configurações do Acervo Salvas!') }, 400)
   } catch(e) { console.error(e); isSaving.value = false; }
 }
@@ -166,7 +167,7 @@ const saveNewsletterArchiveConfig = async () => {
 const saveDonateConfig = async () => {
   isSaving.value = true
   try {
-    siteContent.donateConfig = {
+    const config = {
       headlinePart1: donateConfigData.value.headlinePart1,
       headlinePart2: donateConfigData.value.headlinePart2,
       sub: donateConfigData.value.sub,
@@ -181,6 +182,10 @@ const saveDonateConfig = async () => {
         campaigns: donateConfigData.value.statsCampaigns,
         reports: donateConfigData.value.statsReports
       }
+    }
+    siteContent.donateConfig = config
+    if (supabase) {
+      await supabase.from('site_settings').upsert({ key: 'donateConfig', value: config })
     }
     setTimeout(() => { isSaving.value = false; alert('Configurações de Doação Salvas!') }, 400)
   } catch(e) { console.error(e); isSaving.value = false; }
@@ -216,23 +221,32 @@ const loadData = async () => {
 const saveHome = async () => {
   isSaving.value = true
   try {
-    // Atualiza a memória local para reflexo imediato no site
+    // Atualiza a memória local
     Object.assign(siteContent.home, homeData.value)
 
     if (supabase) {
-      const { error } = await supabase.from('home').upsert({ id: 1, ...homeData.value })
-      if (error) console.warn('Supabase erro:', error)
+      const { error } = await supabase.from('site_settings').upsert({ 
+        key: 'home', 
+        value: homeData.value 
+      })
+      if (error) throw error
     }
-    setTimeout(() => { isSaving.value = false; alert('Home salva com sucesso no Banco de Dados!') }, 600)
-  } catch(e) { console.error(e); isSaving.value = false; alert('Erro ao salvar no banco.') }
+    setTimeout(() => { isSaving.value = false; alert('Home salva com sucesso!') }, 400)
+  } catch(e) { 
+    console.error(e)
+    isSaving.value = false
+    alert('Erro ao salvar no banco: ' + (e.message || e)) 
+  }
 }
 
 const saveArtigo = async () => {
   if (!novoArtigo.value.title && !novoArtigo.value.content) {
-    // Se o artigo está vazio, salva apenas os textos fixos da página
     isSaving.value = true
     Object.assign(siteContent.articlesConfig, articlesConfigData.value)
-    setTimeout(() => { isSaving.value = false; alert('Configurações da Página de Artigos salvas!') }, 400)
+    if (supabase) {
+      await supabase.from('site_settings').upsert({ key: 'articlesConfig', value: articlesConfigData.value })
+    }
+    setTimeout(() => { isSaving.value = false; alert('Configurações da Página salvas!') }, 400)
     return
   }
 
@@ -242,8 +256,6 @@ const saveArtigo = async () => {
   }
   isSaving.value = true
   try {
-    Object.assign(siteContent.articlesConfig, articlesConfigData.value) // Salva os textos fixos também
-    
     const payload = {
       ...novoArtigo.value,
       date: new Date().toISOString()
@@ -254,30 +266,35 @@ const saveArtigo = async () => {
       if (error) throw error
     }
     
-    setTimeout(() => { 
-      siteContent.posts.unshift({ ...payload, id: Date.now() })
-      novoArtigo.value = { title: '', subtitle: '', author: '', type: 'Artigo', category: '', featured: false, content: '', image: '' }
-      isSaving.value = false 
-      alert('Artigo salvo permanentemente no Banco de Dados!') 
-    }, 600)
-  } catch(e) { console.error(e); isSaving.value = false; alert('Erro ao publicar artigo.') }
+    siteContent.posts.unshift({ ...payload, id: Date.now() })
+    novoArtigo.value = { title: '', subtitle: '', author: '', type: 'Artigo', category: '', featured: false, content: '', image: '' }
+    isSaving.value = false 
+    alert('Artigo publicado com sucesso!') 
+  } catch(e) { 
+    console.error(e)
+    isSaving.value = false
+    alert('Erro ao publicar artigo: ' + (e.message || e)) 
+  }
 }
 
 const saveSobre = async () => {
   isSaving.value = true
   try {
-    Object.keys(sobreData.value).forEach(k => {
-      siteContent.about[k] = sobreData.value[k]
-    })
-    setTimeout(() => { isSaving.value = false; alert('Página Sobre atualizada com sucesso!') }, 800)
+    Object.assign(siteContent.about, sobreData.value)
+    if (supabase) {
+      await supabase.from('site_settings').upsert({ key: 'about', value: sobreData.value })
+    }
+    setTimeout(() => { isSaving.value = false; alert('Página Sobre atualizada!') }, 400)
   } catch(e) { console.error(e); isSaving.value = false; }
 }
 
 const saveSettings = async () => {
   isSaving.value = true
   try {
-    // A visibilidade já altera diretamente o siteContent pelas checkboxes
-    setTimeout(() => { isSaving.value = false; alert('Configurações de Visibilidade salvas com sucesso!') }, 500)
+    if (supabase) {
+      await supabase.from('site_settings').upsert({ key: 'settings', value: siteContent.settings })
+    }
+    setTimeout(() => { isSaving.value = false; alert('Módulos atualizados!') }, 400)
   } catch(e) { console.error(e); isSaving.value = false; }
 }
 
@@ -285,7 +302,10 @@ const saveVaga = async () => {
   if (!novaVaga.value.title && !novaVaga.value.description) {
     isSaving.value = true
     Object.assign(siteContent.opportunitiesConfig, oppsConfigData.value)
-    setTimeout(() => { isSaving.value = false; alert('Configurações do Hub de Talentos salvas!') }, 400)
+    if (supabase) {
+      await supabase.from('site_settings').upsert({ key: 'opportunitiesConfig', value: oppsConfigData.value })
+    }
+    setTimeout(() => { isSaving.value = false; alert('Configurações do Hub salvas!') }, 400)
     return
   }
 
@@ -295,9 +315,11 @@ const saveVaga = async () => {
   }
   isSaving.value = true
   try {
-    Object.assign(siteContent.opportunitiesConfig, oppsConfigData.value)
     const payload = { ...novaVaga.value, id: Date.now() }
     siteContent.opportunities.unshift(payload)
+    if (supabase) {
+      await supabase.from('site_settings').upsert({ key: 'opportunities', value: siteContent.opportunities })
+    }
     novaVaga.value = { title: '', category: 'Vagas de Emprego', type: 'Remoto', location: '', deadline: '', link: '', description: '', fullDescription: '' }
     setTimeout(() => { isSaving.value = false; alert('Oportunidade salva!') }, 400)
   } catch(e) { console.error(e); isSaving.value = false; }
@@ -322,8 +344,11 @@ const saveTrilha = async () => {
     }
     if (!siteContent.tracks) siteContent.tracks = []
     siteContent.tracks.push(payload)
+    if (supabase) {
+      await supabase.from('site_settings').upsert({ key: 'tracks', value: siteContent.tracks })
+    }
     novaTrilha.value = { name: '', description: '', hours: '', status: 'GRATUITO', hasCertificate: true, color: '#FF6BCA', mod1: '', mod2: '', mod3: '' }
-    setTimeout(() => { isSaving.value = false; alert('Trilha salva com sucesso!') }, 400)
+    setTimeout(() => { isSaving.value = false; alert('Trilha salva!') }, 400)
   } catch(e) { console.error(e); isSaving.value = false; }
 }
 
@@ -337,10 +362,10 @@ const saveServico = async () => {
     const payload = { ...novoServico.value, id: Date.now() }
     siteContent.services.push(payload)
     
-    // Salvar config do servico tbm
-    Object.keys(servicosConfigData.value).forEach(k => {
-      siteContent.servicesConfig[k] = servicosConfigData.value[k]
-    })
+    if (supabase) {
+      await supabase.from('site_settings').upsert({ key: 'services', value: siteContent.services })
+      await supabase.from('site_settings').upsert({ key: 'servicesConfig', value: servicosConfigData.value })
+    }
 
     novoServico.value = { title: '', description: '', icon: 'Zap', bg: '#FF6BCA', textColor: '#FFFFFF' }
     setTimeout(() => { isSaving.value = false; alert('Eixo de Ação e Configurações Salvos!') }, 400)
@@ -358,10 +383,10 @@ const saveBiblioteca = async () => {
     if (!siteContent.library) siteContent.library = []
     siteContent.library.push(payload)
     
-    // Salvar config global
-    Object.keys(bibliotecaConfigData.value).forEach(k => {
-      siteContent.libraryConfig[k] = bibliotecaConfigData.value[k]
-    })
+    if (supabase) {
+      await supabase.from('site_settings').upsert({ key: 'library', value: siteContent.library })
+      await supabase.from('site_settings').upsert({ key: 'libraryConfig', value: bibliotecaConfigData.value })
+    }
 
     novoDoc.value = { title: '', description: '', category: 'Relatório', fileUrl: '', externalLink: '' }
     setTimeout(() => { isSaving.value = false; alert('Biblioteca Atualizada!') }, 400)
