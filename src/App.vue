@@ -46,6 +46,8 @@ import { ref, onMounted, watch, computed } from 'vue'
 import { useRoute } from 'vue-router'
 import AppHeader from './components/AppHeader.vue'
 import AppFooter from './components/AppFooter.vue'
+import { siteContent, fetchAllContent } from './store/content'
+import { applySettings } from './store/settings'
 
 const route = useRoute()
 const isLoading = ref(true)
