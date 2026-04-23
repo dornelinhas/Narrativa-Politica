@@ -3,7 +3,7 @@ import { ref, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuth } from '../store/auth'
 import { supabase } from '../lib/supabase'
-import { Settings, LogOut, CheckCircle, Clock, Trash2, Home, Search, BookOpen, Briefcase, ChevronDown, Package, FileText, User, Mail, Folder, Download, Eye, Heart } from 'lucide-vue-next'
+import { Settings, LogOut, CheckCircle, Clock, Trash2, Home, Search, BookOpen, Briefcase, ChevronDown, Package, FileText, User, Mail, Folder, Download, Eye, Heart, Library, Save, Plus } from 'lucide-vue-next'
 import BrutalEditor from '../components/BrutalEditor.vue'
 import ImageUploader from '../components/ImageUploader.vue'
 import { siteContent, saveItemToSupabase } from '../store/content'
@@ -486,44 +486,46 @@ onMounted(() => {
       </div>
 
       <nav class="sidebar-nav-stack">
-        <button class="nav-btn" :class="{ active: activeTab === 'newsletter' }" @click="activeTab = 'newsletter'">
-          <Mail :size="18" /> NEWSLETTER CREATOR
-        </button>
+        <span class="nav-section-label">CONTEÚDO</span>
         <button class="nav-btn" :class="{ active: activeTab === 'home' }" @click="activeTab = 'home'">
           <Home :size="18" /> GESTÃO DA HOME
         </button>
         <button class="nav-btn" :class="{ active: activeTab === 'editorial' }" @click="activeTab = 'editorial'">
           <FileText :size="18" /> HUB EDITORIAL
         </button>
+        <button class="nav-btn" :class="{ active: activeTab === 'newsletter' }" @click="activeTab = 'newsletter'">
+          <Mail :size="18" /> NEWSLETTER
+        </button>
+        <button class="nav-btn" :class="{ active: activeTab === 'sobre' }" @click="activeTab = 'sobre'">
+          <User :size="18" /> SOBRE MIM
+        </button>
+
+        <span class="nav-section-label">PLATAFORMA</span>
         <button class="nav-btn" :class="{ active: activeTab === 'vagas' }" @click="activeTab = 'vagas'">
           <Briefcase :size="18" /> OPORTUNIDADES
         </button>
         <button class="nav-btn" :class="{ active: activeTab === 'trilhas' }" @click="activeTab = 'trilhas'">
           <BookOpen :size="18" /> GESTÃO LMS
         </button>
-        <button class="nav-btn" :class="{ active: activeTab === 'biblioteca' }" @click="activeTab = 'biblioteca'">
-          <Library :size="18" /> BIBLIOTECA TÉCNICA
-        </button>
         <button class="nav-btn" :class="{ active: activeTab === 'servicos' }" @click="activeTab = 'servicos'">
           <Package :size="18" /> SERVIÇOS
+        </button>
+        <button class="nav-btn" :class="{ active: activeTab === 'biblioteca' }" @click="activeTab = 'biblioteca'">
+          <Library :size="18" /> BIBLIOTECA
         </button>
         <button class="nav-btn" :class="{ active: activeTab === 'projetos' }" @click="activeTab = 'projetos'">
           <Folder :size="18" /> PROJETOS
         </button>
-        <button class="nav-btn" :class="{ active: activeTab === 'sobre' }" @click="activeTab = 'sobre'">
-          <User :size="18" /> SOBRE MIM
-        </button>
-        <button class="nav-btn" :class="{ active: activeTab === 'newsletter' }" @click="activeTab = 'newsletter'">
-          <Mail :size="18" /> NEWSLETTER
-        </button>
-        <button class="nav-btn" :class="{ active: activeTab === 'configuracoes' }" @click="activeTab = 'configuracoes'">
-          <Settings :size="18" /> CONFIGURAÇÕES
-        </button>
         <button class="nav-btn" :class="{ active: activeTab === 'doacao' }" @click="activeTab = 'doacao'">
           <Heart :size="18" /> DOAÇÕES
         </button>
+
+        <span class="nav-section-label">SISTEMA</span>
         <button class="nav-btn" :class="{ active: activeTab === 'visibilidade' }" @click="activeTab = 'visibilidade'">
           <Eye :size="18" /> MÓDULOS
+        </button>
+        <button class="nav-btn" :class="{ active: activeTab === 'configuracoes' }" @click="activeTab = 'configuracoes'">
+          <Settings :size="18" /> CONFIGURAÇÕES
         </button>
       </nav>
       
@@ -1725,6 +1727,63 @@ onMounted(() => {
         </div>
       </section>
 
+      <!-- TAB DOAÇÕES -->
+      <section v-if="activeTab === 'doacao'" class="admin-section fade-in-up">
+        <div class="editor-card-brutal shadow-solid mb-10">
+          <h2 class="card-label-black mb-8">HEADLINE DA PÁGINA</h2>
+          <div class="form-grid-2 mb-6">
+             <div class="input-group">
+                <label>TÍTULO PARTE 1 (PRETO)</label>
+                <input v-model="donateConfigData.headlinePart1" type="text" placeholder="Ex: TRANSFORME" />
+             </div>
+             <div class="input-group">
+                <label>TÍTULO PARTE 2 (COLORIDO)</label>
+                <input v-model="donateConfigData.headlinePart2" type="text" placeholder="Ex: NARRATIVA EM AÇÃO" />
+             </div>
+          </div>
+          <div class="input-group mb-6">
+             <label>SUBTÍTULO</label>
+             <textarea v-model="donateConfigData.sub" rows="2" placeholder="Descrição motivacional para doar"></textarea>
+          </div>
+          <div class="form-grid-2 mb-6">
+             <div class="input-group">
+                <label>RÓTULO TOGGLE (ÚNICA)</label>
+                <input v-model="donateConfigData.toggleLabelSingle" type="text" placeholder="ÚNICA" />
+             </div>
+             <div class="input-group">
+                <label>RÓTULO TOGGLE (MENSAL)</label>
+                <input v-model="donateConfigData.toggleLabelMonthly" type="text" placeholder="MENSAL" />
+             </div>
+          </div>
+          <div class="input-group mb-6">
+             <label>TEXTO DO BOTÃO CONTRIBUIR</label>
+             <input v-model="donateConfigData.buttonText" type="text" placeholder="CONTRIBUIR AGORA" />
+          </div>
+        </div>
+
+        <div class="editor-card-brutal shadow-solid mb-10">
+          <h2 class="card-label-black mb-8">ESTATÍSTICAS DE IMPACTO</h2>
+          <div class="form-grid-3">
+             <div class="input-group">
+                <label>LÍDERES</label>
+                <input v-model="donateConfigData.statsLeaders" type="text" placeholder="2.500+ LÍDERES" />
+             </div>
+             <div class="input-group">
+                <label>CAMPANHAS</label>
+                <input v-model="donateConfigData.statsCampaigns" type="text" placeholder="10+ CAMPANHAS" />
+             </div>
+             <div class="input-group">
+                <label>RELATÓRIOS</label>
+                <input v-model="donateConfigData.statsReports" type="text" placeholder="80+ RELATÓRIOS" />
+             </div>
+          </div>
+        </div>
+
+        <button class="btn-save-brutal w-full" @click="saveDonateConfig" :disabled="isSaving">
+           <Save :size="18" /> {{ isSaving ? 'SALVANDO...' : 'SALVAR CONFIGURAÇÕES DE DOAÇÃO' }}
+        </button>
+      </section>
+
       <!-- TAB VISIBILIDADE / MÓDULOS -->
       <section v-if="activeTab === 'visibilidade'" class="admin-section fade-in-up">
         <div class="editor-card-brutal shadow-solid mb-10">
@@ -1799,12 +1858,27 @@ onMounted(() => {
   position: fixed; top: 0; left: 0; bottom: 0; z-index: 100;
   display: flex; flex-direction: column; padding: 40px 30px;
   border-right: 4px solid #1C1C1C;
+  overflow-y: auto;
 }
+.sidebar-black-fixed::-webkit-scrollbar { width: 4px; }
+.sidebar-black-fixed::-webkit-scrollbar-track { background: transparent; }
+.sidebar-black-fixed::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 10px; }
 
-.sidebar-header { display: flex; align-items: center; gap: 15px; margin-bottom: 50px; padding-left: 10px; }
+.sidebar-header { display: flex; align-items: center; gap: 15px; margin-bottom: 40px; padding-left: 10px; flex-shrink: 0; }
 .logo-brutal-white { width: 50px; height: 50px; border: 3px solid #FFF; display: flex; align-items: center; justify-content: center; border-radius: 12px; background: #FF6BCA; box-shadow: 4px 4px 0px #FFF; }
 .logo-txt { font-family: "Archivo Black", sans-serif; font-size: 1.5rem; color: #1C1C1C; }
 .badge-admin { background: #A4CD39; color: #1C1C1C; padding: 6px 12px; font-weight: 900; font-family: "Archivo Black"; font-size: 10px; border-radius: 6px; letter-spacing: 1px; border: 2px solid #1C1C1C; }
+
+.nav-section-label {
+  font-family: "Archivo Black", sans-serif;
+  font-size: 9px;
+  letter-spacing: 2px;
+  color: rgba(255,255,255,0.35);
+  text-transform: uppercase;
+  padding: 20px 20px 8px;
+  display: block;
+}
+.nav-section-label:first-child { padding-top: 0; }
 
 .sidebar-nav-stack { display: flex; flex-direction: column; gap: 12px; }
 .nav-btn { 
