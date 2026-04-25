@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from 'vue'
-import { Image as ImageIcon, UploadCloud } from 'lucide-vue-next'
+import { uploadImage } from '../lib/supabaseStorage'
 
 const props = defineProps({
   modelValue: { type: String, default: '' },
@@ -11,27 +11,33 @@ const emit = defineEmits(['update:modelValue'])
 
 const isDragging = ref(false)
 const fileInput = ref(null)
+const isUploading = ref(false)
 
-const handleDrop = (e) => {
+const handleDrop = async (e) => {
   isDragging.value = false
   const files = e.dataTransfer.files
   if (files.length > 0 && files[0].type.startsWith('image/')) {
-    processFile(files[0])
+    await processFile(files[0])
   }
 }
 
-const handleFileSelect = (e) => {
+const handleFileSelect = async (e) => {
   if (e.target.files && e.target.files[0]) {
-    processFile(e.target.files[0])
+    await processFile(e.target.files[0])
   }
 }
 
-const processFile = (file) => {
-  const reader = new FileReader()
-  reader.onload = (e) => {
-    emit('update:modelValue', e.target.result)
+const processFile = async (file) => {
+  isUploading.value = true
+  try {
+    const publicUrl = await uploadImage(file, 'uploads')
+    emit('update:modelValue', publicUrl)
+  } catch (err) {
+    console.error('Erro no upload:', err)
+    alert('Erro ao subir imagem. Verifique se o bucket "media" foi criado no Supabase.')
+  } finally {
+    isUploading.value = false
   }
-  reader.readAsDataURL(file)
 }
 
 const triggerInput = () => {
@@ -59,7 +65,12 @@ const triggerInput = () => {
         @change="handleFileSelect"
       />
       
-      <div v-if="modelValue" class="preview-container">
+      <div v-if="isUploading" class="upload-loading">
+        <div class="spinner"></div>
+        <span>SUBINDO PARA O SERVIDOR...</span>
+      </div>
+
+      <div v-else-if="modelValue" class="preview-container">
         <img :src="modelValue" class="image-preview" />
         <div class="preview-overlay">
           <UploadCloud :size="24" />
@@ -101,6 +112,29 @@ const triggerInput = () => {
   border-color: #1C1C1C;
   box-shadow: 8px 8px 0px #1C1C1C;
   transform: translate(-4px, -4px);
+}
+
+.upload-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+  color: #1C1C1C;
+  font-family: "Archivo Black", sans-serif;
+  font-size: 0.8rem;
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid rgba(28, 28, 28, 0.1);
+  border-left-color: #1C1C1C;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
 }
 
 .hidden-input {
