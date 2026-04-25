@@ -1677,7 +1677,7 @@ onMounted(() => {
         <div class="editor-card-brutal shadow-solid mb-10">
           <h2 class="card-label-black mb-8">ESTÉTICA DA PLATAFORMA (CORES E LOGO)</h2>
           <div class="mb-6">
-             <ImageUploader label="LOGO PRINCIPAL DO SITE (Fundo Escuro)" />
+             <ImageUploader v-model="siteContent.settings.siteLogo" label="LOGO PRINCIPAL DO SITE (Fundo Escuro)" />
           </div>
           <div class="form-grid-2 mb-6">
              <div class="input-group">
