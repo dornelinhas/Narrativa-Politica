@@ -109,12 +109,17 @@ const sobreData = ref({
   ctaEyebrow: '', ctaTitle: '', ctaDesc: '', ctaBtn: ''
 })
 
+import { sendNewsletterEmail } from '../lib/emailSender'
+
 // --- FUNÇÕES DE NEWSLETTER ---
 const saveNewsletter = async () => {
   if (!novaNewsletter.value.titulo || !novaNewsletter.value.conteudo) {
     alert("Título e Conteúdo são obrigatórios.")
     return
   }
+
+  const confirmSend = confirm("Deseja SALVAR e DISPARAR esta newsletter por e-mail para todos os inscritos agora?")
+  
   isSaving.value = true
   try {
     const payload = {
@@ -122,21 +127,40 @@ const saveNewsletter = async () => {
       enviado_em: new Date().toISOString()
     }
     
+    // 1. Salva no Banco de Dados (Acervo)
     if (supabase) {
       const { error } = await supabase.from('newsletters').insert([payload])
       if (error) throw error
     }
+
+    // 2. Dispara E-mails se confirmado
+    if (confirmSend) {
+      const emails = inscritos.value.map(s => s.email).filter(e => e)
+      if (emails.length > 0) {
+        const htmlBody = `
+          <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; border: 10px solid #1C1C1C; padding: 40px;">
+            <h1 style="font-size: 24px; text-transform: uppercase; border-bottom: 5px solid #1C1C1C; padding-bottom: 10px;">${novaNewsletter.value.titulo}</h1>
+            <p style="font-size: 16px; line-height: 1.6; color: #333;">${novaNewsletter.value.descricao}</p>
+            <div style="margin: 30px 0;">
+              ${novaNewsletter.value.conteudo}
+            </div>
+            <hr style="border: 0; border-top: 2px solid #EEE;" />
+            <p style="font-size: 12px; color: #999;">Você recebeu este e-mail da Narrativa Política.</p>
+          </div>
+        `
+        const success = await sendNewsletterEmail(novaNewsletter.value.titulo, htmlBody, emails)
+        if (!success) alert("Newsletter salva no arquivo, mas houve um erro no disparo dos e-mails.")
+      }
+    }
     
-    setTimeout(() => { 
-      siteContent.newsletters.unshift({ ...payload, id: Date.now() })
-      novaNewsletter.value = { titulo: '', descricao: '', conteudo: '', capa_url: '', tag: 'Política' }
-      isSaving.value = false 
-      alert('Newsletter salva e publicada no arquivo!') 
-    }, 600)
+    siteContent.newsletters.unshift({ ...payload, id: Date.now() })
+    novaNewsletter.value = { titulo: '', descricao: '', conteudo: '', capa_url: '', tag: 'Política' }
+    isSaving.value = false 
+    alert(confirmSend ? 'Newsletter salva e enviada com sucesso!' : 'Newsletter salva no arquivo!') 
   } catch(e) { 
     console.error(e)
     isSaving.value = false
-    alert('Erro ao salvar newsletter.')
+    alert('Erro ao processar newsletter.')
   }
 }
 
