@@ -69,17 +69,23 @@ const handleScroll = () => {
 
 onMounted(async () => {
   window.addEventListener('scroll', handleScroll)
-  // ... resto do onMounted
-  console.log('App Mounted - Starting data fetch')
+  
+  // Se já temos os posts carregados, não precisamos mostrar o loader longo
+  if (siteContent.posts && siteContent.posts.length > 0) {
+    isLoading.value = false
+    return
+  }
+
   try {
     applySettings()
     await fetchAllContent()
   } catch (e) {
     console.error('Erro na montagem inicial:', e)
   } finally {
+    // Esconde o loader mais rápido
     setTimeout(() => {
       isLoading.value = false
-    }, 800) // Tempo reduzido para ser mais rápido
+    }, 400) 
   }
 })
 
