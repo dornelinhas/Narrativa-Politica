@@ -3,6 +3,7 @@ import { ref, computed, onMounted, watchEffect } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { siteContent } from '../store/content'
 import { useAuth } from '../store/auth'
+import { supabase } from '../lib/supabase'
 import { 
   ArrowLeft, ArrowRight, Clock, Award, Check, Play, Lock, 
   FileText, Download, Bookmark, Share2, MessageCircle,
@@ -13,58 +14,72 @@ const route = useRoute()
 const router = useRouter()
 const { user, isAuthenticated } = useAuth()
 
-// REDIRECIONAMENTO SE NÃO LOGADO
-watchEffect(() => {
-  if (!isAuthenticated.value) {
-    router.push('/login')
-  }
+// 1. Localizar a trilha correta no store global
+const trackId = route.params.id || 'advocacy'
+const track = computed(() => {
+  return siteContent.tracks.find(t => t.id === trackId) || siteContent.tracks[0]
 })
 
-// MOCK DATA PARA ÁREA DO ALUNO
-const track = {
-  id: 'advocacy',
-  title: 'Advocacy e Articulação',
-  progress: 45,
-  description: 'Domine as táticas de incidência política, pauta de mídia e articulação institucional.'
+// 2. Cálculo de Progresso Real
+const totalLessons = computed(() => {
+  if (!track.value?.modules) return 0
+  return track.value.modules.reduce((acc, mod) => acc + (mod.lessons?.length || 0), 0)
+})
+
+const completedLessonsCount = computed(() => {
+  if (!track.value?.modules) return 0
+  return track.value.modules.reduce((acc, mod) => {
+    return acc + (mod.lessons?.filter(l => l.done).length || 0)
+  }, 0)
+})
+
+const progressPercent = computed(() => {
+  if (totalLessons.value === 0) return 0
+  return Math.round((completedLessonsCount.value / totalLessons.value) * 100)
+})
+
+const isCourseComplete = computed(() => progressPercent.value === 100)
+
+// 3. Marcar Aula como Concluída
+const toggleLesson = (modId, lessonId) => {
+  const module = track.value.modules.find(m => m.id === modId)
+  if (!module) return
+  const lesson = module.lessons.find(l => l.id === lessonId)
+  if (lesson) {
+    lesson.done = !lesson.done
+    // Salvar no Supabase (Persistência)
+    saveProgress()
+  }
 }
 
-const modules = [
-  { 
-    id: 1, title: 'CONCEITOS DE PODER LOCAL', 
-    lessons: [
-      { id: 101, title: 'Aula 1.1: Geopolítica Urbana', done: true, type: 'video' },
-      { id: 102, title: 'Aula 1.2: Território e Disputa', done: true, type: 'texto' }
-    ]
-  },
-  { 
-    id: 2, title: 'MAPEAMENTO DE ATORES', 
-    lessons: [
-      { id: 201, title: 'Aula 2.1: Matriz de Influência', active: true, type: 'video' },
-      { id: 202, title: 'Aula 2.2: Redes de Apoio', done: false, type: 'prática' }
-    ]
-  },
-  { 
-    id: 3, title: 'ESTRATÉGIA DE MÍDIA', 
-    lessons: [
-      { id: 301, title: 'Aula 3.1: Pauta Editorial', locked: true, type: 'video' }
-    ]
+const saveProgress = async () => {
+  try {
+    // Salvamos a estrutura de tracks inteira para manter o progresso
+    const { error } = await supabase.from('site_settings').upsert({
+      key: 'tracks',
+      value: siteContent.tracks
+    })
+    if (error) throw error
+  } catch (err) {
+    console.error('Erro ao salvar progresso:', err)
   }
-]
+}
+
+const downloadCertificate = () => {
+  alert('🏆 Parabéns! Gerando seu Certificado de Elite da Narrativa Política...')
+  // Aqui poderia gerar um PDF real ou abrir um link
+}
 
 onMounted(() => {
   window.scrollTo(0, 0)
 })
-
-const goToLesson = (id) => {
-  console.log('Carregando aula:', id)
-}
 </script>
 
 <template>
   <div v-if="isAuthenticated" class="classroom-magazine-layout">
     <!-- 1. HEADER: BARRA DE PROGRESSO MAGENTA NO TOPO -->
     <div class="top-progress-container">
-      <div class="progress-bar-magenta" :style="{ width: track.progress + '%' }"></div>
+      <div class="progress-bar-magenta" :style="{ width: progressPercent + '%' }"></div>
     </div>
 
     <!-- TEXTURA FILM GRAIN -->
@@ -84,16 +99,25 @@ const goToLesson = (id) => {
             <div class="sidebar-header-course mb-12">
               <span class="course-label mb-2">CURSO EM ANDAMENTO</span>
               <h2 class="sidebar-course-title">{{ track.title }}</h2>
+              
+              <!-- BOTÃO DE CERTIFICADO (SÓ APARECE EM 100%) -->
+              <button 
+                v-if="isCourseComplete" 
+                class="btn-certificate-unlock mt-6"
+                @click="downloadCertificate"
+              >
+                <Award :size="18" /> BAIXAR CERTIFICADO
+              </button>
             </div>
 
             <nav class="curriculum-nav">
-              <div v-for="mod in modules" :key="mod.id" class="curriculum-module mb-10">
+              <div v-for="mod in track.modules" :key="mod.id" class="curriculum-module mb-10">
                 <h4 class="module-title-editorial mb-4">{{ mod.title }}</h4>
                 <div class="lessons-stack">
                   <div v-for="lesson in mod.lessons" :key="lesson.id" 
                     class="lesson-row-item" 
                     :class="{ 'is-done': lesson.done, 'is-active': lesson.active, 'is-locked': lesson.locked }"
-                    @click="!lesson.locked && goToLesson(lesson.id)"
+                    @click="!lesson.locked && toggleLesson(mod.id, lesson.id)"
                   >
                     <div class="flex items-center gap-3">
                       <div class="lesson-status-icon">
@@ -103,7 +127,10 @@ const goToLesson = (id) => {
                       </div>
                       <span class="lesson-title-text">{{ lesson.title }}</span>
                     </div>
-                    <ChevronRight :size="12" class="opacity-20" />
+                    <div class="flex items-center gap-2">
+                       <span v-if="lesson.done" class="text-[10px] font-black text-lime">CONCLUÍDO</span>
+                       <ChevronRight :size="12" class="opacity-20" />
+                    </div>
                   </div>
                 </div>
               </div>
@@ -175,6 +202,31 @@ const goToLesson = (id) => {
 </template>
 
 <style scoped>
+.btn-certificate-unlock {
+  background: #FFE65A;
+  color: #1C1C1C;
+  border: 3px solid #1C1C1C;
+  padding: 12px 20px;
+  border-radius: 12px;
+  font-family: "Archivo Black", sans-serif;
+  font-size: 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  transition: 0.3s;
+  box-shadow: 4px 4px 0px #1C1C1C;
+  width: 100%;
+  justify-content: center;
+  text-transform: uppercase;
+}
+
+.btn-certificate-unlock:hover {
+  background: #FF6BCA;
+  transform: translateY(-2px);
+  box-shadow: 6px 6px 0px #1C1C1C;
+}
+
 .classroom-magazine-layout { background-color: #FFFFFF; min-height: 100vh; position: relative; overflow-x: hidden; }
 
 /* 1. PROGRESS BAR MAGENTA NO TOPO */
