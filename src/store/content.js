@@ -355,47 +355,32 @@ export const fetchAllContent = async () => {
       return data || (opt.single ? null : [])
     }
 
-    const [posts, newsletters, services, projects, settings, paths, library, team, about, opportunities, subscribers, home] = await Promise.all([
-      fetchTable('posts', { order: 'date', orderOptions: { ascending: false } }),
+    const [articles, newsletters, subscribers, settings] = await Promise.all([
+      fetchTable('articles', { order: 'date', orderOptions: { ascending: false } }),
       fetchTable('newsletters', { order: 'created_at', orderOptions: { ascending: false } }),
-      fetchTable('services'),
-      fetchTable('projects'),
-      fetchTable('site_settings'),
-      fetchTable('paths'),
-      fetchTable('library'),
-      fetchTable('team'),
-      fetchTable('about', { single: true }),
-      fetchTable('opportunities'),
       fetchTable('subscribers'),
-      fetchTable('home', { single: true })
+      fetchTable('site_settings')
     ])
 
-    if (posts && posts.length > 0) siteContent.posts = posts
-    if (newsletters) siteContent.newsletters = newsletters
-    if (services) siteContent.services = services
-    if (projects) siteContent.projects = projects
-    if (paths) siteContent.paths = paths
-    if (library) siteContent.library = library
-    if (team) siteContent.team = team
-    if (about) siteContent.about = { ...siteContent.about, ...about }
-    if (home) siteContent.home = { ...siteContent.home, ...home }
-    if (opportunities && opportunities.length > 0) {
-      siteContent.opportunities = opportunities
-    } else {
-      siteContent.opportunities = initialContent.opportunities
-    }
+    if (articles && articles.length > 0) siteContent.posts = articles
+    if (newsletters && newsletters.length > 0) siteContent.newsletters = newsletters
     if (subscribers) siteContent.subscribers = subscribers
-    if (settings) {
-      settings.forEach(s => { siteContent.settings[s.key] = s.value })
-    }
     
-    // Garantir que o menu inicial exista se não vier do banco
-    if (!siteContent.settings.menu) {
-      siteContent.settings.menu = initialContent.settings.menu
+    if (settings) {
+      settings.forEach(s => {
+        // Se a chave for 'home', 'about', etc, mapeia para o objeto correto
+        if (['home', 'about', 'settings', 'donateConfig', 'services', 'opportunities', 'tracks', 'library', 'newsletterArchiveConfig'].includes(s.key)) {
+           siteContent[s.key === 'settings' ? 'settings' : s.key] = { ...siteContent[s.key], ...s.value }
+        } else {
+           // Outras chaves de configuração no siteContent.settings
+           siteContent.settings[s.key] = s.value
+        }
+      })
     }
 
     return { success: true }
   } catch (e) {
+    console.error('Erro ao buscar conteúdo:', e)
     return { success: false, error: e.message }
   }
 }
@@ -403,22 +388,14 @@ export const fetchAllContent = async () => {
 export const saveItemToSupabase = async (table, item, isNew = false) => {
   if (!supabase) return { success: false, error: 'Supabase não inicializado' }
   try {
-    const dataToSave = { ...item }
-    if (table === 'posts' && dataToSave.references) {
-      dataToSave.refs = dataToSave.references
-      delete dataToSave.references
-    }
+    const tableMap = { 'posts': 'articles' }
+    const actualTable = tableMap[table] || table
     
     let result
-    if (table === 'about') {
-      result = await supabase.from('about').upsert(dataToSave)
-    } else if (table === 'settings') {
-      for (const [key, value] of Object.entries(item)) {
-        await supabase.from('site_settings').upsert({ key, value })
-      }
-      return { success: true }
+    if (['home', 'about', 'settings', 'donateConfig', 'services', 'opportunities', 'tracks', 'library', 'newsletterArchiveConfig'].includes(actualTable)) {
+      result = await supabase.from('site_settings').upsert({ key: actualTable, value: item })
     } else {
-      result = isNew ? await supabase.from(table).insert(dataToSave) : await supabase.from(table).update(dataToSave).eq('id', item.id)
+      result = isNew ? await supabase.from(actualTable).insert(item) : await supabase.from(actualTable).update(item).eq('id', item.id)
     }
     return result.error ? { success: false, error: result.error.message } : { success: true }
   } catch (e) {
