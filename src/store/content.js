@@ -157,7 +157,7 @@ const initialContent = {
   ],
   subscribers: [],
   settings: {
-    siteName: "Narrativa Política",
+    siteName: "Narrativa Politica",
     siteTagline: "Transformando Teoria Econômica em Impacto",
     siteDescription: "Plataforma de economia e dados.",
     contactEmail: "contatonarrativapolitica@gmail.com",

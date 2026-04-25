@@ -8,9 +8,9 @@
       <div class="reading-progress-bar" :style="{ width: scrollPercent + '%' }"></div>
     </div>
     
-    <!-- TELA DE CARREGAMENTO EDITORIAL -->
+    <!-- TELA DE CARREGAMENTO EDITORIAL (APENAS NO ADMIN) -->
     <transition name="fade-slow">
-      <div v-if="isLoading" class="editorial-loader">
+      <div v-if="isLoading && showStrategicLoader" class="editorial-loader">
         <div class="loader-content">
           <div class="logo-np-brutalist loader-logo">
             <div class="shape s1"></div>
@@ -59,6 +59,10 @@ const showReadingProgress = computed(() => {
   return routes.includes(route.name)
 })
 
+const showStrategicLoader = computed(() => {
+  return route.path.startsWith('/admin')
+})
+
 const handleScroll = () => {
   const windowHeight = window.innerHeight
   const documentHeight = document.documentElement.scrollHeight
@@ -70,21 +74,10 @@ const handleScroll = () => {
 // Lógica de SEO e Meta Tags Dinâmicas
 watch(() => route.path, () => {
   const settings = siteContent.settings || {}
-  const siteName = settings.siteName || 'Narrativa Política'
+  const siteName = settings.siteName || 'Narrativa Politica'
   
-  // 1. Atualiza o Título da Aba
-  const pageTitles = {
-    '/': 'Home',
-    '/conteudo': 'Artigos e Análises',
-    '/oportunidades': 'Oportunidades',
-    '/trilhas': 'Trilhas de Aprendizado',
-    '/servicos': 'Serviços e Atuação',
-    '/sobre': 'Sobre Mim',
-    '/biblioteca': 'Biblioteca Digital'
-  }
-  
-  const currentPage = pageTitles[route.path] || ''
-  document.title = currentPage ? `${currentPage} | ${siteName}` : siteName
+  // 1. Atualiza o Título da Aba (Mantendo apenas o nome do site como solicitado)
+  document.title = siteName
 
   // 2. Atualiza Meta Tags para Redes Sociais (WhatsApp, Insta, etc)
   const updateMeta = (name, content, isProperty = false) => {
