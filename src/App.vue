@@ -67,6 +67,48 @@ const handleScroll = () => {
   scrollPercent.value = Math.min(100, Math.max(0, percent))
 }
 
+// Lógica de SEO e Meta Tags Dinâmicas
+watch(() => route.path, () => {
+  const settings = siteContent.settings || {}
+  const siteName = settings.siteName || 'Narrativa Política'
+  
+  // 1. Atualiza o Título da Aba
+  const pageTitles = {
+    '/': 'Home',
+    '/conteudo': 'Artigos e Análises',
+    '/oportunidades': 'Oportunidades',
+    '/trilhas': 'Trilhas de Aprendizado',
+    '/servicos': 'Serviços e Atuação',
+    '/sobre': 'Sobre Mim',
+    '/biblioteca': 'Biblioteca Digital'
+  }
+  
+  const currentPage = pageTitles[route.path] || ''
+  document.title = currentPage ? `${currentPage} | ${siteName}` : siteName
+
+  // 2. Atualiza Meta Tags para Redes Sociais (WhatsApp, Insta, etc)
+  const updateMeta = (name, content, isProperty = false) => {
+    let el = document.querySelector(isProperty ? `meta[property="${name}"]` : `meta[name="${name}"]`)
+    if (!el) {
+      el = document.createElement('meta')
+      if (isProperty) el.setAttribute('property', name)
+      else el.setAttribute('name', name)
+      document.head.appendChild(el)
+    }
+    el.setAttribute('content', content)
+  }
+
+  const description = settings.seoDescription || 'Plataforma de inteligência e estratégia política.'
+  const image = settings.siteLogo || '/favicon.png'
+
+  updateMeta('description', description)
+  updateMeta('og:title', document.title, true)
+  updateMeta('og:description', description, true)
+  updateMeta('og:image', image, true)
+  updateMeta('og:url', window.location.href, true)
+  updateMeta('twitter:card', 'summary_large_image')
+}, { immediate: true })
+
 onMounted(async () => {
   window.addEventListener('scroll', handleScroll)
   
