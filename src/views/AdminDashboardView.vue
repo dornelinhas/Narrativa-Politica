@@ -13,7 +13,7 @@ const { user, logout } = useAuth()
 const activeTab = ref('home')
 const isSaving = ref(false)
 
-const defaultArticleForm = () => ({ title: '', subtitle: '', author: '', type: 'Artigo', category: '', featured: false, content: '', image: '' })
+const defaultArticleForm = () => ({ title: '', subtitle: '', author: '', type: 'Artigo', category: '', featured: false, content: '', image: '', imageDescription: '', imageCaption: '', references: '', highlightQuote: '' })
 const defaultOpportunityForm = () => ({ title: '', category: 'Vagas de Emprego', type: 'Remoto', location: '', deadline: '', link: '', description: '', fullDescription: '' })
 const defaultTrackForm = () => ({
   name: '', description: '', hours: '', status: 'GRATUITO', hasCertificate: true, color: '#FF6BCA',
@@ -321,7 +321,10 @@ const editArtigo = (art) => {
     category: art.category || '',
     featured: Boolean(art.featured),
     content: art.content || '',
-    image: art.image || ''
+    image: art.image || '',
+    imageDescription: art.imageDescription || '',
+    references: art.references || '',
+    highlightQuote: art.highlightQuote || ''
   }
   scrollToForm('article-editor-form')
 }
@@ -340,21 +343,43 @@ const saveArtigo = async () => {
   try {
     if (!siteContent.posts) siteContent.posts = []
     const existing = siteContent.posts.find(p => String(p.id) === String(editingArtigoId.value))
+    
+    // Preparar o payload para o Supabase (usando upsert para garantir persistência)
     const payload = {
-      ...novoArtigo.value,
-      excerpt: novoArtigo.value.subtitle,
+      title: novoArtigo.value.title,
+      subtitle: novoArtigo.value.subtitle,
+      excerpt: novoArtigo.value.subtitle, // excerpt e subtitle são mantidos em sincronia
+      author: novoArtigo.value.author,
+      type: novoArtigo.value.type,
+      category: novoArtigo.value.category,
+      featured: novoArtigo.value.featured,
+      content: novoArtigo.value.content,
+      image: novoArtigo.value.image,
+      imageDescription: novoArtigo.value.imageDescription,
+      imageCaption: novoArtigo.value.imageCaption,
+      references: novoArtigo.value.references,
+      highlightQuote: novoArtigo.value.highlightQuote,
       date: existing?.date || new Date().toISOString()
     }
-    let savedArticle = { ...payload, id: editingArtigoId.value || Date.now() }
 
-    if (supabase) {
-      const { data, error } = isEditingArtigo.value
-        ? await supabase.from('articles').update(payload).eq('id', editingArtigoId.value).select().maybeSingle()
-        : await supabase.from('articles').insert([payload]).select().maybeSingle()
-      if (error) throw error
-      savedArticle = { ...savedArticle, ...(data || {}) }
+    // Se estivermos editando, incluímos o ID no payload para o upsert funcionar como update
+    if (editingArtigoId.value) {
+      payload.id = editingArtigoId.value
     }
 
+    let savedArticle = { ...payload }
+
+    if (supabase) {
+      // Usamos upsert em vez de update/insert separado para evitar problemas de ID não encontrado
+      const { data, error } = await supabase.from('articles').upsert(payload).select().maybeSingle()
+      if (error) throw error
+      if (data) savedArticle = { ...data }
+    } else {
+      // Fallback para memória se não houver supabase
+      if (!savedArticle.id) savedArticle.id = Date.now()
+    }
+
+    // Normalização básica pós-salvamento
     savedArticle.subtitle = savedArticle.subtitle || savedArticle.excerpt || ''
     savedArticle.excerpt = savedArticle.excerpt || savedArticle.subtitle || ''
 
@@ -365,7 +390,8 @@ const saveArtigo = async () => {
     } else {
       siteContent.posts.unshift(savedArticle)
     }
-    artigos.value = siteContent.posts
+    
+    artigos.value = [...siteContent.posts]
     resetArtigoForm()
     isSaving.value = false
     alert(wasEditing ? 'Artigo atualizado com sucesso!' : 'Artigo publicado com sucesso!')
@@ -997,46 +1023,79 @@ onMounted(() => {
               <X :size="14" /> CANCELAR EDIÇÃO
             </button>
           </div>
-          <div class="input-group mb-6">
-             <label>TÍTULO DO ARTIGO</label>
-             <input v-model="novoArtigo.title" type="text" class="input-large" />
-          </div>
-          <div class="input-group mb-6">
-             <label>RESUMO (EXCERPT) / LINHA FINA</label>
-             <textarea v-model="novoArtigo.subtitle" rows="2" placeholder="Resumo curto que aparece no card..."></textarea>
-          </div>
-          <div class="form-grid-3 mb-6">
+          <!-- CAMPOS DE METADADOS DO ARTIGO -->
+          <div class="form-grid-2 mb-6">
              <div class="input-group">
-                <label>AUTOR</label>
-                <input v-model="novoArtigo.author" type="text" placeholder="Nome do Autor" />
+                <label>TÍTULO DO ARTIGO / ENSAIO</label>
+                <input v-model="novoArtigo.title" type="text" placeholder="Ex: A Geopolítica do Sul Global..." />
              </div>
              <div class="input-group">
-                <label>TIPO DE CONTEÚDO</label>
+                <label>AUTOR(A)</label>
+                <input v-model="novoArtigo.author" type="text" placeholder="Ex: Anne Dornelas" />
+             </div>
+          </div>
+
+          <div class="form-grid-2 mb-6">
+             <div class="input-group">
+                <label>CATEGORIA</label>
                 <div class="category-pill-group">
-                   <button v-for="typ in ['Artigo', 'Análise', 'Notícia']" :key="typ" class="cat-pill" :class="{ active: novoArtigo.type === typ }" @click.prevent="novoArtigo.type = typ">
-                     {{ typ }}
+                   <button v-for="cat in ['Mobilização', 'Educação', 'Clima', 'Notícias', 'Análise']" :key="cat" class="cat-pill" :class="{ active: novoArtigo.category === cat }" @click.prevent="novoArtigo.category = cat">
+                     {{ cat }}
                    </button>
                 </div>
              </div>
              <div class="input-group">
-                <label>CATEGORIA / EIXO</label>
-                <input v-model="novoArtigo.category" type="text" placeholder="Ex: Clima, Mobilização..." />
+                <label>TIPO DE CONTEÚDO</label>
+                <select v-model="novoArtigo.type" class="select-brutal">
+                   <option value="Artigo">Artigo</option>
+                   <option value="Notícia">Notícia</option>
+                   <option value="Análise">Análise</option>
+                   <option value="Ensaio">Ensaio</option>
+                </select>
              </div>
           </div>
-          <div class="mb-6">
-             <ImageUploader v-model="novoArtigo.image" label="IMAGEM DE CAPA (ARRASTE OU CLIQUE)" />
+
+          <div class="input-group mb-6">
+             <label>RESUMO ESTRATÉGICO (APARECE NOS CARDS)</label>
+             <textarea v-model="novoArtigo.subtitle" rows="2" placeholder="Uma breve provocação para atrair o leitor..."></textarea>
           </div>
-          <div class="input-group flex items-center justify-start gap-4 mb-6">
+
+          <div class="form-grid-2 mb-6">
+             <div class="input-group">
+                <label>URL DA IMAGEM DE CAPA</label>
+                <input v-model="novoArtigo.image" type="url" placeholder="https://images.unsplash.com/..." />
+             </div>
+             <div class="input-group">
+                <label>DESCRIÇÃO DA IMAGEM (ALT TEXT / ACESSIBILIDADE)</label>
+                <input v-model="novoArtigo.imageDescription" type="text" placeholder="Ex: Foto preto e branco de uma manifestação..." />
+             </div>
+          </div>
+
+          <div class="input-group mb-6">
+             <label>LEGENDA DA IMAGEM (APARECE EMBAIXO DA FOTO NO SITE)</label>
+             <input v-model="novoArtigo.imageCaption" type="text" placeholder="Ex: Manifestantes ocupam a praça central durante o ato..." />
+          </div>
+
+          <div class="input-group mb-6">
+             <label>REFERÊNCIAS E LINKS DE APOIO</label>
+             <textarea v-model="novoArtigo.references" rows="3" placeholder="Liste as fontes, referências bibliográficas ou links úteis..."></textarea>
+          </div>
+
+          <div class="input-group mb-6">
+           <label>CITAÇÃO EM DESTAQUE (OPCIONAL)</label>
+           <textarea v-model="novoArtigo.highlightQuote" rows="2" placeholder="Uma frase de impacto para destacar durante o texto..."></textarea>
+        </div>
+
+        <div class="mb-8 flex items-center gap-4">
              <label class="checkbox-container">
                 <input type="checkbox" v-model="novoArtigo.featured" />
                 <span class="checkmark"></span>
-                <span class="check-label font-bold text-magenta-500">DESTAQUE PRINCIPAL NA HOME</span>
+                <span class="check-label font-bold text-dark">DESTACAR NA PÁGINA INICIAL</span>
              </label>
           </div>
-          <div class="input-group mb-6">
-             <label>CORPO DO TEXTO (RICH TEXT)</label>
-             <div class="editor-workspace-dual">
-                <div class="main-editor-area">
+
+          <div class="editor-workspace-dual mb-10">
+             <div class="main-editor-area">
                    <BrutalEditor v-model="novoArtigo.content" placeholder="Escreva o conteúdo do seu artigo aqui..." />
                 </div>
                 
@@ -1633,17 +1692,6 @@ onMounted(() => {
 
               <div class="form-grid-2 mb-6">
                  <div class="input-group">
-                    <label>TAG DA EDIÇÃO</label>
-                    <input v-model="novaNewsletter.tag" type="text" class="input-premium" />
-                 </div>
-                 <div class="input-group">
-                    <label>CAPA DE IMPACTO</label>
-                    <ImageUploader v-model="novaNewsletter.capa_url" label="UPLOAD DA CAPA" />
-                 </div>
-              </div>
-
-              <div class="input-group mb-8">
-                 <label>CONTEÚDO MAGNÉTICO (EDITOR RICO)</label>
                  <BrutalEditor v-model="novaNewsletter.conteudo" />
               </div>
 

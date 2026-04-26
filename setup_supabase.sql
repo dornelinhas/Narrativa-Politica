@@ -41,11 +41,13 @@ CREATE TABLE IF NOT EXISTS articles (
   excerpt TEXT, -- Adicionado para evitar erro "column excerpt does not exist"
   content TEXT NOT NULL, 
   image TEXT, -- Nome da coluna alterado de capa_url para image
+  imageDescription TEXT, -- Descrição da imagem (texto alternativo)
   category TEXT,
   type TEXT DEFAULT 'Artigo',
   featured BOOLEAN DEFAULT false,
   status TEXT CHECK (status IN ('rascunho', 'publicado')) DEFAULT 'rascunho',
   date TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()),
+  "references" TEXT, -- Referências bibliográficas ou links
   created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
 );
 
@@ -68,6 +70,9 @@ BEGIN
   IF NOT EXISTS (SELECT 1 FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='articles' AND COLUMN_NAME='image') THEN
     ALTER TABLE articles ADD COLUMN image TEXT;
   END IF;
+  IF NOT EXISTS (SELECT 1 FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='articles' AND COLUMN_NAME='imageDescription') THEN
+    ALTER TABLE articles ADD COLUMN "imageDescription" TEXT;
+  END IF;
   IF NOT EXISTS (SELECT 1 FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='articles' AND COLUMN_NAME='featured') THEN
     ALTER TABLE articles ADD COLUMN featured BOOLEAN DEFAULT false;
   END IF;
@@ -79,6 +84,12 @@ BEGIN
   END IF;
   IF NOT EXISTS (SELECT 1 FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='articles' AND COLUMN_NAME='date') THEN
     ALTER TABLE articles ADD COLUMN date TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now());
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='articles' AND COLUMN_NAME='references') THEN
+    ALTER TABLE articles ADD COLUMN "references" TEXT;
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='articles' AND COLUMN_NAME='highlightQuote') THEN
+    ALTER TABLE articles ADD COLUMN "highlightQuote" TEXT;
   END IF;
 END $$;
 

@@ -1,6 +1,6 @@
 <script setup>
 import { ref, onMounted, watch } from 'vue'
-import { Bold, Italic, List, Heading2, Image as ImageIcon } from 'lucide-vue-next'
+import { Bold, Italic, List, Heading2, Heading3, Image as ImageIcon, Type, Trash2 } from 'lucide-vue-next'
 
 const props = defineProps({
   modelValue: { type: String, default: '' },
@@ -10,6 +10,8 @@ const props = defineProps({
 const emit = defineEmits(['update:modelValue'])
 
 const editorRef = ref(null)
+const selectedImg = ref(null)
+const floatingMenuPos = ref({ top: 0, left: 0 })
 
 const updateContent = () => {
   if (editorRef.value) {
@@ -27,6 +29,13 @@ const execCmd = (cmd, arg = null) => {
   document.execCommand(cmd, false, arg)
   updateContent()
   editorRef.value.focus()
+}
+
+const setFontSize = (size) => {
+  // execCommand('fontSize') uses 1-7, which is limited. 
+  // We'll use a span with style for more control if needed, 
+  // but for simplicity and to follow document.execCommand:
+  execCmd('fontSize', size)
 }
 
 const handleDrop = (e) => {
@@ -52,6 +61,8 @@ const handlePaste = (e) => {
 const insertImage = (file) => {
   const reader = new FileReader()
   reader.onload = (e) => {
+    // Wrap image in a div to make it easier to manage if needed, 
+    // but execCommand insertImage is more standard for contenteditable
     execCmd('insertImage', e.target.result)
   }
   reader.readAsDataURL(file)
@@ -68,28 +79,85 @@ const triggerFileInput = () => {
   }
   input.click()
 }
+
+const handleEditorClick = (e) => {
+  if (e.target.tagName === 'IMG') {
+    selectedImg.value = e.target
+    const rect = e.target.getBoundingClientRect()
+    const editorRect = editorRef.value.getBoundingClientRect()
+    floatingMenuPos.value = {
+      top: rect.top - editorRect.top + 10,
+      left: rect.left - editorRect.left + 10
+    }
+  } else {
+    selectedImg.value = null
+  }
+}
+
+const deleteSelectedImage = () => {
+  if (selectedImg.value) {
+    selectedImg.value.remove()
+    selectedImg.value = null
+    updateContent()
+  }
+}
 </script>
 
 <template>
   <div class="brutal-editor-wrapper">
     <div class="editor-toolbar">
-      <button type="button" @click="execCmd('bold')" title="Negrito"><Bold :size="16" /></button>
-      <button type="button" @click="execCmd('italic')" title="Itálico"><Italic :size="16" /></button>
-      <button type="button" @click="execCmd('formatBlock', 'H2')" title="Título"><Heading2 :size="16" /></button>
-      <button type="button" @click="execCmd('insertUnorderedList')" title="Lista"><List :size="16" /></button>
-      <button type="button" @click="triggerFileInput" title="Inserir Imagem"><ImageIcon :size="16" /></button>
+      <div class="toolbar-group">
+        <button type="button" @click="execCmd('bold')" title="Negrito"><Bold :size="16" /></button>
+        <button type="button" @click="execCmd('italic')" title="Itálico"><Italic :size="16" /></button>
+      </div>
+      
+      <div class="toolbar-group">
+        <button type="button" @click="execCmd('formatBlock', 'H2')" title="Título 2"><Heading2 :size="16" /></button>
+        <button type="button" @click="execCmd('formatBlock', 'H3')" title="Título 3"><Heading3 :size="16" /></button>
+      </div>
+
+      <div class="toolbar-group">
+        <select @change="setFontSize($event.target.value)" class="font-size-select" title="Tamanho da Letra">
+          <option value="3">Médio</option>
+          <option value="1">Pequeno</option>
+          <option value="2">Normal</option>
+          <option value="4">Grande</option>
+          <option value="5">Extra G</option>
+          <option value="6">Gigante</option>
+          <option value="7">Máximo</option>
+        </select>
+      </div>
+
+      <div class="toolbar-group">
+        <button type="button" @click="execCmd('insertUnorderedList')" title="Lista"><List :size="16" /></button>
+        <button type="button" @click="triggerFileInput" title="Inserir Imagem"><ImageIcon :size="16" /></button>
+      </div>
     </div>
     
-    <div 
-      ref="editorRef"
-      class="editor-content"
-      contenteditable="true"
-      @input="updateContent"
-      @dragover.prevent
-      @drop="handleDrop"
-      @paste="handlePaste"
-      :data-placeholder="placeholder"
-    ></div>
+    <div class="editor-relative-container">
+      <div 
+        ref="editorRef"
+        class="editor-content"
+        contenteditable="true"
+        @input="updateContent"
+        @click="handleEditorClick"
+        @dragover.prevent
+        @drop="handleDrop"
+        @paste="handlePaste"
+        :data-placeholder="placeholder"
+      ></div>
+
+      <!-- Botão flutuante para apagar imagem -->
+      <div 
+        v-if="selectedImg" 
+        class="image-floating-menu"
+        :style="{ top: floatingMenuPos.top + 'px', left: floatingMenuPos.left + 'px' }"
+      >
+        <button @click="deleteSelectedImage" class="btn-delete-img" title="Remover Imagem">
+          <Trash2 :size="14" /> APAGAR IMAGEM
+        </button>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -110,16 +178,28 @@ const triggerFileInput = () => {
 
 .editor-toolbar {
   display: flex;
-  gap: 8px;
-  padding: 12px 20px;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 10px 16px;
   background: #F8FAFC;
   border-bottom: 3px solid #1C1C1C;
+}
+
+.toolbar-group {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  border-right: 2px solid #E2E8F0;
+  padding-right: 12px;
+}
+.toolbar-group:last-child {
+  border-right: none;
 }
 
 .editor-toolbar button {
   background: none;
   border: 2px solid transparent;
-  padding: 8px;
+  padding: 6px;
   border-radius: 6px;
   cursor: pointer;
   color: #1C1C1C;
@@ -133,15 +213,29 @@ const triggerFileInput = () => {
   border-color: #1C1C1C;
 }
 
+.font-size-select {
+  background: white;
+  border: 2px solid #1C1C1C;
+  border-radius: 4px;
+  padding: 2px 4px;
+  font-family: "Inter", sans-serif;
+  font-size: 0.75rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.editor-relative-container {
+  position: relative;
+}
+
 .editor-content {
-  min-height: 200px;
+  min-height: 250px;
   padding: 20px;
   font-family: "Inter", sans-serif;
   font-size: 1rem;
   line-height: 1.6;
   color: #000;
   outline: none;
-  position: relative;
 }
 
 .editor-content:empty:before {
@@ -149,6 +243,30 @@ const triggerFileInput = () => {
   color: #94a3b8;
   pointer-events: none;
   position: absolute;
+}
+
+.image-floating-menu {
+  position: absolute;
+  z-index: 50;
+}
+
+.btn-delete-img {
+  background: #DF2028;
+  color: white;
+  border: 2px solid #1C1C1C;
+  padding: 6px 12px;
+  font-family: "Archivo Black", sans-serif;
+  font-size: 10px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  box-shadow: 4px 4px 0px #1C1C1C;
+  transition: 0.2s;
+}
+.btn-delete-img:hover {
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0px #1C1C1C;
 }
 
 /* Base styles inside editor */
@@ -160,15 +278,37 @@ const triggerFileInput = () => {
   letter-spacing: -0.02em;
 }
 
+.editor-content :deep(h3) {
+  font-family: "Archivo Black", sans-serif;
+  font-size: 1.2rem;
+  margin-top: 1.2rem;
+  margin-bottom: 0.8rem;
+  letter-spacing: -0.01em;
+}
+
 .editor-content :deep(img) {
   max-width: 100%;
   border-radius: 8px;
   border: 2px solid #1C1C1C;
   margin: 1rem 0;
+  cursor: pointer;
+}
+.editor-content :deep(img):hover {
+  outline: 4px solid #DF2028;
 }
 
 .editor-content :deep(ul) {
   padding-left: 1.5rem;
   margin-bottom: 1rem;
 }
+
+/* Font sizes from execCommand */
+.editor-content :deep(font[size="1"]) { font-size: 0.75rem; }
+.editor-content :deep(font[size="2"]) { font-size: 0.875rem; }
+.editor-content :deep(font[size="3"]) { font-size: 1rem; }
+.editor-content :deep(font[size="4"]) { font-size: 1.25rem; }
+.editor-content :deep(font[size="5"]) { font-size: 1.5rem; }
+.editor-content :deep(font[size="6"]) { font-size: 2rem; }
+.editor-content :deep(font[size="7"]) { font-size: 2.5rem; }
 </style>
+

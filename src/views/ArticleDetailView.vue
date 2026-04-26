@@ -6,7 +6,10 @@
 
     <!-- HERO IMAGE (Full Width) -->
     <div class="art-hero">
-      <img :src="post.image || 'https://images.unsplash.com/photo-1541844053589-346841d0b34c?w=1400&q=80'" :alt="post.title" class="art-hero__img" />
+      <img :src="post.image || 'https://images.unsplash.com/photo-1541844053589-346841d0b34c?w=1400&q=80'" :alt="post.imageDescription || post.title" class="art-hero__img" />
+      <div v-if="post.imageCaption" class="art-image-caption">
+        {{ post.imageCaption }}
+      </div>
       <div class="art-hero__overlay"></div>
     </div>
 
@@ -18,15 +21,28 @@
         <router-link to="/conteudo" class="art-meta__back">
           <ArrowLeft :size="16" /> {{ siteContent.articlesConfig?.backButtonText || 'Voltar ao Radar' }}
         </router-link>
-        <div class="art-meta__tags">
-          <span class="art-tag">{{ post.category }}</span>
-          <span class="art-tag art-tag--muted">{{ post.type || 'Artigo' }}</span>
+        <div class="art-meta-actions">
+          <button v-if="post.references" @click="scrollToRefs" class="art-btn-ref" title="Ver referências">
+            <LinkIcon :size="14" /> FONTES
+          </button>
+          <div class="art-meta__tags">
+            <span class="art-tag">{{ post.category }}</span>
+            <span class="art-tag art-tag--muted">{{ post.type || 'Artigo' }}</span>
+          </div>
         </div>
       </div>
 
       <!-- HEADLINE -->
       <h1 class="art-title">{{ post.title }}</h1>
       <p v-if="post.excerpt" class="art-excerpt">{{ post.excerpt }}</p>
+      
+      <!-- HIGHLIGHT QUOTE -->
+      <div v-if="post.highlightQuote" class="art-highlight-quote">
+        <div class="art-highlight-quote__inner">
+          <span class="art-highlight-quote__icon">“</span>
+          <p>{{ post.highlightQuote }}</p>
+        </div>
+      </div>
 
       <!-- AUTHOR ROW -->
       <div class="art-author-row">
@@ -161,6 +177,10 @@ const handleScroll = () => {
   const h = document.documentElement.scrollHeight - document.documentElement.clientHeight
   scrollProgress.value = h > 0 ? (window.scrollY / h) * 100 : 0
 }
+const scrollToRefs = () => {
+  const el = document.querySelector('.art-references')
+  if (el) el.scrollIntoView({ behavior: 'smooth' })
+}
 onMounted(() => { window.scrollTo(0, 0); window.addEventListener('scroll', handleScroll) })
 onUnmounted(() => window.removeEventListener('scroll', handleScroll))
 </script>
@@ -174,9 +194,23 @@ onUnmounted(() => window.removeEventListener('scroll', handleScroll))
 .art-progress__fill { height: 100%; background: var(--color-red, #DF2028); transition: width .12s ease-out; }
 
 /* ── HERO IMAGE ─────────────────────────────── */
-.art-hero { position: relative; width: 100%; max-height: 520px; overflow: hidden; }
-.art-hero__img { width: 100%; height: 520px; object-fit: cover; display: block; }
-.art-hero__overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,.25) 0%, transparent 50%); }
+.art-hero { position: relative; width: 100%; max-height: 650px; overflow: hidden; background: #000; }
+.art-hero__img { width: 100%; height: auto; max-height: 650px; object-fit: cover; display: block; }
+.art-hero__overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,.25) 0%, transparent 50%); pointer-events: none; }
+.art-image-caption {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  z-index: 10;
+  background: #1C1C1C;
+  color: #FFF;
+  padding: 8px 20px;
+  font-family: "Inter", sans-serif;
+  font-size: 0.7rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
 
 /* ── CONTAINER ──────────────────────────────── */
 .art-container { max-width: 720px; margin: 0 auto; padding: 0 24px; }
@@ -185,6 +219,26 @@ onUnmounted(() => window.removeEventListener('scroll', handleScroll))
 .art-meta { display: flex; justify-content: space-between; align-items: center; padding: 28px 0 20px; flex-wrap: wrap; gap: 12px; }
 .art-meta__back { display: inline-flex; align-items: center; gap: 6px; font-family: var(--font-sans, 'Inter', sans-serif); font-weight: 700; font-size: .8rem; color: var(--color-dark, #1C1C1C); text-transform: uppercase; letter-spacing: .06em; opacity: .55; transition: opacity .2s; text-decoration: none; }
 .art-meta__back:hover { opacity: 1; }
+.art-meta-actions { display: flex; align-items: center; gap: 12px; }
+.art-btn-ref {
+  background: transparent;
+  border: 1.5px solid #1C1C1C;
+  padding: 4px 10px;
+  font-family: var(--font-sans);
+  font-weight: 800;
+  font-size: 0.65rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  transition: 0.2s;
+  border-radius: 4px;
+  text-transform: uppercase;
+}
+.art-btn-ref:hover {
+  background: #1C1C1C;
+  color: #FFF;
+}
 .art-meta__tags { display: flex; gap: 8px; }
 .art-tag { display: inline-block; padding: 5px 14px; font-family: var(--font-sans); font-weight: 800; font-size: .7rem; text-transform: uppercase; letter-spacing: .08em; background: var(--color-red, #DF2028); color: #fff; border-radius: 3px; }
 .art-tag--muted { background: var(--color-bg, #F7F7F5); color: var(--color-dark, #1C1C1C); }
@@ -209,6 +263,13 @@ onUnmounted(() => window.removeEventListener('scroll', handleScroll))
 .art-share-btn { width: 40px; height: 40px; border-radius: 50%; border: 1.5px solid #ddd; background: #fff; display: flex; align-items: center; justify-content: center; color: #555; cursor: pointer; transition: all .2s; }
 .art-share-btn:hover { border-color: var(--color-dark); color: var(--color-dark); background: var(--color-bg, #F7F7F5); }
 
+/* ── HIGHLIGHT QUOTE ────────────────────────── */
+.art-highlight-quote { margin: 40px 0; border-left: 10px solid var(--color-red, #DF2028); padding: 30px 40px; background: #1C1C1C; color: #FFF; box-shadow: 10px 10px 0px var(--color-yellow, #FFE65A); position: relative; overflow: hidden; }
+.art-highlight-quote__inner { position: relative; z-index: 2; }
+.art-highlight-quote__icon { position: absolute; top: -30px; left: -20px; font-size: 8rem; font-family: 'Archivo Black'; color: var(--color-red); opacity: 0.2; pointer-events: none; z-index: 1; }
+.art-highlight-quote p { font-family: 'Archivo Black', sans-serif; font-size: 1.5rem; line-height: 1.3; font-style: italic; margin: 0; position: relative; z-index: 2; text-transform: uppercase; letter-spacing: -1px; }
+
+
 /* ── DIVIDER ────────────────────────────────── */
 .art-divider { border: none; border-top: 1px solid #e6e6e6; margin: 0; }
 
@@ -225,9 +286,9 @@ onUnmounted(() => window.removeEventListener('scroll', handleScroll))
 .art-body :deep(figcaption) { font-family: var(--font-sans); font-size: .85rem; color: #888; text-align: center; margin-top: -1rem; margin-bottom: 2rem; }
 
 /* ── REFERENCES ─────────────────────────────── */
-.art-references { background: var(--color-bg, #F7F7F5); border-radius: 8px; padding: 28px 32px; margin: 8px 0 32px; }
-.art-references__title { font-family: var(--font-sans); font-weight: 800; font-size: .9rem; text-transform: uppercase; letter-spacing: .1em; color: var(--color-dark); margin: 0 0 14px; }
-.art-references__content { font-family: var(--font-sans); font-size: .9rem; line-height: 1.7; color: #555; }
+.art-references { background: var(--color-bg, #F7F7F5); border-radius: 8px; padding: 28px 32px; margin: 8px 0 32px; border: 2px solid #1C1C1C; box-shadow: 6px 6px 0px #1C1C1C; }
+.art-references__title { font-family: var(--font-display, 'Archivo Black', sans-serif); font-weight: 900; font-size: .9rem; text-transform: uppercase; letter-spacing: .1em; color: var(--color-dark); margin: 0 0 14px; border-bottom: 3px solid #DF2028; display: inline-block; padding-bottom: 4px; }
+.art-references__content { font-family: var(--font-sans); font-size: .9rem; line-height: 1.7; color: #555; white-space: pre-wrap; }
 .art-references__content :deep(a) { color: var(--color-red); text-decoration: underline; }
 .art-references__content :deep(p) { margin: 0 0 .6rem; }
 

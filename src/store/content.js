@@ -362,6 +362,9 @@ const normalizePost = (post) => ({
   featured: post.featured ?? post.destaque_home ?? false,
   content: post.content || post.conteudo || '',
   image: post.image || post.capa_url || '',
+  imageDescription: post.imageDescription || post.imagedescription || '',
+  references: post.references || '',
+  highlightQuote: post.highlightQuote || post.highlightquote || '',
   date: post.date || post.created_at || ''
 })
 
