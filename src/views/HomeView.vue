@@ -70,7 +70,7 @@
                <div class="large-card-img-wrapper relative border-b-dark md-border-r-dark w-full md-w-half h-64 md-h-auto overflow-hidden bg-dark">
                  <img
                    :src="filteredPosts[0].image || 'https://images.unsplash.com/photo-1541844053589-346841d0b34c?auto=format&fit=crop&q=80&w=800'"
-                   class="full-img object-cover grayscale mix-blend-multiply opacity-80 transition-all duration-500 w-full h-full"
+                   class="full-img object-cover transition-all duration-500 w-full h-full"
                    style="display: block; min-height: 100%;"
                    :alt="filteredPosts[0].title"
                  />
