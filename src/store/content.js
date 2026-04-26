@@ -345,6 +345,35 @@ const initialContent = {
 
 export const siteContent = reactive({ ...initialContent })
 
+const siteSettingKeys = [
+  'home', 'about', 'settings', 'donateConfig', 'services', 'opportunities', 'tracks',
+  'library', 'newsletterArchiveConfig', 'articlesConfig', 'opportunitiesConfig',
+  'servicesConfig', 'libraryConfig'
+]
+
+const normalizePost = (post) => ({
+  ...post,
+  title: post.title || post.titulo || '',
+  subtitle: post.subtitle || post.subtitulo || post.excerpt || '',
+  excerpt: post.excerpt || post.subtitle || post.subtitulo || '',
+  author: post.author || post.autor || '',
+  type: post.type || post.tipo || 'Artigo',
+  category: post.category || post.categoria || '',
+  featured: post.featured ?? post.destaque_home ?? false,
+  content: post.content || post.conteudo || '',
+  image: post.image || post.capa_url || '',
+  date: post.date || post.created_at || ''
+})
+
+const mergeSettingValue = (currentValue, savedValue) => {
+  if (Array.isArray(savedValue)) return savedValue
+  if (Array.isArray(currentValue)) {
+    return savedValue && typeof savedValue === 'object' ? Object.values(savedValue) : currentValue
+  }
+  if (savedValue && typeof savedValue === 'object') return { ...(currentValue || {}), ...savedValue }
+  return savedValue ?? currentValue
+}
+
 export const fetchAllContent = async () => {
   if (!supabase) return { success: false, error: 'Supabase não inicializado' }
   try {
@@ -362,15 +391,15 @@ export const fetchAllContent = async () => {
       fetchTable('site_settings')
     ])
 
-    if (articles && articles.length > 0) siteContent.posts = articles
+    if (articles && articles.length > 0) siteContent.posts = articles.map(normalizePost)
     if (newsletters && newsletters.length > 0) siteContent.newsletters = newsletters
     if (subscribers) siteContent.subscribers = subscribers
     
     if (settings) {
       settings.forEach(s => {
         // Se a chave for 'home', 'about', etc, mapeia para o objeto correto
-        if (['home', 'about', 'settings', 'donateConfig', 'services', 'opportunities', 'tracks', 'library', 'newsletterArchiveConfig'].includes(s.key)) {
-           siteContent[s.key === 'settings' ? 'settings' : s.key] = { ...siteContent[s.key], ...s.value }
+        if (siteSettingKeys.includes(s.key)) {
+           siteContent[s.key] = mergeSettingValue(siteContent[s.key], s.value)
         } else {
            // Outras chaves de configuração no siteContent.settings
            siteContent.settings[s.key] = s.value
@@ -392,7 +421,7 @@ export const saveItemToSupabase = async (table, item, isNew = false) => {
     const actualTable = tableMap[table] || table
     
     let result
-    if (['home', 'about', 'settings', 'donateConfig', 'services', 'opportunities', 'tracks', 'library', 'newsletterArchiveConfig'].includes(actualTable)) {
+    if (siteSettingKeys.includes(actualTable)) {
       result = await supabase.from('site_settings').upsert({ key: actualTable, value: item })
     } else {
       result = isNew ? await supabase.from(actualTable).insert(item) : await supabase.from(actualTable).update(item).eq('id', item.id)

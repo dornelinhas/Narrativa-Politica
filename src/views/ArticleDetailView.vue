@@ -133,7 +133,7 @@ const scrollProgress = ref(0)
 const isZenMode = ref(false)
 const showToast = ref(false)
 
-const post = computed(() => siteContent.posts?.find(p => p.id === parseInt(route.params.id)))
+const post = computed(() => siteContent.posts?.find(p => String(p.id) === String(route.params.id)))
 const authorProfile = computed(() => {
   const authorId = post.value?.authorId || 'anne'
   return siteContent.authors?.find(a => a.id === authorId) || siteContent.authors?.[0] || { name: 'Anne Dornelas' }

@@ -3,15 +3,48 @@ import { ref, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuth } from '../store/auth'
 import { supabase } from '../lib/supabase'
-import { Settings, LogOut, CheckCircle, Clock, Trash2, Home, Search, BookOpen, Briefcase, ChevronDown, Package, FileText, User, Mail, Folder, Download, Eye, Heart, Library, Save, Plus } from 'lucide-vue-next'
+import { Settings, LogOut, CheckCircle, Clock, Trash2, Home, Search, BookOpen, Briefcase, ChevronDown, Package, FileText, User, Mail, Folder, Download, Eye, Heart, Library, Save, Plus, Edit, Trash, Zap, Calendar, X, ExternalLink } from 'lucide-vue-next'
 import BrutalEditor from '../components/BrutalEditor.vue'
 import ImageUploader from '../components/ImageUploader.vue'
-import { siteContent, saveItemToSupabase } from '../store/content'
+import { siteContent } from '../store/content'
 
 const router = useRouter()
 const { user, logout } = useAuth()
 const activeTab = ref('home')
 const isSaving = ref(false)
+
+const defaultArticleForm = () => ({ title: '', subtitle: '', author: '', type: 'Artigo', category: '', featured: false, content: '', image: '' })
+const defaultOpportunityForm = () => ({ title: '', category: 'Vagas de Emprego', type: 'Remoto', location: '', deadline: '', link: '', description: '', fullDescription: '' })
+const defaultTrackForm = () => ({
+  name: '', description: '', hours: '', status: 'GRATUITO', hasCertificate: true, color: '#FF6BCA',
+  mod1: '', mod2: '', mod3: ''
+})
+const defaultServiceForm = () => ({ title: '', description: '', icon: 'Zap', bg: '#FF6BCA', textColor: '#FFFFFF' })
+const defaultDocForm = () => ({ title: '', description: '', category: 'Relatório', fileUrl: '', externalLink: '' })
+
+const editingArtigoId = ref(null)
+const editingVagaId = ref(null)
+const editingTrilhaId = ref(null)
+const editingServicoId = ref(null)
+const editingDocId = ref(null)
+
+const isEditingArtigo = computed(() => editingArtigoId.value !== null)
+const isEditingVaga = computed(() => editingVagaId.value !== null)
+const isEditingTrilha = computed(() => editingTrilhaId.value !== null)
+const isEditingServico = computed(() => editingServicoId.value !== null)
+const isEditingDoc = computed(() => editingDocId.value !== null)
+
+const scrollToForm = (id) => {
+  setTimeout(() => {
+    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  }, 0)
+}
+
+const persistSiteSetting = async (key, value) => {
+  if (!supabase) return
+  const { error } = await supabase.from('site_settings').upsert({ key, value })
+  if (error) throw error
+}
 
 // --- ESTADOS DO DASHBOARD ---
 // NEWSLETTER
@@ -73,34 +106,31 @@ const articlesConfigData = ref({
 })
 // EDITORIAL
 const artigos = ref(siteContent.posts || [])
-const novoArtigo = ref({ title: '', subtitle: '', author: '', type: 'Artigo', category: '', featured: false, content: '', image: '' })
+const novoArtigo = ref(defaultArticleForm())
 // VAGAS E OPORTUNIDADES
 const oppsConfigData = ref({
   pageTitle1: '', pageTitle2: '', searchPlaceholder: '', toggleText: '',
   detailBackBtn: '', detailApplyBtn: '', detailShareTitle: '', detailStatusBadge: ''
 })
 const vagas = ref(siteContent.opportunities || [])
-const novaVaga = ref({ title: '', category: 'Vagas de Emprego', type: 'Remoto', location: '', deadline: '', link: '', description: '', fullDescription: '' })
+const novaVaga = ref(defaultOpportunityForm())
 // LMS / TRILHAS
 const trilhas = ref(siteContent.tracks || [])
-const novaTrilha = ref({
-  name: '', description: '', hours: '', status: 'GRATUITO', hasCertificate: true, color: '#FF6BCA',
-  mod1: '', mod2: '', mod3: ''
-})
+const novaTrilha = ref(defaultTrackForm())
 // SERVIÇOS / EIXOS DE AÇÃO
 const servicosConfigData = ref({
   pageTitle1: '', pageTitle2: '', cardButton: '', ctaTitle: '', ctaDesc: '', ctaButton: '',
   newsletterEyebrow: '', newsletterTitle: '', newsletterDesc: '', newsletterBtn: ''
 })
 const servicos = ref(siteContent.services || [])
-const novoServico = ref({ title: '', description: '', icon: 'Zap', bg: '#FF6BCA', textColor: '#FFFFFF' })
+const novoServico = ref(defaultServiceForm())
 // BIBLIOTECA
 const bibliotecaConfigData = ref({
   pageTitle1: '', pageTitle2: '', pageSubtitle: '', searchPlaceholder: '', filterLabel: '',
   btnDownload: '', btnSource: '', emptyTitle: '', emptyDesc: '', emptyBtn: ''
 })
 const docs = ref(siteContent.library || [])
-const novoDoc = ref({ title: '', description: '', category: 'Relatório', fileUrl: '', externalLink: '' })
+const novoDoc = ref(defaultDocForm())
 
 // SOBRE MIM
 const sobreData = ref({ 
@@ -263,41 +293,105 @@ const saveHome = async () => {
   }
 }
 
-const saveArtigo = async () => {
-  if (!novoArtigo.value.title && !novoArtigo.value.content) {
-    isSaving.value = true
+const saveArticlesConfig = async () => {
+  isSaving.value = true
+  try {
     Object.assign(siteContent.articlesConfig, articlesConfigData.value)
-    if (supabase) {
-      await supabase.from('site_settings').upsert({ key: 'articlesConfig', value: articlesConfigData.value })
-    }
+    await persistSiteSetting('articlesConfig', articlesConfigData.value)
     setTimeout(() => { isSaving.value = false; alert('Configurações da Página salvas!') }, 400)
-    return
+  } catch (e) {
+    console.error(e)
+    isSaving.value = false
+    alert('Erro ao salvar configurações: ' + (e.message || e))
   }
+}
 
+const resetArtigoForm = () => {
+  novoArtigo.value = defaultArticleForm()
+  editingArtigoId.value = null
+}
+
+const editArtigo = (art) => {
+  editingArtigoId.value = art.id
+  novoArtigo.value = {
+    title: art.title || '',
+    subtitle: art.subtitle || art.excerpt || '',
+    author: art.author || '',
+    type: art.type || 'Artigo',
+    category: art.category || '',
+    featured: Boolean(art.featured),
+    content: art.content || '',
+    image: art.image || ''
+  }
+  scrollToForm('article-editor-form')
+}
+
+const previewArtigo = (id) => {
+  const href = router.resolve({ name: 'content-detail', params: { id } }).href
+  window.open(href, '_blank')
+}
+
+const saveArtigo = async () => {
   if (!novoArtigo.value.title) {
     alert("O título do artigo é obrigatório.")
     return
   }
   isSaving.value = true
   try {
+    if (!siteContent.posts) siteContent.posts = []
+    const existing = siteContent.posts.find(p => String(p.id) === String(editingArtigoId.value))
     const payload = {
       ...novoArtigo.value,
-      date: new Date().toISOString()
+      excerpt: novoArtigo.value.subtitle,
+      date: existing?.date || new Date().toISOString()
     }
-    
+    let savedArticle = { ...payload, id: editingArtigoId.value || Date.now() }
+
     if (supabase) {
-      const { error } = await supabase.from('articles').insert([payload])
+      const { data, error } = isEditingArtigo.value
+        ? await supabase.from('articles').update(payload).eq('id', editingArtigoId.value).select().maybeSingle()
+        : await supabase.from('articles').insert([payload]).select().maybeSingle()
       if (error) throw error
+      savedArticle = { ...savedArticle, ...(data || {}) }
     }
-    
-    siteContent.posts.unshift({ ...payload, id: Date.now() })
-    novoArtigo.value = { title: '', subtitle: '', author: '', type: 'Artigo', category: '', featured: false, content: '', image: '' }
-    isSaving.value = false 
-    alert('Artigo publicado com sucesso!') 
-  } catch(e) { 
+
+    savedArticle.subtitle = savedArticle.subtitle || savedArticle.excerpt || ''
+    savedArticle.excerpt = savedArticle.excerpt || savedArticle.subtitle || ''
+
+    const wasEditing = isEditingArtigo.value
+    if (wasEditing) {
+      const index = siteContent.posts.findIndex(p => String(p.id) === String(editingArtigoId.value))
+      if (index !== -1) siteContent.posts.splice(index, 1, savedArticle)
+    } else {
+      siteContent.posts.unshift(savedArticle)
+    }
+    artigos.value = siteContent.posts
+    resetArtigoForm()
+    isSaving.value = false
+    alert(wasEditing ? 'Artigo atualizado com sucesso!' : 'Artigo publicado com sucesso!')
+  } catch(e) {
     console.error(e)
     isSaving.value = false
-    alert('Erro ao publicar artigo: ' + (e.message || e)) 
+    alert('Erro ao salvar artigo: ' + (e.message || e))
+  }
+}
+
+const deleteArtigo = async (art) => {
+  if (!confirm(`Excluir o artigo "${art.title}"?`)) return
+  isSaving.value = true
+  try {
+    if (supabase) {
+      const { error } = await supabase.from('articles').delete().eq('id', art.id)
+      if (error) throw error
+    }
+    siteContent.posts = (siteContent.posts || []).filter(p => String(p.id) !== String(art.id))
+    artigos.value = siteContent.posts
+    if (String(editingArtigoId.value) === String(art.id)) resetArtigoForm()
+    isSaving.value = false
+  } catch (e) {
+    console.error(e)
+    isSaving.value = false
+    alert('Erro ao excluir artigo: ' + (e.message || e))
   }
 }
 
@@ -322,31 +416,85 @@ const saveSettings = async () => {
   } catch(e) { console.error(e); isSaving.value = false; }
 }
 
-const saveVaga = async () => {
-  if (!novaVaga.value.title && !novaVaga.value.description) {
-    isSaving.value = true
+const saveOpportunitiesConfig = async () => {
+  isSaving.value = true
+  try {
     Object.assign(siteContent.opportunitiesConfig, oppsConfigData.value)
-    if (supabase) {
-      await supabase.from('site_settings').upsert({ key: 'opportunitiesConfig', value: oppsConfigData.value })
-    }
+    await persistSiteSetting('opportunitiesConfig', oppsConfigData.value)
     setTimeout(() => { isSaving.value = false; alert('Configurações do Hub salvas!') }, 400)
-    return
+  } catch (e) {
+    console.error(e)
+    isSaving.value = false
+    alert('Erro ao salvar configurações: ' + (e.message || e))
   }
+}
 
+const resetVagaForm = () => {
+  novaVaga.value = defaultOpportunityForm()
+  editingVagaId.value = null
+}
+
+const editVaga = (vaga) => {
+  editingVagaId.value = vaga.id
+  novaVaga.value = {
+    title: vaga.title || '',
+    category: vaga.category || 'Vagas de Emprego',
+    type: vaga.type || 'Remoto',
+    location: vaga.location || '',
+    deadline: vaga.deadline || '',
+    link: vaga.link || '',
+    description: vaga.description || '',
+    fullDescription: vaga.fullDescription || ''
+  }
+  scrollToForm('opportunity-editor-form')
+}
+
+const previewVaga = (id) => {
+  const href = router.resolve({ name: 'opportunity-detail', params: { id } }).href
+  window.open(href, '_blank')
+}
+
+const saveVaga = async () => {
   if (!novaVaga.value.title) {
     alert("O título da vaga é obrigatório.")
     return
   }
   isSaving.value = true
   try {
-    const payload = { ...novaVaga.value, id: Date.now() }
-    siteContent.opportunities.unshift(payload)
-    if (supabase) {
-      await supabase.from('site_settings').upsert({ key: 'opportunities', value: siteContent.opportunities })
+    if (!siteContent.opportunities) siteContent.opportunities = []
+    const payload = { ...novaVaga.value, id: editingVagaId.value || Date.now() }
+    const wasEditing = isEditingVaga.value
+    if (wasEditing) {
+      const index = siteContent.opportunities.findIndex(v => String(v.id) === String(editingVagaId.value))
+      if (index !== -1) siteContent.opportunities.splice(index, 1, payload)
+    } else {
+      siteContent.opportunities.unshift(payload)
     }
-    novaVaga.value = { title: '', category: 'Vagas de Emprego', type: 'Remoto', location: '', deadline: '', link: '', description: '', fullDescription: '' }
-    setTimeout(() => { isSaving.value = false; alert('Oportunidade salva!') }, 400)
-  } catch(e) { console.error(e); isSaving.value = false; }
+    vagas.value = siteContent.opportunities
+    await persistSiteSetting('opportunities', siteContent.opportunities)
+    resetVagaForm()
+    setTimeout(() => { isSaving.value = false; alert(wasEditing ? 'Oportunidade atualizada!' : 'Oportunidade salva!') }, 400)
+  } catch(e) {
+    console.error(e)
+    isSaving.value = false
+    alert('Erro ao salvar oportunidade: ' + (e.message || e))
+  }
+}
+
+const deleteVaga = async (vaga) => {
+  if (!confirm(`Excluir a oportunidade "${vaga.title}"?`)) return
+  isSaving.value = true
+  try {
+    siteContent.opportunities = (siteContent.opportunities || []).filter(v => String(v.id) !== String(vaga.id))
+    vagas.value = siteContent.opportunities
+    await persistSiteSetting('opportunities', siteContent.opportunities)
+    if (String(editingVagaId.value) === String(vaga.id)) resetVagaForm()
+    isSaving.value = false
+  } catch (e) {
+    console.error(e)
+    isSaving.value = false
+    alert('Erro ao excluir oportunidade: ' + (e.message || e))
+  }
 }
 
 const saveTrilha = async () => {
@@ -368,12 +516,40 @@ const saveTrilha = async () => {
     }
     if (!siteContent.tracks) siteContent.tracks = []
     siteContent.tracks.push(payload)
-    if (supabase) {
-      await supabase.from('site_settings').upsert({ key: 'tracks', value: siteContent.tracks })
-    }
-    novaTrilha.value = { name: '', description: '', hours: '', status: 'GRATUITO', hasCertificate: true, color: '#FF6BCA', mod1: '', mod2: '', mod3: '' }
+    await persistSiteSetting('tracks', siteContent.tracks)
+    novaTrilha.value = defaultTrackForm()
     setTimeout(() => { isSaving.value = false; alert('Trilha salva!') }, 400)
   } catch(e) { console.error(e); isSaving.value = false; }
+}
+
+const saveServicesConfig = async () => {
+  isSaving.value = true
+  try {
+    Object.assign(siteContent.servicesConfig, servicosConfigData.value)
+    await persistSiteSetting('servicesConfig', servicosConfigData.value)
+    setTimeout(() => { isSaving.value = false; alert('Configurações da página salvas!') }, 400)
+  } catch (e) {
+    console.error(e)
+    isSaving.value = false
+    alert('Erro ao salvar configurações: ' + (e.message || e))
+  }
+}
+
+const resetServicoForm = () => {
+  novoServico.value = defaultServiceForm()
+  editingServicoId.value = null
+}
+
+const editServico = (srv) => {
+  editingServicoId.value = srv.id
+  novoServico.value = {
+    title: srv.title || '',
+    description: srv.description || '',
+    icon: srv.icon || 'Zap',
+    bg: srv.bg || '#FF6BCA',
+    textColor: srv.textColor || '#FFFFFF'
+  }
+  scrollToForm('service-editor-form')
 }
 
 const saveServico = async () => {
@@ -383,17 +559,51 @@ const saveServico = async () => {
   }
   isSaving.value = true
   try {
-    const payload = { ...novoServico.value, id: Date.now() }
-    siteContent.services.push(payload)
-    
-    if (supabase) {
-      await supabase.from('site_settings').upsert({ key: 'services', value: siteContent.services })
-      await supabase.from('site_settings').upsert({ key: 'servicesConfig', value: servicosConfigData.value })
+    if (!siteContent.services) siteContent.services = []
+    const payload = { ...novoServico.value, id: editingServicoId.value || Date.now() }
+    const wasEditing = isEditingServico.value
+    if (wasEditing) {
+      const index = siteContent.services.findIndex(s => String(s.id) === String(editingServicoId.value))
+      if (index !== -1) siteContent.services.splice(index, 1, payload)
+    } else {
+      siteContent.services.push(payload)
     }
+    
+    await persistSiteSetting('services', siteContent.services)
 
-    novoServico.value = { title: '', description: '', icon: 'Zap', bg: '#FF6BCA', textColor: '#FFFFFF' }
-    setTimeout(() => { isSaving.value = false; alert('Eixo de Ação e Configurações Salvos!') }, 400)
+    resetServicoForm()
+    setTimeout(() => { isSaving.value = false; alert(wasEditing ? 'Eixo atualizado!' : 'Eixo cadastrado!') }, 400)
   } catch(e) { console.error(e); isSaving.value = false; }
+}
+
+const saveLibraryConfig = async () => {
+  isSaving.value = true
+  try {
+    Object.assign(siteContent.libraryConfig, bibliotecaConfigData.value)
+    await persistSiteSetting('libraryConfig', bibliotecaConfigData.value)
+    setTimeout(() => { isSaving.value = false; alert('Configurações da biblioteca salvas!') }, 400)
+  } catch (e) {
+    console.error(e)
+    isSaving.value = false
+    alert('Erro ao salvar configurações: ' + (e.message || e))
+  }
+}
+
+const resetDocForm = () => {
+  novoDoc.value = defaultDocForm()
+  editingDocId.value = null
+}
+
+const editDoc = (doc) => {
+  editingDocId.value = doc.id
+  novoDoc.value = {
+    title: doc.title || '',
+    description: doc.description || '',
+    category: doc.category || 'Relatório',
+    fileUrl: doc.fileUrl || '',
+    externalLink: doc.externalLink || ''
+  }
+  scrollToForm('library-editor-form')
 }
 
 const saveBiblioteca = async () => {
@@ -403,34 +613,65 @@ const saveBiblioteca = async () => {
   }
   isSaving.value = true
   try {
-    const payload = { ...novoDoc.value, id: Date.now() }
     if (!siteContent.library) siteContent.library = []
-    siteContent.library.push(payload)
-    
-    if (supabase) {
-      await supabase.from('site_settings').upsert({ key: 'library', value: siteContent.library })
-      await supabase.from('site_settings').upsert({ key: 'libraryConfig', value: bibliotecaConfigData.value })
+    const payload = { ...novoDoc.value, id: editingDocId.value || Date.now() }
+    const wasEditing = isEditingDoc.value
+    if (wasEditing) {
+      const index = siteContent.library.findIndex(d => String(d.id) === String(editingDocId.value))
+      if (index !== -1) siteContent.library.splice(index, 1, payload)
+    } else {
+      siteContent.library.push(payload)
     }
+    
+    await persistSiteSetting('library', siteContent.library)
 
-    novoDoc.value = { title: '', description: '', category: 'Relatório', fileUrl: '', externalLink: '' }
-    setTimeout(() => { isSaving.value = false; alert('Biblioteca Atualizada!') }, 400)
+    resetDocForm()
+    setTimeout(() => { isSaving.value = false; alert(wasEditing ? 'Documento atualizado!' : 'Documento cadastrado!') }, 400)
   } catch(e) { console.error(e); isSaving.value = false; }
 }
 
-const deleteServico = (id) => {
-  if (confirm('Tem certeza que deseja excluir este eixo?')) {
-    siteContent.services = siteContent.services.filter(s => s.id !== id)
+const deleteServico = async (id) => {
+  if (!confirm('Tem certeza que deseja excluir este eixo?')) return
+  isSaving.value = true
+  try {
+    siteContent.services = (siteContent.services || []).filter(s => String(s.id) !== String(id))
+    await persistSiteSetting('services', siteContent.services)
+    if (String(editingServicoId.value) === String(id)) resetServicoForm()
+    isSaving.value = false
+  } catch (e) {
+    console.error(e)
+    isSaving.value = false
+    alert('Erro ao excluir eixo: ' + (e.message || e))
   }
 }
 
-const deleteDoc = (id) => {
-  if (confirm('Tem certeza que deseja excluir este documento?')) {
-    siteContent.library = siteContent.library.filter(d => d.id !== id)
+const deleteDoc = async (id) => {
+  if (!confirm('Tem certeza que deseja excluir este documento?')) return
+  isSaving.value = true
+  try {
+    siteContent.library = (siteContent.library || []).filter(d => String(d.id) !== String(id))
+    await persistSiteSetting('library', siteContent.library)
+    if (String(editingDocId.value) === String(id)) resetDocForm()
+    isSaving.value = false
+  } catch (e) {
+    console.error(e)
+    isSaving.value = false
+    alert('Erro ao excluir documento: ' + (e.message || e))
   }
 }
 
-const deleteTrilha = (id) => {
-  window.open('/', '_blank')
+const deleteTrilha = async (id) => {
+  if (!confirm('Tem certeza que deseja excluir esta trilha?')) return
+  isSaving.value = true
+  try {
+    siteContent.tracks = (siteContent.tracks || []).filter(t => String(t.id) !== String(id))
+    await persistSiteSetting('tracks', siteContent.tracks)
+    isSaving.value = false
+  } catch (e) {
+    console.error(e)
+    isSaving.value = false
+    alert('Erro ao excluir trilha: ' + (e.message || e))
+  }
 }
 
 const handleLogout = () => {
@@ -744,13 +985,18 @@ onMounted(() => {
                 <input v-model="articlesConfigData.newsletterDesc" type="text" placeholder="Ex: Receba nossa curadoria..." />
              </div>
           </div>
-          <button class="btn-save-brutal" @click="saveArtigo" :disabled="isSaving">
+          <button class="btn-save-brutal" @click="saveArticlesConfig" :disabled="isSaving">
              <Save :size="18" /> SALVAR TEXTOS DA PÁGINA
           </button>
         </div>
 
-        <div class="editor-card-brutal shadow-solid mb-10">
-          <h2 class="card-label-black mb-8">PUBLICAR NOVO ARTIGO</h2>
+        <div id="article-editor-form" class="editor-card-brutal shadow-solid mb-10">
+          <div class="pane-header mb-8">
+            <h2 class="card-label-black mb-0">{{ isEditingArtigo ? 'EDITAR ARTIGO PUBLICADO' : 'PUBLICAR NOVO ARTIGO' }}</h2>
+            <button v-if="isEditingArtigo" class="btn-tool-sm" @click="resetArtigoForm">
+              <X :size="14" /> CANCELAR EDIÇÃO
+            </button>
+          </div>
           <div class="input-group mb-6">
              <label>TÍTULO DO ARTIGO</label>
              <input v-model="novoArtigo.title" type="text" class="input-large" />
@@ -824,7 +1070,9 @@ onMounted(() => {
              </div>
           </div>
           <button class="btn-save-brutal" @click="saveArtigo" :disabled="isSaving">
-             <Plus :size="18" /> PUBLICAR ARTIGO
+             <Save v-if="isEditingArtigo" :size="18" />
+             <Plus v-else :size="18" />
+             {{ isEditingArtigo ? 'SALVAR ALTERAÇÕES DO ARTIGO' : 'PUBLICAR ARTIGO' }}
           </button>
         </div>
 
@@ -843,7 +1091,9 @@ onMounted(() => {
               </thead>
               <tbody>
                  <tr v-for="art in siteContent.posts" :key="art.id">
-                    <td class="font-bold">{{ art.title }}</td>
+                    <td class="font-bold">
+                       <button class="table-title-btn" @click="editArtigo(art)">{{ art.title }}</button>
+                    </td>
                     <td>{{ art.author }}</td>
                     <td>{{ art.type }} <span class="opacity-50">({{ art.category }})</span></td>
                     <td>
@@ -851,8 +1101,9 @@ onMounted(() => {
                        <span v-else class="badge-normal">NÃO</span>
                     </td>
                     <td class="actions-td">
-                       <button class="icon-action"><Edit :size="16" /></button>
-                       <button class="icon-action text-red-500"><Trash :size="16" /></button>
+                       <button class="icon-action" title="Abrir no site" @click="previewArtigo(art.id)"><ExternalLink :size="16" /></button>
+                       <button class="icon-action" title="Editar" @click="editArtigo(art)"><Edit :size="16" /></button>
+                       <button class="icon-action text-red-500" title="Excluir" @click="deleteArtigo(art)"><Trash :size="16" /></button>
                     </td>
                  </tr>
                  <tr v-if="siteContent.posts.length === 0">
@@ -908,13 +1159,18 @@ onMounted(() => {
                 <input v-model="oppsConfigData.detailStatusBadge" type="text" placeholder="Ex: INSCRIÇÕES ABERTAS" />
              </div>
           </div>
-          <button class="btn-save-brutal" @click="saveVaga" :disabled="isSaving">
+          <button class="btn-save-brutal" @click="saveOpportunitiesConfig" :disabled="isSaving">
              <Save :size="18" /> SALVAR CONFIGURAÇÕES DO HUB
           </button>
         </div>
 
-        <div class="editor-card-brutal shadow-solid mb-10">
-          <h2 class="card-label-black mb-8">CADASTRAR OPORTUNIDADE</h2>
+        <div id="opportunity-editor-form" class="editor-card-brutal shadow-solid mb-10">
+          <div class="pane-header mb-8">
+            <h2 class="card-label-black mb-0">{{ isEditingVaga ? 'EDITAR OPORTUNIDADE' : 'CADASTRAR OPORTUNIDADE' }}</h2>
+            <button v-if="isEditingVaga" class="btn-tool-sm" @click="resetVagaForm">
+              <X :size="14" /> CANCELAR EDIÇÃO
+            </button>
+          </div>
           <div class="form-grid-2 mb-6">
              <div class="input-group">
                 <label>TÍTULO DA VAGA / OPORTUNIDADE</label>
@@ -959,7 +1215,11 @@ onMounted(() => {
              <label>LINK PARA INSCRIÇÃO</label>
              <input v-model="novaVaga.link" type="url" placeholder="https://..." />
           </div>
-          <button class="btn-save-brutal" @click="saveVaga" :disabled="isSaving"><Plus :size="18" /> ADICIONAR OPORTUNIDADE</button>
+          <button class="btn-save-brutal" @click="saveVaga" :disabled="isSaving">
+            <Save v-if="isEditingVaga" :size="18" />
+            <Plus v-else :size="18" />
+            {{ isEditingVaga ? 'SALVAR ALTERAÇÕES DA OPORTUNIDADE' : 'ADICIONAR OPORTUNIDADE' }}
+          </button>
         </div>
 
         <div class="editor-card-brutal shadow-solid">
@@ -975,12 +1235,15 @@ onMounted(() => {
               </thead>
               <tbody>
                  <tr v-for="vaga in siteContent.opportunities" :key="vaga.id">
-                    <td class="font-bold">{{ vaga.title }}</td>
+                    <td class="font-bold">
+                       <button class="table-title-btn" @click="editVaga(vaga)">{{ vaga.title }}</button>
+                    </td>
                     <td>{{ vaga.category }}</td>
                     <td>{{ vaga.deadline }}</td>
                     <td class="actions-td">
-                       <button class="icon-action"><Edit :size="16" /></button>
-                       <button class="icon-action text-red-500"><Trash :size="16" /></button>
+                       <button class="icon-action" title="Abrir no site" @click="previewVaga(vaga.id)"><ExternalLink :size="16" /></button>
+                       <button class="icon-action" title="Editar" @click="editVaga(vaga)"><Edit :size="16" /></button>
+                       <button class="icon-action text-red-500" title="Excluir" @click="deleteVaga(vaga)"><Trash :size="16" /></button>
                     </td>
                  </tr>
               </tbody>
@@ -1070,7 +1333,7 @@ onMounted(() => {
                     </td>
                     <td>{{ t.hasCertificate ? 'SIM' : 'NÃO' }}</td>
                     <td class="actions-td">
-                       <button class="icon-action text-red-500"><Trash :size="16" /></button>
+                       <button class="icon-action text-red-500" title="Excluir" @click="deleteTrilha(t.id)"><Trash :size="16" /></button>
                     </td>
                  </tr>
                  <tr v-if="!siteContent.tracks || siteContent.tracks.length === 0">
@@ -1129,11 +1392,16 @@ onMounted(() => {
                 <input v-model="bibliotecaConfigData.btnSource" type="text" placeholder="Ex: FONTE" />
              </div>
           </div>
-          <button class="btn-save-brutal" @click="saveBiblioteca" :disabled="isSaving"><Save :size="18" /> SALVAR CONFIGURAÇÕES DA PÁGINA</button>
+          <button class="btn-save-brutal" @click="saveLibraryConfig" :disabled="isSaving"><Save :size="18" /> SALVAR CONFIGURAÇÕES DA PÁGINA</button>
         </div>
 
-        <div class="editor-card-brutal shadow-solid mb-10">
-          <h2 class="card-label-black mb-8">ADICIONAR DOCUMENTO</h2>
+        <div id="library-editor-form" class="editor-card-brutal shadow-solid mb-10">
+          <div class="pane-header mb-8">
+            <h2 class="card-label-black mb-0">{{ isEditingDoc ? 'EDITAR DOCUMENTO' : 'ADICIONAR DOCUMENTO' }}</h2>
+            <button v-if="isEditingDoc" class="btn-tool-sm" @click="resetDocForm">
+              <X :size="14" /> CANCELAR EDIÇÃO
+            </button>
+          </div>
           <div class="form-grid-2 mb-6">
              <div class="input-group">
                 <label>TÍTULO DO DOCUMENTO</label>
@@ -1162,7 +1430,11 @@ onMounted(() => {
                 <input v-model="novoDoc.externalLink" type="url" placeholder="https://" />
              </div>
           </div>
-          <button class="btn-save-brutal" @click="saveBiblioteca" :disabled="isSaving"><Plus :size="18" /> CADASTRAR DOCUMENTO</button>
+          <button class="btn-save-brutal" @click="saveBiblioteca" :disabled="isSaving">
+            <Save v-if="isEditingDoc" :size="18" />
+            <Plus v-else :size="18" />
+            {{ isEditingDoc ? 'SALVAR ALTERAÇÕES DO DOCUMENTO' : 'CADASTRAR DOCUMENTO' }}
+          </button>
         </div>
 
         <div class="editor-card-brutal shadow-solid">
@@ -1177,10 +1449,12 @@ onMounted(() => {
               </thead>
               <tbody>
                  <tr v-for="doc in siteContent.library" :key="doc.id">
-                    <td class="font-bold">{{ doc.title }}</td>
+                    <td class="font-bold">
+                       <button class="table-title-btn" @click="editDoc(doc)">{{ doc.title }}</button>
+                    </td>
                     <td><span class="badge-normal">{{ doc.category }}</span></td>
                     <td class="actions-td">
-                       <button class="icon-action"><Edit :size="16" /></button>
+                       <button class="icon-action" title="Editar" @click="editDoc(doc)"><Edit :size="16" /></button>
                        <button class="icon-action text-red-500" @click="deleteDoc(doc.id)"><Trash :size="16" /></button>
                     </td>
                  </tr>
@@ -1598,11 +1872,16 @@ onMounted(() => {
                 <input v-model="servicosConfigData.newsletterBtn" type="text" placeholder="Ex: QUERO FAZER PARTE" />
              </div>
           </div>
-          <button class="btn-save-brutal" @click="saveServico" :disabled="isSaving"><Save :size="18" /> SALVAR CONFIGURAÇÕES DA PÁGINA</button>
+          <button class="btn-save-brutal" @click="saveServicesConfig" :disabled="isSaving"><Save :size="18" /> SALVAR CONFIGURAÇÕES DA PÁGINA</button>
         </div>
 
-        <div class="editor-card-brutal shadow-solid mb-10">
-          <h2 class="card-label-black mb-8">ADICIONAR EIXO DE AÇÃO / SERVIÇO</h2>
+        <div id="service-editor-form" class="editor-card-brutal shadow-solid mb-10">
+          <div class="pane-header mb-8">
+            <h2 class="card-label-black mb-0">{{ isEditingServico ? 'EDITAR EIXO DE AÇÃO / SERVIÇO' : 'ADICIONAR EIXO DE AÇÃO / SERVIÇO' }}</h2>
+            <button v-if="isEditingServico" class="btn-tool-sm" @click="resetServicoForm">
+              <X :size="14" /> CANCELAR EDIÇÃO
+            </button>
+          </div>
           <div class="form-grid-2 mb-6">
              <div class="input-group">
                 <label>TÍTULO DO EIXO</label>
@@ -1643,7 +1922,11 @@ onMounted(() => {
              <label>DESCRIÇÃO CURTA</label>
              <textarea v-model="novoServico.description" rows="3" placeholder="Resumo do que o eixo entrega..."></textarea>
           </div>
-          <button class="btn-save-brutal" @click="saveServico" :disabled="isSaving"><Plus :size="18" /> CADASTRAR EIXO</button>
+          <button class="btn-save-brutal" @click="saveServico" :disabled="isSaving">
+            <Save v-if="isEditingServico" :size="18" />
+            <Plus v-else :size="18" />
+            {{ isEditingServico ? 'SALVAR ALTERAÇÕES DO EIXO' : 'CADASTRAR EIXO' }}
+          </button>
         </div>
 
         <div class="editor-card-brutal shadow-solid">
@@ -1659,11 +1942,13 @@ onMounted(() => {
               </thead>
               <tbody>
                  <tr v-for="srv in siteContent.services" :key="srv.id">
-                    <td class="font-bold">{{ srv.title }}</td>
+                    <td class="font-bold">
+                       <button class="table-title-btn" @click="editServico(srv)">{{ srv.title }}</button>
+                    </td>
                     <td><span class="badge-pill" :style="{ background: srv.bg, color: srv.textColor }">{{ srv.icon }}</span></td>
                     <td>{{ srv.description ? srv.description.substring(0, 30) + '...' : '' }}</td>
                     <td class="actions-td">
-                       <button class="icon-action"><Edit :size="16" /></button>
+                       <button class="icon-action" title="Editar" @click="editServico(srv)"><Edit :size="16" /></button>
                        <button class="icon-action text-red-500" @click="deleteServico(srv.id)"><Trash :size="16" /></button>
                     </td>
                  </tr>
@@ -2050,6 +2335,19 @@ onMounted(() => {
 .badge-normal { background: #FFF; color: #1C1C1C; padding: 6px 12px; border-radius: 8px; font-weight: 900; font-family: "Archivo Black"; font-size: 10px; border: 2px solid #1C1C1C; }
 .badge-pill { padding: 8px 16px; border-radius: 12px; font-weight: 900; font-family: "Archivo Black"; font-size: 11px; display: inline-block; border: 2px solid #1C1C1C; }
 
+.table-title-btn {
+  appearance: none;
+  background: transparent;
+  border: 0;
+  padding: 0;
+  font: inherit;
+  font-weight: 900;
+  color: #1C1C1C;
+  text-align: left;
+  cursor: pointer;
+}
+.table-title-btn:hover { color: #3D78E0; text-decoration: underline; text-underline-offset: 4px; }
+
 .actions-td { display: flex; gap: 15px; }
 .icon-action { background: #FFF; border: 3px solid #1C1C1C; width: 40px; height: 40px; border-radius: 12px; cursor: pointer; color: #1C1C1C; display: flex; align-items: center; justify-content: center; transition: all 0.2s; box-shadow: 4px 4px 0px rgba(0,0,0,0.1); }
 .icon-action:hover { background: #FFE65A; transform: translate(-2px, -2px); box-shadow: 6px 6px 0px #1C1C1C; }
@@ -2166,6 +2464,7 @@ onMounted(() => {
 
 /* CLASSES UTILITÁRIAS FALTANTES */
 .mb-6 { margin-bottom: 1.5rem; }
+.mb-0 { margin-bottom: 0; }
 .mb-8 { margin-bottom: 2.5rem; }
 .mb-10 { margin-bottom: 3.5rem; }
 .mb-12 { margin-bottom: 4rem; }

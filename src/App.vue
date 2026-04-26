@@ -105,12 +105,6 @@ watch(() => route.path, () => {
 onMounted(async () => {
   window.addEventListener('scroll', handleScroll)
   
-  // Se já temos os posts carregados, não precisamos mostrar o loader longo
-  if (siteContent.posts && siteContent.posts.length > 0) {
-    isLoading.value = false
-    return
-  }
-
   try {
     applySettings()
     await fetchAllContent()
