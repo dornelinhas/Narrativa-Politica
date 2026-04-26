@@ -107,6 +107,41 @@ const articlesConfigData = ref({
 // EDITORIAL
 const artigos = ref(siteContent.posts || [])
 const novoArtigo = ref(defaultArticleForm())
+const categoriasDisponiveis = ref(['Mobilização', 'Educação', 'Clima', 'Notícias', 'Análise'])
+const isGeneratingSummary = ref(false)
+
+const adicionarNovaCategoria = () => {
+  const nova = prompt("Digite o nome da nova categoria:")
+  if (nova && !categoriasDisponiveis.value.includes(nova)) {
+    categoriasDisponiveis.value.push(nova)
+    novoArtigo.value.category = nova
+  }
+}
+
+const gerarResumoIA = async () => {
+  if (!novoArtigo.value.content || novoArtigo.value.content.length < 100) {
+    alert("Escreva pelo menos um pouco do artigo primeiro para que a IA possa resumir!")
+    return
+  }
+  
+  isGeneratingSummary.value = true
+  
+  // Simulando processamento de IA (Prompts Estratégicos)
+  // Em uma versão futura, isso pode se conectar a uma API real de LLM
+  setTimeout(() => {
+    const textoLimpo = novoArtigo.value.content.replace(/<[^>]*>/g, '') // Remove HTML
+    const frases = textoLimpo.split(/[.!?]/).filter(f => f.trim().length > 20)
+    
+    if (frases.length > 0) {
+      // Pega as primeiras frases e formata como provocação
+      const base = frases[0].trim()
+      const resumo = base.length > 150 ? base.substring(0, 147) + '...' : base
+      novoArtigo.value.subtitle = resumo + " Uma análise profunda sobre o impacto dessas estruturas no território."
+    }
+    
+    isGeneratingSummary.value = false
+  }, 1200)
+}
 // VAGAS E OPORTUNIDADES
 const oppsConfigData = ref({
   pageTitle1: '', pageTitle2: '', searchPlaceholder: '', toggleText: '',
@@ -1066,8 +1101,11 @@ onMounted(() => {
              <div class="input-group">
                 <label>CATEGORIA</label>
                 <div class="category-pill-group">
-                   <button v-for="cat in ['Mobilização', 'Educação', 'Clima', 'Notícias', 'Análise']" :key="cat" class="cat-pill" :class="{ active: novoArtigo.category === cat }" @click.prevent="novoArtigo.category = cat">
+                   <button v-for="cat in categoriasDisponiveis" :key="cat" class="cat-pill" :class="{ active: novoArtigo.category === cat }" @click.prevent="novoArtigo.category = cat">
                      {{ cat }}
+                   </button>
+                   <button class="cat-pill btn-add-cat" @click.prevent="adicionarNovaCategoria">
+                     <Plus :size="14" /> NOVA
                    </button>
                 </div>
              </div>
@@ -1083,7 +1121,12 @@ onMounted(() => {
           </div>
 
           <div class="input-group mb-6">
-             <label>RESUMO ESTRATÉGICO (APARECE NOS CARDS)</label>
+             <div class="flex justify-between items-center mb-2">
+                <label class="mb-0">RESUMO ESTRATÉGICO (APARECE NOS CARDS)</label>
+                <button @click.prevent="gerarResumoIA" class="btn-tool-sm bg-yellow border-dark" :disabled="isGeneratingSummary">
+                   <Zap :size="12" /> {{ isGeneratingSummary ? 'GERANDO...' : 'GERAR COM IA' }}
+                </button>
+             </div>
              <textarea v-model="novoArtigo.subtitle" rows="2" placeholder="Uma breve provocação para atrair o leitor..."></textarea>
           </div>
 
