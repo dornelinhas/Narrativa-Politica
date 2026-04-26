@@ -48,6 +48,8 @@ CREATE TABLE IF NOT EXISTS articles (
   status TEXT CHECK (status IN ('rascunho', 'publicado')) DEFAULT 'rascunho',
   date TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()),
   "references" TEXT, -- Referências bibliográficas ou links
+  "imageCaption" TEXT, -- Legenda da imagem de capa
+  "highlightQuote" TEXT, -- Citação em destaque
   created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
 );
 
@@ -72,6 +74,9 @@ BEGIN
   END IF;
   IF NOT EXISTS (SELECT 1 FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='articles' AND COLUMN_NAME='imageDescription') THEN
     ALTER TABLE articles ADD COLUMN "imageDescription" TEXT;
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='articles' AND COLUMN_NAME='imageCaption') THEN
+    ALTER TABLE articles ADD COLUMN "imageCaption" TEXT;
   END IF;
   IF NOT EXISTS (SELECT 1 FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='articles' AND COLUMN_NAME='featured') THEN
     ALTER TABLE articles ADD COLUMN featured BOOLEAN DEFAULT false;
