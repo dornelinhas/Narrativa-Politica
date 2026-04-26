@@ -53,7 +53,7 @@
           </div>
           <div class="art-author-info">
             <span class="art-author-info__name">{{ authorProfile.name }}</span>
-            <span class="art-author-info__date">{{ formatDate(post.date) }} · {{ readingTime }} min de leitura</span>
+            <span class="art-author-info__date">{{ formatDate(post.date) }} · {{ post.reading_time || readingTime }} min de leitura</span>
           </div>
         </div>
         <div class="art-share-row">

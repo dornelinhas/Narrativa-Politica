@@ -415,11 +415,14 @@ const saveArtigo = async () => {
     if (!siteContent.posts) siteContent.posts = []
     const existing = siteContent.posts.find(p => String(p.id) === String(editingArtigoId.value))
     
-    // Preparar o payload para o Supabase (usando upsert para garantir persistência)
+    // Preparar o payload para o Supabase
+    const wordCount = novoArtigo.value.content ? novoArtigo.value.content.replace(/<[^>]*>/g, '').split(/\s+/).length : 0
+    const calcReadingTime = Math.max(1, Math.ceil(wordCount / 200))
+
     const payload = {
       title: novoArtigo.value.title,
       subtitle: novoArtigo.value.subtitle,
-      excerpt: novoArtigo.value.subtitle, // excerpt e subtitle são mantidos em sincronia
+      excerpt: novoArtigo.value.subtitle,
       author: novoArtigo.value.author,
       type: novoArtigo.value.type,
       category: novoArtigo.value.category,
@@ -430,10 +433,10 @@ const saveArtigo = async () => {
       imageCaption: novoArtigo.value.imageCaption,
       references: novoArtigo.value.references,
       highlightQuote: novoArtigo.value.highlightQuote,
+      reading_time: calcReadingTime, // Novo campo calculado
       date: existing?.date || new Date().toISOString()
     }
 
-    // Se estivermos editando, incluímos o ID no payload para o upsert funcionar como update
     if (editingArtigoId.value) {
       payload.id = editingArtigoId.value
     }
@@ -441,31 +444,20 @@ const saveArtigo = async () => {
     let savedArticle = { ...payload }
 
     if (supabase) {
-      // Usamos upsert em vez de update/insert separado para evitar problemas de ID não encontrado
       const { data, error } = await supabase.from('articles').upsert(payload).select().maybeSingle()
       if (error) throw error
       if (data) savedArticle = { ...data }
     } else {
-      // Fallback para memória se não houver supabase
       if (!savedArticle.id) savedArticle.id = Date.now()
     }
 
-    // Normalização básica pós-salvamento
-    savedArticle.subtitle = savedArticle.subtitle || savedArticle.excerpt || ''
-    savedArticle.excerpt = savedArticle.excerpt || savedArticle.subtitle || ''
-
-    const wasEditing = isEditingArtigo.value
-    if (wasEditing) {
-      const index = siteContent.posts.findIndex(p => String(p.id) === String(editingArtigoId.value))
-      if (index !== -1) siteContent.posts.splice(index, 1, savedArticle)
-    } else {
-      siteContent.posts.unshift(savedArticle)
-    }
-    
+    // Atualiza a lista global com segurança
+    await fetchAllContent() 
     artigos.value = [...siteContent.posts]
+    
     resetArtigoForm()
     isSaving.value = false
-    alert(wasEditing ? 'Artigo atualizado com sucesso!' : 'Artigo publicado com sucesso!')
+    alert(wasEditing ? 'Artigo atualizado!' : 'Artigo publicado com sucesso!')
   } catch(e) {
     console.error(e)
     isSaving.value = false
