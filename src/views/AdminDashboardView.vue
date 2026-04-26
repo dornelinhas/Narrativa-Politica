@@ -1689,8 +1689,8 @@ onMounted(() => {
                  <textarea v-model="novaNewsletter.descricao" rows="2" class="input-premium" placeholder="Um resumo magnético para atrair o clique..."></textarea>
               </div>
 
-              <div class="form-grid-2 mb-6">
-                 <div class="input-group">
+              <div class="input-group mb-8">
+                 <label>CONTEÚDO DA NEWSLETTER</label>
                  <BrutalEditor v-model="novaNewsletter.conteudo" />
               </div>
 
