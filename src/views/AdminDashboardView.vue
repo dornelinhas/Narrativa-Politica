@@ -1127,7 +1127,6 @@ onMounted(() => {
                    </div>
                 </aside>
              </div>
-          </div>
           <button class="btn-save-brutal" @click="saveArtigo" :disabled="isSaving">
              <Save v-if="isEditingArtigo" :size="18" />
              <Plus v-else :size="18" />
