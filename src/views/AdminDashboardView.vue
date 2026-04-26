@@ -263,12 +263,39 @@ const copyCaption = () => {
 
 // --- FUNÇÕES DE BANCO DE DADOS (SUPABASE) ---
 const loadData = async () => {
-  // Simulação de chamadas para o Supabase
+  isSaving.value = true
   try {
-    // const { data: hData } = await supabase.from('site_config').select('*').eq('page', 'home').single()
-    // if(hData) homeData.value = hData.content
+    await fetchAllContent()
+    // Sincroniza refs locais com o store reativo
+    artigos.value = siteContent.posts || []
+    vagas.value = siteContent.opportunities || []
+    trilhas.value = siteContent.tracks || []
+    servicos.value = siteContent.services || []
+    docs.value = siteContent.library || []
+    inscritos.value = siteContent.subscribers || []
+    newsletters.value = siteContent.newsletters || []
+    
+    // Atualiza outros dados de configuração
+    if (siteContent.home) Object.assign(homeData.value, siteContent.home)
+    if (siteContent.about) Object.assign(sobreData.value, siteContent.about)
+    if (siteContent.articlesConfig) Object.assign(articlesConfigData.value, siteContent.articlesConfig)
+    if (siteContent.opportunitiesConfig) Object.assign(oppsConfigData.value, siteContent.opportunitiesConfig)
+    if (siteContent.servicesConfig) Object.assign(servicosConfigData.value, siteContent.servicesConfig)
+    if (siteContent.libraryConfig) Object.assign(bibliotecaConfigData.value, siteContent.libraryConfig)
+    if (siteContent.donateConfig) {
+      const d = siteContent.donateConfig
+      donateConfigData.value = {
+        ...donateConfigData.value,
+        ...d,
+        statsLeaders: d.stats?.leaders || '',
+        statsCampaigns: d.stats?.campaigns || '',
+        statsReports: d.stats?.reports || ''
+      }
+    }
   } catch (error) {
-    console.error('Erro ao carregar dados', error)
+    console.error('Erro ao carregar dados do banco:', error)
+  } finally {
+    isSaving.value = false
   }
 }
 
@@ -1061,10 +1088,7 @@ onMounted(() => {
           </div>
 
           <div class="form-grid-2 mb-6">
-             <div class="input-group">
-                <label>URL DA IMAGEM DE CAPA</label>
-                <input v-model="novoArtigo.image" type="url" placeholder="https://images.unsplash.com/..." />
-             </div>
+             <ImageUploader v-model="novoArtigo.image" label="IMAGEM DE CAPA (UPLOAD)" />
              <div class="input-group">
                 <label>DESCRIÇÃO DA IMAGEM (ALT TEXT / ACESSIBILIDADE)</label>
                 <input v-model="novoArtigo.imageDescription" type="text" placeholder="Ex: Foto preto e branco de uma manifestação..." />

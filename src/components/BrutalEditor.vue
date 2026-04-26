@@ -1,6 +1,7 @@
 <script setup>
 import { ref, onMounted, watch } from 'vue'
 import { Bold, Italic, List, Heading2, Heading3, Image as ImageIcon, Type, Trash2 } from 'lucide-vue-next'
+import { uploadImage } from '../lib/supabaseStorage'
 
 const props = defineProps({
   modelValue: { type: String, default: '' },
@@ -58,14 +59,14 @@ const handlePaste = (e) => {
   }
 }
 
-const insertImage = (file) => {
-  const reader = new FileReader()
-  reader.onload = (e) => {
-    // Wrap image in a div to make it easier to manage if needed, 
-    // but execCommand insertImage is more standard for contenteditable
-    execCmd('insertImage', e.target.result)
+const insertImage = async (file) => {
+  try {
+    const publicUrl = await uploadImage(file, 'articles')
+    execCmd('insertImage', publicUrl)
+  } catch (err) {
+    console.error('Erro ao subir imagem do editor:', err)
+    alert('Erro ao subir imagem: ' + err.message)
   }
-  reader.readAsDataURL(file)
 }
 
 const triggerFileInput = () => {
