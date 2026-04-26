@@ -1,6 +1,7 @@
 <script setup>
 import { ref } from 'vue'
 import { uploadImage } from '../lib/supabaseStorage'
+import { UploadCloud } from 'lucide-vue-next'
 
 const props = defineProps({
   modelValue: { type: String, default: '' },
@@ -12,6 +13,7 @@ const emit = defineEmits(['update:modelValue'])
 const isDragging = ref(false)
 const fileInput = ref(null)
 const isUploading = ref(false)
+const localPreview = ref('')
 
 const handleDrop = async (e) => {
   isDragging.value = false
@@ -29,15 +31,25 @@ const handleFileSelect = async (e) => {
 
 const processFile = async (file) => {
   isUploading.value = true
+  localPreview.value = URL.createObjectURL(file) // Mostra preview local instantâneo
+  console.log('Iniciando processamento do arquivo:', file.name)
   try {
     const publicUrl = await uploadImage(file, 'uploads')
+    console.log('URL recebida do Supabase:', publicUrl)
+    localPreview.value = publicUrl // Atualiza para a URL final do servidor
     emit('update:modelValue', publicUrl)
   } catch (err) {
-    console.error('Erro no upload:', err)
-    alert('Erro ao subir imagem. Verifique se o bucket "media" foi criado no Supabase.')
+    console.error('Erro no processamento do arquivo:', err)
+    localPreview.value = '' 
+    alert(`Erro ao subir imagem: ${err.message || 'verifique se o bucket "media" foi criado no Supabase.'}`)
   } finally {
     isUploading.value = false
   }
+}
+
+const onImageError = (e) => {
+  console.error('Erro ao carregar a imagem do servidor:', e.target.src)
+  // Se a imagem do servidor falhou, podemos tentar manter a local ou mostrar erro
 }
 
 const triggerInput = () => {
@@ -70,8 +82,8 @@ const triggerInput = () => {
         <span>SUBINDO PARA O SERVIDOR...</span>
       </div>
 
-      <div v-else-if="modelValue" class="preview-container">
-        <img :src="modelValue" class="image-preview" />
+      <div v-else-if="modelValue || localPreview" class="preview-container">
+        <img :src="localPreview || modelValue" class="image-preview" @error="onImageError" />
         <div class="preview-overlay">
           <UploadCloud :size="24" />
           <span>Trocar imagem</span>
