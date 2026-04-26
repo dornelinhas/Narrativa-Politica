@@ -3,7 +3,7 @@ import { ref, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuth } from '../store/auth'
 import { supabase } from '../lib/supabase'
-import { Settings, LogOut, CheckCircle, Clock, Trash2, Home, Search, BookOpen, Briefcase, ChevronDown, Package, FileText, User, Mail, Folder, Download, Eye, Heart, Library, Save, Plus, Edit, Trash, Zap, Calendar, X, ExternalLink } from 'lucide-vue-next'
+import { Settings, LogOut, CheckCircle, Clock, Trash2, Home, Search, BookOpen, Briefcase, ChevronDown, Package, FileText, User, Mail, Folder, Download, Eye, Heart, Library, Save, Plus, Edit, Trash, Zap, Calendar, X, ExternalLink, ArrowUp } from 'lucide-vue-next'
 import BrutalEditor from '../components/BrutalEditor.vue'
 import ImageUploader from '../components/ImageUploader.vue'
 import { siteContent } from '../store/content'
@@ -175,6 +175,15 @@ const sobreData = ref({
 })
 
 import { sendNewsletterEmail } from '../lib/emailSender'
+
+const showScrollTop = ref(false)
+const handleAdminScroll = () => {
+  showScrollTop.value = window.scrollY > 400
+}
+const scrollToTop = () => {
+  window.scrollTo({ top: 0, behavior: 'smooth' })
+}
+import { onUnmounted } from 'vue'
 
 // --- FUNÇÕES DE NEWSLETTER ---
 const saveNewsletter = async () => {
@@ -842,10 +851,15 @@ onMounted(() => {
 
   loadData()
   window.scrollTo(0, 0)
+  window.addEventListener('scroll', handleAdminScroll)
   
   if (!user.value) {
     router.push('/login')
   }
+})
+
+onUnmounted(() => {
+  window.removeEventListener('scroll', handleAdminScroll)
 })
 </script>
 
@@ -2299,12 +2313,51 @@ onMounted(() => {
         </button>
       </section>
 
-    </main>
-  </div>
-</template>
+      </main>
 
-<style scoped>
-.admin-dashboard-premium { display: flex; min-height: 100vh; background: #F1F5F9; position: relative; font-family: "Inter", sans-serif; }
+      <!-- BOTÃO VOLTAR AO TOPO (FLUTUANTE) -->
+      <transition name="fade">
+      <button 
+        v-if="showScrollTop" 
+        @click="scrollToTop" 
+        class="btn-back-to-top shadow-solid"
+        title="Voltar ao topo"
+      >
+        <ArrowUp :size="24" />
+      </button>
+      </transition>
+      </div>
+      </template>
+
+      <style scoped>
+      .admin-dashboard-premium { display: flex; min-height: 100vh; background: #F1F5F9; position: relative; font-family: "Inter", sans-serif; }
+
+      /* BOTÃO VOLTAR AO TOPO */
+      .btn-back-to-top {
+      position: fixed;
+      bottom: 40px;
+      right: 40px;
+      width: 60px;
+      height: 60px;
+      background: #A4CD39;
+      border: 4px solid #1C1C1C;
+      border-radius: 15px;
+      color: #1C1C1C;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 1000;
+      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      box-shadow: 6px 6px 0px #1C1C1C;
+      }
+      .btn-back-to-top:hover {
+      transform: translateY(-5px) scale(1.1);
+      background: #FFE65A;
+      }
+      .fade-enter-active, .fade-leave-active { transition: opacity 0.3s, transform 0.3s; }
+      .fade-enter-from, .fade-leave-to { opacity: 0; transform: translateY(20px); }
+      ...
 
 /* FUNDO TEXTURA */
 .film-grain-bg { position: fixed; inset: 0; z-index: 1; pointer-events: none; background-image: radial-gradient(#1C1C1C 1px, transparent 1px); background-size: 20px 20px; opacity: 0.05; }
