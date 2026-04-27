@@ -1,6 +1,6 @@
 <script setup>
 import { ref, onMounted, watch } from 'vue'
-import { Bold, Italic, List, Heading2, Heading3, Image as ImageIcon, Type, Trash2 } from 'lucide-vue-next'
+import { Bold, Italic, List, Heading2, Heading3, Image as ImageIcon, Type, Trash2, Quote } from 'lucide-vue-next'
 import { uploadImage } from '../lib/supabaseStorage'
 
 const props = defineProps({
@@ -115,6 +115,7 @@ const deleteSelectedImage = () => {
       <div class="toolbar-group">
         <button type="button" @click="execCmd('formatBlock', 'H2')" title="Título 2"><Heading2 :size="16" /></button>
         <button type="button" @click="execCmd('formatBlock', 'H3')" title="Título 3"><Heading3 :size="16" /></button>
+        <button type="button" @click="execCmd('formatBlock', 'blockquote')" title="Citação"><Quote :size="16" /></button>
       </div>
 
       <div class="toolbar-group">
@@ -285,6 +286,19 @@ const deleteSelectedImage = () => {
   margin-top: 1.2rem;
   margin-bottom: 0.8rem;
   letter-spacing: -0.01em;
+}
+
+.editor-content :deep(blockquote) {
+  border-left: 6px solid #FF6BCA;
+  padding: 15px 25px;
+  margin: 1.5rem 0;
+  background: #F1F5F9;
+  font-family: "Inter", sans-serif;
+  font-size: 1.05rem;
+  font-style: italic;
+  line-height: 1.4;
+  color: #1C1C1C;
+  border-radius: 0 12px 12px 0;
 }
 
 .editor-content :deep(img) {
