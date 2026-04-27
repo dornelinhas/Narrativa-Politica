@@ -6,7 +6,7 @@ import { supabase } from '../lib/supabase'
 import { Settings, LogOut, CheckCircle, Clock, Trash2, Home, Search, BookOpen, Briefcase, ChevronDown, Package, FileText, User, Mail, Folder, Download, Eye, Heart, Library, Save, Plus, Edit, Trash, Zap, Calendar, X, ExternalLink, ArrowUp } from 'lucide-vue-next'
 import BrutalEditor from '../components/BrutalEditor.vue'
 import ImageUploader from '../components/ImageUploader.vue'
-import { siteContent } from '../store/content'
+import { siteContent, fetchAllContent } from '../store/content'
 
 const router = useRouter()
 const { user, logout } = useAuth()
