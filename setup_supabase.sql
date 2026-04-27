@@ -50,6 +50,7 @@ CREATE TABLE IF NOT EXISTS articles (
   "references" TEXT, -- Referências bibliográficas ou links
   "imageCaption" TEXT, -- Legenda da imagem de capa
   "highlightQuote" TEXT, -- Citação em destaque
+  "reading_time" INTEGER, -- Tempo de leitura em minutos
   created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
 );
 
@@ -95,6 +96,9 @@ BEGIN
   END IF;
   IF NOT EXISTS (SELECT 1 FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='articles' AND COLUMN_NAME='highlightQuote') THEN
     ALTER TABLE articles ADD COLUMN "highlightQuote" TEXT;
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='articles' AND COLUMN_NAME='reading_time') THEN
+    ALTER TABLE articles ADD COLUMN "reading_time" INTEGER;
   END IF;
 END $$;
 
