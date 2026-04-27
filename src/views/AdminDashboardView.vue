@@ -411,6 +411,7 @@ const saveArtigo = async () => {
     return
   }
   isSaving.value = true
+  const wasEditing = isEditingArtigo.value
   try {
     if (!siteContent.posts) siteContent.posts = []
     const existing = siteContent.posts.find(p => String(p.id) === String(editingArtigoId.value))
