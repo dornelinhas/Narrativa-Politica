@@ -301,8 +301,10 @@ CREATE POLICY "Admin Full Access Subs" ON subscribers FOR ALL USING (true);
 
 -- Garante que o bucket existe
 INSERT INTO storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
-VALUES ('media', 'media', true, 10485760, ARRAY['image/jpeg', 'image/png', 'image/webp', 'image/gif'])
-ON CONFLICT (id) DO UPDATE SET public = true;
+VALUES ('media', 'media', true, 10485760, ARRAY['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'image/avif', 'image/svg+xml'])
+ON CONFLICT (id) DO UPDATE SET 
+  public = true,
+  allowed_mime_types = ARRAY['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'image/avif', 'image/svg+xml'];
 
 -- POLÍTICAS DE STORAGE (Públicas para facilitar o upload via Admin sem Auth complexo)
 DROP POLICY IF EXISTS "Public Read Media" ON storage.objects;
