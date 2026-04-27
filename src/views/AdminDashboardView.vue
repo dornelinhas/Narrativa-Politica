@@ -405,13 +405,16 @@ const previewArtigo = (id) => {
   window.open(href, '_blank')
 }
 
+// Version: 2026-04-26-FINAL-FIX
 const saveArtigo = async () => {
   if (!novoArtigo.value.title) {
     alert("O título do artigo é obrigatório.")
     return
   }
   isSaving.value = true
-  const wasEditing = isEditingArtigo.value
+  // Captura o estado de edição antes de qualquer processamento
+  const wasEditing = Boolean(editingArtigoId.value !== null)
+  
   try {
     if (!siteContent.posts) siteContent.posts = []
     const existing = siteContent.posts.find(p => String(p.id) === String(editingArtigoId.value))
