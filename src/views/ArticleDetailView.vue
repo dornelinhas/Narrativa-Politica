@@ -1,5 +1,5 @@
 <template>
-  <div v-if="post" class="article-page" :class="{ 'zen-mode': isZenMode }">
+  <div v-if="post" class="article-page">
 
     <!-- PROGRESS BAR -->
     <div class="art-progress"><div class="art-progress__fill" :style="{ width: scrollProgress + '%' }"></div></div>
@@ -21,8 +21,8 @@
           <ArrowLeft :size="16" /> {{ siteContent.articlesConfig?.backButtonText || 'Voltar ao Radar' }}
         </router-link>
         <div class="art-meta-actions">
-          <button v-if="post.references" @click="toggleRefs" class="art-btn-ref" :class="{ active: showRefs }" title="Ver referências">
-            <LinkIcon :size="14" /> {{ showRefs ? 'FECHAR FONTES' : 'VER FONTES' }}
+          <button v-if="post.references" @click="toggleRefs" class="art-btn-ref-premium" :class="{ active: showRefs }" title="Ver referências">
+            <LinkIcon :size="14" /> {{ showRefs ? 'OCULTAR FONTES' : 'VER FONTES E REFERÊNCIAS' }}
           </button>
           <div class="art-meta__tags hide-mobile">
             <span class="art-tag">{{ post.category }}</span>
@@ -48,9 +48,10 @@
           </div>
         </div>
         <div class="art-share-row">
-          <a :href="shareLinks.linkedin" target="_blank" rel="noopener" class="art-share-btn" title="LinkedIn"><Linkedin :size="18" /></a>
-          <a :href="shareLinks.whatsapp" target="_blank" rel="noopener" class="art-share-btn" title="WhatsApp"><MessageCircle :size="18" /></a>
-          <button @click="copyLink" class="art-share-btn" title="Copiar link"><LinkIcon :size="18" /></button>
+          <span class="share-label hide-mobile">COMPARTILHAR:</span>
+          <a :href="shareLinks.linkedin" target="_blank" rel="noopener" class="art-share-btn btn-li" title="LinkedIn"><Linkedin :size="18" /></a>
+          <a :href="shareLinks.whatsapp" target="_blank" rel="noopener" class="art-share-btn btn-wa" title="WhatsApp"><MessageCircle :size="18" /></a>
+          <button @click="copyLink" class="art-share-btn btn-copy" title="Copiar link"><LinkIcon :size="18" /></button>
         </div>
       </div>
 
@@ -89,9 +90,9 @@
       <div class="art-share-bottom">
         <span class="art-share-bottom__label">Compartilhar este artigo</span>
         <div class="art-share-row">
-          <a :href="shareLinks.linkedin" target="_blank" rel="noopener" class="art-share-btn"><Linkedin :size="18" /></a>
-          <a :href="shareLinks.whatsapp" target="_blank" rel="noopener" class="art-share-btn"><MessageCircle :size="18" /></a>
-          <button @click="copyLink" class="art-share-btn"><LinkIcon :size="18" /></button>
+          <a :href="shareLinks.linkedin" target="_blank" rel="noopener" class="art-share-btn btn-li"><Linkedin :size="18" /></a>
+          <a :href="shareLinks.whatsapp" target="_blank" rel="noopener" class="art-share-btn btn-wa"><MessageCircle :size="18" /></a>
+          <button @click="copyLink" class="art-share-btn btn-copy"><LinkIcon :size="18" /></button>
         </div>
       </div>
 
@@ -116,11 +117,6 @@
 
     </div>
 
-    <!-- ZEN MODE -->
-    <button @click="isZenMode = !isZenMode" class="art-zen" :title="isZenMode ? 'Sair do Modo Foco' : 'Modo Foco'">
-      <Maximize v-if="!isZenMode" :size="20" /><Minimize v-else :size="20" />
-    </button>
-
     <!-- TOAST -->
     <transition name="toast">
       <div v-if="showToast" class="art-toast">Link copiado!</div>
@@ -138,11 +134,10 @@
 import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { siteContent } from '../store/content'
-import { Linkedin, MessageCircle, Link as LinkIcon, ArrowLeft, Maximize, Minimize } from 'lucide-vue-next'
+import { Linkedin, MessageCircle, Link as LinkIcon, ArrowLeft } from 'lucide-vue-next'
 
 const route = useRoute()
 const scrollProgress = ref(0)
-const isZenMode = ref(false)
 const showToast = ref(false)
 const showRefs = ref(false)
 
@@ -194,7 +189,7 @@ onUnmounted(() => window.removeEventListener('scroll', handleScroll))
 
 <style scoped>
 /* ── PAGE ───────────────────────────────────── */
-.article-page { min-height: 100vh; padding-bottom: 80px; }
+.article-page { min-height: 100vh; padding-bottom: 80px; background: #FFF; }
 
 /* ── PROGRESS ───────────────────────────────── */
 .art-progress { position: fixed; top: 0; left: 0; width: 100%; height: 4px; z-index: 9999; background: rgba(0,0,0,.06); }
@@ -228,23 +223,32 @@ onUnmounted(() => window.removeEventListener('scroll', handleScroll))
 .art-meta__back:hover { opacity: 1; }
 .art-meta-actions { display: flex; align-items: center; gap: 12px; }
 
-.art-btn-ref {
-  background: transparent;
-  border: 1.5px solid #1C1C1C;
-  padding: 6px 12px;
+.art-btn-ref-premium {
+  background: #FFF;
+  border: 2px solid #1C1C1C;
+  padding: 8px 16px;
   font-family: var(--font-sans);
-  font-weight: 800;
-  font-size: 0.65rem;
+  font-weight: 900;
+  font-size: 0.7rem;
   cursor: pointer;
   display: flex;
   align-items: center;
-  gap: 6px;
-  transition: 0.2s;
-  border-radius: 4px;
+  gap: 8px;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  border-radius: 8px;
   text-transform: uppercase;
+  box-shadow: 4px 4px 0px #1C1C1C;
 }
-.art-btn-ref:hover { background: #1C1C1C; color: #FFF; }
-.art-btn-ref.active { background: #FFE65A; color: #1C1C1C; border-color: #1C1C1C; }
+.art-btn-ref-premium:hover { 
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0px #1C1C1C;
+  background: #F1F5F9;
+}
+.art-btn-ref-premium.active { 
+  background: #FFE65A; 
+  box-shadow: 2px 2px 0px #1C1C1C;
+  transform: translate(2px, 2px);
+}
 
 .art-meta__tags { display: flex; gap: 8px; }
 .art-tag { display: inline-block; padding: 5px 14px; font-family: var(--font-sans); font-weight: 800; font-size: .7rem; text-transform: uppercase; letter-spacing: .08em; background: var(--color-red, #DF2028); color: #fff; border-radius: 3px; }
@@ -266,9 +270,13 @@ onUnmounted(() => window.removeEventListener('scroll', handleScroll))
 .art-author-info__date { font-family: var(--font-sans); font-size: .82rem; color: #888; margin-top: 2px; }
 
 /* ── SHARE BUTTONS ──────────────────────────── */
-.art-share-row { display: flex; gap: 8px; }
+.art-share-row { display: flex; align-items: center; gap: 8px; }
+.share-label { font-family: var(--font-sans); font-weight: 800; font-size: 0.65rem; color: #888; margin-right: 4px; letter-spacing: 1px; }
 .art-share-btn { width: 40px; height: 40px; border-radius: 50%; border: 1.5px solid #ddd; background: #fff; display: flex; align-items: center; justify-content: center; color: #555; cursor: pointer; transition: all .2s; }
-.art-share-btn:hover { border-color: var(--color-dark); color: var(--color-dark); background: var(--color-bg, #F7F7F5); }
+.art-share-btn:hover { transform: translateY(-3px); border-color: var(--color-dark); color: white; }
+.btn-li:hover { background: #0077b5; border-color: #0077b5; }
+.btn-wa:hover { background: #25d366; border-color: #25d366; }
+.btn-copy:hover { background: #1C1C1C; border-color: #1C1C1C; }
 
 /* ── ARTICLE BODY ───────────────────────────── */
 .art-body { font-family: 'Georgia', 'Times New Roman', serif; font-size: 1.22rem; line-height: 1.85; color: #222; padding: 36px 0; }
@@ -313,6 +321,11 @@ onUnmounted(() => window.removeEventListener('scroll', handleScroll))
 .slide-fade-enter-active, .slide-fade-leave-active { transition: all 0.4s ease; }
 .slide-fade-enter-from, .slide-fade-leave-to { opacity: 0; transform: translateY(-20px); }
 
+/* ── TOAST ───────────────────────────────────── */
+.art-toast { position: fixed; bottom: 40px; left: 50%; transform: translateX(-50%); background: #1C1C1C; color: #FFF; padding: 12px 24px; border-radius: 50px; font-family: var(--font-sans); font-weight: 700; font-size: .9rem; z-index: 10000; box-shadow: 0 10px 30px rgba(0,0,0,.2); }
+.toast-enter-active, .toast-leave-active { transition: all .3s ease; }
+.toast-enter-from, .toast-leave-to { opacity: 0; transform: translate(-50%, 20px); }
+
 /* ── RESPONSIVE ─────────────────────────────── */
 @media (max-width: 900px) {
   .art-related__grid { grid-template-columns: 1fr; }
@@ -326,5 +339,6 @@ onUnmounted(() => window.removeEventListener('scroll', handleScroll))
   .art-bio { flex-direction: column; align-items: center; text-align: center; }
   .art-hero__img { height: 240px; }
   .art-references { padding: 20px; }
+  .art-btn-ref-premium { width: 100%; justify-content: center; }
 }
 </style>

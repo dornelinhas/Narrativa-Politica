@@ -24,10 +24,10 @@ onUnmounted(() => window.removeEventListener('scroll', updateScrollProgress))
 const newsItems = computed(() => allPosts.value.filter(p => p.type === 'Notícia' || p.category === 'Notícias').slice(0, 5))
 
 const articlesItems = computed(() => {
-  let posts = allPosts.value.filter(p => p.type !== 'Notícia' && p.category !== 'Notícias')
+  let posts = allPosts.value.filter(p => p.type !== 'Notícia')
   if (searchQuery.value) {
     const query = searchQuery.value.toLowerCase()
-    posts = posts.filter(p => p.title.toLowerCase().includes(query))
+    posts = posts.filter(p => p.title.toLowerCase().includes(query) || p.category?.toLowerCase().includes(query))
   }
   if (selectedCategory.value !== 'Tudo') {
     posts = posts.filter(p => p.category === selectedCategory.value)
