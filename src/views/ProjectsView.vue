@@ -1,8 +1,10 @@
 <script setup>
 import { computed } from 'vue'
+import { useRouter } from 'vue-router'
 import { siteContent } from '../store/content'
 import { ArrowRight, Zap } from 'lucide-vue-next'
 
+const router = useRouter()
 const projects = computed(() => siteContent.projects || [])
 
 const staticProjects = [
@@ -13,6 +15,18 @@ const staticProjects = [
 const displayProjects = computed(() => {
   return projects.value.length > 0 ? projects.value : staticProjects
 })
+
+const normalizeProjectTags = (tags) => {
+  if (Array.isArray(tags)) return tags
+  if (typeof tags === 'string' && tags.trim()) {
+    return tags.split(',').map(label => ({ label: label.trim(), cls: 'yellow-bg' }))
+  }
+  return []
+}
+
+const openProject = (id) => {
+  router.push(`/projetos/${id}`)
+}
 </script>
 
 <template>
@@ -36,7 +50,7 @@ const displayProjects = computed(() => {
     <section class="projects-section">
       <div class="container-custom">
         <div class="projects-grid-vibrant">
-          <div v-for="p in displayProjects" :key="p.id" class="project-card-vibrant group" @click="$router.push(`/projetos/${p.id}`)">
+          <button v-for="p in displayProjects" :key="p.id" class="project-card-vibrant group" type="button" @click="openProject(p.id)">
             <div class="project-media-vibrant">
               <img :src="p.image || 'https://images.unsplash.com/photo-1541844053589-346841d0b34c?auto=format&fit=crop&q=80&w=800'" :alt="p.title" />
               <div class="project-overlay-vibrant">
@@ -45,7 +59,7 @@ const displayProjects = computed(() => {
             </div>
             <div class="project-content-vibrant">
               <div class="project-tags-row">
-                <span v-for="(tag, ti) in p.tags" :key="ti" class="tag-vibrant" :class="tag.cls">{{ tag.label }}</span>
+                <span v-for="(tag, ti) in normalizeProjectTags(p.tags)" :key="ti" class="tag-vibrant" :class="tag.cls">{{ tag.label }}</span>
               </div>
               <h3 class="project-title-vibrant group-hover:text-red transition-colors">
                 {{ p.title }}
@@ -61,7 +75,7 @@ const displayProjects = computed(() => {
                 <span class="learn-more-text">LER MAIS <ArrowRight :size="16" /></span>
               </div>
             </div>
-          </div>
+          </button>
         </div>
       </div>
     </section>
@@ -159,6 +173,9 @@ const displayProjects = computed(() => {
 }
 
 .project-card-vibrant {
+  appearance: none;
+  text-align: left;
+  width: 100%;
   background: #ffffff;
   border: 3px solid #1c1c1c;
   display: flex;
@@ -168,6 +185,7 @@ const displayProjects = computed(() => {
   border-radius: 1.75rem;
   overflow: hidden;
   box-shadow: 10px 10px 0 rgba(28, 28, 28, 1);
+  padding: 0;
 }
 
 .project-card-vibrant:hover {

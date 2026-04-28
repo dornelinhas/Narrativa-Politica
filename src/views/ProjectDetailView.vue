@@ -49,13 +49,13 @@
             <div class="project-detail-text" v-html="project.content || project.solution || 'Detalhes da solução não informados.'"></div>
           </section>
 
-          <section v-if="project.tags && project.tags.length" class="project-detail-block">
+          <section v-if="projectTags.length" class="project-detail-block">
             <div class="project-detail-block__header">
               <span class="project-detail-block__kicker project-detail-block__kicker--lime"></span>
               <h2>Tags</h2>
             </div>
             <div class="project-detail-tags">
-              <span v-for="tag in project.tags" :key="tag.label || tag" class="project-detail-tag">
+              <span v-for="tag in projectTags" :key="tag.label || tag" class="project-detail-tag">
                 {{ tag.label || tag }}
               </span>
             </div>
@@ -78,7 +78,19 @@ import { siteContent } from '../store/content'
 
 const route = useRoute()
 const fallbackImage = 'https://images.unsplash.com/photo-1541844053589-346841d0b34c?auto=format&fit=crop&q=80&w=1200'
-const project = computed(() => siteContent.projects.find(p => p.id === parseInt(route.params.id)))
+const project = computed(() => {
+  const id = route.params.id
+  return (siteContent.projects || []).find(p => String(p.id) === String(id) || String(p.id) === String(parseInt(id)))
+})
+
+const projectTags = computed(() => {
+  const tags = project.value?.tags
+  if (Array.isArray(tags)) return tags
+  if (typeof tags === 'string' && tags.trim()) {
+    return tags.split(',').map(label => ({ label: label.trim() }))
+  }
+  return []
+})
 </script>
 
 <style scoped>
