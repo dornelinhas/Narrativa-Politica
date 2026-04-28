@@ -24,7 +24,11 @@
           <h1 class="huge-magazine-title mb-16">
             {{ op.title.toUpperCase() }}
           </h1>
-          
+
+          <figure v-if="op.image" class="op-cover-frame">
+            <img :src="op.image" :alt="op.title" class="op-cover-image" />
+          </figure>
+           
           <div class="serif-magazine-desc">
             <div v-if="op.fullDescription" v-html="op.fullDescription"></div>
             <div v-else class="placeholder-content">
@@ -72,7 +76,7 @@
               </div>
               <div class="info-mini-card yellow-card">
                 <span class="l">MODELO</span>
-                <span class="v">Híbrido / CLT</span>
+                <span class="v">{{ op.type || 'Oportunidade' }}</span>
               </div>
             </div>
             
@@ -107,7 +111,18 @@ const op = computed(() => siteContent.opportunities?.find(o => String(o.id) === 
   id: 1, title: 'Bolsa de Pesquisa', category: 'Bolsas', deadline: '25 MAI', location: 'Remoto'
 })
 
-const getCategoryColor = (cat) => ({ 'Gênero': '#FF6BCA', 'Clima': '#A4CD39', 'Internacional': '#3D78E0', 'Editais': '#FFE65A', 'Urgente': '#DF2028', 'Vagas de Emprego': '#FFE65A', 'Vagas': '#FFE65A' }[cat] || '#FFE65A')
+const getCategoryColor = (cat) => ({
+  'Gênero': '#FF6BCA',
+  'Clima': '#A4CD39',
+  'Internacional': '#3D78E0',
+  'Bolsas': '#3D78E0',
+  'Editais': '#FFE65A',
+  'Estudos': '#FFE65A',
+  'Educação': '#FFE65A',
+  'Urgente': '#DF2028',
+  'Vagas de Emprego': '#FFE65A',
+  'Vagas': '#FFE65A'
+}[cat] || '#FFE65A')
 const copyLink = () => { navigator.clipboard.writeText(window.location.href); alert('Link copiado!') }
 </script>
 
@@ -128,6 +143,21 @@ const copyLink = () => { navigator.clipboard.writeText(window.location.href); al
 
 .cat-pill { padding: 8px 18px; font-weight: 900; font-size: 11px; border-radius: 6px; text-transform: uppercase; color: #000 !important; border: 2px solid #000; box-shadow: 3px 3px 0px #000; }
 .huge-magazine-title { font-family: "Archivo Black", sans-serif; font-size: clamp(3rem, 6vw, 5.5rem); line-height: 0.9; color: #000; letter-spacing: -0.05em; }
+
+.op-cover-frame {
+  border: 4px solid #000;
+  border-radius: 2rem;
+  overflow: hidden;
+  margin: -2rem 0 4rem;
+  box-shadow: 12px 12px 0 #A4CD39;
+  background: #FFE65A;
+}
+.op-cover-image {
+  display: block;
+  width: 100%;
+  max-height: 440px;
+  object-fit: cover;
+}
 
 .serif-magazine-desc { font-family: "Georgia", serif; font-size: 1.35rem; line-height: 1.8; color: #1e293b; }
 .editorial-intro { font-size: 1.6rem; font-weight: 800; color: #000; margin-bottom: 4rem; border-left: 6px solid #A4CD39; padding-left: 2.5rem; }

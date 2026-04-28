@@ -3,7 +3,7 @@ import { ref, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuth } from '../store/auth'
 import { supabase } from '../lib/supabase'
-import { Settings, LogOut, CheckCircle, Clock, Trash2, Home, Search, BookOpen, Briefcase, ChevronDown, Package, FileText, User, Mail, Folder, Download, Eye, Heart, Library, Save, Plus, Edit, Trash, Zap, Calendar, X, ExternalLink, ArrowUp } from 'lucide-vue-next'
+import { Settings, LogOut, CheckCircle, Clock, Trash2, Home, Search, BookOpen, Briefcase, ChevronDown, Package, FileText, User, Mail, Folder, Download, Eye, Heart, Library, Save, Plus, Edit, Trash, Zap, Calendar, X, ExternalLink, ArrowUp, Sparkles } from 'lucide-vue-next'
 import BrutalEditor from '../components/BrutalEditor.vue'
 import ImageUploader from '../components/ImageUploader.vue'
 import { siteContent, fetchAllContent } from '../store/content'
@@ -1404,10 +1404,6 @@ onUnmounted(() => {
                 <input v-model="oppsConfigData.toggleText" type="text" placeholder="Ex: DESTAQUE NORDESTE" />
              </div>
           </div>
-          <div class="input-group mb-6">
-             <label>IMAGEM DA OPORTUNIDADE (URL)</label>
-             <input v-model="novaVaga.image" type="url" placeholder="https://..." />
-          </div>
           <div class="form-grid-3 mb-6">
              <div class="input-group">
                 <label>BOTÃO VOLTAR (INTERNO)</label>
@@ -1457,12 +1453,12 @@ onUnmounted(() => {
              <div class="input-group">
                 <label>CATEGORIA</label>
                 <div class="category-pill-group">
-                   <button v-for="cat in ['Vagas de Emprego', 'Bolsas', 'Editais', 'Educação', 'Gênero', 'Clima', 'Internacional']" :key="cat" class="cat-pill" :class="{ active: novaVaga.category === cat }" @click.prevent="novaVaga.category = cat">
-                     {{ cat }}
-                   </button>
-                </div>
-             </div>
-          </div>
+                   <button v-for="cat in ['Vagas de Emprego', 'Bolsas', 'Editais', 'Estudos', 'Educação', 'Gênero', 'Clima', 'Internacional']" :key="cat" class="cat-pill" :class="{ active: novaVaga.category === cat }" @click.prevent="novaVaga.category = cat">
+                      {{ cat }}
+                    </button>
+                 </div>
+              </div>
+           </div>
           <div class="input-group mb-6">
              <label>DESCRIÇÃO CURTA (Aparece no card de fora)</label>
              <textarea v-model="novaVaga.description" rows="2" placeholder="Impacto focado em liderança..."></textarea>
@@ -1470,8 +1466,12 @@ onUnmounted(() => {
           <div class="input-group mb-6">
              <label>DESCRIÇÃO COMPLETA DA VAGA (Aparece na página de detalhe)</label>
              <BrutalEditor v-model="novaVaga.fullDescription" placeholder="Detalhes, requisitos, benefícios..." />
-          </div>
-          <div class="form-grid-3 mb-6">
+           </div>
+           <div class="input-group mb-6">
+             <label>IMAGEM DA OPORTUNIDADE (URL)</label>
+             <input v-model="novaVaga.image" type="url" placeholder="https://..." />
+           </div>
+           <div class="form-grid-3 mb-6">
              <div class="input-group">
                 <label>MODELO</label>
                 <div class="category-pill-group">
@@ -2576,8 +2576,6 @@ onUnmounted(() => {
       }
       .fade-enter-active, .fade-leave-active { transition: opacity 0.3s, transform 0.3s; }
       .fade-enter-from, .fade-leave-to { opacity: 0; transform: translateY(20px); }
-      ...
-
 /* FUNDO TEXTURA */
 .film-grain-bg { position: fixed; inset: 0; z-index: 1; pointer-events: none; background-image: radial-gradient(#1C1C1C 1px, transparent 1px); background-size: 20px 20px; opacity: 0.05; }
 

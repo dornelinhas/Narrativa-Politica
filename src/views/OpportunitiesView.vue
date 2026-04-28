@@ -17,11 +17,13 @@ const colorMap = {
   'Internacional': '#3D78E0',
   'Bolsas': '#3D78E0',
   'Editais': '#FFE65A',
+  'Educação': '#FFE65A',
+  'Estudos': '#FFE65A',
   'Chamada para Artigos': '#FFE65A',
   'Urgente': '#DF2028'
 }
 
-const categories = ['Tudo', 'Gênero', 'Clima', 'Internacional', 'Vagas de Emprego', 'Editais']
+const categories = ['Tudo', 'Vagas de Emprego', 'Bolsas', 'Editais', 'Estudos', 'Educação', 'Gênero', 'Clima', 'Internacional']
 
 const mockOpportunities = [
   { id: 1, title: 'Formação em Advocacy Internacional', category: 'Internacional', deadline: '25 MAI', location: 'Remoto', type: 'Bolsa', description: 'Programa focado em incidência política na ONU e organismos internacionais para líderes do sul global.' },
@@ -37,7 +39,7 @@ const filteredOpportunities = computed(() => {
   if (destaqueNordeste.value) ops = ops.filter(op => op.location?.toLowerCase().includes('pe') || op.location?.toLowerCase().includes('nordeste'))
   if (searchQuery.value) {
     const q = searchQuery.value.toLowerCase()
-    ops = ops.filter(op => op.title.toLowerCase().includes(q) || op.description.toLowerCase().includes(q))
+    ops = ops.filter(op => (op.title || '').toLowerCase().includes(q) || (op.description || '').toLowerCase().includes(q))
   }
   return ops
 })
@@ -96,6 +98,10 @@ const toggleFavorite = (id) => {
           class="op-card-premium group"
           :style="{ '--hover-color': getCategoryColor(op.category) }"
         >
+          <div v-if="op.image" class="op-card-image-wrap">
+            <img :src="op.image" :alt="op.title" class="op-card-image" loading="lazy" />
+          </div>
+
           <div class="card-header">
             <div class="category-badge" :style="{ backgroundColor: getCategoryColor(op.category) }">
               {{ op.category }}
@@ -204,6 +210,22 @@ const toggleFavorite = (id) => {
   transform: translateY(-12px);
   border-color: var(--hover-color);
   box-shadow: 20px 20px 0 var(--hover-color);
+}
+
+.op-card-image-wrap {
+  height: 170px;
+  border: 3px solid #000000;
+  border-radius: 1.25rem;
+  overflow: hidden;
+  margin: -1.25rem -1.25rem 2rem;
+  background: #FFE65A;
+}
+.op-card-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  filter: saturate(1.05) contrast(1.03);
 }
 
 .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2.5rem; }
