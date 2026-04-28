@@ -24,6 +24,7 @@ const router = createRouter({
     { path: '/servicos', name: 'services-list', component: () => import('../views/ServicesView.vue') },
     { path: '/servicos/:id', name: 'service-detail', component: () => import('../views/ServiceDetailView.vue') },
     { path: '/projetos', name: 'projects-list', component: () => import('../views/ProjectsView.vue') },
+    { path: '/projetos/:id', name: 'project-detail', component: () => import('../views/ProjectDetailView.vue') },
     { path: '/doacao', name: 'donate', component: () => import('../views/DonateView.vue') },
     { path: '/biblioteca', name: 'library', component: () => import('../views/LibraryView.vue') },
     { path: '/trilhas', name: 'paths-list', component: PathsView },
