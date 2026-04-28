@@ -14,7 +14,7 @@ const activeTab = ref('home')
 const isSaving = ref(false)
 
 const defaultArticleForm = () => ({ title: '', subtitle: '', author: '', type: 'Artigo', category: '', featured: false, content: '', image: '', imageDescription: '', imageCaption: '', references: '' })
-const defaultOpportunityForm = () => ({ title: '', category: 'Vagas de Emprego', type: 'Remoto', location: '', deadline: '', link: '', description: '', fullDescription: '' })
+const defaultOpportunityForm = () => ({ title: '', category: 'Vagas de Emprego', type: 'Remoto', location: '', deadline: '', link: '', description: '', fullDescription: '', image: '' })
 const defaultTrackForm = () => ({
   name: '', description: '', hours: '', status: 'GRATUITO', hasCertificate: true, color: '#FF6BCA',
   mod1: '', mod2: '', mod3: ''
@@ -154,6 +154,8 @@ const oppsConfigData = ref({
 })
 const vagas = ref(siteContent.opportunities || [])
 const novaVaga = ref(defaultOpportunityForm())
+const opportunityImportUrl = ref('')
+const isImportingOpportunity = ref(false)
 // LMS / TRILHAS
 const trilhas = ref(siteContent.tracks || [])
 const novaTrilha = ref(defaultTrackForm())
@@ -542,7 +544,8 @@ const editVaga = (vaga) => {
     deadline: vaga.deadline || '',
     link: vaga.link || '',
     description: vaga.description || '',
-    fullDescription: vaga.fullDescription || ''
+    fullDescription: vaga.fullDescription || '',
+    image: vaga.image || ''
   }
   scrollToForm('opportunity-editor-form')
 }
@@ -672,6 +675,40 @@ const saveServico = async () => {
     resetServicoForm()
     setTimeout(() => { isSaving.value = false; alert(wasEditing ? 'Eixo atualizado!' : 'Eixo cadastrado!') }, 400)
   } catch(e) { console.error(e); isSaving.value = false; }
+}
+
+const importOpportunityFromUrl = async () => {
+  if (!opportunityImportUrl.value.trim()) {
+    alert('Cole a URL da oportunidade.')
+    return
+  }
+  isImportingOpportunity.value = true
+  try {
+    const response = await fetch(`/api/import-opportunity?url=${encodeURIComponent(opportunityImportUrl.value.trim())}`)
+    const data = await response.json()
+    if (!response.ok) throw new Error(data.error || 'Não foi possível importar.')
+
+    novaVaga.value = {
+      ...novaVaga.value,
+      title: data.title || novaVaga.value.title,
+      category: data.category || novaVaga.value.category,
+      type: data.type || novaVaga.value.type,
+      location: data.location || novaVaga.value.location,
+      deadline: data.deadline || novaVaga.value.deadline,
+      link: data.link || opportunityImportUrl.value.trim(),
+      description: data.description || novaVaga.value.description,
+      fullDescription: data.fullDescription || novaVaga.value.fullDescription,
+    }
+    if (data.image) {
+      novaVaga.value.image = data.image
+    }
+    alert('Conteúdo importado. Revise antes de salvar.')
+  } catch (e) {
+    console.error(e)
+    alert('Falha ao importar a oportunidade: ' + (e.message || e))
+  } finally {
+    isImportingOpportunity.value = false
+  }
 }
 
 const resetProjectForm = () => {
@@ -1367,6 +1404,10 @@ onUnmounted(() => {
                 <input v-model="oppsConfigData.toggleText" type="text" placeholder="Ex: DESTAQUE NORDESTE" />
              </div>
           </div>
+          <div class="input-group mb-6">
+             <label>IMAGEM DA OPORTUNIDADE (URL)</label>
+             <input v-model="novaVaga.image" type="url" placeholder="https://..." />
+          </div>
           <div class="form-grid-3 mb-6">
              <div class="input-group">
                 <label>BOTÃO VOLTAR (INTERNO)</label>
@@ -1397,6 +1438,15 @@ onUnmounted(() => {
             <h2 class="card-label-black mb-0">{{ isEditingVaga ? 'EDITAR OPORTUNIDADE' : 'CADASTRAR OPORTUNIDADE' }}</h2>
             <button v-if="isEditingVaga" class="btn-tool-sm" @click="resetVagaForm">
               <X :size="14" /> CANCELAR EDIÇÃO
+            </button>
+          </div>
+          <div class="import-bar mb-6">
+            <div class="input-group flex-1">
+              <label>IMPORTAR POR URL</label>
+              <input v-model="opportunityImportUrl" type="url" placeholder="Cole a URL da oportunidade, vaga ou edital..." />
+            </div>
+            <button class="btn-tool-sm import-btn" @click="importOpportunityFromUrl" :disabled="isImportingOpportunity">
+              <Sparkles :size="14" /> {{ isImportingOpportunity ? 'LENDO PÁGINA...' : 'IMPORTAR E PREENCHER' }}
             </button>
           </div>
           <div class="form-grid-2 mb-6">
@@ -2677,6 +2727,8 @@ onUnmounted(() => {
 .tag-chip-empty { background: #F1F5F9; color: #64748B; cursor: default; }
 .tag-chip-empty:hover { transform: none; box-shadow: none; }
 .tag-suggestions { display: flex; flex-wrap: wrap; gap: 8px; }
+.import-bar { display: flex; gap: 16px; align-items: end; flex-wrap: wrap; }
+.import-btn { white-space: nowrap; }
 
 /* TABELA DE REGISTROS BRUTAL */
 .table-brutal { width: 100%; border-collapse: separate; border-spacing: 0; border: 4px solid #1C1C1C; border-radius: 16px; overflow: hidden; background: #FFF; box-shadow: 8px 8px 0px #1C1C1C; }
