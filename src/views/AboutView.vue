@@ -34,6 +34,14 @@
                 <a href="#" class="s-icon-colored instagram"><Instagram :size="20" /></a>
                 <a href="#" class="s-icon-colored mail"><Mail :size="20" /></a>
               </div>
+
+              <router-link
+                v-if="siteContent.settings?.menuProjects !== false"
+                to="/projetos"
+                class="projects-profile-link"
+              >
+                Ver projetos
+              </router-link>
             </div>
           </div>
         </aside>
@@ -161,6 +169,27 @@ onMounted(() => window.scrollTo(0, 0))
 .linkedin { color: #0077B5; }
 .instagram { color: #E1306C; }
 .mail { color: #DF2028; }
+
+.projects-profile-link {
+  display: inline-flex;
+  margin-top: 18px;
+  padding: 10px 16px;
+  border: 2px solid #000;
+  border-radius: 9999px;
+  font-family: "Inter", sans-serif;
+  font-size: 0.72rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #000;
+  text-decoration: none;
+  transition: 0.2s;
+}
+
+.projects-profile-link:hover {
+  background: #FFE65A;
+  transform: translateY(-2px);
+}
 
 /* CAIXAS AMARELAS */
 .editorial-boxes-column { display: flex; flex-direction: column; gap: 40px; }

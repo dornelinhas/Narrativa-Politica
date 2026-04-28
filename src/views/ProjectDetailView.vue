@@ -11,7 +11,7 @@
         </div>
         
         <h1 class="cs-title">{{ project.title }}</h1>
-        <p class="cs-impact-highlight">{{ project.impact }}</p>
+        <p v-if="project.impact" class="cs-impact-highlight">{{ project.impact }}</p>
       </div>
     </header>
 
@@ -34,7 +34,7 @@
 
           <div class="cs-content">
             <h2 class="cs-section-title">O Desafio</h2>
-            <div class="cs-render" v-html="project.description || 'Descrição do desafio não informada.'"></div>
+            <div class="cs-render" v-html="project.description || project.desc || 'Descrição do desafio não informada.'"></div>
             
             <div class="cs-divider"></div>
             

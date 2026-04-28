@@ -2,63 +2,9 @@ import { reactive } from 'vue'
 import { supabase } from '../lib/supabase'
 
 const initialContent = {
+  isLoading: true,
   lastActivity: [],
-  posts: [
-    {
-      id: 1,
-      title: "Por que o ativismo corporativo fracassa.",
-      excerpt: "Um mergulho profundo na cooptação de movimentos radicais e o que o impacto autêntico exige dos organizadores comunitários no cenário atual.",
-      category: "Mobilização",
-      type: "Artigo",
-      image: "https://images.unsplash.com/photo-1541844053589-346841d0b34c?auto=format&fit=crop&q=80&w=800",
-      date: "2026-04-18"
-    },
-    {
-      id: 2,
-      title: "Como estruturar um sindicato local no modelo 2026",
-      excerpt: "A nova onda de sindicalismo que está transformando a relação entre capital e trabalho nas cidades.",
-      category: "Educação",
-      type: "Análise",
-      image: "",
-      date: "2026-04-15"
-    },
-    {
-      id: 3,
-      title: "A geopolítica da descarbonização nos países em desenvolvimento",
-      excerpt: "Como o sul global está liderando e sofrendo com a transição energética global.",
-      category: "Clima",
-      type: "Análise",
-      image: "",
-      date: "2026-04-10"
-    },
-    {
-      id: 4,
-      title: "Novas diretrizes para financiamento de movimentos sociais",
-      excerpt: "O governo anuncia novas regras para o repasse de verbas para o terceiro setor.",
-      category: "Notícias",
-      type: "Notícia",
-      image: "",
-      date: "2026-04-20"
-    },
-    {
-      id: 5,
-      title: "Lançamento da plataforma de dados abertos para ativistas",
-      excerpt: "Ferramenta gratuita visa democratizar o acesso a informações estratégicas.",
-      category: "Notícias",
-      type: "Notícia",
-      image: "",
-      date: "2026-04-19"
-    },
-    {
-      id: 6,
-      title: "Relatório aponta crescimento de lideranças femininas no campo",
-      excerpt: "Dados consolidados mostram avanço da participação feminina na gestão de cooperativas.",
-      category: "Mobilização",
-      type: "Artigo",
-      image: "",
-      date: "2026-04-12"
-    }
-  ],
+  posts: [],
   newsletters: [],
   newsletterArchiveConfig: {
     heroTitle1: "ACERVO DE",
@@ -347,7 +293,7 @@ export const siteContent = reactive({ ...initialContent })
 
 const siteSettingKeys = [
   'home', 'about', 'settings', 'donateConfig', 'services', 'opportunities', 'tracks',
-  'library', 'newsletterArchiveConfig', 'articlesConfig', 'opportunitiesConfig',
+  'library', 'projects', 'newsletterArchiveConfig', 'articlesConfig', 'opportunitiesConfig',
   'servicesConfig', 'libraryConfig'
 ]
 
@@ -410,9 +356,11 @@ export const fetchAllContent = async () => {
       })
     }
 
+    siteContent.isLoading = false;
     return { success: true }
   } catch (e) {
     console.error('Erro ao buscar conteúdo:', e)
+    siteContent.isLoading = false;
     return { success: false, error: e.message }
   }
 }

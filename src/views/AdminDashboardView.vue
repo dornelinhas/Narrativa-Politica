@@ -20,18 +20,21 @@ const defaultTrackForm = () => ({
   mod1: '', mod2: '', mod3: ''
 })
 const defaultServiceForm = () => ({ title: '', description: '', icon: 'Zap', bg: '#FF6BCA', textColor: '#FFFFFF' })
+const defaultProjectForm = () => ({ title: '', organization: '', description: '', impact: '', image: '', tags: '' })
 const defaultDocForm = () => ({ title: '', description: '', category: 'Relatório', fileUrl: '', externalLink: '' })
 
 const editingArtigoId = ref(null)
 const editingVagaId = ref(null)
 const editingTrilhaId = ref(null)
 const editingServicoId = ref(null)
+const editingProjectId = ref(null)
 const editingDocId = ref(null)
 
 const isEditingArtigo = computed(() => editingArtigoId.value !== null)
 const isEditingVaga = computed(() => editingVagaId.value !== null)
 const isEditingTrilha = computed(() => editingTrilhaId.value !== null)
 const isEditingServico = computed(() => editingServicoId.value !== null)
+const isEditingProject = computed(() => editingProjectId.value !== null)
 const isEditingDoc = computed(() => editingDocId.value !== null)
 
 const scrollToForm = (id) => {
@@ -109,6 +112,8 @@ const artigos = ref(siteContent.posts || [])
 const novoArtigo = ref(defaultArticleForm())
 const categoriasDisponiveis = ref(['Mobilização', 'Educação', 'Clima', 'Notícias', 'Análise'])
 const isGeneratingSummary = ref(false)
+const projetos = ref(siteContent.projects || [])
+const novoProjeto = ref(defaultProjectForm())
 
 const adicionarNovaCategoria = () => {
   const nova = prompt("Digite o nome da nova categoria:")
@@ -669,6 +674,94 @@ const saveServico = async () => {
   } catch(e) { console.error(e); isSaving.value = false; }
 }
 
+const resetProjectForm = () => {
+  novoProjeto.value = defaultProjectForm()
+  editingProjectId.value = null
+}
+
+const editProject = (project) => {
+  editingProjectId.value = project.id
+  novoProjeto.value = {
+    title: project.title || '',
+    organization: project.organization || '',
+    description: project.description || project.desc || '',
+    impact: project.impact || '',
+    image: project.image || '',
+    tags: Array.isArray(project.tags) ? project.tags.map(tag => tag.label).join(', ') : (project.tags || '')
+  }
+  scrollToForm('project-editor-form')
+}
+
+const saveProject = async () => {
+  if (!novoProjeto.value.title) {
+    alert('O título do projeto é obrigatório.')
+    return
+  }
+  isSaving.value = true
+  try {
+    if (!siteContent.projects) siteContent.projects = []
+    const payload = {
+      id: editingProjectId.value || Date.now(),
+      title: novoProjeto.value.title,
+      organization: novoProjeto.value.organization,
+      description: novoProjeto.value.description,
+      desc: novoProjeto.value.description,
+      impact: novoProjeto.value.impact,
+      image: novoProjeto.value.image,
+      tags: novoProjeto.value.tags
+        ? novoProjeto.value.tags.split(',').map(tag => tag.trim()).filter(Boolean).map(label => ({ label }))
+        : []
+    }
+    const wasEditing = isEditingProject.value
+    if (wasEditing) {
+      const index = siteContent.projects.findIndex(p => String(p.id) === String(editingProjectId.value))
+      if (index !== -1) siteContent.projects.splice(index, 1, payload)
+    } else {
+      siteContent.projects.push(payload)
+    }
+
+    await persistSiteSetting('projects', siteContent.projects)
+
+    resetProjectForm()
+    setTimeout(() => { isSaving.value = false; alert(wasEditing ? 'Projeto atualizado!' : 'Projeto cadastrado!') }, 400)
+  } catch (e) {
+    console.error(e)
+    isSaving.value = false
+    alert('Erro ao salvar projeto: ' + (e.message || e))
+  }
+}
+
+const projectTagList = computed(() =>
+  novoProjeto.value.tags
+    ? novoProjeto.value.tags.split(',').map(tag => tag.trim()).filter(Boolean)
+    : []
+)
+
+const addProjectTag = (tag) => {
+  const current = projectTagList.value
+  if (current.includes(tag)) return
+  novoProjeto.value.tags = [...current, tag].join(', ')
+}
+
+const removeProjectTag = (tag) => {
+  novoProjeto.value.tags = projectTagList.value.filter(t => t !== tag).join(', ')
+}
+
+const deleteProject = async (id) => {
+  if (!confirm('Tem certeza que deseja excluir este projeto?')) return
+  isSaving.value = true
+  try {
+    siteContent.projects = (siteContent.projects || []).filter(p => String(p.id) !== String(id))
+    await persistSiteSetting('projects', siteContent.projects)
+    if (String(editingProjectId.value) === String(id)) resetProjectForm()
+    isSaving.value = false
+  } catch (e) {
+    console.error(e)
+    isSaving.value = false
+    alert('Erro ao excluir projeto: ' + (e.message || e))
+  }
+}
+
 const saveLibraryConfig = async () => {
   isSaving.value = true
   try {
@@ -1047,7 +1140,7 @@ onUnmounted(() => {
       <!-- 2. HUB EDITORIAL -->
       <section v-if="activeTab === 'editorial'" class="admin-section fade-in-up">
         
-        <div class="editor-card-brutal shadow-solid mb-10">
+        <div class="editor-card-brutal shadow-solid mb-10" id="project-editor-form">
           <h2 class="card-label-black mb-8">CONFIGURAÇÕES DA PÁGINA (TEXTOS FIXOS)</h2>
           <div class="form-grid-3 mb-4">
              <div class="input-group">
@@ -2091,17 +2184,92 @@ onUnmounted(() => {
           <div class="form-grid-2 mb-6">
              <div class="input-group">
                 <label>TÍTULO DO PROJETO</label>
-                <input type="text" placeholder="Ex: Campanha Prefeituras 2024" />
+                <input v-model="novoProjeto.title" type="text" placeholder="Ex: Campanha Prefeituras 2024" />
              </div>
              <div class="input-group">
                 <label>CLIENTE / ORGANIZAÇÃO</label>
-                <input type="text" placeholder="Ex: Instituto XPTO" />
+                <input v-model="novoProjeto.organization" type="text" placeholder="Ex: Instituto XPTO" />
+             </div>
+          </div>
+          <div class="input-group mb-6">
+             <label>DESCRIÃ‡ÃƒO DO PROJETO</label>
+             <textarea v-model="novoProjeto.description" rows="4" placeholder="Explique do que o projeto se trata, qual problema resolve e qual foi o resultado..."></textarea>
+          </div>
+          <div class="form-grid-2 mb-6">
+             <div class="input-group">
+                <label>IMPACTO</label>
+                <input v-model="novoProjeto.impact" type="text" placeholder="Ex: +500 lideranças formadas" />
+             </div>
+             <div class="input-group">
+                <label>IMAGEM DE CAPA (URL)</label>
+                <input v-model="novoProjeto.image" type="text" placeholder="https://..." />
+             </div>
+          </div>
+          <div class="input-group mb-6">
+             <label>TAGS (SEPARADAS POR VÍRGULA)</label>
+             <input v-model="novoProjeto.tags" type="text" placeholder="Ex: Gênero, Liderança, Advocacy" />
+          </div>
+          <div class="tag-editor-preview mb-6">
+             <button
+               v-for="tag in projectTagList"
+               :key="tag"
+               class="tag-chip"
+               type="button"
+               @click="removeProjectTag(tag)"
+               :title="`Remover ${tag}`"
+             >
+               {{ tag }} <X :size="12" />
+             </button>
+             <button
+               v-if="projectTagList.length === 0"
+               class="tag-chip tag-chip-empty"
+               type="button"
+             >
+               Nenhuma tag ainda
+             </button>
+             <div class="tag-suggestions">
+               <button type="button" class="tag-suggestion" @click="addProjectTag('Gênero')">+ Gênero</button>
+               <button type="button" class="tag-suggestion" @click="addProjectTag('Liderança')">+ Liderança</button>
+               <button type="button" class="tag-suggestion" @click="addProjectTag('Advocacy')">+ Advocacy</button>
              </div>
           </div>
           <div class="mb-6">
-             <ImageUploader label="IMAGEM DE CAPA DO PROJETO" />
+             <ImageUploader v-model="novoProjeto.image" label="IMAGEM DE CAPA DO PROJETO" />
           </div>
-          <button class="btn-save-brutal"><Plus :size="18" /> SALVAR PROJETO</button>
+          <button class="btn-save-brutal" @click="saveProject" :disabled="isSaving">
+            <Save v-if="isEditingProject" :size="18" />
+            <Plus v-else :size="18" />
+            {{ isEditingProject ? 'SALVAR ALTERAÇÕES DO PROJETO' : 'SALVAR PROJETO' }}
+          </button>
+        </div>
+        <div class="editor-card-brutal shadow-solid">
+           <h2 class="card-label-black mb-8">PROJETOS CADASTRADOS</h2>
+           <table class="table-brutal">
+              <thead>
+                 <tr>
+                    <th>TÍTULO</th>
+                    <th>CLIENTE</th>
+                    <th>DESCRIÇÃO</th>
+                    <th>AÇÕES</th>
+                 </tr>
+              </thead>
+              <tbody>
+                 <tr v-for="project in siteContent.projects" :key="project.id">
+                    <td class="font-bold">
+                       <button class="table-title-btn" @click="editProject(project)">{{ project.title }}</button>
+                    </td>
+                    <td>{{ project.organization || '—' }}</td>
+                    <td>{{ (project.description || project.desc || '').substring(0, 45) }}{{ (project.description || project.desc || '').length > 45 ? '...' : '' }}</td>
+                    <td class="actions-td">
+                       <button class="icon-action" title="Editar" @click="editProject(project)"><Edit :size="16" /></button>
+                       <button class="icon-action text-red-500" title="Excluir" @click="deleteProject(project.id)"><Trash :size="16" /></button>
+                    </td>
+                 </tr>
+                 <tr v-if="!siteContent.projects || siteContent.projects.length === 0">
+                    <td colspan="4" class="text-center opacity-50 py-6">Nenhum projeto cadastrado.</td>
+                 </tr>
+              </tbody>
+           </table>
         </div>
       </section>
 
@@ -2273,6 +2441,11 @@ onUnmounted(() => {
                 <input type="checkbox" v-model="siteContent.settings.menuServices" />
                 <span class="toggle-slider"></span>
                 <span class="toggle-label">Serviços / Eixos</span>
+             </label>
+             <label class="toggle-brutal-container">
+                <input type="checkbox" v-model="siteContent.settings.menuProjects" />
+                <span class="toggle-slider"></span>
+                <span class="toggle-label">Projetos / Cases</span>
              </label>
              <label class="toggle-brutal-container">
                 <input type="checkbox" v-model="siteContent.settings.menuLibrary" />
@@ -2487,6 +2660,23 @@ onUnmounted(() => {
 }
 .btn-save-brutal:hover:not(:disabled) { background: #A4CD39; transform: translate(-4px, -4px); box-shadow: 12px 12px 0px #1C1C1C; }
 .btn-save-brutal:disabled { opacity: 0.6; cursor: not-allowed; background: #CBD5E1; }
+.tag-editor-preview { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.tag-chip, .tag-suggestion {
+  border: 2px solid #1C1C1C;
+  background: #FFE65A;
+  color: #1C1C1C;
+  font-family: "Archivo Black", sans-serif;
+  font-size: 11px;
+  text-transform: uppercase;
+  padding: 8px 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.tag-chip { display: inline-flex; align-items: center; gap: 6px; }
+.tag-chip:hover, .tag-suggestion:hover { background: #FF6BCA; color: #fff; transform: translate(-2px, -2px); box-shadow: 4px 4px 0 #1C1C1C; }
+.tag-chip-empty { background: #F1F5F9; color: #64748B; cursor: default; }
+.tag-chip-empty:hover { transform: none; box-shadow: none; }
+.tag-suggestions { display: flex; flex-wrap: wrap; gap: 8px; }
 
 /* TABELA DE REGISTROS BRUTAL */
 .table-brutal { width: 100%; border-collapse: separate; border-spacing: 0; border: 4px solid #1C1C1C; border-radius: 16px; overflow: hidden; background: #FFF; box-shadow: 8px 8px 0px #1C1C1C; }
