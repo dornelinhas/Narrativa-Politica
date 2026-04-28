@@ -131,21 +131,26 @@ const gerarResumoIA = async () => {
   
   isGeneratingSummary.value = true
   
-  // Simulando processamento de IA (Prompts Estratégicos)
-  // Em uma versão futura, isso pode se conectar a uma API real de LLM
-  setTimeout(() => {
-    const textoLimpo = novoArtigo.value.content.replace(/<[^>]*>/g, '') // Remove HTML
-    const frases = textoLimpo.split(/[.!?]/).filter(f => f.trim().length > 20)
+  try {
+    const response = await fetch('/api/generate-summary', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        content: novoArtigo.value.content,
+        type: novoArtigo.value.type
+      })
+    })
     
-    if (frases.length > 0) {
-      // Pega as primeiras frases e formata como provocação
-      const base = frases[0].trim()
-      const resumo = base.length > 150 ? base.substring(0, 147) + '...' : base
-      novoArtigo.value.subtitle = resumo + " Uma análise profunda sobre o impacto dessas estruturas no território."
-    }
+    const data = await response.json()
+    if (!response.ok) throw new Error(data.error || 'Erro na IA')
     
+    novoArtigo.value.subtitle = data.summary
+  } catch (e) {
+    console.error(e)
+    alert("Não foi possível gerar o resumo automático. Verifique se a GEMINI_API_KEY está configurada.")
+  } finally {
     isGeneratingSummary.value = false
-  }, 1200)
+  }
 }
 // VAGAS E OPORTUNIDADES
 const oppsConfigData = ref({
