@@ -23,30 +23,43 @@ const plainText = (html = '') =>
 const analyzeWithAI = async (title, text, apiKey) => {
   const genAI = new GoogleGenerativeAI(apiKey);
   
-  // Usaremos o 1.5-flash que é o mais estável para contas gratuitas novas
-  const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+  // Lista de modelos que confirmamos estarem ATIVOS na sua chave
+  const modelsToTry = ["gemini-2.0-flash-lite", "gemini-2.0-flash", "gemini-2.5-flash"];
+  let lastError = null;
 
-  const prompt = `
-    Analise esta oportunidade e extraia as informações em PORTUGUÊS.
-    Traduza se estiver em inglês.
-    
-    Conteúdo: ${text.slice(0, 10000)}
+  for (const modelName of modelsToTry) {
+    try {
+      console.log(`Tentando modelo: ${modelName}`);
+      const model = genAI.getGenerativeModel({ model: modelName });
+      
+      const prompt = `
+        Analise esta oportunidade e extraia as informações em PORTUGUÊS.
+        Traduza se estiver em inglês.
+        
+        Conteúdo: ${text.slice(0, 10000)}
 
-    Responda APENAS em JSON:
-    {
-      "title": "Título traduzido",
-      "description": "Resumo curto",
-      "fullDescription": "HTML formatado profissional",
-      "category": "Vagas de Emprego, Bolsas, Editais ou Estudos",
-      "type": "Remoto, Híbrido ou Presencial",
-      "location": "Cidade ou Continente",
-      "deadline": "Prazo"
+        Responda APENAS em JSON:
+        {
+          "title": "Título traduzido",
+          "description": "Resumo curto",
+          "fullDescription": "HTML formatado profissional",
+          "category": "Vagas de Emprego, Bolsas, Editais ou Estudos",
+          "type": "Remoto, Híbrido ou Presencial",
+          "location": "Cidade ou Continente",
+          "deadline": "Prazo"
+        }
+      `;
+
+      const result = await model.generateContent(prompt);
+      const response = await result.response;
+      return JSON.parse(response.text().replace(/```json|```/g, "").trim());
+    } catch (err) {
+      console.error(`Falha no ${modelName}:`, err.message);
+      lastError = err;
+      continue; // Tenta o próximo modelo
     }
-  `;
-
-  const result = await model.generateContent(prompt);
-  const response = await result.response;
-  return JSON.parse(response.text().replace(/```json|```/g, "").trim());
+  }
+  throw lastError;
 }
 
 export default async function handler(req, res) {
@@ -72,9 +85,8 @@ export default async function handler(req, res) {
         link: url
       });
     } catch (aiError) {
-      console.error("Erro Gemini:", aiError);
       return res.status(500).json({ 
-        error: `O Google recusou o acesso: ${aiError.message}. Verifique se o modelo 'Gemini 1.5 Flash' está ativo no seu AI Studio.` 
+        error: `O Google recusou todos os modelos. Detalhes: ${aiError.message}` 
       });
     }
   } catch (error) {
