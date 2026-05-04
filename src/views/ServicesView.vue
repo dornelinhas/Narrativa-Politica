@@ -4,6 +4,7 @@ import { useRouter } from 'vue-router'
 import { Zap, Database, Users, Briefcase, Mail, ArrowRight } from 'lucide-vue-next'
 
 import { siteContent } from '../store/content'
+import { sanitizeHtml } from '../utils/sanitizeHtml'
 import * as icons from 'lucide-vue-next'
 
 const services = computed(() => siteContent.services || [])
@@ -100,7 +101,7 @@ onMounted(() => {
                  <Zap class="text-red-icon" />
                  <span class="eyebrow-news">{{ config.newsletterEyebrow || 'Rede de Mobilização' }}</span>
               </div>
-              <h2 class="newsletter-title-home" v-html="config.newsletterTitle || 'Junte-se ao <br /> Movimento.'"></h2>
+              <h2 class="newsletter-title-home" v-html="sanitizeHtml(config.newsletterTitle || 'Junte-se ao <br /> Movimento.')"></h2>
               <p class="newsletter-desc-home">
                 {{ config.newsletterDesc || 'Receba despachos estratégicos, convocações de ação e atualizações das frentes de luta. Sem spam.' }}
               </p>

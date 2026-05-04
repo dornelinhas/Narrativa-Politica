@@ -479,7 +479,10 @@ const mergeSettingValue = (currentValue, savedValue) => {
 }
 
 export const fetchAllContent = async () => {
-  if (!supabase) return { success: false, error: 'Supabase não inicializado' }
+  if (!supabase) {
+    siteContent.isLoading = false
+    return { success: false, error: 'Supabase não inicializado' }
+  }
   try {
     const fetchTable = async (table, opt = {}) => {
       let q = supabase.from(table).select('*')
@@ -511,11 +514,11 @@ export const fetchAllContent = async () => {
       })
     }
 
-    siteContent.isLoading = false;
+    siteContent.isLoading = false
     return { success: true }
   } catch (e) {
     console.error('Erro ao buscar conteúdo:', e)
-    siteContent.isLoading = false;
+    siteContent.isLoading = false
     return { success: false, error: e.message }
   }
 }

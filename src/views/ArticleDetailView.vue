@@ -58,16 +58,18 @@
       <hr class="art-divider" />
 
       <!-- ARTICLE BODY -->
-      <article class="art-body" v-html="post.content"></article>
+      <article class="art-body" v-html="sanitizeHtml(post.content)"></article>
 
       <!-- REFERENCES (COLLAPSIBLE) -->
       <transition name="slide-fade">
         <section v-if="post.references && showRefs" class="art-references">
-          <div class="flex justify-between items-center mb-6">
+          <div class="art-refs-header">
             <h3 class="art-references__title">REFERÊNCIAS E FONTES</h3>
-            <button @click="showRefs = false" class="text-xs font-bold opacity-50">FECHAR [X]</button>
+            <button @click="showRefs = false" class="btn-close-refs" title="Fechar referências">
+              <X :size="20" />
+            </button>
           </div>
-          <div class="art-references__content" v-html="formatReferences(post.references)"></div>
+          <div class="art-references__content" v-html="sanitizeHtml(formatReferences(post.references))"></div>
         </section>
       </transition>
 
@@ -134,6 +136,7 @@
 import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { siteContent } from '../store/content'
+import { sanitizeHtml } from '../utils/sanitizeHtml'
 import { Linkedin, MessageCircle, Link as LinkIcon, ArrowLeft } from 'lucide-vue-next'
 
 const route = useRoute()

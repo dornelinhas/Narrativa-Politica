@@ -209,7 +209,7 @@
              <Zap class="text-red" style="fill: #DF2028; color: #DF2028; width: 24px; height: 24px; flex-shrink: 0;" />
              <span class="font-sans font-black text-xs uppercase tracking-widest text-dark">{{ siteContent.home?.newsletterEyebrow || 'Rede de Mobilização' }}</span>
           </div>
-          <h2 class="font-display text-4xl md-text-5xl uppercase tracking-tighter text-dark leading-none mb-4" v-html="siteContent.home?.newsletterTitle || 'Junte-se ao <br /> Movimento.'"></h2>
+          <h2 class="font-display text-4xl md-text-5xl uppercase tracking-tighter text-dark leading-none mb-4" v-html="sanitizeHtml(siteContent.home?.newsletterTitle || 'Junte-se ao <br /> Movimento.')"></h2>
           <p class="font-sans font-bold text-dark-80">
             {{ siteContent.home?.newsletterDescription || 'Receba despachos estratégicos, convocações de ação e atualizações das frentes de luta. Sem spam.' }}
           </p>
@@ -248,6 +248,7 @@
 import { computed, ref } from 'vue'
 import { ArrowRight, Globe, Users, Zap, Sun, Database, ShieldCheck, Mic2, Cpu } from 'lucide-vue-next'
 import { siteContent, filterPublicOpportunities } from '../store/content'
+import { sanitizeHtml } from '../utils/sanitizeHtml'
 
 const servicesIcons = { Globe, Users, Zap, Database, ShieldCheck, Mic2, Cpu }
 

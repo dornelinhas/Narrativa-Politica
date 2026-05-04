@@ -2,6 +2,7 @@
 import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { supabase } from '../lib/supabase'
+import { sanitizeHtml } from '../utils/sanitizeHtml'
 import { ChevronLeft, Calendar, Tag, Share2 } from 'lucide-vue-next'
 
 const route = useRoute()
@@ -65,7 +66,7 @@ const share = () => {
       </div>
 
       <!-- CONTEÚDO HTML -->
-      <div class="nl-content shadow-solid" v-html="newsletter.conteudo"></div>
+      <div class="nl-content shadow-solid" v-html="sanitizeHtml(newsletter.conteudo)"></div>
 
       <!-- RODAPÉ DE AÇÃO -->
       <footer class="nl-footer mt-12 flex justify-between items-center">

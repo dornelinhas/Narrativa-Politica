@@ -38,7 +38,7 @@
               <span class="project-detail-block__kicker"></span>
               <h2>Contexto</h2>
             </div>
-            <div class="project-detail-text" v-html="project.description || project.desc || 'Descrição do projeto não informada.'"></div>
+            <div class="project-detail-text" v-html="sanitizeHtml(project.description || project.desc || 'Descrição do projeto não informada.')"></div>
           </section>
 
           <section class="project-detail-block">
@@ -46,7 +46,7 @@
               <span class="project-detail-block__kicker project-detail-block__kicker--red"></span>
               <h2>Resultado</h2>
             </div>
-            <div class="project-detail-text" v-html="project.content || project.solution || 'Detalhes da solução não informados.'"></div>
+            <div class="project-detail-text" v-html="sanitizeHtml(project.content || project.solution || 'Detalhes da solução não informados.')"></div>
           </section>
 
           <section v-if="projectTags.length" class="project-detail-block">
@@ -75,6 +75,7 @@
 import { computed } from 'vue'
 import { useRoute } from 'vue-router'
 import { siteContent } from '../store/content'
+import { sanitizeHtml } from '../utils/sanitizeHtml'
 
 const route = useRoute()
 const fallbackImage = 'https://images.unsplash.com/photo-1541844053589-346841d0b34c?auto=format&fit=crop&q=80&w=1200'

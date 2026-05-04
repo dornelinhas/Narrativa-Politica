@@ -30,7 +30,7 @@
           </figure>
            
           <div class="serif-magazine-desc">
-            <div v-if="op.fullDescription" v-html="op.fullDescription"></div>
+            <div v-if="op.fullDescription" v-html="sanitizeHtml(op.fullDescription)"></div>
             <div v-else class="placeholder-content">
               <p class="editorial-intro">Convocatória estratégica para lideranças territoriais.</p>
               
@@ -122,6 +122,7 @@
 import { computed } from 'vue'
 import { useRoute } from 'vue-router'
 import { siteContent, getOpportunityVisibilityState } from '../store/content'
+import { sanitizeHtml } from '../utils/sanitizeHtml'
 import { ArrowLeft, ExternalLink, Linkedin, MessageCircle, Link } from 'lucide-vue-next'
 
 const route = useRoute()

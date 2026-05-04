@@ -20,14 +20,14 @@
         
         <div class="svc-text-block">
           <h2 class="svc-heading">Visão Geral</h2>
-          <div class="svc-paragraph" v-html="service.description || 'Nenhuma descrição disponível.'"></div>
+          <div class="svc-paragraph" v-html="sanitizeHtml(service.description || 'Nenhuma descrição disponível.')"></div>
         </div>
 
         <div class="svc-divider"></div>
 
         <div v-if="service.benefits" class="svc-text-block">
           <h2 class="svc-heading">Principais Benefícios</h2>
-          <div class="svc-paragraph" v-html="service.benefits"></div>
+          <div class="svc-paragraph" v-html="sanitizeHtml(service.benefits)"></div>
           <div class="svc-divider"></div>
         </div>
 
@@ -69,6 +69,7 @@
 import { computed } from 'vue'
 import { useRoute } from 'vue-router'
 import { siteContent } from '../store/content'
+import { sanitizeHtml } from '../utils/sanitizeHtml'
 import { ArrowRight } from 'lucide-vue-next'
 
 const route = useRoute()

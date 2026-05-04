@@ -52,7 +52,7 @@
           <!-- CAIXA TRAJETÓRIA -->
           <section class="yellow-box-editorial-anchored fade-in-up" style="animation-delay: 0.4s">
             <h3 class="box-label-black">TRAJETÓRIA & VISÃO</h3>
-            <div class="serif-content-black" v-html="formatBio(siteContent.about.bioInstitucional || defaultBio)"></div>
+            <div class="serif-content-black" v-html="sanitizeHtml(formatBio(siteContent.about.bioInstitucional || defaultBio))"></div>
           </section>
 
           <!-- CAIXA ATUAÇÃO (HABILIDADES COMO CARDS COLORIDOS COM MARGEM E PADDING) -->
@@ -78,7 +78,7 @@
                <Zap class="text-red-icon" />
                <span class="eyebrow-news">{{ siteContent.about.ctaEyebrow || 'Conexão de Impacto' }}</span>
             </div>
-            <h2 class="cta-title-home" v-html="siteContent.about.ctaTitle || 'VAMOS MONTAR OU <br /> CRIAR ALGO JUNTOS?'"></h2>
+            <h2 class="cta-title-home" v-html="sanitizeHtml(siteContent.about.ctaTitle || 'VAMOS MONTAR OU <br /> CRIAR ALGO JUNTOS?')"></h2>
             <p class="cta-desc-home">
               {{ siteContent.about.ctaDesc || 'Construímos tecnologias sociais e infraestruturas estratégicas que permitem aos movimentos pautarem o debate público com total autonomia.' }}
             </p>
@@ -99,6 +99,7 @@
 <script setup>
 import { computed, onMounted } from 'vue'
 import { siteContent } from '../store/content'
+import { sanitizeHtml } from '../utils/sanitizeHtml'
 import { Linkedin, Instagram, Mail, Zap } from 'lucide-vue-next'
 
 const dotColors = ['bg-magenta', 'bg-blue', 'bg-lime', 'bg-yellow-dark']

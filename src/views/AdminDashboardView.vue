@@ -6,6 +6,7 @@ import { supabase } from '../lib/supabase'
 import { Settings, LogOut, CheckCircle, Clock, Trash2, Home, Search, BookOpen, Briefcase, ChevronDown, Package, FileText, User, Mail, Folder, Download, Eye, Heart, Library, Save, Plus, Edit, Trash, Zap, Calendar, X, ExternalLink, ArrowUp, Sparkles } from 'lucide-vue-next'
 import BrutalEditor from '../components/BrutalEditor.vue'
 import ImageUploader from '../components/ImageUploader.vue'
+import { sanitizeHtml } from '../utils/sanitizeHtml'
 import { siteContent, fetchAllContent, getOpportunityVisibilityState } from '../store/content'
 
 const router = useRouter()
@@ -2204,7 +2205,7 @@ onUnmounted(() => {
                           <div class="email-body-mock">
                              <img v-if="novaNewsletter.capa_url" :src="novaNewsletter.capa_url" class="preview-img-mock" />
                              <div class="preview-title-mock">{{ novaNewsletter.titulo || 'Assunto da Newsletter...' }}</div>
-                             <div class="preview-text-mock" v-html="novaNewsletter.conteudo || 'O conteúdo do seu e-mail aparecerá aqui em tempo real...'"></div>
+                             <div class="preview-text-mock" v-html="sanitizeHtml(novaNewsletter.conteudo || 'O conteúdo do seu e-mail aparecerá aqui em tempo real...')"></div>
                              <div class="preview-footer-mock">
                                 © 2026 Narrativa Política. <br>
                                 Você recebeu este e-mail porque faz parte da nossa rede.
