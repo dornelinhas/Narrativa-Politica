@@ -1,5 +1,5 @@
 <template>
-  <div v-if="op" class="op-magazine-layout">
+  <div v-if="op && !opIsExpired" class="op-magazine-layout">
     <!-- FUNDO TEXTURIZADO PREMIUM -->
     <div class="film-grain-overlay"></div>
 
@@ -98,18 +98,40 @@
       </div>
     </div>
   </div>
+
+  <div v-else class="op-magazine-layout expired-opportunity-layout">
+    <div class="film-grain-overlay"></div>
+    <div class="container-mag expired-state">
+      <router-link to="/oportunidades" class="back-link-mag">
+        <ArrowLeft :size="16" /> {{ siteContent.opportunitiesConfig?.detailBackBtn || 'PORTAL DE TALENTOS' }}
+      </router-link>
+
+      <div class="expired-card">
+        <span class="expired-badge">OPORTUNIDADE ENCERRADA</span>
+        <h1 class="huge-magazine-title expired-title">ESTA OPORTUNIDADE NÃO ESTÁ MAIS DISPONÍVEL</h1>
+        <p class="expired-text">
+          O prazo informado já passou ou a oportunidade foi marcada como encerrada. A listagem pública oculta itens vencidos automaticamente.
+        </p>
+        <router-link to="/oportunidades" class="pill-btn-black-matte">
+          VOLTAR PARA O HUB DE TALENTOS <ArrowRight :size="18" />
+        </router-link>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script setup>
 import { computed } from 'vue'
 import { useRoute } from 'vue-router'
-import { siteContent } from '../store/content'
+import { siteContent, isOpportunityExpired } from '../store/content'
 import { ArrowLeft, ExternalLink, Linkedin, MessageCircle, Link } from 'lucide-vue-next'
 
 const route = useRoute()
 const op = computed(() => siteContent.opportunities?.find(o => String(o.id) === String(route.params.id)) || {
   id: 1, title: 'Bolsa de Pesquisa', category: 'Bolsas', deadline: '25 MAI', location: 'Remoto'
 })
+
+const opIsExpired = computed(() => isOpportunityExpired(op.value))
 
 const getCategoryColor = (cat) => ({
   'Gênero': '#FF6BCA',
@@ -128,6 +150,7 @@ const copyLink = () => { navigator.clipboard.writeText(window.location.href); al
 
 <style scoped>
 .op-magazine-layout { min-height: 100vh; background-color: #FFFFFF; position: relative; overflow-x: hidden; }
+.expired-opportunity-layout { display: flex; align-items: center; }
 
 .film-grain-overlay {
   position: fixed; inset: 0; z-index: 5; pointer-events: none;
@@ -136,6 +159,7 @@ const copyLink = () => { navigator.clipboard.writeText(window.location.href); al
 }
 
 .container-mag { max-width: 1200px; margin: 0 auto; padding: 180px 2rem 140px 2rem; position: relative; z-index: 10; }
+.expired-state { min-height: 100vh; display: flex; align-items: center; }
 .back-link-mag { display: inline-flex; align-items: center; gap: 8px; font-weight: 900; font-size: 11px; color: #000; text-decoration: none; opacity: 0.4; margin-bottom: 40px; }
 
 .magazine-columns-grid { display: grid; grid-template-columns: 1fr 380px; gap: 100px; }
@@ -170,6 +194,31 @@ const copyLink = () => { navigator.clipboard.writeText(window.location.href); al
 
 .pill-btn-black-matte { display: inline-flex; align-items: center; gap: 15px; background: #1C1C1C; color: #FFF; padding: 1.5rem 3.5rem; border-radius: 9999px; font-weight: 900; font-size: 14px; text-decoration: none; text-transform: uppercase; transition: 0.3s; }
 .pill-btn-black-matte:hover { background: #DF2028; transform: scale(1.05); }
+
+.expired-card {
+  max-width: 760px;
+  background: #fff;
+  border: 4px solid #000;
+  border-radius: 2.5rem;
+  padding: 3rem;
+  box-shadow: 12px 12px 0 #DF2028;
+}
+
+.expired-badge {
+  display: inline-flex;
+  margin-bottom: 1.5rem;
+  padding: 0.5rem 1rem;
+  background: #DF2028;
+  color: #fff;
+  border: 2px solid #000;
+  border-radius: 9999px;
+  font-size: 11px;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.expired-title { margin-bottom: 1.5rem; }
+.expired-text { font-size: 1.1rem; line-height: 1.8; color: #1C1C1C; margin-bottom: 2.5rem; max-width: 56ch; }
 
 .sticky-info-card-brutal { background: white; border: 4px solid #000; border-radius: 3rem; padding: 3rem; box-shadow: 12px 12px 0px #000; }
 

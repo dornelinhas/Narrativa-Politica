@@ -1,6 +1,80 @@
 import { reactive } from 'vue'
 import { supabase } from '../lib/supabase'
 
+const MONTHS_PT = {
+  JAN: 0,
+  FEV: 1,
+  MAR: 2,
+  ABR: 3,
+  MAI: 4,
+  JUN: 5,
+  JUL: 6,
+  AGO: 7,
+  SET: 8,
+  OUT: 9,
+  NOV: 10,
+  DEZ: 11
+}
+
+const stripAccents = (value = '') =>
+  String(value)
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+
+const normalizeDeadlineText = (value = '') =>
+  stripAccents(value).replace(/\s+/g, ' ').trim().toUpperCase()
+
+export const parseOpportunityDeadline = (deadline) => {
+  const raw = String(deadline || '').trim()
+  if (!raw) return null
+
+  const normalized = normalizeDeadlineText(raw)
+  if (!normalized) return null
+
+  if (
+    normalized === 'ABERTO' ||
+    normalized.includes('INSCRICOES ABERTAS') ||
+    normalized.includes('INSCRICOES EM ANDAMENTO') ||
+    normalized.includes('INSCRICAO ABERTA')
+  ) {
+    return null
+  }
+
+  const isoMatch = normalized.match(/^(\d{4})-(\d{2})-(\d{2})$/)
+  if (isoMatch) {
+    const [, year, month, day] = isoMatch
+    return new Date(Number(year), Number(month) - 1, Number(day), 23, 59, 59, 999)
+  }
+
+  const dateMatch = normalized.match(/^(\d{1,2})\s+([A-Z]{3})(?:\s+(\d{4}))?$/)
+  if (dateMatch) {
+    const [, day, monthLabel, year] = dateMatch
+    const month = MONTHS_PT[monthLabel]
+    if (month === undefined) return null
+    const targetYear = year ? Number(year) : new Date().getFullYear()
+    return new Date(targetYear, month, Number(day), 23, 59, 59, 999)
+  }
+
+  const fallback = new Date(raw)
+  return Number.isNaN(fallback.getTime()) ? null : fallback
+}
+
+export const isOpportunityExpired = (opportunity, now = new Date()) => {
+  if (!opportunity) return false
+
+  const status = normalizeDeadlineText(opportunity.status || '')
+  if (status === 'ENCERRADA') return true
+  if (status === 'ABERTA') return false
+
+  const deadlineDate = parseOpportunityDeadline(opportunity.deadline)
+  if (!deadlineDate) return false
+
+  return deadlineDate.getTime() < now.getTime()
+}
+
+export const filterActiveOpportunities = (opportunities = [], now = new Date()) =>
+  opportunities.filter(opportunity => !isOpportunityExpired(opportunity, now))
+
 const initialContent = {
   isLoading: true,
   lastActivity: [],

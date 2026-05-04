@@ -66,7 +66,10 @@
               </div>
             </div>
             
-            <router-link v-if="filteredPosts.length > 0" :to="`/conteudo/${filteredPosts[0].id}`" class="large-card group cursor-pointer border-dark bg-white flex-col md-flex-row flex-1 no-underline text-dark" style="min-height: 450px; display: flex;">
+            <div v-if="siteContent.isLoading" class="large-card group border-dark bg-white flex-col p-12 justify-center items-center flex-1">
+              <div class="font-sans font-bold text-dark opacity-40 animate-pulse uppercase tracking-widest text-sm">Carregando editorial...</div>
+            </div>
+            <router-link v-else-if="filteredPosts.length > 0" :to="`/conteudo/${filteredPosts[0].id}`" class="large-card group cursor-pointer border-dark bg-white flex-col md-flex-row flex-1 no-underline text-dark" style="min-height: 450px; display: flex;">
                <div class="large-card-img-wrapper relative border-b-dark md-border-r-dark w-full md-w-half h-64 md-h-auto overflow-hidden bg-dark">
                  <img
                    :src="filteredPosts[0].image || 'https://images.unsplash.com/photo-1541844053589-346841d0b34c?auto=format&fit=crop&q=80&w=800'"
@@ -141,7 +144,7 @@
           </p>
         </div>
         
-        <div class="grid-opps-list gap-6 flex-col">
+        <div v-if="displayOpportunities.length > 0" class="grid-opps-list gap-6 flex-col">
           <router-link v-for="(opp, idx) in displayOpportunities" :key="opp.id" :to="`/oportunidades/${opp.id}`" class="opp-item-brutalist group border-dark bg-white flex-col sm-flex-row justify-between no-underline transition-all" style="display: flex;">
             <div class="opp-content p-6 md-p-8 flex-1">
               <div class="flex-center-left gap-3 mb-4">
@@ -158,6 +161,10 @@
               </div>
             </div>
           </router-link>
+        </div>
+        <div v-else class="opp-empty-state bg-white border-dark p-8 shadow-solid">
+          <h3 class="font-display text-2xl uppercase tracking-tighter text-dark mb-3">Nenhuma oportunidade ativa</h3>
+          <p class="font-sans font-semibold text-dark opacity-80">Quando o prazo vence, a oportunidade some automaticamente da vitrine pública.</p>
         </div>
       </div>
     </section>
@@ -240,7 +247,7 @@
 <script setup>
 import { computed, ref } from 'vue'
 import { ArrowRight, Globe, Users, Zap, Sun, Database, ShieldCheck, Mic2, Cpu } from 'lucide-vue-next'
-import { siteContent } from '../store/content'
+import { siteContent, filterActiveOpportunities } from '../store/content'
 
 const servicesIcons = { Globe, Users, Zap, Database, ShieldCheck, Mic2, Cpu }
 
@@ -282,7 +289,7 @@ const mockOpportunities = [
 
 const displayOpportunities = computed(() => {
   return siteContent.opportunities && siteContent.opportunities.length > 0 
-    ? siteContent.opportunities 
+    ? filterActiveOpportunities(siteContent.opportunities)
     : mockOpportunities
 })
 
@@ -314,6 +321,7 @@ const mockPosts = [
 ]
 
 const displayPosts = computed(() => {
+  if (siteContent.isLoading) return []
   return siteContent.posts && siteContent.posts.length > 0 ? siteContent.posts : mockPosts
 })
 

@@ -1,7 +1,7 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { Bookmark, MapPin, Briefcase, Search, Star, ArrowRight, AlertCircle, Sparkles, Filter } from 'lucide-vue-next'
-import { siteContent } from '../store/content'
+import { siteContent, filterActiveOpportunities } from '../store/content'
 
 const searchQuery = ref('')
 const selectedCategory = ref('Tudo')
@@ -34,7 +34,8 @@ const mockOpportunities = [
 ]
 
 const filteredOpportunities = computed(() => {
-  let ops = (siteContent.opportunities?.length ? siteContent.opportunities : mockOpportunities)
+  const source = siteContent.opportunities?.length ? siteContent.opportunities : mockOpportunities
+  let ops = filterActiveOpportunities(source)
   if (selectedCategory.value !== 'Tudo') ops = ops.filter(op => op.category === selectedCategory.value)
   if (destaqueNordeste.value) ops = ops.filter(op => op.location?.toLowerCase().includes('pe') || op.location?.toLowerCase().includes('nordeste'))
   if (searchQuery.value) {
@@ -128,6 +129,10 @@ const toggleFavorite = (id) => {
             </div>
           </div>
         </div>
+      </div>
+      <div v-else class="empty-opportunities-state">
+        <h2>Nenhuma oportunidade ativa no momento</h2>
+        <p>Quando o prazo vence, o item sai da vitrine automaticamente.</p>
       </div>
       
       <div class="footer-spacer-secure"></div>
@@ -250,6 +255,27 @@ const toggleFavorite = (id) => {
 .btn-details:hover { color: #FF6BCA; transform: translateX(8px); }
 
 .footer-spacer-secure { height: 180px; }
+
+.empty-opportunities-state {
+  background: #FFFFFF;
+  border: 3px solid #000000;
+  border-radius: 2rem;
+  padding: 2.5rem;
+  box-shadow: 10px 10px 0 rgba(0,0,0,0.05);
+  max-width: 760px;
+}
+.empty-opportunities-state h2 {
+  font-family: "Archivo Black", sans-serif;
+  text-transform: uppercase;
+  font-size: 1.6rem;
+  line-height: 1.1;
+  margin-bottom: 0.75rem;
+}
+.empty-opportunities-state p {
+  font-weight: 700;
+  color: #1C1C1C;
+  opacity: 0.75;
+}
 
 @media (max-width: 768px) { .ops-grid-clean { grid-template-columns: 1fr; } .editorial-title { font-size: 3.5rem; } }
 </style>
