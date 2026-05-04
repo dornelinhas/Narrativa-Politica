@@ -1,5 +1,4 @@
 const { GoogleGenerativeAI } = require("@google/generative-ai");
-const zlib = require('node:zlib')
 
 const decodeHtml = (value = '') =>
   String(value)
@@ -30,27 +29,6 @@ const normalizeList = (value) => {
 }
 
 const lowercase = (value = '') => String(value || '').toLowerCase()
-
-const GENERIC_OPPORTUNITY_PAGES = [
-  'cadastre-se',
-  'cadastro',
-  'faça seu cadastro',
-  'faca seu cadastro',
-  'acessar perfil',
-  'perfil',
-  'central de editais',
-  'entrar',
-  'login',
-  'sair',
-  'home',
-  'início',
-  'inicio',
-  'sobre nós',
-  'sobre nos',
-  'contato',
-  'privacidade',
-  'termos'
-]
 
 const OPPORTUNITY_LINK_TERMS = [
   'vaga',
@@ -400,70 +378,6 @@ const evaluateOpportunityCuration = (item = {}, rules = {}) => {
   }
 }
 
-const isOpportunityLink = (text = '', href = '') => {
-  const combined = `${text} ${href}`.toLowerCase()
-  const path = (() => {
-    try {
-      return new URL(href).pathname.toLowerCase()
-    } catch {
-      return ''
-    }
-  })()
-
-  if (!combined.trim()) return false
-  if (GENERIC_LINK_PATTERNS.some(pattern => pattern.test(combined))) return false
-  if (GENERIC_PATH_PATTERNS.some(pattern => pattern.test(path))) return false
-
-  const hasOpportunityTerm = OPPORTUNITY_LINK_TERMS.some(term => combined.includes(term))
-  const deepPath = /\/[^/]+/.test(path)
-  const likelyListingPath = /vaga|oportunidade|bolsa|edital|chamada|inscri|program|grant|scholar|work|job/.test(path)
-
-  return hasOpportunityTerm || likelyListingPath || (deepPath && /\/(blog|news|noticia|notícias|post|article|articles|editais|vagas|oportunidades)/i.test(path))
-}
-
-const extractOpportunityLinksFromHtml = (html = '', baseUrl) => {
-  const links = []
-  const seen = new Set()
-  const anchorRegex = /<a\b[^>]*href=["']([^"']+)["'][^>]*>([\s\S]*?)<\/a>/gi
-  let match
-
-  while ((match = anchorRegex.exec(html)) !== null) {
-    const href = String(match[1] || '').trim()
-    if (!href || href.startsWith('#') || href.startsWith('mailto:') || href.startsWith('javascript:')) continue
-
-    let absoluteUrl
-    try {
-      absoluteUrl = new URL(href, baseUrl).toString()
-    } catch {
-      continue
-    }
-
-    try {
-      const baseHost = new URL(baseUrl).hostname
-      const candidateHost = new URL(absoluteUrl).hostname
-      if (baseHost !== candidateHost && !candidateHost.endsWith(`.${baseHost}`) && !baseHost.endsWith(`.${candidateHost}`)) {
-        continue
-      }
-    } catch {
-      continue
-    }
-
-    const text = plainText(match[2] || '')
-    const surroundingHtml = html.slice(Math.max(0, match.index - 180), Math.min(html.length, match.index + match[0].length + 220))
-    const surroundingText = plainText(surroundingHtml)
-    const combinedContext = `${text} ${surroundingText} ${absoluteUrl}`.toLowerCase()
-    const score = scoreOpportunityCandidate(combinedContext, absoluteUrl)
-    if (score < 20 || !isOpportunityLink(text, absoluteUrl)) continue
-
-    const key = `${absoluteUrl}|${text}`
-    if (seen.has(key)) continue
-    seen.add(key)
-    links.push({ url: absoluteUrl, text, score })
-  }
-
-  return links.sort((a, b) => (b.score || 0) - (a.score || 0))
-}
-
 const fetchPageText = async (url) => {
   const response = await fetch(url, { headers: { 'user-agent': 'Mozilla/5.0' } })
   const contentType = String(response.headers.get('content-type') || '').toLowerCase()
@@ -492,7 +406,6 @@ const coerceOpportunityItems = (payload) => {
 module.exports = {
   analyzeOpportunityText,
   coerceOpportunityItems,
-  extractOpportunityLinksFromHtml,
   extractPdfTextFromBuffer,
   fetchPageText,
   evaluateOpportunityCuration,
