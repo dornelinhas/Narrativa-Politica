@@ -314,6 +314,15 @@ const initialContent = {
     detailShareTitle: "COMPARTILHAR",
     detailStatusBadge: "INSCRIÇÕES ABERTAS"
   },
+  opportunitiesSourcesConfig: {
+    sectionTitle: "FONTES MONITORADAS",
+    sectionDescription: "Sites e publicações que alimentam a fila de revisão.",
+    pdfTitle: "IMPORTAR PDF / PRESS RELEASE",
+    sources: [
+      { id: 'opportunitiesforyouth', label: 'Opportunities for Youth', url: 'https://opportunitiesforyouth.org/', enabled: true },
+      { id: 'terceirosetor', label: 'Vagas Terceiro Setor', url: 'https://vagas.terceirosetor.net/', enabled: true }
+    ]
+  },
   tracks: [
     {
       id: 'advocacy',
@@ -436,6 +445,7 @@ export const siteContent = reactive({ ...initialContent })
 const siteSettingKeys = [
   'home', 'about', 'settings', 'donateConfig', 'services', 'opportunities', 'tracks',
   'library', 'projects', 'newsletterArchiveConfig', 'articlesConfig', 'opportunitiesConfig',
+  'opportunitiesSourcesConfig',
   'servicesConfig', 'libraryConfig'
 ]
 

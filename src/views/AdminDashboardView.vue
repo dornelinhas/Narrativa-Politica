@@ -161,9 +161,14 @@ const vagas = ref(siteContent.opportunities || [])
 const novaVaga = ref(defaultOpportunityForm())
 const opportunityImportUrl = ref('')
 const isImportingOpportunity = ref(false)
+const monitoredSources = computed(() => siteContent.opportunitiesSourcesConfig?.sources?.filter(source => source.enabled !== false) || [])
 const reviewQueue = computed(() => (siteContent.opportunities || []).filter(v => getOpportunityVisibilityState(v) === 'pending'))
 const publishedVagas = computed(() => (siteContent.opportunities || []).filter(v => getOpportunityVisibilityState(v) === 'public'))
 const rejectedVagas = computed(() => (siteContent.opportunities || []).filter(v => getOpportunityVisibilityState(v) === 'rejected'))
+const isImportingSource = ref(false)
+const isImportingPdf = ref(false)
+const selectedPdfName = ref('')
+const selectedPdfDataUrl = ref('')
 const opportunityStatusLabel = (vaga) => ({
   public: 'PUBLICADA',
   pending: 'EM REVISÃO',
@@ -178,6 +183,11 @@ const opportunityStatusClass = (vaga) => ({
   expired: 'badge-danger',
   closed: 'badge-danger'
 }[getOpportunityVisibilityState(vaga)] || 'badge-featured')
+const sourceSummaryText = computed(() => {
+  const total = monitoredSources.value.length
+  const active = monitoredSources.value.filter(source => source.enabled !== false).length
+  return `${active}/${total} fontes ativas`
+})
 // LMS / TRILHAS
 const trilhas = ref(siteContent.tracks || [])
 const novaTrilha = ref(defaultTrackForm())
@@ -635,6 +645,41 @@ const approveVaga = async (vaga) => updateVagaStatus(vaga, 'approved')
 const rejectVaga = async (vaga) => updateVagaStatus(vaga, 'rejected')
 const moveVagaToReview = async (vaga) => updateVagaStatus(vaga, 'pending')
 
+const mergeImportedOpportunities = async (items = []) => {
+  if (!Array.isArray(items) || items.length === 0) return 0
+
+  if (!siteContent.opportunities) siteContent.opportunities = []
+  const next = [...siteContent.opportunities]
+  let inserted = 0
+
+  items.forEach((item, index) => {
+    if (!item) return
+    const normalized = {
+      ...item,
+      id: item.id || `import_${Date.now()}_${index}`,
+      status: item.status || 'pending'
+    }
+
+    const duplicateIndex = next.findIndex(existing => {
+      const sameUrl = normalized.sourceUrl && existing.sourceUrl && String(existing.sourceUrl).trim() === String(normalized.sourceUrl).trim()
+      const sameTitle = String(existing.title || '').trim().toLowerCase() === String(normalized.title || '').trim().toLowerCase()
+      return sameUrl && sameTitle
+    })
+
+    if (duplicateIndex !== -1) {
+      next.splice(duplicateIndex, 1, { ...next[duplicateIndex], ...normalized })
+    } else {
+      next.unshift(normalized)
+      inserted += 1
+    }
+  })
+
+  siteContent.opportunities = next
+  vagas.value = next
+  await persistSiteSetting('opportunities', next)
+  return inserted
+}
+
 const deleteVaga = async (vaga) => {
   if (!confirm(`Excluir a oportunidade "${vaga.title}"?`)) return
   isSaving.value = true
@@ -764,6 +809,101 @@ const importOpportunityFromUrl = async () => {
     alert('Falha ao importar a oportunidade: ' + (e.message || e))
   } finally {
     isImportingOpportunity.value = false
+  }
+}
+
+const importFromSource = async (source, options = {}) => {
+  if (!source?.url) return
+  const manageLoading = !options.batched
+  if (manageLoading) isImportingSource.value = true
+  try {
+    const response = await fetch(`/api/import-opportunities-source?url=${encodeURIComponent(source.url)}&label=${encodeURIComponent(source.label || '')}`)
+    const data = await response.json()
+    if (!response.ok) throw new Error(data.error || 'Não foi possível importar a fonte.')
+
+    const inserted = await mergeImportedOpportunities((data.items || []).map(item => ({
+      ...item,
+      sourceName: source.label || item.sourceName,
+      sourcePageUrl: source.url,
+      sourceUrl: item.sourceUrl || source.url,
+      status: item.status || 'pending'
+    })))
+
+    if (!options.silent) {
+      alert(`Fonte importada: ${inserted} oportunidade(s) adicionada(s) para revisão.`)
+    }
+  } catch (e) {
+    console.error(e)
+    alert('Falha ao importar a fonte: ' + (e.message || e))
+  } finally {
+    if (manageLoading) isImportingSource.value = false
+  }
+}
+
+const importAllSources = async () => {
+  isImportingSource.value = true
+  try {
+    for (const source of monitoredSources.value) {
+      // Importa em sequência para reduzir sobrecarga e facilitar diagnóstico.
+      // eslint-disable-next-line no-await-in-loop
+      await importFromSource(source, { silent: true, batched: true })
+    }
+    alert('Fontes importadas. Verifique a fila de revisão.')
+  } finally {
+    isImportingSource.value = false
+  }
+}
+
+const handlePdfChange = async (event) => {
+  const file = event.target.files?.[0]
+  selectedPdfName.value = file?.name || ''
+  selectedPdfDataUrl.value = ''
+  if (!file) return
+
+  const reader = new FileReader()
+  reader.onload = () => {
+    selectedPdfDataUrl.value = String(reader.result || '')
+  }
+  reader.readAsDataURL(file)
+}
+
+const importPdfRelease = async () => {
+  if (!selectedPdfDataUrl.value) {
+    alert('Selecione um PDF primeiro.')
+    return
+  }
+
+  isImportingPdf.value = true
+  try {
+    const response = await fetch('/api/import-opportunities-pdf', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        dataUrl: selectedPdfDataUrl.value,
+        fileName: selectedPdfName.value,
+        label: selectedPdfName.value
+      })
+    })
+    const data = await response.json()
+    if (!response.ok) throw new Error(data.error || 'Não foi possível importar o PDF.')
+
+    const inserted = await mergeImportedOpportunities((data.items || []).map(item => ({
+      ...item,
+      sourceName: selectedPdfName.value,
+      sourcePageUrl: selectedPdfName.value,
+      sourceUrl: item.sourceUrl || selectedPdfName.value,
+      sourceType: 'pdf',
+      status: item.status || 'pending'
+    })))
+
+    selectedPdfDataUrl.value = ''
+    selectedPdfName.value = ''
+    alert(`PDF importado: ${inserted} oportunidade(s) adicionada(s) para revisão.`)
+  } catch (e) {
+    console.error(e)
+    alert('Falha ao importar o PDF: ' + (e.message || e))
+  } finally {
+    isImportingPdf.value = false
   }
 }
 
@@ -1485,6 +1625,50 @@ onUnmounted(() => {
           </button>
         </div>
 
+        <div class="editor-card-brutal shadow-solid mb-10">
+          <div class="pane-header mb-4">
+            <div>
+              <h2 class="card-label-black mb-2">{{ siteContent.opportunitiesSourcesConfig?.sectionTitle || 'FONTES MONITORADAS' }}</h2>
+              <p class="text-sm opacity-70">{{ siteContent.opportunitiesSourcesConfig?.sectionDescription || 'Sites que alimentam a fila de revisão.' }}</p>
+            </div>
+            <button class="btn-tool-sm" @click="importAllSources" :disabled="isImportingSource">
+              <Sparkles :size="14" /> {{ isImportingSource ? 'IMPORTANDO...' : 'IMPORTAR TODAS' }}
+            </button>
+          </div>
+          <div class="source-summary text-xs font-bold uppercase opacity-60 mb-6">{{ sourceSummaryText }}</div>
+          <div class="sources-grid">
+            <div v-for="source in monitoredSources" :key="source.id" class="source-card">
+              <div class="source-pill">{{ source.label }}</div>
+              <p class="source-url">{{ source.url }}</p>
+              <button class="btn-tool-sm mt-4" @click="importFromSource(source)" :disabled="isImportingSource">
+                <Sparkles :size="14" /> Importar desta fonte
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="editor-card-brutal shadow-solid mb-10">
+          <div class="pane-header mb-4">
+            <div>
+              <h2 class="card-label-black mb-2">{{ siteContent.opportunitiesSourcesConfig?.pdfTitle || 'IMPORTAR PDF / PRESS RELEASE' }}</h2>
+              <p class="text-sm opacity-70">Envie um PDF de boletim, release ou clipping e ele entra na fila de revisão.</p>
+            </div>
+          </div>
+          <div class="form-grid-2 mb-6">
+            <div class="input-group">
+              <label>ARQUIVO PDF</label>
+              <input type="file" accept=".pdf,application/pdf" @change="handlePdfChange" />
+            </div>
+            <div class="input-group">
+              <label>ARQUIVO SELECIONADO</label>
+              <input type="text" :value="selectedPdfName || 'Nenhum arquivo selecionado'" readonly />
+            </div>
+          </div>
+          <button class="btn-save-brutal" @click="importPdfRelease" :disabled="isImportingPdf">
+            <Sparkles :size="18" /> {{ isImportingPdf ? 'ANALISANDO PDF...' : 'IMPORTAR PDF PARA REVISÃO' }}
+          </button>
+        </div>
+
         <div id="opportunity-editor-form" class="editor-card-brutal shadow-solid mb-10">
           <div class="pane-header mb-8">
             <h2 class="card-label-black mb-0">{{ isEditingVaga ? 'EDITAR OPORTUNIDADE' : 'CADASTRAR OPORTUNIDADE' }}</h2>
@@ -1611,7 +1795,7 @@ onUnmounted(() => {
                     <td>{{ vaga.deadline }}</td>
                     <td class="actions-td">
                        <button v-if="getOpportunityVisibilityState(vaga) === 'pending'" class="icon-action" title="Aprovar e publicar" @click="approveVaga(vaga)"><CheckCircle :size="16" /></button>
-                       <button v-if="getOpportunityVisibilityState(vaga) === 'approved'" class="icon-action" title="Enviar para revisão" @click="moveVagaToReview(vaga)"><Clock :size="16" /></button>
+                       <button v-if="getOpportunityVisibilityState(vaga) === 'public'" class="icon-action" title="Enviar para revisão" @click="moveVagaToReview(vaga)"><Clock :size="16" /></button>
                        <button class="icon-action" title="Abrir no site" @click="previewVaga(vaga.id)"><ExternalLink :size="16" /></button>
                        <button class="icon-action" title="Editar" @click="editVaga(vaga)"><Edit :size="16" /></button>
                        <button class="icon-action text-red-500" title="Excluir" @click="deleteVaga(vaga)"><Trash :size="16" /></button>
@@ -2831,6 +3015,41 @@ onUnmounted(() => {
 .badge-normal { background: #FFF; color: #1C1C1C; padding: 6px 12px; border-radius: 8px; font-weight: 900; font-family: "Archivo Black"; font-size: 10px; border: 2px solid #1C1C1C; }
 .badge-danger { background: #DF2028; color: #FFF; padding: 6px 12px; border-radius: 8px; font-weight: 900; font-family: "Archivo Black"; font-size: 10px; border: 2px solid #1C1C1C; }
 .badge-pill { padding: 8px 16px; border-radius: 12px; font-weight: 900; font-family: "Archivo Black"; font-size: 11px; display: inline-block; border: 2px solid #1C1C1C; }
+
+.sources-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 16px;
+}
+
+.source-card {
+  background: #fff;
+  border: 3px solid #1C1C1C;
+  border-radius: 20px;
+  padding: 20px;
+  box-shadow: 8px 8px 0 rgba(0,0,0,0.08);
+}
+
+.source-pill {
+  display: inline-flex;
+  padding: 6px 12px;
+  background: #A4CD39;
+  color: #1C1C1C;
+  border: 2px solid #1C1C1C;
+  border-radius: 9999px;
+  font-size: 10px;
+  font-weight: 900;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+
+.source-url {
+  font-size: 12px;
+  line-height: 1.6;
+  color: #1C1C1C;
+  word-break: break-word;
+  opacity: 0.78;
+}
 
 .table-title-btn {
   appearance: none;
