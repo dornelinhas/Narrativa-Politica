@@ -1,7 +1,7 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { Bookmark, MapPin, Briefcase, Search, Star, ArrowRight, AlertCircle, Sparkles, Filter } from 'lucide-vue-next'
-import { siteContent, filterActiveOpportunities } from '../store/content'
+import { siteContent, filterPublicOpportunities } from '../store/content'
 
 const searchQuery = ref('')
 const selectedCategory = ref('Tudo')
@@ -35,7 +35,7 @@ const mockOpportunities = [
 
 const filteredOpportunities = computed(() => {
   const source = siteContent.opportunities?.length ? siteContent.opportunities : mockOpportunities
-  let ops = filterActiveOpportunities(source)
+  let ops = filterPublicOpportunities(source)
   if (selectedCategory.value !== 'Tudo') ops = ops.filter(op => op.category === selectedCategory.value)
   if (destaqueNordeste.value) ops = ops.filter(op => op.location?.toLowerCase().includes('pe') || op.location?.toLowerCase().includes('nordeste'))
   if (searchQuery.value) {

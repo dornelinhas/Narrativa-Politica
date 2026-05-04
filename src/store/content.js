@@ -24,6 +24,61 @@ const stripAccents = (value = '') =>
 const normalizeDeadlineText = (value = '') =>
   stripAccents(value).replace(/\s+/g, ' ').trim().toUpperCase()
 
+export const normalizeOpportunityStatus = (opportunity) => {
+  const raw = String(opportunity?.status || '').trim()
+  if (!raw) return 'approved'
+
+  const normalized = normalizeDeadlineText(raw)
+
+  if (
+    normalized === 'APPROVED' ||
+    normalized === 'PUBLICADO' ||
+    normalized === 'PUBLICADA' ||
+    normalized === 'ABERTA' ||
+    normalized === 'ACTIVE' ||
+    normalized === 'ATIVA'
+  ) {
+    return 'approved'
+  }
+
+  if (
+    normalized === 'PENDING' ||
+    normalized === 'PENDENTE' ||
+    normalized === 'EM REVISAO' ||
+    normalized === 'REVISAO' ||
+    normalized === 'REVIEW' ||
+    normalized === 'RAScunho'.toUpperCase()
+  ) {
+    return 'pending'
+  }
+
+  if (
+    normalized === 'REJECTED' ||
+    normalized === 'RECUSADA' ||
+    normalized === 'RECUSADO' ||
+    normalized === 'REPROVADA' ||
+    normalized === 'REPROVADO' ||
+    normalized === 'NEGADA' ||
+    normalized === 'NEGADO'
+  ) {
+    return 'rejected'
+  }
+
+  if (
+    normalized === 'CLOSED' ||
+    normalized === 'ENCERRADA' ||
+    normalized === 'ENCERRADO' ||
+    normalized === 'FECHADA' ||
+    normalized === 'FECHADO' ||
+    normalized === 'ARQUIVADA' ||
+    normalized === 'ARQUIVADO'
+  ) {
+    return 'closed'
+  }
+
+  return 'pending'
+}
+
 export const parseOpportunityDeadline = (deadline) => {
   const raw = String(deadline || '').trim()
   if (!raw) return null
@@ -62,9 +117,9 @@ export const parseOpportunityDeadline = (deadline) => {
 export const isOpportunityExpired = (opportunity, now = new Date()) => {
   if (!opportunity) return false
 
-  const status = normalizeDeadlineText(opportunity.status || '')
-  if (status === 'ENCERRADA') return true
-  if (status === 'ABERTA') return false
+  const status = normalizeOpportunityStatus(opportunity)
+  if (status === 'closed') return true
+  if (status === 'pending' || status === 'rejected') return false
 
   const deadlineDate = parseOpportunityDeadline(opportunity.deadline)
   if (!deadlineDate) return false
@@ -72,8 +127,21 @@ export const isOpportunityExpired = (opportunity, now = new Date()) => {
   return deadlineDate.getTime() < now.getTime()
 }
 
-export const filterActiveOpportunities = (opportunities = [], now = new Date()) =>
-  opportunities.filter(opportunity => !isOpportunityExpired(opportunity, now))
+export const getOpportunityVisibilityState = (opportunity, now = new Date()) => {
+  const status = normalizeOpportunityStatus(opportunity)
+
+  if (status === 'pending') return 'pending'
+  if (status === 'rejected') return 'rejected'
+  if (status === 'closed') return 'closed'
+  if (isOpportunityExpired(opportunity, now)) return 'expired'
+  return 'public'
+}
+
+export const filterPublicOpportunities = (opportunities = [], now = new Date()) =>
+  opportunities.filter(opportunity => getOpportunityVisibilityState(opportunity, now) === 'public')
+
+export const filterReviewQueue = (opportunities = []) =>
+  opportunities.filter(opportunity => getOpportunityVisibilityState(opportunity) === 'pending')
 
 const initialContent = {
   isLoading: true,

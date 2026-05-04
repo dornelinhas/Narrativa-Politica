@@ -35,6 +35,8 @@ const analyzeWithAI = async (title, text, apiKey) => {
       const prompt = `
         Analise esta oportunidade e extraia as informações em PORTUGUÊS.
         Traduza se estiver em inglês.
+        Identifique se o conteúdo parece ser uma vaga, edital, bolsa, chamada ou outro tipo de oportunidade.
+        Depois, dê uma recomendação editorial curta sobre publicação.
         
         Conteúdo: ${text.slice(0, 10000)}
 
@@ -46,7 +48,10 @@ const analyzeWithAI = async (title, text, apiKey) => {
           "category": "Vagas de Emprego, Bolsas, Editais ou Estudos",
           "type": "Remoto, Híbrido ou Presencial",
           "location": "Cidade ou Continente",
-          "deadline": "Prazo"
+          "deadline": "Prazo",
+          "sourceType": "pagina, edital, bolsa, chamado ou outro",
+          "publicationDecision": "publicar, revisar ou não_publicar",
+          "reviewNotes": "Justificativa editorial curta"
         }
       `;
 
@@ -82,7 +87,9 @@ export default async function handler(req, res) {
       return res.status(200).json({
         ...aiData,
         fullDescription: `${aiData.fullDescription}<p><strong>Fonte:</strong> <a href="${url}" target="_blank">Acessar original</a></p>`,
-        link: url
+        link: url,
+        sourceUrl: url,
+        status: 'pending'
       });
     } catch (aiError) {
       return res.status(500).json({ 

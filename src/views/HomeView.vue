@@ -247,7 +247,7 @@
 <script setup>
 import { computed, ref } from 'vue'
 import { ArrowRight, Globe, Users, Zap, Sun, Database, ShieldCheck, Mic2, Cpu } from 'lucide-vue-next'
-import { siteContent, filterActiveOpportunities } from '../store/content'
+import { siteContent, filterPublicOpportunities } from '../store/content'
 
 const servicesIcons = { Globe, Users, Zap, Database, ShieldCheck, Mic2, Cpu }
 
@@ -289,7 +289,7 @@ const mockOpportunities = [
 
 const displayOpportunities = computed(() => {
   return siteContent.opportunities && siteContent.opportunities.length > 0 
-    ? filterActiveOpportunities(siteContent.opportunities)
+    ? filterPublicOpportunities(siteContent.opportunities)
     : mockOpportunities
 })
 

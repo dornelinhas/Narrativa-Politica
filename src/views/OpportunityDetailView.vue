@@ -1,5 +1,5 @@
 <template>
-  <div v-if="op && !opIsExpired" class="op-magazine-layout">
+  <div v-if="opState === 'public'" class="op-magazine-layout">
     <!-- FUNDO TEXTURIZADO PREMIUM -->
     <div class="film-grain-overlay"></div>
 
@@ -107,11 +107,9 @@
       </router-link>
 
       <div class="expired-card">
-        <span class="expired-badge">OPORTUNIDADE ENCERRADA</span>
-        <h1 class="huge-magazine-title expired-title">ESTA OPORTUNIDADE NÃO ESTÁ MAIS DISPONÍVEL</h1>
-        <p class="expired-text">
-          O prazo informado já passou ou a oportunidade foi marcada como encerrada. A listagem pública oculta itens vencidos automaticamente.
-        </p>
+        <span class="expired-badge" :class="stateBadgeClass">{{ stateBadgeText }}</span>
+        <h1 class="huge-magazine-title expired-title">{{ stateTitle }}</h1>
+        <p class="expired-text">{{ stateDescription }}</p>
         <router-link to="/oportunidades" class="pill-btn-black-matte">
           VOLTAR PARA O HUB DE TALENTOS <ArrowRight :size="18" />
         </router-link>
@@ -123,15 +121,49 @@
 <script setup>
 import { computed } from 'vue'
 import { useRoute } from 'vue-router'
-import { siteContent, isOpportunityExpired } from '../store/content'
+import { siteContent, getOpportunityVisibilityState } from '../store/content'
 import { ArrowLeft, ExternalLink, Linkedin, MessageCircle, Link } from 'lucide-vue-next'
 
 const route = useRoute()
-const op = computed(() => siteContent.opportunities?.find(o => String(o.id) === String(route.params.id)) || {
-  id: 1, title: 'Bolsa de Pesquisa', category: 'Bolsas', deadline: '25 MAI', location: 'Remoto'
-})
+const op = computed(() => siteContent.opportunities?.find(o => String(o.id) === String(route.params.id)) || null)
 
-const opIsExpired = computed(() => isOpportunityExpired(op.value))
+const opState = computed(() => op.value ? getOpportunityVisibilityState(op.value) : 'missing')
+
+const stateBadgeText = computed(() => ({
+  pending: 'EM REVISÃO',
+  rejected: 'NÃO PUBLICADA',
+  closed: 'OPORTUNIDADE ENCERRADA',
+  expired: 'OPORTUNIDADE ENCERRADA',
+  public: 'INSCRIÇÕES ABERTAS',
+  missing: 'OPORTUNIDADE INDISPONÍVEL'
+}[opState.value] || 'OPORTUNIDADE INDISPONÍVEL'))
+
+const stateTitle = computed(() => ({
+  pending: 'ESTA OPORTUNIDADE AINDA ESTÁ EM ANÁLISE',
+  rejected: 'ESTA OPORTUNIDADE NÃO FOI APROVADA PARA PUBLICAÇÃO',
+  closed: 'ESTA OPORTUNIDADE NÃO ESTÁ MAIS DISPONÍVEL',
+  expired: 'ESTA OPORTUNIDADE NÃO ESTÁ MAIS DISPONÍVEL',
+  public: 'ESTA OPORTUNIDADE ESTÁ PUBLICADA',
+  missing: 'ESTA OPORTUNIDADE NÃO FOI ENCONTRADA'
+}[opState.value] || 'ESTA OPORTUNIDADE NÃO ESTÁ DISPONÍVEL'))
+
+const stateDescription = computed(() => ({
+  pending: 'O conteúdo foi importado e está aguardando sua avaliação para decidir se entra ou não na vitrine pública.',
+  rejected: 'Você marcou este item como não publicável. Ele fica fora da listagem pública até ser reclassificado.',
+  closed: 'O prazo informado já passou ou a oportunidade foi marcada como encerrada. A listagem pública oculta itens vencidos automaticamente.',
+  expired: 'O prazo informado já passou. A listagem pública oculta itens vencidos automaticamente.',
+  public: 'Essa oportunidade está disponível na vitrine pública.',
+  missing: 'Não existe uma oportunidade pública com esse identificador.'
+}[opState.value] || 'Esta oportunidade não está disponível no momento.'))
+
+const stateBadgeClass = computed(() => ({
+  pending: 'state-pending',
+  rejected: 'state-rejected',
+  closed: 'state-closed',
+  expired: 'state-closed',
+  public: 'state-public',
+  missing: 'state-closed'
+}[opState.value] || 'state-closed'))
 
 const getCategoryColor = (cat) => ({
   'Gênero': '#FF6BCA',
@@ -216,6 +248,9 @@ const copyLink = () => { navigator.clipboard.writeText(window.location.href); al
   font-weight: 900;
   text-transform: uppercase;
 }
+.expired-badge.state-pending { background: #FFE65A; color: #000; }
+.expired-badge.state-rejected { background: #FF6BCA; color: #000; }
+.expired-badge.state-public { background: #A4CD39; color: #000; }
 
 .expired-title { margin-bottom: 1.5rem; }
 .expired-text { font-size: 1.1rem; line-height: 1.8; color: #1C1C1C; margin-bottom: 2.5rem; max-width: 56ch; }

@@ -6,7 +6,7 @@ import { supabase } from '../lib/supabase'
 import { Settings, LogOut, CheckCircle, Clock, Trash2, Home, Search, BookOpen, Briefcase, ChevronDown, Package, FileText, User, Mail, Folder, Download, Eye, Heart, Library, Save, Plus, Edit, Trash, Zap, Calendar, X, ExternalLink, ArrowUp, Sparkles } from 'lucide-vue-next'
 import BrutalEditor from '../components/BrutalEditor.vue'
 import ImageUploader from '../components/ImageUploader.vue'
-import { siteContent, fetchAllContent } from '../store/content'
+import { siteContent, fetchAllContent, getOpportunityVisibilityState } from '../store/content'
 
 const router = useRouter()
 const { user, logout } = useAuth()
@@ -14,7 +14,7 @@ const activeTab = ref('home')
 const isSaving = ref(false)
 
 const defaultArticleForm = () => ({ title: '', subtitle: '', author: '', type: 'Artigo', category: '', featured: false, content: '', image: '', imageDescription: '', imageCaption: '', references: '' })
-const defaultOpportunityForm = () => ({ title: '', category: 'Vagas de Emprego', type: 'Remoto', location: '', deadline: '', link: '', description: '', fullDescription: '', image: '' })
+const defaultOpportunityForm = () => ({ title: '', category: 'Vagas de Emprego', type: 'Remoto', location: '', deadline: '', link: '', description: '', fullDescription: '', image: '', status: 'approved', sourceUrl: '', reviewNotes: '' })
 const defaultTrackForm = () => ({
   name: '', description: '', hours: '', status: 'GRATUITO', hasCertificate: true, color: '#FF6BCA',
   mod1: '', mod2: '', mod3: ''
@@ -161,6 +161,23 @@ const vagas = ref(siteContent.opportunities || [])
 const novaVaga = ref(defaultOpportunityForm())
 const opportunityImportUrl = ref('')
 const isImportingOpportunity = ref(false)
+const reviewQueue = computed(() => (siteContent.opportunities || []).filter(v => getOpportunityVisibilityState(v) === 'pending'))
+const publishedVagas = computed(() => (siteContent.opportunities || []).filter(v => getOpportunityVisibilityState(v) === 'public'))
+const rejectedVagas = computed(() => (siteContent.opportunities || []).filter(v => getOpportunityVisibilityState(v) === 'rejected'))
+const opportunityStatusLabel = (vaga) => ({
+  public: 'PUBLICADA',
+  pending: 'EM REVISÃO',
+  rejected: 'NÃO PUBLICADA',
+  expired: 'ENCERRADA',
+  closed: 'ENCERRADA'
+}[getOpportunityVisibilityState(vaga)] || 'EM REVISÃO')
+const opportunityStatusClass = (vaga) => ({
+  public: 'badge-normal',
+  pending: 'badge-featured',
+  rejected: 'badge-danger',
+  expired: 'badge-danger',
+  closed: 'badge-danger'
+}[getOpportunityVisibilityState(vaga)] || 'badge-featured')
 // LMS / TRILHAS
 const trilhas = ref(siteContent.tracks || [])
 const novaTrilha = ref(defaultTrackForm())
@@ -550,7 +567,10 @@ const editVaga = (vaga) => {
     link: vaga.link || '',
     description: vaga.description || '',
     fullDescription: vaga.fullDescription || '',
-    image: vaga.image || ''
+    image: vaga.image || '',
+    status: vaga.status || 'approved',
+    sourceUrl: vaga.sourceUrl || vaga.link || '',
+    reviewNotes: vaga.reviewNotes || ''
   }
   scrollToForm('opportunity-editor-form')
 }
@@ -568,7 +588,11 @@ const saveVaga = async () => {
   isSaving.value = true
   try {
     if (!siteContent.opportunities) siteContent.opportunities = []
-    const payload = { ...novaVaga.value, id: editingVagaId.value || Date.now() }
+    const payload = {
+      ...novaVaga.value,
+      status: novaVaga.value.status || 'approved',
+      id: editingVagaId.value || Date.now()
+    }
     const wasEditing = isEditingVaga.value
     if (wasEditing) {
       const index = siteContent.opportunities.findIndex(v => String(v.id) === String(editingVagaId.value))
@@ -586,6 +610,30 @@ const saveVaga = async () => {
     alert('Erro ao salvar oportunidade: ' + (e.message || e))
   }
 }
+
+const updateVagaStatus = async (vaga, status) => {
+  isSaving.value = true
+  try {
+    if (!siteContent.opportunities) siteContent.opportunities = []
+    const index = siteContent.opportunities.findIndex(v => String(v.id) === String(vaga.id))
+    if (index === -1) throw new Error('Oportunidade não encontrada.')
+
+    const updated = { ...siteContent.opportunities[index], status }
+    siteContent.opportunities.splice(index, 1, updated)
+    vagas.value = siteContent.opportunities
+    await persistSiteSetting('opportunities', siteContent.opportunities)
+
+    if (String(editingVagaId.value) === String(vaga.id)) {
+      novaVaga.value = { ...novaVaga.value, status }
+    }
+  } finally {
+    isSaving.value = false
+  }
+}
+
+const approveVaga = async (vaga) => updateVagaStatus(vaga, 'approved')
+const rejectVaga = async (vaga) => updateVagaStatus(vaga, 'rejected')
+const moveVagaToReview = async (vaga) => updateVagaStatus(vaga, 'pending')
 
 const deleteVaga = async (vaga) => {
   if (!confirm(`Excluir a oportunidade "${vaga.title}"?`)) return
@@ -703,11 +751,14 @@ const importOpportunityFromUrl = async () => {
       link: data.link || opportunityImportUrl.value.trim(),
       description: data.description || novaVaga.value.description,
       fullDescription: data.fullDescription || novaVaga.value.fullDescription,
+      status: data.status || 'pending',
+      sourceUrl: opportunityImportUrl.value.trim(),
+      reviewNotes: data.reviewNotes || data.publicationDecision || '',
     }
     if (data.image) {
       novaVaga.value.image = data.image
     }
-    alert('Conteúdo importado. Revise antes de salvar.')
+    alert('Conteúdo importado. Revise antes de publicar.')
   } catch (e) {
     console.error(e)
     alert('Falha ao importar a oportunidade: ' + (e.message || e))
@@ -1505,12 +1556,46 @@ onUnmounted(() => {
           </button>
         </div>
 
-        <div class="editor-card-brutal shadow-solid">
-           <h2 class="card-label-black mb-8">OPORTUNIDADES ATIVAS</h2>
+        <div class="editor-card-brutal shadow-solid mb-10" v-if="reviewQueue.length">
+           <h2 class="card-label-black mb-4">FILA DE REVISÃO</h2>
+           <p class="text-sm opacity-70 mb-6">Itens importados da internet aguardando sua validação antes de aparecerem publicamente.</p>
            <table class="table-brutal">
               <thead>
                  <tr>
                     <th>TÍTULO</th>
+                    <th>FONTE</th>
+                    <th>CATEGORIA</th>
+                    <th>PRAZO</th>
+                    <th>AÇÕES</th>
+                 </tr>
+              </thead>
+              <tbody>
+                 <tr v-for="vaga in reviewQueue" :key="vaga.id">
+                    <td class="font-bold">
+                       <button class="table-title-btn" @click="editVaga(vaga)">{{ vaga.title }}</button>
+                    </td>
+                    <td class="text-xs opacity-70 max-w-[220px] break-words">{{ vaga.sourceUrl || vaga.link || 'URL não informada' }}</td>
+                    <td>{{ vaga.category }}</td>
+                    <td>{{ vaga.deadline }}</td>
+                    <td class="actions-td">
+                       <button class="icon-action" title="Aprovar e publicar" @click="approveVaga(vaga)"><CheckCircle :size="16" /></button>
+                       <button class="icon-action" title="Recusar publicação" @click="rejectVaga(vaga)"><X :size="16" /></button>
+                       <button class="icon-action" title="Editar" @click="editVaga(vaga)"><Edit :size="16" /></button>
+                       <button class="icon-action text-red-500" title="Excluir" @click="deleteVaga(vaga)"><Trash :size="16" /></button>
+                    </td>
+                 </tr>
+              </tbody>
+           </table>
+        </div>
+
+        <div class="editor-card-brutal shadow-solid">
+           <h2 class="card-label-black mb-4">OPORTUNIDADES CADASTRADAS</h2>
+           <p class="text-sm opacity-70 mb-6">Mostra o conjunto inteiro com o status atual de cada item.</p>
+           <table class="table-brutal">
+              <thead>
+                 <tr>
+                    <th>TÍTULO</th>
+                    <th>STATUS</th>
                     <th>CATEGORIA</th>
                     <th>PRAZO</th>
                     <th>AÇÕES</th>
@@ -1521,9 +1606,12 @@ onUnmounted(() => {
                     <td class="font-bold">
                        <button class="table-title-btn" @click="editVaga(vaga)">{{ vaga.title }}</button>
                     </td>
+                    <td><span :class="opportunityStatusClass(vaga)">{{ opportunityStatusLabel(vaga) }}</span></td>
                     <td>{{ vaga.category }}</td>
                     <td>{{ vaga.deadline }}</td>
                     <td class="actions-td">
+                       <button v-if="getOpportunityVisibilityState(vaga) === 'pending'" class="icon-action" title="Aprovar e publicar" @click="approveVaga(vaga)"><CheckCircle :size="16" /></button>
+                       <button v-if="getOpportunityVisibilityState(vaga) === 'approved'" class="icon-action" title="Enviar para revisão" @click="moveVagaToReview(vaga)"><Clock :size="16" /></button>
                        <button class="icon-action" title="Abrir no site" @click="previewVaga(vaga.id)"><ExternalLink :size="16" /></button>
                        <button class="icon-action" title="Editar" @click="editVaga(vaga)"><Edit :size="16" /></button>
                        <button class="icon-action text-red-500" title="Excluir" @click="deleteVaga(vaga)"><Trash :size="16" /></button>
@@ -2741,6 +2829,7 @@ onUnmounted(() => {
 
 .badge-featured { background: #FF6BCA; color: #1C1C1C; padding: 6px 12px; border-radius: 8px; font-weight: 900; font-family: "Archivo Black"; font-size: 10px; border: 2px solid #1C1C1C; }
 .badge-normal { background: #FFF; color: #1C1C1C; padding: 6px 12px; border-radius: 8px; font-weight: 900; font-family: "Archivo Black"; font-size: 10px; border: 2px solid #1C1C1C; }
+.badge-danger { background: #DF2028; color: #FFF; padding: 6px 12px; border-radius: 8px; font-weight: 900; font-family: "Archivo Black"; font-size: 10px; border: 2px solid #1C1C1C; }
 .badge-pill { padding: 8px 16px; border-radius: 12px; font-weight: 900; font-family: "Archivo Black"; font-size: 11px; display: inline-block; border: 2px solid #1C1C1C; }
 
 .table-title-btn {
