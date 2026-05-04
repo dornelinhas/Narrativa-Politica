@@ -15,7 +15,6 @@ const isSaving = ref(false)
 
 const defaultArticleForm = () => ({ title: '', subtitle: '', author: '', type: 'Artigo', category: '', featured: false, content: '', image: '', imageDescription: '', imageCaption: '', references: '' })
 const defaultOpportunityForm = () => ({ title: '', category: 'Vagas de Emprego', type: 'Remoto', location: '', deadline: '', link: '', description: '', fullDescription: '', image: '', status: 'approved', sourceUrl: '', reviewNotes: '' })
-const defaultSourceForm = () => ({ id: '', label: '', url: '', enabled: true })
 const defaultCurationForm = () => ({
   minScore: 60,
   maxAgeDays: 30,
@@ -168,14 +167,6 @@ const oppsConfigData = ref({
   pageTitle1: '', pageTitle2: '', searchPlaceholder: '', toggleText: '',
   detailBackBtn: '', detailApplyBtn: '', detailShareTitle: '', detailStatusBadge: ''
 })
-const sourcesConfigData = ref({
-  sectionTitle: siteContent.opportunitiesSourcesConfig?.sectionTitle || '',
-  sectionDescription: siteContent.opportunitiesSourcesConfig?.sectionDescription || '',
-  pdfTitle: siteContent.opportunitiesSourcesConfig?.pdfTitle || ''
-})
-const sourceListData = ref((siteContent.opportunitiesSourcesConfig?.sources || []).map(source => ({ ...source })))
-const editingSourceId = ref(null)
-const sourceForm = ref(defaultSourceForm())
 const curationConfigData = ref({
   minScore: siteContent.opportunitiesCurationConfig?.minScore ?? 60,
   maxAgeDays: siteContent.opportunitiesCurationConfig?.maxAgeDays ?? 30,
@@ -190,14 +181,13 @@ const vagas = ref(siteContent.opportunities || [])
 const novaVaga = ref(defaultOpportunityForm())
 const opportunityImportUrl = ref('')
 const isImportingOpportunity = ref(false)
-const monitoredSources = computed(() => sourceListData.value.filter(source => source.enabled !== false))
 const reviewQueue = computed(() => (siteContent.opportunities || []).filter(v => getOpportunityVisibilityState(v) === 'pending'))
 const publishedVagas = computed(() => (siteContent.opportunities || []).filter(v => getOpportunityVisibilityState(v) === 'public'))
 const rejectedVagas = computed(() => (siteContent.opportunities || []).filter(v => getOpportunityVisibilityState(v) === 'rejected'))
-const isImportingSource = ref(false)
-const isImportingPdf = ref(false)
-const selectedPdfName = ref('')
-const selectedPdfDataUrl = ref('')
+const researchSites = [
+  { id: 'opportunitiesforyouth', label: 'Opportunities for Youth', url: 'https://opportunitiesforyouth.org/', note: 'Editais, bolsas e chamadas' },
+  { id: 'terceirosetor', label: 'Vagas Terceiro Setor', url: 'https://vagas.terceirosetor.net/', note: 'Vagas e oportunidades do setor' }
+]
 const opportunityStatusLabel = (vaga) => ({
   public: 'PUBLICADA',
   pending: 'EM REVISÃO',
@@ -212,11 +202,6 @@ const opportunityStatusClass = (vaga) => ({
   expired: 'badge-danger',
   closed: 'badge-danger'
 }[getOpportunityVisibilityState(vaga)] || 'badge-featured')
-const sourceSummaryText = computed(() => {
-  const total = monitoredSources.value.length
-  const active = monitoredSources.value.filter(source => source.enabled !== false).length
-  return `${active}/${total} fontes ativas`
-})
 const curationRules = computed(() => ({
   minScore: Number(curationConfigData.value.minScore || 0),
   maxAgeDays: Number(curationConfigData.value.maxAgeDays || 0),
@@ -671,23 +656,6 @@ const saveVaga = async () => {
   }
 }
 
-const saveSourcesConfig = async () => {
-  isSaving.value = true
-  try {
-    siteContent.opportunitiesSourcesConfig = {
-      ...(siteContent.opportunitiesSourcesConfig || {}),
-      ...sourcesConfigData.value,
-      sources: sourceListData.value
-    }
-    await persistSiteSetting('opportunitiesSourcesConfig', siteContent.opportunitiesSourcesConfig)
-    setTimeout(() => { isSaving.value = false; alert('Fontes monitoradas salvas!') }, 400)
-  } catch (e) {
-    console.error(e)
-    isSaving.value = false
-    alert('Erro ao salvar fontes: ' + (e.message || e))
-  }
-}
-
 const saveCurationConfig = async () => {
   isSaving.value = true
   try {
@@ -714,59 +682,6 @@ const saveCurationConfig = async () => {
   }
 }
 
-const resetSourceForm = () => {
-  sourceForm.value = defaultSourceForm()
-  editingSourceId.value = null
-}
-
-const editSource = (source) => {
-  editingSourceId.value = source.id
-  sourceForm.value = {
-    id: source.id || '',
-    label: source.label || '',
-    url: source.url || '',
-    enabled: source.enabled !== false
-  }
-}
-
-const saveSource = async () => {
-  if (!sourceForm.value.label || !sourceForm.value.url) {
-    alert('Informe nome e URL da fonte.')
-    return
-  }
-
-  const payload = {
-    id: sourceForm.value.id || `source_${Date.now()}`,
-    label: sourceForm.value.label,
-    url: sourceForm.value.url,
-    enabled: sourceForm.value.enabled !== false
-  }
-
-  const existingIndex = sourceListData.value.findIndex(source => String(source.id) === String(editingSourceId.value))
-  if (existingIndex !== -1) {
-    sourceListData.value.splice(existingIndex, 1, payload)
-  } else {
-    sourceListData.value.unshift(payload)
-  }
-
-  await saveSourcesConfig()
-  resetSourceForm()
-}
-
-const deleteSource = async (source) => {
-  if (!confirm(`Remover a fonte "${source.label}"?`)) return
-  sourceListData.value = sourceListData.value.filter(item => String(item.id) !== String(source.id))
-  await saveSourcesConfig()
-  if (String(editingSourceId.value) === String(source.id)) resetSourceForm()
-}
-
-const toggleSourceEnabled = async (source) => {
-  const index = sourceListData.value.findIndex(item => String(item.id) === String(source.id))
-  if (index === -1) return
-  sourceListData.value.splice(index, 1, { ...sourceListData.value[index], enabled: !source.enabled })
-  await saveSourcesConfig()
-}
-
 const updateVagaStatus = async (vaga, status) => {
   isSaving.value = true
   try {
@@ -790,41 +705,6 @@ const updateVagaStatus = async (vaga, status) => {
 const approveVaga = async (vaga) => updateVagaStatus(vaga, 'approved')
 const rejectVaga = async (vaga) => updateVagaStatus(vaga, 'rejected')
 const moveVagaToReview = async (vaga) => updateVagaStatus(vaga, 'pending')
-
-const mergeImportedOpportunities = async (items = []) => {
-  if (!Array.isArray(items) || items.length === 0) return 0
-
-  if (!siteContent.opportunities) siteContent.opportunities = []
-  const next = [...siteContent.opportunities]
-  let inserted = 0
-
-  items.forEach((item, index) => {
-    if (!item) return
-    const normalized = {
-      ...item,
-      id: item.id || `import_${Date.now()}_${index}`,
-      status: item.status || 'pending'
-    }
-
-    const duplicateIndex = next.findIndex(existing => {
-      const sameUrl = normalized.sourceUrl && existing.sourceUrl && String(existing.sourceUrl).trim() === String(normalized.sourceUrl).trim()
-      const sameTitle = String(existing.title || '').trim().toLowerCase() === String(normalized.title || '').trim().toLowerCase()
-      return sameUrl && sameTitle
-    })
-
-    if (duplicateIndex !== -1) {
-      next.splice(duplicateIndex, 1, { ...next[duplicateIndex], ...normalized })
-    } else {
-      next.unshift(normalized)
-      inserted += 1
-    }
-  })
-
-  siteContent.opportunities = next
-  vagas.value = next
-  await persistSiteSetting('opportunities', next)
-  return inserted
-}
 
 const deleteVaga = async (vaga) => {
   if (!confirm(`Excluir a oportunidade "${vaga.title}"?`)) return
@@ -965,108 +845,15 @@ const importOpportunityFromUrl = async () => {
   }
 }
 
-const importFromSource = async (source, options = {}) => {
-  if (!source?.url) return
-  const manageLoading = !options.batched
-  if (manageLoading) isImportingSource.value = true
-  try {
-    const response = await fetch('/api/import-opportunities-source', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        url: source.url,
-        label: source.label || '',
-        rules: curationRules.value
-      })
-    })
-    const data = await response.json()
-    if (!response.ok) throw new Error(data.error || 'Não foi possível importar a fonte.')
-
-    const inserted = await mergeImportedOpportunities((data.items || []).map(item => ({
-      ...item,
-      sourceName: source.label || item.sourceName,
-      sourcePageUrl: source.url,
-      sourceUrl: item.sourceUrl || source.url,
-      status: item.status || 'pending'
-    })))
-
-    if (!options.silent) {
-      alert(`Fonte importada: ${inserted} oportunidade(s) adicionada(s) para revisão.`)
-    }
-  } catch (e) {
-    console.error(e)
-    alert('Falha ao importar a fonte: ' + (e.message || e))
-  } finally {
-    if (manageLoading) isImportingSource.value = false
-  }
+const useResearchSiteUrl = (site) => {
+  if (!site?.url) return
+  opportunityImportUrl.value = site.url
+  scrollToForm('opportunity-editor-form')
 }
 
-const importAllSources = async () => {
-  isImportingSource.value = true
-  try {
-    for (const source of monitoredSources.value) {
-      // Importa em sequência para reduzir sobrecarga e facilitar diagnóstico.
-      // eslint-disable-next-line no-await-in-loop
-      await importFromSource(source, { silent: true, batched: true })
-    }
-    alert('Fontes importadas. Verifique a fila de revisão.')
-  } finally {
-    isImportingSource.value = false
-  }
-}
-
-const handlePdfChange = async (event) => {
-  const file = event.target.files?.[0]
-  selectedPdfName.value = file?.name || ''
-  selectedPdfDataUrl.value = ''
-  if (!file) return
-
-  const reader = new FileReader()
-  reader.onload = () => {
-    selectedPdfDataUrl.value = String(reader.result || '')
-  }
-  reader.readAsDataURL(file)
-}
-
-const importPdfRelease = async () => {
-  if (!selectedPdfDataUrl.value) {
-    alert('Selecione um PDF primeiro.')
-    return
-  }
-
-  isImportingPdf.value = true
-  try {
-    const response = await fetch('/api/import-opportunities-pdf', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        dataUrl: selectedPdfDataUrl.value,
-        fileName: selectedPdfName.value,
-        label: selectedPdfName.value,
-        rules: curationRules.value
-      })
-    })
-    const data = await response.json()
-    if (!response.ok) throw new Error(data.error || 'Não foi possível importar o PDF.')
-
-    const inserted = await mergeImportedOpportunities((data.items || []).map(item => ({
-      ...item,
-      sourceName: selectedPdfName.value,
-      sourcePageUrl: selectedPdfName.value,
-      sourceUrl: item.sourceUrl || selectedPdfName.value,
-      sourceType: 'pdf',
-      status: item.status || 'pending'
-    })))
-
-    selectedPdfDataUrl.value = ''
-    selectedPdfName.value = ''
-    alert(`PDF importado: ${inserted} oportunidade(s) adicionada(s) para revisão.`)
-  } catch (e) {
-    console.error(e)
-    alert('Falha ao importar o PDF: ' + (e.message || e))
-  } finally {
-    isImportingPdf.value = false
-  }
+const openResearchSite = (site) => {
+  if (!site?.url) return
+  window.open(site.url, '_blank', 'noopener,noreferrer')
 }
 
 const resetProjectForm = () => {
@@ -1790,82 +1577,25 @@ onUnmounted(() => {
         <div class="editor-card-brutal shadow-solid mb-10">
           <div class="pane-header mb-4">
             <div>
-              <h2 class="card-label-black mb-2">{{ siteContent.opportunitiesSourcesConfig?.sectionTitle || 'FONTES MONITORADAS' }}</h2>
-              <p class="text-sm opacity-70">{{ siteContent.opportunitiesSourcesConfig?.sectionDescription || 'Sites que alimentam a fila de revisão.' }}</p>
-            </div>
-            <button class="btn-tool-sm" @click="importAllSources" :disabled="isImportingSource">
-              <Sparkles :size="14" /> {{ isImportingSource ? 'IMPORTANDO...' : 'IMPORTAR TODAS' }}
-            </button>
-          </div>
-          <div class="source-summary text-xs font-bold uppercase opacity-60 mb-6">{{ sourceSummaryText }}</div>
-          <div class="form-grid-2 mb-6">
-            <div class="input-group">
-              <label>NOME DA FONTE</label>
-              <input v-model="sourceForm.label" type="text" placeholder="Ex: Conjunto XYZ" />
-            </div>
-            <div class="input-group">
-              <label>URL DA FONTE</label>
-              <input v-model="sourceForm.url" type="url" placeholder="https://..." />
+              <h2 class="card-label-black mb-2">SITES PARA PESQUISAR</h2>
+              <p class="text-sm opacity-70">Abra o site, encontre a vaga/edital e cole a URL no importador manual abaixo.</p>
             </div>
           </div>
-          <div class="flex items-center gap-4 mb-6" style="display:flex; align-items:center; gap:16px; flex-wrap:wrap;">
-            <label class="checkbox-container">
-              <input type="checkbox" v-model="sourceForm.enabled" />
-              <span class="checkmark"></span>
-              <span class="check-label font-bold text-dark">FONTE ATIVA</span>
-            </label>
-            <button class="btn-tool-sm" @click="saveSource">
-              <Save :size="14" /> {{ editingSourceId ? 'SALVAR FONTE' : 'ADICIONAR FONTE' }}
-            </button>
-            <button v-if="editingSourceId" class="btn-tool-sm" @click="resetSourceForm">
-              <X :size="14" /> CANCELAR
-            </button>
-          </div>
-          <div class="sources-grid">
-            <div v-for="source in sourceListData" :key="source.id" class="source-card">
-              <div class="source-pill">{{ source.label }}</div>
-              <div class="text-xs font-black uppercase mb-2" :class="source.enabled !== false ? 'text-lime' : 'text-red'">
-                {{ source.enabled !== false ? 'ATIVA' : 'DESATIVADA' }}
-              </div>
-              <p class="source-url">{{ source.url }}</p>
+          <div class="sites-grid-square">
+            <div v-for="site in researchSites" :key="site.id" class="site-research-card">
+              <div class="source-pill">{{ site.label }}</div>
+              <p class="site-research-note">{{ site.note }}</p>
+              <p class="source-url">{{ site.url }}</p>
               <div class="flex items-center gap-2 mt-4" style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
-                <button class="btn-tool-sm" @click="importFromSource(source)" :disabled="isImportingSource">
-                  <Sparkles :size="14" /> Importar
+                <button class="btn-tool-sm" @click="openResearchSite(site)">
+                  <ExternalLink :size="14" /> Abrir site
                 </button>
-                <button class="btn-tool-sm" @click="editSource(source)">
-                  <Edit :size="14" /> Editar
-                </button>
-                <button class="btn-tool-sm" @click="toggleSourceEnabled(source)">
-                  <Clock :size="14" /> {{ source.enabled !== false ? 'Desativar' : 'Ativar' }}
-                </button>
-                <button class="btn-tool-sm text-red-500" @click="deleteSource(source)">
-                  <Trash :size="14" /> Remover
+                <button class="btn-tool-sm" @click="useResearchSiteUrl(site)">
+                  <Sparkles :size="14" /> Usar na importação
                 </button>
               </div>
             </div>
           </div>
-        </div>
-
-        <div class="editor-card-brutal shadow-solid mb-10">
-          <div class="pane-header mb-4">
-            <div>
-              <h2 class="card-label-black mb-2">{{ siteContent.opportunitiesSourcesConfig?.pdfTitle || 'IMPORTAR PDF / PRESS RELEASE' }}</h2>
-              <p class="text-sm opacity-70">Envie um PDF de boletim, release ou clipping e ele entra na fila de revisão.</p>
-            </div>
-          </div>
-          <div class="form-grid-2 mb-6">
-            <div class="input-group">
-              <label>ARQUIVO PDF</label>
-              <input type="file" accept=".pdf,application/pdf" @change="handlePdfChange" />
-            </div>
-            <div class="input-group">
-              <label>ARQUIVO SELECIONADO</label>
-              <input type="text" :value="selectedPdfName || 'Nenhum arquivo selecionado'" readonly />
-            </div>
-          </div>
-          <button class="btn-save-brutal" @click="importPdfRelease" :disabled="isImportingPdf">
-            <Sparkles :size="18" /> {{ isImportingPdf ? 'ANALISANDO PDF...' : 'IMPORTAR PDF PARA REVISÃO' }}
-          </button>
         </div>
 
         <div class="editor-card-brutal shadow-solid mb-10">
@@ -3276,18 +3006,19 @@ onUnmounted(() => {
 .badge-danger { background: #DF2028; color: #FFF; padding: 6px 12px; border-radius: 8px; font-weight: 900; font-family: "Archivo Black"; font-size: 10px; border: 2px solid #1C1C1C; }
 .badge-pill { padding: 8px 16px; border-radius: 12px; font-weight: 900; font-family: "Archivo Black"; font-size: 11px; display: inline-block; border: 2px solid #1C1C1C; }
 
-.sources-grid {
+.sites-grid-square {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
   gap: 16px;
 }
 
-.source-card {
+.site-research-card {
   background: #fff;
   border: 3px solid #1C1C1C;
-  border-radius: 20px;
+  border-radius: 18px;
   padding: 20px;
   box-shadow: 8px 8px 0 rgba(0,0,0,0.08);
+  min-height: 180px;
 }
 
 .source-pill {
@@ -3309,6 +3040,15 @@ onUnmounted(() => {
   color: #1C1C1C;
   word-break: break-word;
   opacity: 0.78;
+}
+
+.site-research-note {
+  margin: 0 0 8px;
+  font-size: 12px;
+  font-weight: 800;
+  color: #DF2028;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .metrics-row {
