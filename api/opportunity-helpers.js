@@ -31,6 +31,84 @@ const normalizeList = (value) => {
 
 const lowercase = (value = '') => String(value || '').toLowerCase()
 
+const GENERIC_OPPORTUNITY_PAGES = [
+  'cadastre-se',
+  'cadastro',
+  'faça seu cadastro',
+  'faca seu cadastro',
+  'acessar perfil',
+  'perfil',
+  'central de editais',
+  'entrar',
+  'login',
+  'sair',
+  'home',
+  'início',
+  'inicio',
+  'sobre nós',
+  'sobre nos',
+  'contato',
+  'privacidade',
+  'termos'
+]
+
+const OPPORTUNITY_LINK_TERMS = [
+  'vaga',
+  'vagas',
+  'oportunidade',
+  'oportunidades',
+  'bolsa',
+  'bolsas',
+  'edital',
+  'editais',
+  'chamada',
+  'chamadas',
+  'inscri',
+  'seleção',
+  'selecao',
+  'fellow',
+  'grant',
+  'scholar',
+  'job',
+  'jobs',
+  'work'
+]
+
+const GENERIC_LINK_PATTERNS = [
+  /fa[çc]a seu cadastro/i,
+  /cadastre-se/i,
+  /cadastro/i,
+  /acessar perfil/i,
+  /central de editais/i,
+  /perfil/i,
+  /login/i,
+  /entrar/i,
+  /home/i,
+  /in[ií]cio/i,
+  /contato/i,
+  /sobre nós/i,
+  /sobre nos/i
+]
+
+const GENERIC_PATH_PATTERNS = [
+  /\/cadastro/i,
+  /\/register/i,
+  /\/signup/i,
+  /\/login/i,
+  /\/entrar/i,
+  /\/perfil/i,
+  /\/profile/i,
+  /\/contato/i,
+  /\/contact/i,
+  /\/sobre/i,
+  /\/about/i,
+  /\/privacy/i,
+  /\/termos/i,
+  /\/terms/i,
+  /\/home/i,
+  /\/index/i
+]
+
 const MONTHS_PT = {
   JAN: 0,
   FEV: 1,
@@ -131,6 +209,20 @@ const parseOpportunityDeadline = (deadline) => {
 
   const fallback = new Date(raw)
   return Number.isNaN(fallback.getTime()) ? null : fallback
+}
+
+const scoreOpportunityCandidate = (text = '', href = '') => {
+  const combined = lowercase(`${text} ${href}`)
+  let score = 0
+
+  if (OPPORTUNITY_LINK_TERMS.some(term => combined.includes(term))) score += 25
+  if (/vaga|oportunidade|bolsa|edital|chamada|inscri|fellow|grant|scholar|job|work/.test(combined)) score += 25
+  if (/\/(vagas|oportunidades|editais|bolsas|chamadas|processo|processos|sele[çc][aã]o|news|blog|noticias|notícias|posts|article|articles)/i.test(href)) score += 20
+  if (/\d{4}/.test(combined)) score += 5
+  if (GENERIC_LINK_PATTERNS.some(pattern => pattern.test(combined))) score -= 40
+  if (GENERIC_PATH_PATTERNS.some(pattern => pattern.test(href))) score -= 30
+  if (combined.length < 8) score -= 10
+  return score
 }
 
 const analyzeWithAI = async (prompt, apiKey) => {
@@ -318,10 +410,15 @@ const isOpportunityLink = (text = '', href = '') => {
     }
   })()
 
-  return (
-    /vaga|oportunidade|bolsa|edital|chamada|fellow|grant|scholar|work|job|inscri/.test(combined) ||
-    (/\/[^/]+/.test(path) && !/about|contact|privacy|login|home|index/.test(path))
-  )
+  if (!combined.trim()) return false
+  if (GENERIC_LINK_PATTERNS.some(pattern => pattern.test(combined))) return false
+  if (GENERIC_PATH_PATTERNS.some(pattern => pattern.test(path))) return false
+
+  const hasOpportunityTerm = OPPORTUNITY_LINK_TERMS.some(term => combined.includes(term))
+  const deepPath = /\/[^/]+/.test(path)
+  const likelyListingPath = /vaga|oportunidade|bolsa|edital|chamada|inscri|program|grant|scholar|work|job/.test(path)
+
+  return hasOpportunityTerm || likelyListingPath || (deepPath && /\/(blog|news|noticia|notícias|post|article|articles|editais|vagas|oportunidades)/i.test(path))
 }
 
 const extractOpportunityLinksFromHtml = (html = '', baseUrl) => {
@@ -352,15 +449,19 @@ const extractOpportunityLinksFromHtml = (html = '', baseUrl) => {
     }
 
     const text = plainText(match[2] || '')
-    if (!isOpportunityLink(text, absoluteUrl)) continue
+    const surroundingHtml = html.slice(Math.max(0, match.index - 180), Math.min(html.length, match.index + match[0].length + 220))
+    const surroundingText = plainText(surroundingHtml)
+    const combinedContext = `${text} ${surroundingText} ${absoluteUrl}`.toLowerCase()
+    const score = scoreOpportunityCandidate(combinedContext, absoluteUrl)
+    if (score < 20 || !isOpportunityLink(text, absoluteUrl)) continue
 
     const key = `${absoluteUrl}|${text}`
     if (seen.has(key)) continue
     seen.add(key)
-    links.push({ url: absoluteUrl, text })
+    links.push({ url: absoluteUrl, text, score })
   }
 
-  return links
+  return links.sort((a, b) => (b.score || 0) - (a.score || 0))
 }
 
 const fetchPageText = async (url) => {
@@ -397,4 +498,5 @@ module.exports = {
   evaluateOpportunityCuration,
   normalizeOpportunityPayload,
   parseJsonResponse,
+  scoreOpportunityCandidate,
 }

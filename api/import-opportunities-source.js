@@ -1,4 +1,34 @@
-const { analyzeOpportunityText, coerceOpportunityItems, evaluateOpportunityCuration, extractOpportunityLinksFromHtml, fetchPageText, normalizeOpportunityPayload } = require('./opportunity-helpers')
+const { analyzeOpportunityText, coerceOpportunityItems, evaluateOpportunityCuration, extractOpportunityLinksFromHtml, fetchPageText, normalizeOpportunityPayload, scoreOpportunityCandidate } = require('./opportunity-helpers')
+
+const GENERIC_TEXT_PATTERNS = [
+  /fa[çc]a seu cadastro/i,
+  /cadastre-se/i,
+  /acessar perfil/i,
+  /central de editais/i,
+  /saiba mais/i,
+  /ver mais/i,
+  /clique aqui/i,
+  /acesse/i,
+  /perfil/i,
+  /home/i,
+  /in[ií]cio/i
+]
+
+const OPPORTUNITY_TEXT_PATTERN = /vaga|oportunidade|bolsa|edital|chamada|inscri|fellow|grant|scholar|job|work/i
+
+const isGenericOpportunityRecord = (payload = {}, candidate = {}) => {
+  const combined = String([
+    payload.title,
+    payload.description,
+    payload.fullDescription,
+    candidate.text,
+    candidate.url
+  ].filter(Boolean).join(' ')).toLowerCase()
+
+  if (!combined.trim()) return true
+  if (OPPORTUNITY_TEXT_PATTERN.test(combined)) return false
+  return GENERIC_TEXT_PATTERNS.some(pattern => pattern.test(combined))
+}
 
 module.exports = async function handler(req, res) {
   try {
@@ -18,22 +48,27 @@ module.exports = async function handler(req, res) {
     const analyzedItems = []
 
     if (candidates.length === 0) {
-      const aiData = await analyzeOpportunityText(sourcePage.text || '', apiKey, 'single')
-      const payload = normalizeOpportunityPayload(aiData, {
-          sourceUrl: url,
-          sourcePageUrl: url,
-          sourceName: label || new URL(url).hostname,
-          sourceType: sourcePage.contentType === 'application/pdf' ? 'pdf' : 'pagina',
-          status: 'pending'
-        })
-      const curation = evaluateOpportunityCuration(payload, rules)
-      analyzedItems.push({
-        ...payload,
-        status: curation.decision === 'rejected' ? 'rejected' : 'pending',
-        curationScore: curation.score,
-        curationDecision: curation.decision,
-        curationNotes: curation.notes
-      })
+      const pageScore = scoreOpportunityCandidate(sourcePage.text || '', url)
+      if (pageScore >= 20) {
+        const aiData = await analyzeOpportunityText(sourcePage.text || '', apiKey, 'single')
+        const payload = normalizeOpportunityPayload(aiData, {
+            sourceUrl: url,
+            sourcePageUrl: url,
+            sourceName: label || new URL(url).hostname,
+            sourceType: sourcePage.contentType === 'application/pdf' ? 'pdf' : 'pagina',
+            status: 'pending'
+          })
+        if (!isGenericOpportunityRecord(payload, { text: sourcePage.text, url })) {
+          const curation = evaluateOpportunityCuration(payload, rules)
+          analyzedItems.push({
+            ...payload,
+            status: curation.decision === 'rejected' ? 'rejected' : 'pending',
+            curationScore: curation.score,
+            curationDecision: curation.decision,
+            curationNotes: curation.notes
+          })
+        }
+      }
     } else {
       for (const candidate of candidates) {
         try {
@@ -46,33 +81,37 @@ module.exports = async function handler(req, res) {
               sourceType: 'pagina',
               status: 'pending'
             })
-          const curation = evaluateOpportunityCuration(payload, rules)
-          analyzedItems.push({
-            ...payload,
-            status: curation.decision === 'rejected' ? 'rejected' : 'pending',
-            curationScore: curation.score,
-            curationDecision: curation.decision,
-            curationNotes: curation.notes
-          })
+          if (!isGenericOpportunityRecord(payload, candidate)) {
+            const curation = evaluateOpportunityCuration(payload, rules)
+            analyzedItems.push({
+              ...payload,
+              status: curation.decision === 'rejected' ? 'rejected' : 'pending',
+              curationScore: curation.score,
+              curationDecision: curation.decision,
+              curationNotes: curation.notes
+            })
+          }
         } catch (candidateError) {
-          analyzedItems.push({
-            title: candidate.text || candidate.url,
-            description: 'Falha ao analisar a página.',
-            fullDescription: '',
-            category: 'Editais',
-            type: 'Remoto',
-            location: '',
-            deadline: '',
-            link: candidate.url,
-            sourceUrl: candidate.url,
-            sourcePageUrl: url,
-            sourceName: label || new URL(url).hostname,
-            sourceType: 'pagina',
-            status: 'pending',
-            curationScore: 0,
-            curationDecision: 'pending',
-            reviewNotes: candidateError.message || 'Erro de análise'
-          })
+          if (!isGenericOpportunityRecord({ title: candidate.text, description: candidate.url }, candidate)) {
+            analyzedItems.push({
+              title: candidate.text || candidate.url,
+              description: 'Falha ao analisar a página.',
+              fullDescription: '',
+              category: 'Editais',
+              type: 'Remoto',
+              location: '',
+              deadline: '',
+              link: candidate.url,
+              sourceUrl: candidate.url,
+              sourcePageUrl: url,
+              sourceName: label || new URL(url).hostname,
+              sourceType: 'pagina',
+              status: 'pending',
+              curationScore: 0,
+              curationDecision: 'pending',
+              reviewNotes: candidateError.message || 'Erro de análise'
+            })
+          }
         }
       }
     }
