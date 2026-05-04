@@ -21,6 +21,38 @@ const plainText = (html = '') =>
       .replace(/<[^>]+>/g, ' ')
   )
 
+const normalizeList = (value) => {
+  if (Array.isArray(value)) return value.map(item => String(item).trim()).filter(Boolean)
+  if (typeof value === 'string') {
+    return value.split(',').map(item => item.trim()).filter(Boolean)
+  }
+  return []
+}
+
+const lowercase = (value = '') => String(value || '').toLowerCase()
+
+const MONTHS_PT = {
+  JAN: 0,
+  FEV: 1,
+  FEB: 1,
+  MAR: 2,
+  ABR: 3,
+  APR: 3,
+  MAI: 4,
+  MAY: 4,
+  JUN: 5,
+  JUL: 6,
+  AGO: 7,
+  AUG: 7,
+  SET: 8,
+  SEP: 8,
+  OUT: 9,
+  OCT: 9,
+  NOV: 10,
+  DEZ: 11,
+  DEC: 11
+}
+
 const unescapePdfString = (value = '') =>
   String(value)
     .replace(/\\\\/g, '\\')
@@ -57,6 +89,48 @@ const extractPdfTextFromBuffer = (buffer) => {
   }
 
   return plainText(segments.join(' '))
+}
+
+const normalizeDeadlineText = (deadline = '') =>
+  lowercase(deadline)
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/\s+/g, ' ')
+    .trim()
+
+const parseOpportunityDeadline = (deadline) => {
+  const raw = String(deadline || '').trim()
+  if (!raw) return null
+
+  const normalized = normalizeDeadlineText(raw).toUpperCase()
+  if (!normalized) return null
+
+  if (
+    normalized === 'ABERTO' ||
+    normalized.includes('INSCRICOES ABERTAS') ||
+    normalized.includes('INSCRICOES EM ANDAMENTO') ||
+    normalized.includes('INSCRICAO ABERTA')
+  ) {
+    return null
+  }
+
+  const isoMatch = normalized.match(/^(\d{4})-(\d{2})-(\d{2})$/)
+  if (isoMatch) {
+    const [, year, month, day] = isoMatch
+    return new Date(Number(year), Number(month) - 1, Number(day), 23, 59, 59, 999)
+  }
+
+  const dateMatch = normalized.match(/^(\d{1,2})\s+([A-Z]{3})(?:\s+(\d{4}))?$/)
+  if (dateMatch) {
+    const [, day, monthLabel, year] = dateMatch
+    const month = MONTHS_PT[monthLabel]
+    if (month === undefined) return null
+    const targetYear = year ? Number(year) : new Date().getFullYear()
+    return new Date(targetYear, month, Number(day), 23, 59, 59, 999)
+  }
+
+  const fallback = new Date(raw)
+  return Number.isNaN(fallback.getTime()) ? null : fallback
 }
 
 const analyzeWithAI = async (prompt, apiKey) => {
@@ -164,6 +238,76 @@ const normalizeOpportunityPayload = (item = {}, fallback = {}) => {
   }
 }
 
+const evaluateOpportunityCuration = (item = {}, rules = {}) => {
+  const title = lowercase(item.title)
+  const description = lowercase(item.description)
+  const fullDescription = lowercase(item.fullDescription)
+  const sourceText = lowercase(`${item.sourceName || ''} ${item.sourceUrl || ''} ${item.sourcePageUrl || ''}`)
+  const content = `${title} ${description} ${fullDescription} ${sourceText}`
+
+  const includeKeywords = normalizeList(rules.includeKeywords).map(lowercase)
+  const excludeKeywords = normalizeList(rules.excludeKeywords).map(lowercase)
+  const acceptedCategories = normalizeList(rules.acceptedCategories).map(lowercase)
+  const acceptedLocations = normalizeList(rules.acceptedLocations).map(lowercase)
+
+  const matchedInclude = includeKeywords.filter(keyword => keyword && content.includes(keyword))
+  const matchedExclude = excludeKeywords.filter(keyword => keyword && content.includes(keyword))
+  const matchedCategory = acceptedCategories.some(category => category && lowercase(item.category).includes(category))
+  const matchedLocation = acceptedLocations.some(location => location && lowercase(item.location).includes(location))
+  const deadlineDate = parseOpportunityDeadline(item.deadline)
+  const maxAgeDays = Number(rules.maxAgeDays ?? 0)
+  const deadlineAgeDays = deadlineDate ? (Date.now() - deadlineDate.getTime()) / 86400000 : null
+
+  let score = 35
+  score += matchedInclude.length * 12
+  score += matchedCategory ? 15 : 0
+  score += matchedLocation ? 10 : 0
+  score += item.deadline ? 10 : 0
+  score -= matchedExclude.length * 25
+
+  if (item.sourceType === 'pdf') score += 8
+  if (item.sourceType === 'pagina') score += 5
+
+  if (String(item.publicationDecision || '').toLowerCase() === 'publicar') score += 10
+  if (String(item.publicationDecision || '').toLowerCase() === 'não_publicar' || String(item.publicationDecision || '').toLowerCase() === 'nao_publicar') score -= 30
+  if (deadlineAgeDays !== null && maxAgeDays > 0 && deadlineAgeDays > maxAgeDays) score -= 30
+
+  score = Math.max(0, Math.min(100, score))
+
+  const minScore = Number(rules.minScore ?? 60)
+  const hasExcludedKeyword = matchedExclude.length > 0
+  const hasIncludeKeyword = matchedInclude.length > 0
+  const missingDeadline = !String(item.deadline || '').trim()
+  const rejectIfMissingDeadline = Boolean(rules.rejectIfMissingDeadline)
+  const tooOld = deadlineAgeDays !== null && maxAgeDays > 0 && deadlineAgeDays > maxAgeDays
+
+  let decision = 'pending'
+  if (hasExcludedKeyword) decision = 'rejected'
+  else if (rejectIfMissingDeadline && missingDeadline) decision = 'rejected'
+  else if (tooOld) decision = 'rejected'
+  else if (score < minScore) decision = 'rejected'
+  else if (!hasIncludeKeyword && rules.requireSourceMatch !== false) decision = 'pending'
+
+  const notes = [
+    hasIncludeKeyword ? `Inclui: ${matchedInclude.join(', ')}` : '',
+    hasExcludedKeyword ? `Exclui: ${matchedExclude.join(', ')}` : '',
+    matchedCategory ? 'Categoria compatível' : '',
+    matchedLocation ? 'Local compatível' : '',
+    `Score: ${score}/100`
+  ].filter(Boolean)
+
+  return {
+    score,
+    decision,
+    matchedInclude,
+    matchedExclude,
+    matchedCategory,
+    matchedLocation,
+    tooOld,
+    notes: notes.join(' | ')
+  }
+}
+
 const isOpportunityLink = (text = '', href = '') => {
   const combined = `${text} ${href}`.toLowerCase()
   const path = (() => {
@@ -250,6 +394,7 @@ module.exports = {
   extractOpportunityLinksFromHtml,
   extractPdfTextFromBuffer,
   fetchPageText,
+  evaluateOpportunityCuration,
   normalizeOpportunityPayload,
   parseJsonResponse,
 }

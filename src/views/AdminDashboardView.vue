@@ -15,6 +15,17 @@ const isSaving = ref(false)
 
 const defaultArticleForm = () => ({ title: '', subtitle: '', author: '', type: 'Artigo', category: '', featured: false, content: '', image: '', imageDescription: '', imageCaption: '', references: '' })
 const defaultOpportunityForm = () => ({ title: '', category: 'Vagas de Emprego', type: 'Remoto', location: '', deadline: '', link: '', description: '', fullDescription: '', image: '', status: 'approved', sourceUrl: '', reviewNotes: '' })
+const defaultSourceForm = () => ({ id: '', label: '', url: '', enabled: true })
+const defaultCurationForm = () => ({
+  minScore: 60,
+  maxAgeDays: 30,
+  rejectIfMissingDeadline: false,
+  includeKeywords: 'vaga, bolsa, edital, chamada, oportunidade, inscrição',
+  excludeKeywords: 'voluntariado não remunerado, spam, marketing multinível',
+  acceptedCategories: 'Vagas de Emprego, Bolsas, Editais, Estudos, Educação',
+  acceptedLocations: 'Brasil, Remoto, Híbrido, Presencial, Nordeste',
+  requireSourceMatch: true
+})
 const defaultTrackForm = () => ({
   name: '', description: '', hours: '', status: 'GRATUITO', hasCertificate: true, color: '#FF6BCA',
   mod1: '', mod2: '', mod3: ''
@@ -157,11 +168,29 @@ const oppsConfigData = ref({
   pageTitle1: '', pageTitle2: '', searchPlaceholder: '', toggleText: '',
   detailBackBtn: '', detailApplyBtn: '', detailShareTitle: '', detailStatusBadge: ''
 })
+const sourcesConfigData = ref({
+  sectionTitle: siteContent.opportunitiesSourcesConfig?.sectionTitle || '',
+  sectionDescription: siteContent.opportunitiesSourcesConfig?.sectionDescription || '',
+  pdfTitle: siteContent.opportunitiesSourcesConfig?.pdfTitle || ''
+})
+const sourceListData = ref((siteContent.opportunitiesSourcesConfig?.sources || []).map(source => ({ ...source })))
+const editingSourceId = ref(null)
+const sourceForm = ref(defaultSourceForm())
+const curationConfigData = ref({
+  minScore: siteContent.opportunitiesCurationConfig?.minScore ?? 60,
+  maxAgeDays: siteContent.opportunitiesCurationConfig?.maxAgeDays ?? 30,
+  rejectIfMissingDeadline: siteContent.opportunitiesCurationConfig?.rejectIfMissingDeadline ?? false,
+  includeKeywords: (siteContent.opportunitiesCurationConfig?.includeKeywords || []).join(', '),
+  excludeKeywords: (siteContent.opportunitiesCurationConfig?.excludeKeywords || []).join(', '),
+  acceptedCategories: (siteContent.opportunitiesCurationConfig?.acceptedCategories || []).join(', '),
+  acceptedLocations: (siteContent.opportunitiesCurationConfig?.acceptedLocations || []).join(', '),
+  requireSourceMatch: siteContent.opportunitiesCurationConfig?.requireSourceMatch ?? true
+})
 const vagas = ref(siteContent.opportunities || [])
 const novaVaga = ref(defaultOpportunityForm())
 const opportunityImportUrl = ref('')
 const isImportingOpportunity = ref(false)
-const monitoredSources = computed(() => siteContent.opportunitiesSourcesConfig?.sources?.filter(source => source.enabled !== false) || [])
+const monitoredSources = computed(() => sourceListData.value.filter(source => source.enabled !== false))
 const reviewQueue = computed(() => (siteContent.opportunities || []).filter(v => getOpportunityVisibilityState(v) === 'pending'))
 const publishedVagas = computed(() => (siteContent.opportunities || []).filter(v => getOpportunityVisibilityState(v) === 'public'))
 const rejectedVagas = computed(() => (siteContent.opportunities || []).filter(v => getOpportunityVisibilityState(v) === 'rejected'))
@@ -187,6 +216,27 @@ const sourceSummaryText = computed(() => {
   const total = monitoredSources.value.length
   const active = monitoredSources.value.filter(source => source.enabled !== false).length
   return `${active}/${total} fontes ativas`
+})
+const curationRules = computed(() => ({
+  minScore: Number(curationConfigData.value.minScore || 0),
+  maxAgeDays: Number(curationConfigData.value.maxAgeDays || 0),
+  rejectIfMissingDeadline: !!curationConfigData.value.rejectIfMissingDeadline,
+  includeKeywords: curationConfigData.value.includeKeywords,
+  excludeKeywords: curationConfigData.value.excludeKeywords,
+  acceptedCategories: curationConfigData.value.acceptedCategories,
+  acceptedLocations: curationConfigData.value.acceptedLocations,
+  requireSourceMatch: !!curationConfigData.value.requireSourceMatch
+}))
+const curationMetrics = computed(() => {
+  const includeCount = curationConfigData.value.includeKeywords.split(',').map(s => s.trim()).filter(Boolean).length
+  const excludeCount = curationConfigData.value.excludeKeywords.split(',').map(s => s.trim()).filter(Boolean).length
+  return {
+    includeCount,
+    excludeCount,
+    pending: reviewQueue.value.length,
+    published: publishedVagas.value.length,
+    rejected: rejectedVagas.value.length
+  }
 })
 // LMS / TRILHAS
 const trilhas = ref(siteContent.tracks || [])
@@ -621,6 +671,102 @@ const saveVaga = async () => {
   }
 }
 
+const saveSourcesConfig = async () => {
+  isSaving.value = true
+  try {
+    siteContent.opportunitiesSourcesConfig = {
+      ...(siteContent.opportunitiesSourcesConfig || {}),
+      ...sourcesConfigData.value,
+      sources: sourceListData.value
+    }
+    await persistSiteSetting('opportunitiesSourcesConfig', siteContent.opportunitiesSourcesConfig)
+    setTimeout(() => { isSaving.value = false; alert('Fontes monitoradas salvas!') }, 400)
+  } catch (e) {
+    console.error(e)
+    isSaving.value = false
+    alert('Erro ao salvar fontes: ' + (e.message || e))
+  }
+}
+
+const saveCurationConfig = async () => {
+  isSaving.value = true
+  try {
+    const payload = {
+      minScore: Number(curationConfigData.value.minScore || 0),
+      maxAgeDays: Number(curationConfigData.value.maxAgeDays || 0),
+      rejectIfMissingDeadline: !!curationConfigData.value.rejectIfMissingDeadline,
+      includeKeywords: curationConfigData.value.includeKeywords.split(',').map(s => s.trim()).filter(Boolean),
+      excludeKeywords: curationConfigData.value.excludeKeywords.split(',').map(s => s.trim()).filter(Boolean),
+      acceptedCategories: curationConfigData.value.acceptedCategories.split(',').map(s => s.trim()).filter(Boolean),
+      acceptedLocations: curationConfigData.value.acceptedLocations.split(',').map(s => s.trim()).filter(Boolean),
+      requireSourceMatch: !!curationConfigData.value.requireSourceMatch
+    }
+    siteContent.opportunitiesCurationConfig = {
+      ...(siteContent.opportunitiesCurationConfig || {}),
+      ...payload
+    }
+    await persistSiteSetting('opportunitiesCurationConfig', siteContent.opportunitiesCurationConfig)
+    setTimeout(() => { isSaving.value = false; alert('Regras de curadoria salvas!') }, 400)
+  } catch (e) {
+    console.error(e)
+    isSaving.value = false
+    alert('Erro ao salvar regras: ' + (e.message || e))
+  }
+}
+
+const resetSourceForm = () => {
+  sourceForm.value = defaultSourceForm()
+  editingSourceId.value = null
+}
+
+const editSource = (source) => {
+  editingSourceId.value = source.id
+  sourceForm.value = {
+    id: source.id || '',
+    label: source.label || '',
+    url: source.url || '',
+    enabled: source.enabled !== false
+  }
+}
+
+const saveSource = async () => {
+  if (!sourceForm.value.label || !sourceForm.value.url) {
+    alert('Informe nome e URL da fonte.')
+    return
+  }
+
+  const payload = {
+    id: sourceForm.value.id || `source_${Date.now()}`,
+    label: sourceForm.value.label,
+    url: sourceForm.value.url,
+    enabled: sourceForm.value.enabled !== false
+  }
+
+  const existingIndex = sourceListData.value.findIndex(source => String(source.id) === String(editingSourceId.value))
+  if (existingIndex !== -1) {
+    sourceListData.value.splice(existingIndex, 1, payload)
+  } else {
+    sourceListData.value.unshift(payload)
+  }
+
+  await saveSourcesConfig()
+  resetSourceForm()
+}
+
+const deleteSource = async (source) => {
+  if (!confirm(`Remover a fonte "${source.label}"?`)) return
+  sourceListData.value = sourceListData.value.filter(item => String(item.id) !== String(source.id))
+  await saveSourcesConfig()
+  if (String(editingSourceId.value) === String(source.id)) resetSourceForm()
+}
+
+const toggleSourceEnabled = async (source) => {
+  const index = sourceListData.value.findIndex(item => String(item.id) === String(source.id))
+  if (index === -1) return
+  sourceListData.value.splice(index, 1, { ...sourceListData.value[index], enabled: !source.enabled })
+  await saveSourcesConfig()
+}
+
 const updateVagaStatus = async (vaga, status) => {
   isSaving.value = true
   try {
@@ -782,7 +928,14 @@ const importOpportunityFromUrl = async () => {
   }
   isImportingOpportunity.value = true
   try {
-    const response = await fetch(`/api/import-opportunity?url=${encodeURIComponent(opportunityImportUrl.value.trim())}`)
+    const response = await fetch('/api/import-opportunity', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        url: opportunityImportUrl.value.trim(),
+        rules: curationRules.value
+      })
+    })
     const data = await response.json()
     if (!response.ok) throw new Error(data.error || 'Não foi possível importar.')
 
@@ -817,7 +970,15 @@ const importFromSource = async (source, options = {}) => {
   const manageLoading = !options.batched
   if (manageLoading) isImportingSource.value = true
   try {
-    const response = await fetch(`/api/import-opportunities-source?url=${encodeURIComponent(source.url)}&label=${encodeURIComponent(source.label || '')}`)
+    const response = await fetch('/api/import-opportunities-source', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        url: source.url,
+        label: source.label || '',
+        rules: curationRules.value
+      })
+    })
     const data = await response.json()
     if (!response.ok) throw new Error(data.error || 'Não foi possível importar a fonte.')
 
@@ -881,7 +1042,8 @@ const importPdfRelease = async () => {
       body: JSON.stringify({
         dataUrl: selectedPdfDataUrl.value,
         fileName: selectedPdfName.value,
-        label: selectedPdfName.value
+        label: selectedPdfName.value,
+        rules: curationRules.value
       })
     })
     const data = await response.json()
@@ -1636,13 +1798,50 @@ onUnmounted(() => {
             </button>
           </div>
           <div class="source-summary text-xs font-bold uppercase opacity-60 mb-6">{{ sourceSummaryText }}</div>
+          <div class="form-grid-2 mb-6">
+            <div class="input-group">
+              <label>NOME DA FONTE</label>
+              <input v-model="sourceForm.label" type="text" placeholder="Ex: Conjunto XYZ" />
+            </div>
+            <div class="input-group">
+              <label>URL DA FONTE</label>
+              <input v-model="sourceForm.url" type="url" placeholder="https://..." />
+            </div>
+          </div>
+          <div class="flex items-center gap-4 mb-6" style="display:flex; align-items:center; gap:16px; flex-wrap:wrap;">
+            <label class="checkbox-container">
+              <input type="checkbox" v-model="sourceForm.enabled" />
+              <span class="checkmark"></span>
+              <span class="check-label font-bold text-dark">FONTE ATIVA</span>
+            </label>
+            <button class="btn-tool-sm" @click="saveSource">
+              <Save :size="14" /> {{ editingSourceId ? 'SALVAR FONTE' : 'ADICIONAR FONTE' }}
+            </button>
+            <button v-if="editingSourceId" class="btn-tool-sm" @click="resetSourceForm">
+              <X :size="14" /> CANCELAR
+            </button>
+          </div>
           <div class="sources-grid">
-            <div v-for="source in monitoredSources" :key="source.id" class="source-card">
+            <div v-for="source in sourceListData" :key="source.id" class="source-card">
               <div class="source-pill">{{ source.label }}</div>
+              <div class="text-xs font-black uppercase mb-2" :class="source.enabled !== false ? 'text-lime' : 'text-red'">
+                {{ source.enabled !== false ? 'ATIVA' : 'DESATIVADA' }}
+              </div>
               <p class="source-url">{{ source.url }}</p>
-              <button class="btn-tool-sm mt-4" @click="importFromSource(source)" :disabled="isImportingSource">
-                <Sparkles :size="14" /> Importar desta fonte
-              </button>
+              <div class="flex items-center gap-2 mt-4" style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+                <button class="btn-tool-sm" @click="importFromSource(source)" :disabled="isImportingSource">
+                  <Sparkles :size="14" /> Importar
+                </button>
+                <button class="btn-tool-sm" @click="editSource(source)">
+                  <Edit :size="14" /> Editar
+                </button>
+                <button class="btn-tool-sm" @click="toggleSourceEnabled(source)">
+                  <Clock :size="14" /> {{ source.enabled !== false ? 'Desativar' : 'Ativar' }}
+                </button>
+                <button class="btn-tool-sm text-red-500" @click="deleteSource(source)">
+                  <Trash :size="14" /> Remover
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -1666,6 +1865,67 @@ onUnmounted(() => {
           </div>
           <button class="btn-save-brutal" @click="importPdfRelease" :disabled="isImportingPdf">
             <Sparkles :size="18" /> {{ isImportingPdf ? 'ANALISANDO PDF...' : 'IMPORTAR PDF PARA REVISÃO' }}
+          </button>
+        </div>
+
+        <div class="editor-card-brutal shadow-solid mb-10">
+          <div class="pane-header mb-4">
+            <div>
+              <h2 class="card-label-black mb-2">{{ siteContent.opportunitiesCurationConfig?.sectionTitle || 'REGRAS DE CURADORIA' }}</h2>
+              <p class="text-sm opacity-70">{{ siteContent.opportunitiesCurationConfig?.sectionDescription || 'Define o que entra, o que rejeita e o que merece revisão.' }}</p>
+            </div>
+          </div>
+          <div class="metrics-row mb-6">
+            <div class="metric-chip">Pendentes: {{ curationMetrics.pending }}</div>
+            <div class="metric-chip">Publicadas: {{ curationMetrics.published }}</div>
+            <div class="metric-chip">Rejeitadas: {{ curationMetrics.rejected }}</div>
+            <div class="metric-chip">Incluir: {{ curationMetrics.includeCount }}</div>
+            <div class="metric-chip">Excluir: {{ curationMetrics.excludeCount }}</div>
+          </div>
+          <div class="form-grid-2 mb-4">
+            <div class="input-group">
+              <label>NOTA MÍNIMA</label>
+              <input v-model.number="curationConfigData.minScore" type="number" min="0" max="100" />
+            </div>
+            <div class="input-group">
+              <label>Dias máximos sem publicação</label>
+              <input v-model.number="curationConfigData.maxAgeDays" type="number" min="1" max="365" />
+            </div>
+          </div>
+          <div class="form-grid-2 mb-4">
+            <div class="input-group">
+              <label>PALAVRAS-CHAVE PARA INCLUIR</label>
+              <textarea v-model="curationConfigData.includeKeywords" rows="3" placeholder="vaga, bolsa, edital..."></textarea>
+            </div>
+            <div class="input-group">
+              <label>PALAVRAS-CHAVE PARA EXCLUIR</label>
+              <textarea v-model="curationConfigData.excludeKeywords" rows="3" placeholder="voluntariado não remunerado, spam..."></textarea>
+            </div>
+          </div>
+          <div class="form-grid-2 mb-4">
+            <div class="input-group">
+              <label>CATEGORIAS ACEITAS</label>
+              <textarea v-model="curationConfigData.acceptedCategories" rows="3" placeholder="Vagas de Emprego, Bolsas, Editais..."></textarea>
+            </div>
+            <div class="input-group">
+              <label>LOCAIS ACEITOS</label>
+              <textarea v-model="curationConfigData.acceptedLocations" rows="3" placeholder="Brasil, Remoto, Nordeste..."></textarea>
+            </div>
+          </div>
+          <div class="flex items-center gap-4 mb-6" style="display:flex; align-items:center; gap:16px; flex-wrap:wrap;">
+            <label class="checkbox-container">
+              <input type="checkbox" v-model="curationConfigData.rejectIfMissingDeadline" />
+              <span class="checkmark"></span>
+              <span class="check-label font-bold text-dark">REJEITAR SEM PRAZO</span>
+            </label>
+            <label class="checkbox-container">
+              <input type="checkbox" v-model="curationConfigData.requireSourceMatch" />
+              <span class="checkmark"></span>
+              <span class="check-label font-bold text-dark">EXIGIR PALAVRA-CHAVE</span>
+            </label>
+          </div>
+          <button class="btn-save-brutal" @click="saveCurationConfig">
+            <Save :size="18" /> SALVAR REGRAS DE CURADORIA
           </button>
         </div>
 
@@ -3049,6 +3309,22 @@ onUnmounted(() => {
   color: #1C1C1C;
   word-break: break-word;
   opacity: 0.78;
+}
+
+.metrics-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.metric-chip {
+  padding: 8px 12px;
+  border-radius: 9999px;
+  background: #F7F7F5;
+  border: 2px solid #1C1C1C;
+  font-size: 11px;
+  font-weight: 900;
+  text-transform: uppercase;
 }
 
 .table-title-btn {

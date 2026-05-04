@@ -1,10 +1,12 @@
-const { analyzeOpportunityText, coerceOpportunityItems, extractOpportunityLinksFromHtml, fetchPageText, normalizeOpportunityPayload } = require('./opportunity-helpers')
+const { analyzeOpportunityText, coerceOpportunityItems, evaluateOpportunityCuration, extractOpportunityLinksFromHtml, fetchPageText, normalizeOpportunityPayload } = require('./opportunity-helpers')
 
 module.exports = async function handler(req, res) {
   try {
-    const url = String(req.query.url || '').trim()
-    const label = String(req.query.label || '').trim()
+    const body = req.body || {}
+    const url = String(body.url || req.query.url || '').trim()
+    const label = String(body.label || req.query.label || '').trim()
     if (!url) return res.status(400).json({ error: 'URL da fonte necessária.' })
+    const rules = body.rules || {}
 
     const apiKey = process.env.GEMINI_API_KEY
     if (!apiKey) {
@@ -17,29 +19,41 @@ module.exports = async function handler(req, res) {
 
     if (candidates.length === 0) {
       const aiData = await analyzeOpportunityText(sourcePage.text || '', apiKey, 'single')
-      analyzedItems.push(
-        normalizeOpportunityPayload(aiData, {
+      const payload = normalizeOpportunityPayload(aiData, {
           sourceUrl: url,
           sourcePageUrl: url,
           sourceName: label || new URL(url).hostname,
           sourceType: sourcePage.contentType === 'application/pdf' ? 'pdf' : 'pagina',
           status: 'pending'
         })
-      )
+      const curation = evaluateOpportunityCuration(payload, rules)
+      analyzedItems.push({
+        ...payload,
+        status: curation.decision === 'rejected' ? 'rejected' : 'pending',
+        curationScore: curation.score,
+        curationDecision: curation.decision,
+        curationNotes: curation.notes
+      })
     } else {
       for (const candidate of candidates) {
         try {
           const page = await fetchPageText(candidate.url)
           const aiData = await analyzeOpportunityText(page.text || '', apiKey, 'single')
-          analyzedItems.push(
-            normalizeOpportunityPayload(aiData, {
+          const payload = normalizeOpportunityPayload(aiData, {
               sourceUrl: candidate.url,
               sourcePageUrl: url,
               sourceName: label || new URL(url).hostname,
               sourceType: 'pagina',
               status: 'pending'
             })
-          )
+          const curation = evaluateOpportunityCuration(payload, rules)
+          analyzedItems.push({
+            ...payload,
+            status: curation.decision === 'rejected' ? 'rejected' : 'pending',
+            curationScore: curation.score,
+            curationDecision: curation.decision,
+            curationNotes: curation.notes
+          })
         } catch (candidateError) {
           analyzedItems.push({
             title: candidate.text || candidate.url,
@@ -55,6 +69,8 @@ module.exports = async function handler(req, res) {
             sourceName: label || new URL(url).hostname,
             sourceType: 'pagina',
             status: 'pending',
+            curationScore: 0,
+            curationDecision: 'pending',
             reviewNotes: candidateError.message || 'Erro de análise'
           })
         }

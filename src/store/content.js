@@ -323,6 +323,18 @@ const initialContent = {
       { id: 'terceirosetor', label: 'Vagas Terceiro Setor', url: 'https://vagas.terceirosetor.net/', enabled: true }
     ]
   },
+  opportunitiesCurationConfig: {
+    sectionTitle: "REGRAS DE CURADORIA",
+    sectionDescription: "Define o que entra na fila, o que é rejeitado e o que pode ir para revisão.",
+    minScore: 60,
+    maxAgeDays: 30,
+    rejectIfMissingDeadline: false,
+    includeKeywords: ['vaga', 'bolsa', 'edital', 'chamada', 'oportunidade', 'inscrição', 'inscrições'],
+    excludeKeywords: ['voluntariado não remunerado', 'spam', 'marketing multinível'],
+    acceptedCategories: ['Vagas de Emprego', 'Bolsas', 'Editais', 'Estudos', 'Educação'],
+    acceptedLocations: ['Brasil', 'Remoto', 'Híbrido', 'Presencial', 'Nordeste'],
+    requireSourceMatch: true
+  },
   tracks: [
     {
       id: 'advocacy',
@@ -445,7 +457,7 @@ export const siteContent = reactive({ ...initialContent })
 const siteSettingKeys = [
   'home', 'about', 'settings', 'donateConfig', 'services', 'opportunities', 'tracks',
   'library', 'projects', 'newsletterArchiveConfig', 'articlesConfig', 'opportunitiesConfig',
-  'opportunitiesSourcesConfig',
+  'opportunitiesSourcesConfig', 'opportunitiesCurationConfig',
   'servicesConfig', 'libraryConfig'
 ]
 

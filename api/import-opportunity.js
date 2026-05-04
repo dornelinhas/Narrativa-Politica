@@ -1,9 +1,11 @@
-const { analyzeOpportunityText, fetchPageText, normalizeOpportunityPayload } = require('./opportunity-helpers')
+const { analyzeOpportunityText, evaluateOpportunityCuration, fetchPageText, normalizeOpportunityPayload } = require('./opportunity-helpers')
 
 module.exports = async function handler(req, res) {
   try {
-    const url = String(req.query.url || '').trim()
+    const body = req.body || {}
+    const url = String(body.url || req.query.url || '').trim()
     if (!url) return res.status(400).json({ error: 'URL necessária.' })
+    const rules = body.rules || {}
 
     const apiKey = process.env.GEMINI_API_KEY
     if (!apiKey) {
@@ -13,13 +15,19 @@ module.exports = async function handler(req, res) {
     const { text } = await fetchPageText(url)
     const aiData = await analyzeOpportunityText(text, apiKey, 'single')
     const payload = normalizeOpportunityPayload(aiData, { sourceUrl: url, link: url, status: 'pending' })
+    const curation = evaluateOpportunityCuration(payload, rules)
+    const finalStatus = curation.decision === 'rejected' ? 'rejected' : 'pending'
 
     return res.status(200).json({
       ...payload,
+      status: finalStatus,
+      curationScore: curation.score,
+      curationDecision: curation.decision,
+      curationNotes: curation.notes,
       fullDescription: `${payload.fullDescription}<p><strong>Fonte:</strong> <a href="${url}" target="_blank">Acessar original</a></p>`,
       link: url,
       sourceUrl: url,
-      status: 'pending'
+      status: finalStatus
     })
   } catch (error) {
     return res.status(500).json({ error: error.message })

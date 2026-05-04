@@ -1,4 +1,4 @@
-const { analyzeOpportunityText, coerceOpportunityItems, extractPdfTextFromBuffer, normalizeOpportunityPayload } = require('./opportunity-helpers')
+const { analyzeOpportunityText, coerceOpportunityItems, evaluateOpportunityCuration, extractPdfTextFromBuffer, normalizeOpportunityPayload } = require('./opportunity-helpers')
 
 module.exports = async function handler(req, res) {
   try {
@@ -6,6 +6,7 @@ module.exports = async function handler(req, res) {
 
     const { dataUrl, fileName, label } = req.body || {}
     if (!dataUrl) return res.status(400).json({ error: 'PDF obrigatório.' })
+    const rules = req.body?.rules || {}
 
     const apiKey = process.env.GEMINI_API_KEY
     if (!apiKey) {
@@ -21,13 +22,23 @@ module.exports = async function handler(req, res) {
     }
 
     const raw = await analyzeOpportunityText(text, apiKey, 'batch')
-    const items = coerceOpportunityItems(raw).map(item => normalizeOpportunityPayload(item, {
-      sourceUrl: fileName || label || 'pdf-upload',
-      sourcePageUrl: fileName || label || 'pdf-upload',
-      sourceName: label || fileName || 'PDF enviado',
-      sourceType: 'pdf',
-      status: 'pending'
-    }))
+    const items = coerceOpportunityItems(raw).map(item => {
+      const payload = normalizeOpportunityPayload(item, {
+        sourceUrl: fileName || label || 'pdf-upload',
+        sourcePageUrl: fileName || label || 'pdf-upload',
+        sourceName: label || fileName || 'PDF enviado',
+        sourceType: 'pdf',
+        status: 'pending'
+      })
+      const curation = evaluateOpportunityCuration(payload, rules)
+      return {
+        ...payload,
+        status: curation.decision === 'rejected' ? 'rejected' : 'pending',
+        curationScore: curation.score,
+        curationDecision: curation.decision,
+        curationNotes: curation.notes
+      }
+    })
 
     return res.status(200).json({
       source: {
