@@ -443,13 +443,20 @@ const initialContent = {
   categories: ['Artigos', 'Notícias', 'Análises']
 }
 
-export const siteContent = reactive({ ...initialContent })
+let cachedContent = null
+try {
+  cachedContent = JSON.parse(localStorage.getItem('np_content_v6') || 'null')
+} catch {
+  cachedContent = null
+}
+
+export const siteContent = reactive(cachedContent ? { ...initialContent, ...cachedContent } : { ...initialContent })
 
 const siteSettingKeys = [
   'home', 'about', 'settings', 'donateConfig', 'services', 'opportunities', 'tracks',
   'library', 'projects', 'newsletterArchiveConfig', 'articlesConfig', 'opportunitiesConfig',
   'opportunitiesCurationConfig',
-  'servicesConfig', 'libraryConfig'
+  'servicesConfig', 'libraryConfig', 'lastActivity'
 ]
 
 const normalizePost = (post) => ({
@@ -551,4 +558,6 @@ export const saveContent = () => localStorage.setItem('np_content_v6', JSON.stri
 export const logActivity = (title, type = 'Edição') => {
   if (!siteContent.lastActivity) siteContent.lastActivity = []
   siteContent.lastActivity.unshift({ id: Date.now(), title, type, date: new Date().toLocaleString('pt-BR') })
+  siteContent.lastActivity = siteContent.lastActivity.slice(0, 20)
+  saveContent()
 }

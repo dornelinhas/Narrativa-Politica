@@ -7,7 +7,7 @@ import { Settings, LogOut, CheckCircle, Clock, Trash2, Home, Search, BookOpen, B
 import BrutalEditor from '../components/BrutalEditor.vue'
 import ImageUploader from '../components/ImageUploader.vue'
 import { sanitizeHtml } from '../utils/sanitizeHtml'
-import { siteContent, fetchAllContent, getOpportunityVisibilityState } from '../store/content'
+import { siteContent, fetchAllContent, getOpportunityVisibilityState, logActivity, parseOpportunityDeadline } from '../store/content'
 
 const router = useRouter()
 const { user, logout } = useAuth()
@@ -52,6 +52,30 @@ const scrollToForm = (id) => {
   setTimeout(() => {
     document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
   }, 0)
+}
+
+const normalizeOpportunityDeadline = (value) => {
+  const raw = String(value || '').trim()
+  if (!raw) return ''
+  const parsed = parseOpportunityDeadline(raw)
+  if (!parsed) return raw.toUpperCase() === 'ABERTO' ? 'ABERTO' : raw
+  return parsed.toISOString().slice(0, 10)
+}
+
+const isValidHttpUrl = (value) => {
+  const raw = String(value || '').trim()
+  if (!raw) return true
+  try {
+    const parsed = new URL(raw)
+    return parsed.protocol === 'http:' || parsed.protocol === 'https:'
+  } catch {
+    return false
+  }
+}
+
+const recordActivity = async (title, type = 'Edição') => {
+  logActivity(title, type)
+  await persistSiteSetting('lastActivity', siteContent.lastActivity)
 }
 
 const persistSiteSetting = async (key, value) => {
@@ -224,6 +248,7 @@ const curationMetrics = computed(() => {
     rejected: rejectedVagas.value.length
   }
 })
+const recentActivity = computed(() => (siteContent.lastActivity || []).slice(0, 8))
 // LMS / TRILHAS
 const trilhas = ref(siteContent.tracks || [])
 const novaTrilha = ref(defaultTrackForm())
@@ -304,6 +329,7 @@ const saveNewsletter = async () => {
     
     siteContent.newsletters.unshift({ ...payload, id: Date.now() })
     novaNewsletter.value = { titulo: '', descricao: '', conteudo: '', capa_url: '', tag: 'Política' }
+    await recordActivity(`Newsletter: ${payload.titulo}`, confirmSend ? 'Envio' : 'Criação')
     isSaving.value = false 
     alert(confirmSend ? 'Newsletter salva e enviada com sucesso!' : 'Newsletter salva no arquivo!') 
   } catch(e) { 
@@ -333,6 +359,7 @@ const saveNewsletterArchiveConfig = async () => {
     if (supabase) {
       await supabase.from('site_settings').upsert({ key: 'newsletterArchiveConfig', value: newsletterArchiveConfigData.value })
     }
+    await recordActivity('Acervo de newsletter', 'Configuração')
     setTimeout(() => { isSaving.value = false; alert('Configurações do Acervo Salvas!') }, 400)
   } catch(e) { console.error(e); isSaving.value = false; }
 }
@@ -360,6 +387,7 @@ const saveDonateConfig = async () => {
     if (supabase) {
       await supabase.from('site_settings').upsert({ key: 'donateConfig', value: config })
     }
+    await recordActivity('Página de doação', 'Configuração')
     setTimeout(() => { isSaving.value = false; alert('Configurações de Doação Salvas!') }, 400)
   } catch(e) { console.error(e); isSaving.value = false; }
 }
@@ -431,6 +459,7 @@ const saveHome = async () => {
       })
       if (error) throw error
     }
+    await recordActivity('Home', 'Configuração')
     setTimeout(() => { isSaving.value = false; alert('Home salva com sucesso!') }, 400)
   } catch(e) { 
     console.error(e)
@@ -444,6 +473,7 @@ const saveArticlesConfig = async () => {
   try {
     Object.assign(siteContent.articlesConfig, articlesConfigData.value)
     await persistSiteSetting('articlesConfig', articlesConfigData.value)
+    await recordActivity('Editorial geral', 'Configuração')
     setTimeout(() => { isSaving.value = false; alert('Configurações da Página salvas!') }, 400)
   } catch (e) {
     console.error(e)
@@ -533,6 +563,7 @@ const saveArtigo = async () => {
     // Atualiza a lista global com segurança
     await fetchAllContent() 
     artigos.value = [...siteContent.posts]
+    await recordActivity(`Artigo: ${payload.title}`, wasEditing ? 'Edição' : 'Criação')
     
     resetArtigoForm()
     isSaving.value = false
@@ -554,6 +585,7 @@ const deleteArtigo = async (art) => {
     }
     siteContent.posts = (siteContent.posts || []).filter(p => String(p.id) !== String(art.id))
     artigos.value = siteContent.posts
+    await recordActivity(`Artigo excluído: ${art.title}`, 'Exclusão')
     if (String(editingArtigoId.value) === String(art.id)) resetArtigoForm()
     isSaving.value = false
   } catch (e) {
@@ -570,6 +602,7 @@ const saveSobre = async () => {
     if (supabase) {
       await supabase.from('site_settings').upsert({ key: 'about', value: sobreData.value })
     }
+    await recordActivity('Página Sobre', 'Configuração')
     setTimeout(() => { isSaving.value = false; alert('Página Sobre atualizada!') }, 400)
   } catch(e) { console.error(e); isSaving.value = false; }
 }
@@ -580,6 +613,7 @@ const saveSettings = async () => {
     if (supabase) {
       await supabase.from('site_settings').upsert({ key: 'settings', value: siteContent.settings })
     }
+    await recordActivity('Visibilidade do site', 'Configuração')
     setTimeout(() => { isSaving.value = false; alert('Módulos atualizados!') }, 400)
   } catch(e) { console.error(e); isSaving.value = false; }
 }
@@ -631,12 +665,18 @@ const saveVaga = async () => {
     alert("O título da vaga é obrigatório.")
     return
   }
+  if (!isValidHttpUrl(novaVaga.value.link) || !isValidHttpUrl(novaVaga.value.sourceUrl)) {
+    alert('A URL da oportunidade precisa ser válida.')
+    return
+  }
   isSaving.value = true
   try {
     if (!siteContent.opportunities) siteContent.opportunities = []
+    const normalizedDeadline = normalizeOpportunityDeadline(novaVaga.value.deadline)
     const payload = {
       ...novaVaga.value,
       status: novaVaga.value.status || 'approved',
+      deadline: normalizedDeadline,
       id: editingVagaId.value || Date.now()
     }
     const wasEditing = isEditingVaga.value
@@ -648,6 +688,7 @@ const saveVaga = async () => {
     }
     vagas.value = siteContent.opportunities
     await persistSiteSetting('opportunities', siteContent.opportunities)
+    await recordActivity(`Oportunidade: ${payload.title}`, wasEditing ? 'Edição' : 'Criação')
     resetVagaForm()
     setTimeout(() => { isSaving.value = false; alert(wasEditing ? 'Oportunidade atualizada!' : 'Oportunidade salva!') }, 400)
   } catch(e) {
@@ -675,6 +716,7 @@ const saveCurationConfig = async () => {
       ...payload
     }
     await persistSiteSetting('opportunitiesCurationConfig', siteContent.opportunitiesCurationConfig)
+    await recordActivity('Regras de curadoria', 'Configuração')
     setTimeout(() => { isSaving.value = false; alert('Regras de curadoria salvas!') }, 400)
   } catch (e) {
     console.error(e)
@@ -694,6 +736,7 @@ const updateVagaStatus = async (vaga, status) => {
     siteContent.opportunities.splice(index, 1, updated)
     vagas.value = siteContent.opportunities
     await persistSiteSetting('opportunities', siteContent.opportunities)
+    await recordActivity(`Oportunidade: ${updated.title}`, `Status ${status}`)
 
     if (String(editingVagaId.value) === String(vaga.id)) {
       novaVaga.value = { ...novaVaga.value, status }
@@ -714,6 +757,7 @@ const deleteVaga = async (vaga) => {
     siteContent.opportunities = (siteContent.opportunities || []).filter(v => String(v.id) !== String(vaga.id))
     vagas.value = siteContent.opportunities
     await persistSiteSetting('opportunities', siteContent.opportunities)
+    await recordActivity(`Oportunidade excluída: ${vaga.title}`, 'Exclusão')
     if (String(editingVagaId.value) === String(vaga.id)) resetVagaForm()
     isSaving.value = false
   } catch (e) {
@@ -1223,6 +1267,25 @@ onUnmounted(() => {
 
       <!-- 1. GESTÃO DA HOME -->
       <section v-if="activeTab === 'home'" class="admin-section fade-in-up">
+        <div class="editor-card-brutal shadow-solid mb-10">
+          <div class="pane-header mb-4">
+            <div>
+              <h2 class="card-label-black mb-2">ATIVIDADE RECENTE</h2>
+              <p class="text-sm opacity-70">Últimas alterações salvas no painel.</p>
+            </div>
+          </div>
+          <div v-if="recentActivity.length" class="space-y-3">
+            <div v-for="entry in recentActivity" :key="entry.id" class="flex items-center justify-between gap-4 border-b border-black/10 pb-3 last:border-b-0 last:pb-0">
+              <div>
+                <p class="font-bold">{{ entry.title }}</p>
+                <p class="text-xs opacity-60">{{ entry.type }}</p>
+              </div>
+              <span class="text-xs opacity-60">{{ entry.date }}</span>
+            </div>
+          </div>
+          <p v-else class="text-sm opacity-70">Nenhuma atividade registrada ainda.</p>
+        </div>
+
         <div class="editor-card-brutal shadow-solid">
           <h2 class="card-label-black mb-8">HERO SECTION (TOPO)</h2>
           <div class="form-grid-2">
