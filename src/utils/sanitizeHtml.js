@@ -30,7 +30,8 @@ const ALLOWED_TAGS = new Set([
 
 const ALLOWED_ATTRS = {
   A: ['href', 'title', 'target', 'rel'],
-  IMG: ['src', 'alt', 'title', 'width', 'height', 'loading']
+  IMG: ['src', 'alt', 'title', 'width', 'height', 'loading'],
+  SPAN: ['data-explanation', 'class']
 }
 
 const SAFE_URL_PATTERN = /^(https?:|mailto:|tel:|\/|#)/i

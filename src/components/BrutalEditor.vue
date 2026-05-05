@@ -1,6 +1,6 @@
 <script setup>
 import { ref, onMounted, watch } from 'vue'
-import { Bold, Italic, List, Heading2, Heading3, Image as ImageIcon, Type, Trash2, Quote } from 'lucide-vue-next'
+import { Bold, Italic, List, Heading2, Heading3, Image as ImageIcon, Type, Trash2, Quote, Link, MessageSquarePlus } from 'lucide-vue-next'
 import { uploadImage } from '../lib/supabaseStorage'
 
 const props = defineProps({
@@ -30,6 +30,33 @@ const execCmd = (cmd, arg = null) => {
   document.execCommand(cmd, false, arg)
   updateContent()
   editorRef.value.focus()
+}
+
+const addLink = () => {
+  const url = prompt('Cole ou digite a URL do link:', 'https://')
+  if (url && url !== 'https://') {
+    execCmd('createLink', url)
+  }
+}
+
+const addExplanation = () => {
+  const selection = window.getSelection()
+  if (!selection.rangeCount || selection.isCollapsed) {
+    alert('Selecione uma parte do texto primeiro para adicionar o balão de explicação.')
+    return
+  }
+
+  const explanation = prompt('Digite a explicação que aparecerá no balão ao passar o mouse:')
+  if (!explanation) return
+
+  const range = selection.getRangeAt(0)
+  const span = document.createElement('span')
+  span.className = 'explanation-trigger'
+  span.setAttribute('data-explanation', explanation)
+  span.appendChild(range.extractContents())
+  range.insertNode(span)
+  
+  updateContent()
 }
 
 const setFontSize = (size) => {
@@ -131,6 +158,8 @@ const deleteSelectedImage = () => {
       </div>
 
       <div class="toolbar-group">
+        <button type="button" @click="addLink" title="Adicionar Link"><Link :size="16" /></button>
+        <button type="button" @click="addExplanation" title="Adicionar Balão de Explicação"><MessageSquarePlus :size="16" /></button>
         <button type="button" @click="execCmd('insertUnorderedList')" title="Lista"><List :size="16" /></button>
         <button type="button" @click="triggerFileInput" title="Inserir Imagem"><ImageIcon :size="16" /></button>
       </div>
@@ -325,5 +354,30 @@ const deleteSelectedImage = () => {
 .editor-content :deep(font[size="5"]) { font-size: 1.5rem; }
 .editor-content :deep(font[size="6"]) { font-size: 2rem; }
 .editor-content :deep(font[size="7"]) { font-size: 2.5rem; }
+
+.editor-content :deep(.explanation-trigger) {
+  text-decoration: underline dotted #FF6BCA 3px;
+  cursor: help;
+  position: relative;
+}
+.editor-content :deep(.explanation-trigger):hover::after {
+  content: "Explicação: " attr(data-explanation);
+  position: absolute;
+  bottom: 100%;
+  left: 0;
+  background: #1C1C1C;
+  color: #FFF;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 12px;
+  width: 250px;
+  z-index: 100;
+  box-shadow: 4px 4px 0 #FF6BCA;
+  font-family: "Inter", sans-serif;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 1.4;
+  pointer-events: none;
+}
 </style>
 
