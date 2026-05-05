@@ -341,9 +341,18 @@ const deleteSelectedImage = () => {
   outline: 4px solid #DF2028;
 }
 
-.editor-content :deep(ul) {
-  padding-left: 1.5rem;
-  margin-bottom: 1rem;
+/* Estilos para links e explicações dentro do editor */
+.editor-content :deep(a) {
+  color: #3D78E0 !important;
+  text-decoration: underline !important;
+  font-weight: 600;
+}
+
+.editor-content :deep(.explanation-trigger) {
+  text-decoration: underline dotted #FF6BCA 3px !important;
+  background: rgba(255, 107, 202, 0.1);
+  cursor: help;
+  position: relative;
 }
 
 /* Font sizes from execCommand */

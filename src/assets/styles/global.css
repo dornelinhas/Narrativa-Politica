@@ -347,3 +347,59 @@ p, .font-sans {
   width: 100%;
   min-height: 100vh;
 }
+
+/* ── ESTILOS PARA CONTEÚDO EDITORIAL (ARTIGOS/VAGAS) ── */
+/* Links dentro de blocos de texto */
+.editor-content a, 
+.article-body a,
+.opportunity-detail a {
+  color: var(--color-blue);
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 3px;
+  font-weight: 700;
+  transition: 0.2s;
+}
+
+.editor-content a:hover, 
+.article-body a:hover,
+.opportunity-detail a:hover {
+  background: var(--color-blue);
+  color: white;
+}
+
+/* Balão de Explicação (Tooltips) */
+.explanation-trigger {
+  text-decoration: underline dotted var(--color-pink) 3px;
+  cursor: help;
+  position: relative;
+  font-weight: 600;
+  display: inline;
+}
+
+.explanation-trigger:hover::after {
+  content: "INFO: " attr(data-explanation);
+  position: absolute;
+  bottom: 120%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--color-dark);
+  color: white;
+  padding: 12px 18px;
+  border-radius: 12px;
+  font-size: 0.85rem;
+  width: 300px;
+  z-index: 9999;
+  box-shadow: 6px 6px 0 var(--color-pink);
+  font-family: var(--font-sans);
+  font-weight: 500;
+  line-height: 1.5;
+  text-transform: none;
+  pointer-events: none;
+  animation: tooltip-fade-in 0.2s ease-out;
+}
+
+@keyframes tooltip-fade-in {
+  from { opacity: 0; transform: translateX(-50%) translateY(10px); }
+  to { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
