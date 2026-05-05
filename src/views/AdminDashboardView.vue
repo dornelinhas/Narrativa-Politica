@@ -993,6 +993,57 @@ const importSelectedLinks = async () => {
   discoveredLinks.value = discoveredLinks.value.filter(l => !toImport.includes(l.url))
 }
 
+const bulkImportText = ref('')
+const isImportingBulk = ref(false)
+
+const importBulkText = async () => {
+  if (!bulkImportText.value.trim()) return
+  
+  isImportingBulk.value = true
+  try {
+    const response = await fetch('/api/import-opportunity', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ 
+        url: bulkImportText.value, // Passamos o texto no campo que a API já aceita
+        rules: curationRules.value 
+      })
+    })
+    
+    const data = await response.json()
+    if (!response.ok) throw new Error(data.error || 'Erro ao processar texto.')
+    
+    const items = data.items || []
+    if (items.length === 0) {
+      alert('A IA não conseguiu identificar vagas claras neste texto. Tente copiar um trecho menor ou mais específico.')
+      return
+    }
+
+    let successCount = 0
+    for (const item of items) {
+      const payload = {
+        ...item,
+        id: Date.now() + Math.random(),
+        status: item.status || 'pending'
+      }
+      siteContent.opportunities.unshift(payload)
+      successCount++
+    }
+    
+    vagas.value = siteContent.opportunities
+    await persistSiteSetting('opportunities', siteContent.opportunities)
+    await recordActivity(`${successCount} vagas extraídas de texto colado`, 'Importação')
+    
+    bulkImportText.value = ''
+    alert(`Sucesso! A IA encontrou e separou ${successCount} vagas. Confira na Fila de Revisão abaixo.`)
+  } catch (e) {
+    console.error(e)
+    alert('Falha na análise: ' + e.message)
+  } finally {
+    isImportingBulk.value = false
+  }
+}
+
 const useResearchSiteUrl = (site) => {
   if (!site?.url) return
   opportunityImportUrl.value = site.url
@@ -1903,46 +1954,38 @@ onUnmounted(() => {
           </button>
         </div>
 
-        <div class="editor-card-brutal shadow-solid mb-10" v-if="discoveredLinks.length">
-           <div class="pane-header mb-4">
+        <!-- ÁREA DE IMPORTAÇÃO INTELIGENTE (BULK PASTE) -->
+        <div class="editor-card-brutal shadow-solid mb-10">
+           <div class="pane-header mb-6">
               <div>
-                <h2 class="card-label-black mb-2">LINKS DESCOBERTOS (CURADORIA AUTOMÁTICA)</h2>
-                <p class="text-sm opacity-70">A IA encontrou estes links nos sites monitorados que ainda não estão no seu sistema.</p>
+                <h2 class="card-label-black mb-2">IMPORTAÇÃO TURBO (COLE O TEXTO DO SITE)</h2>
+                <p class="text-sm opacity-70">Abra o site da fonte, dê <strong>Ctrl+A (Selecionar Tudo)</strong>, <strong>Ctrl+C (Copiar)</strong> e cole no campo abaixo. A IA vai encontrar e separar cada vaga sozinha.</p>
               </div>
-              <button class="btn-tool-sm bg-lima-accent" @click="importSelectedLinks" :disabled="isSaving || selectedDiscoveryLinks.length === 0">
-                <Sparkles :size="14" /> IMPORTAR SELECIONADOS ({{ selectedDiscoveryLinks.length }})
+           </div>
+           
+           <div class="input-group mb-6">
+              <label>CONTEÚDO BRUTO DO SITE / LISTA DE VAGAS</label>
+              <textarea 
+                v-model="bulkImportText" 
+                rows="8" 
+                placeholder="Cole aqui o texto copiado do site (mesmo que venha com menus, rodapés e poluição)..."
+                class="input-premium"
+              ></textarea>
+           </div>
+
+           <div class="flex justify-between items-center">
+              <p class="text-xs font-bold text-lima-accent" v-if="bulkImportText.length > 0">
+                Conteúdo detectado: {{ bulkImportText.length }} caracteres.
+              </p>
+              <button 
+                class="btn-launch-premium" 
+                @click="importBulkText" 
+                :disabled="isImportingBulk || !bulkImportText.trim()"
+                style="padding: 16px 32px;"
+              >
+                <Sparkles :size="20" /> {{ isImportingBulk ? 'IA ANALISANDO E SEPARANDO VAGAS...' : 'PROCESSAR E CRIAR VAGAS' }}
               </button>
            </div>
-           <table class="table-brutal">
-              <thead>
-                 <tr>
-                    <th style="width: 40px;">
-                      <input type="checkbox" :checked="selectedDiscoveryLinks.length === discoveredLinks.length" @change="e => selectedDiscoveryLinks = e.target.checked ? discoveredLinks.map(l => l.url) : []" />
-                    </th>
-                    <th>URL / FONTE</th>
-                    <th>SCORE</th>
-                    <th>AÇÕES</th>
-                 </tr>
-              </thead>
-              <tbody>
-                 <tr v-for="link in discoveredLinks" :key="link.url">
-                    <td>
-                      <input type="checkbox" v-model="selectedDiscoveryLinks" :value="link.url" />
-                    </td>
-                    <td class="text-xs opacity-70 max-w-[400px] break-words">
-                      <strong>[{{ link.sourceLabel }}]</strong><br />
-                      {{ link.url }}
-                    </td>
-                    <td>
-                      <span class="badge-normal" :style="{ backgroundColor: link.score > 50 ? '#A4CD39' : '#FFE65A' }">{{ link.score }}%</span>
-                    </td>
-                    <td class="actions-td">
-                       <button class="icon-action" title="Abrir link" @click="window.open(link.url, '_blank')"><ExternalLink :size="16" /></button>
-                       <button class="icon-action" title="Importar este" @click="selectedDiscoveryLinks = [link.url]; importSelectedLinks()"><Sparkles :size="16" /></button>
-                    </td>
-                 </tr>
-              </tbody>
-           </table>
         </div>
 
         <div class="editor-card-brutal shadow-solid mb-10" v-if="reviewQueue.length">
