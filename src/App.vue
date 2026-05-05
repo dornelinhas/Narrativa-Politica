@@ -92,7 +92,7 @@ watch(() => route.path, () => {
   }
 
   const description = settings.seoDescription || 'Plataforma de inteligência e estratégia política.'
-  const image = settings.siteLogo || '/favicon.png'
+  const image = settings.siteLogo || '/favicon.svg'
 
   updateMeta('description', description)
   updateMeta('og:title', document.title, true)

@@ -1,0 +1,13 @@
+<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Fundo preto sólido para garantir visibilidade em abas claras -->
+  <rect x="0.5" y="0.5" width="31" height="31" rx="5.5" fill="#1C1C1C" stroke="white" stroke-width="1"/>
+  
+  <!-- Formas coloridas do estilo Brutalista NP -->
+  <circle cx="6" cy="6" r="3" fill="#DF2028"/>
+  <rect x="22" y="4" width="6" height="4" fill="#FF6BCA"/>
+  <rect x="24" y="24" width="4" height="4" fill="#A4CD39"/>
+  <rect x="4" y="22" width="4" height="6" fill="#FFE65A"/>
+  
+  <!-- Texto NP -->
+  <text x="16" y="18" text-anchor="middle" dominant-baseline="central" font-family="sans-serif" font-weight="900" font-size="12" fill="white">NP</text>
+</svg>
