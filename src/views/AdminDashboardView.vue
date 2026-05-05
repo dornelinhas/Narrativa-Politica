@@ -905,24 +905,35 @@ const discoveredLinks = ref([])
 const isDiscovering = ref(false)
 const selectedDiscoveryLinks = ref([])
 
+const customDiscoveryUrl = ref('')
+
 const runDiscovery = async () => {
   isDiscovering.value = true
   discoveredLinks.value = []
+  
+  // Combina as fontes padrão com a customizada se houver
+  const sources = [...researchSites]
+  if (customDiscoveryUrl.value.trim()) {
+    sources.push({ label: 'Link Customizado', url: customDiscoveryUrl.value.trim() })
+  }
+
   try {
     const response = await fetch('/api/discover-opportunities', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ sources: researchSites })
+      body: JSON.stringify({ sources })
     })
     const data = await response.json()
     if (!response.ok) throw new Error(data.error || 'Erro na descoberta.')
     
     // Filtra links que já existem no siteContent.opportunities
     const existingLinks = new Set((siteContent.opportunities || []).map(o => o.sourceUrl || o.link))
-    discoveredLinks.value = (data.links || []).filter(l => !existingLinks.has(l.url))
+    discoveredLinks.value = (data.links || []).filter(l => !existingLinks.has(l.url) && l.score > 20)
     
     if (discoveredLinks.value.length === 0) {
-      alert('Nenhum link novo encontrado nos sites monitorados.')
+      alert('Nenhum link novo relevante encontrado.')
+    } else {
+      customDiscoveryUrl.value = '' // Limpa se teve sucesso
     }
   } catch (e) {
     console.error(e)
@@ -1736,9 +1747,12 @@ onUnmounted(() => {
               <h2 class="card-label-black mb-2">SITES PARA PESQUISAR</h2>
               <p class="text-sm opacity-70">Abra o site, encontre a vaga/edital e cole a URL no importador manual abaixo. Ou use a Descoberta Automática.</p>
             </div>
-            <button class="btn-launch-premium" @click="runDiscovery" :disabled="isDiscovering" style="padding: 12px 24px; font-size: 0.9rem;">
-              <Zap :size="16" /> {{ isDiscovering ? 'DESCOBRINDO...' : 'DESCOBERTA AUTOMÁTICA' }}
-            </button>
+            <div class="flex gap-2 items-center">
+              <input v-model="customDiscoveryUrl" type="url" placeholder="URL específica para descobrir..." class="input-premium py-2 text-xs" style="width: 250px;" />
+              <button class="btn-launch-premium" @click="runDiscovery" :disabled="isDiscovering" style="padding: 12px 24px; font-size: 0.9rem;">
+                <Zap :size="16" /> {{ isDiscovering ? 'DESCOBRINDO...' : 'DESCOBERTA AUTOMÁTICA' }}
+              </button>
+            </div>
           </div>
           <div class="sites-grid-square">
             <div v-for="site in researchSites" :key="site.id" class="site-research-card">

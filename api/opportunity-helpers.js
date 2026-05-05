@@ -191,15 +191,29 @@ const parseOpportunityDeadline = (deadline) => {
 
 const scoreOpportunityCandidate = (text = '', href = '') => {
   const combined = lowercase(`${text} ${href}`)
+  
+  // Se for um arquivo estático óbvio, score zero ou negativo
+  if (/\.(css|js|png|jpg|jpeg|gif|svg|woff|woff2|ttf|eot|mp4|webm|map|json|txt|xml|rss)$/i.test(href)) {
+    return -100
+  }
+
   let score = 0
 
   if (OPPORTUNITY_LINK_TERMS.some(term => combined.includes(term))) score += 25
   if (/vaga|oportunidade|bolsa|edital|chamada|inscri|fellow|grant|scholar|job|work/.test(combined)) score += 25
-  if (/\/(vagas|oportunidades|editais|bolsas|chamadas|processo|processos|sele[çc][aã]o|news|blog|noticias|notícias|posts|article|articles)/i.test(href)) score += 20
+  
+  // Bônus para caminhos que costumam conter o detalhe da vaga
+  if (/\/(vaga|oportunidade|edital|bolsa|chamada|job|post|news|article|noticia|vagas|editais|bolsas)\//i.test(href)) score += 30
+  
+  // Penalidade para URLs genéricas de listagem ou navegação
+  if (/\/(category|tag|archive|page|author|search|login|register|signup|perfil|profile|contato|contact|sobre|about|privacy|termos|terms|home|index)/i.test(href)) score -= 40
+  
   if (/\d{4}/.test(combined)) score += 5
   if (GENERIC_LINK_PATTERNS.some(pattern => pattern.test(combined))) score -= 40
   if (GENERIC_PATH_PATTERNS.some(pattern => pattern.test(href))) score -= 30
-  if (combined.length < 8) score -= 10
+  
+  if (combined.length < 10) score -= 20
+  
   return score
 }
 
