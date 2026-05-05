@@ -233,53 +233,40 @@ const parseJsonResponse = (text) => {
 }
 
 const buildOpportunityPrompt = (text, mode = 'single') => {
-  if (mode === 'batch') {
-    return `
-      Analise o texto abaixo e extraia oportunidades publicáveis em PORTUGUÊS.
-      O texto pode vir de edital, boletim, release, página de vagas, blog ou PDF.
-      Retorne apenas JSON válido.
-
-      Conteúdo: ${text.slice(0, 15000)}
-
-      Responda exatamente neste formato:
-      {
-        "items": [
-          {
-            "title": "Título traduzido",
-            "description": "Resumo curto",
-            "fullDescription": "HTML formatado profissional",
-            "category": "Vagas de Emprego, Bolsas, Editais ou Estudos",
-            "type": "Remoto, Híbrido ou Presencial",
-            "location": "Cidade ou Continente",
-            "deadline": "Prazo",
-            "publicationDecision": "publicar, revisar ou não_publicar",
-            "reviewNotes": "Justificativa editorial curta"
-          }
-        ]
-      }
-    `
-  }
-
   return `
-    Analise esta oportunidade e extraia as informações em PORTUGUÊS.
-    Traduza se estiver em inglês.
-    Identifique se o conteúdo parece ser uma vaga, edital, bolsa, chamada ou outro tipo de oportunidade.
-    Depois, dê uma recomendação editorial curta sobre publicação.
+    Analise o texto abaixo e extraia TODAS as oportunidades individuais (vagas, editais, bolsas, chamadas) publicáveis em PORTUGUÊS.
+    IMPORTANTE: Se o texto contiver uma lista ou vários blocos de vagas diferentes, extraia CADA UMA como um objeto separado no array "items".
+    Não agrupe vagas diferentes em um único item. Se for "Analista de Clima" e "Coordenador de Projetos", devem ser dois itens.
+    Traduza para o português se o original estiver em inglês.
 
-    Conteúdo: ${text.slice(0, 10000)}
+    Para cada oportunidade encontrada, forneça:
+    - title: Título da vaga.
+    - description: Resumo curto de 1 frase.
+    - fullDescription: HTML formatado com <h3> e <ul> para requisitos e benefícios.
+    - category: "Vagas de Emprego", "Bolsas", "Editais", "Estudos" ou "Educação".
+    - type: "Remoto", "Híbrido" ou "Presencial".
+    - location: Local da vaga.
+    - deadline: Data (ex: "25 MAI") ou "ABERTO".
+    - publicationDecision: "publicar", "revisar" ou "não_publicar".
+    - reviewNotes: Breve justificativa.
 
-    Responda APENAS em JSON:
+    Texto: ${text.slice(0, 18000)}
+
+    Responda EXCLUSIVAMENTE em JSON:
     {
-      "title": "Título traduzido",
-      "description": "Resumo curto",
-      "fullDescription": "HTML formatado profissional",
-      "category": "Vagas de Emprego, Bolsas, Editais ou Estudos",
-      "type": "Remoto, Híbrido ou Presencial",
-      "location": "Cidade ou Continente",
-      "deadline": "Prazo",
-      "sourceType": "pagina, edital, bolsa, chamado ou outro",
-      "publicationDecision": "publicar, revisar ou não_publicar",
-      "reviewNotes": "Justificativa editorial curta"
+      "items": [
+        {
+          "title": "...",
+          "description": "...",
+          "fullDescription": "...",
+          "category": "...",
+          "type": "...",
+          "location": "...",
+          "deadline": "...",
+          "publicationDecision": "...",
+          "reviewNotes": "..."
+        }
+      ]
     }
   `
 }
@@ -379,7 +366,25 @@ const evaluateOpportunityCuration = (item = {}, rules = {}) => {
 }
 
 const fetchPageText = async (url) => {
-  const response = await fetch(url, { headers: { 'user-agent': 'Mozilla/5.0' } })
+  const headers = {
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
+    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
+    'Accept-Language': 'pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7',
+    'Cache-Control': 'no-cache',
+    'Pragma': 'no-cache',
+    'Sec-Fetch-Dest': 'document',
+    'Sec-Fetch-Mode': 'navigate',
+    'Sec-Fetch-Site': 'none',
+    'Sec-Fetch-User': '?1',
+    'Upgrade-Insecure-Requests': '1'
+  }
+
+  const response = await fetch(url, { headers })
+  
+  if (!response.ok) {
+    throw new Error(`O servidor bloqueou o acesso (Erro ${response.status}). Isso ocorre por segurança do site de origem. Tente copiar o texto da vaga manualmente.`)
+  }
+
   const contentType = String(response.headers.get('content-type') || '').toLowerCase()
   if (contentType.includes('application/pdf') || url.toLowerCase().endsWith('.pdf')) {
     const buffer = Buffer.from(await response.arrayBuffer())
@@ -389,6 +394,48 @@ const fetchPageText = async (url) => {
 
   const html = await response.text()
   return { text: plainText(html), html, contentType: 'text/html' }
+}
+
+const extractLinksFromHtml = (html, baseUrl) => {
+  const links = []
+  const hrefRegex = /href=["']([^"']+)["']/gi
+  let match
+  const base = new URL(baseUrl)
+
+  while ((match = hrefRegex.exec(html)) !== null) {
+    try {
+      const href = match[1]
+      const absoluteUrl = new URL(href, baseUrl).href
+      // Evita links externos que não sejam da mesma origem se for um site de busca
+      // Ou permite tudo se quisermos expandir
+      links.push(absoluteUrl)
+    } catch (e) {
+      // Ignora URLs inválidas
+    }
+  }
+  return [...new Set(links)]
+}
+
+const discoverOpportunityLinks = async (sourceUrl) => {
+  const { html, text } = await fetchPageText(sourceUrl)
+  if (!html) return []
+  
+  const allLinks = extractLinksFromHtml(html, sourceUrl)
+  const candidates = []
+
+  for (const link of allLinks) {
+    // Evita loop infinito se o link for a própria página
+    if (link === sourceUrl || link === sourceUrl + '/') continue
+    
+    // Tenta pegar um pequeno contexto do texto do link (difícil só com regex, mas podemos tentar)
+    // Por enquanto, score baseado apenas na URL e termos globais
+    const score = scoreOpportunityCandidate('', link)
+    if (score > 30) {
+      candidates.push({ url: link, score })
+    }
+  }
+
+  return candidates.sort((a, b) => b.score - a.score)
 }
 
 const analyzeOpportunityText = async (text, apiKey, mode = 'single') => {
@@ -412,4 +459,6 @@ module.exports = {
   normalizeOpportunityPayload,
   parseJsonResponse,
   scoreOpportunityCandidate,
+  extractLinksFromHtml,
+  discoverOpportunityLinks
 }

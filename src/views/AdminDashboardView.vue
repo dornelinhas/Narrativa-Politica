@@ -864,30 +864,122 @@ const importOpportunityFromUrl = async () => {
     const data = await response.json()
     if (!response.ok) throw new Error(data.error || 'Não foi possível importar.')
 
+    const items = data.items || []
+    if (items.length === 0) throw new Error('Nenhuma vaga encontrada nesta URL.')
+    
+    // Para importação manual, pegamos a primeira vaga encontrada para preencher o formulário
+    const firstItem = items[0]
+
     novaVaga.value = {
       ...novaVaga.value,
-      title: data.title || novaVaga.value.title,
-      category: data.category || novaVaga.value.category,
-      type: data.type || novaVaga.value.type,
-      location: data.location || novaVaga.value.location,
-      deadline: data.deadline || novaVaga.value.deadline,
-      link: data.link || opportunityImportUrl.value.trim(),
-      description: data.description || novaVaga.value.description,
-      fullDescription: data.fullDescription || novaVaga.value.fullDescription,
-      status: data.status || 'pending',
+      title: firstItem.title || novaVaga.value.title,
+      category: firstItem.category || novaVaga.value.category,
+      type: firstItem.type || novaVaga.value.type,
+      location: firstItem.location || novaVaga.value.location,
+      deadline: firstItem.deadline || novaVaga.value.deadline,
+      link: firstItem.link || opportunityImportUrl.value.trim(),
+      description: firstItem.description || novaVaga.value.description,
+      fullDescription: firstItem.fullDescription || novaVaga.value.fullDescription,
+      status: firstItem.status || 'pending',
       sourceUrl: opportunityImportUrl.value.trim(),
-      reviewNotes: data.reviewNotes || data.publicationDecision || '',
+      reviewNotes: firstItem.reviewNotes || firstItem.publicationDecision || '',
     }
-    if (data.image) {
-      novaVaga.value.image = data.image
+    if (firstItem.image) {
+      novaVaga.value.image = firstItem.image
     }
-    alert('Conteúdo importado. Revise antes de publicar.')
+    
+    if (items.length > 1) {
+      alert(`Foram encontradas ${items.length} vagas. A primeira foi carregada no formulário. Considere usar a Descoberta Automática para importar todas em lote.`)
+    } else {
+      alert('Conteúdo importado. Revise antes de publicar.')
+    }
   } catch (e) {
     console.error(e)
-    alert('Falha ao importar a oportunidade: ' + (e.message || e))
+    alert('Falha ao importar: ' + (e.message || e))
   } finally {
     isImportingOpportunity.value = false
   }
+}
+
+const discoveredLinks = ref([])
+const isDiscovering = ref(false)
+const selectedDiscoveryLinks = ref([])
+
+const runDiscovery = async () => {
+  isDiscovering.value = true
+  discoveredLinks.value = []
+  try {
+    const response = await fetch('/api/discover-opportunities', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ sources: researchSites })
+    })
+    const data = await response.json()
+    if (!response.ok) throw new Error(data.error || 'Erro na descoberta.')
+    
+    // Filtra links que já existem no siteContent.opportunities
+    const existingLinks = new Set((siteContent.opportunities || []).map(o => o.sourceUrl || o.link))
+    discoveredLinks.value = (data.links || []).filter(l => !existingLinks.has(l.url))
+    
+    if (discoveredLinks.value.length === 0) {
+      alert('Nenhum link novo encontrado nos sites monitorados.')
+    }
+  } catch (e) {
+    console.error(e)
+    alert('Falha ao descobrir links: ' + e.message)
+  } finally {
+    isDiscovering.value = false
+  }
+}
+
+const importSelectedLinks = async () => {
+  if (selectedDiscoveryLinks.value.length === 0) return
+  
+  const toImport = [...selectedDiscoveryLinks.value]
+  selectedDiscoveryLinks.value = []
+  
+  let successCount = 0
+  let failCount = 0
+  
+  isSaving.value = true
+  
+  for (const url of toImport) {
+    try {
+      const response = await fetch('/api/import-opportunity', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ url, rules: curationRules.value })
+      })
+      const data = await response.json()
+      if (response.ok) {
+        const items = data.items || []
+        for (const item of items) {
+          const payload = {
+            ...item,
+            id: Date.now() + Math.random(),
+            status: item.status || 'pending'
+          }
+          siteContent.opportunities.unshift(payload)
+          successCount++
+        }
+      } else {
+        failCount++
+      }
+    } catch (e) {
+      console.error(e)
+      failCount++
+    }
+  }
+  
+  vagas.value = siteContent.opportunities
+  await persistSiteSetting('opportunities', siteContent.opportunities)
+  await recordActivity(`${successCount} vagas importadas em lote`, 'Importação')
+  
+  isSaving.value = false
+  alert(`Importação concluída: ${successCount} sucessos individuais, ${failCount} falhas de URL. Verifique a Fila de Revisão.`)
+  
+  // Remove os importados da lista de descobertos
+  discoveredLinks.value = discoveredLinks.value.filter(l => !toImport.includes(l.url))
 }
 
 const useResearchSiteUrl = (site) => {
@@ -1642,8 +1734,11 @@ onUnmounted(() => {
           <div class="pane-header mb-4">
             <div>
               <h2 class="card-label-black mb-2">SITES PARA PESQUISAR</h2>
-              <p class="text-sm opacity-70">Abra o site, encontre a vaga/edital e cole a URL no importador manual abaixo.</p>
+              <p class="text-sm opacity-70">Abra o site, encontre a vaga/edital e cole a URL no importador manual abaixo. Ou use a Descoberta Automática.</p>
             </div>
+            <button class="btn-launch-premium" @click="runDiscovery" :disabled="isDiscovering" style="padding: 12px 24px; font-size: 0.9rem;">
+              <Zap :size="16" /> {{ isDiscovering ? 'DESCOBRINDO...' : 'DESCOBERTA AUTOMÁTICA' }}
+            </button>
           </div>
           <div class="sites-grid-square">
             <div v-for="site in researchSites" :key="site.id" class="site-research-card">
@@ -1792,6 +1887,48 @@ onUnmounted(() => {
             <Plus v-else :size="18" />
             {{ isEditingVaga ? 'SALVAR ALTERAÇÕES DA OPORTUNIDADE' : 'ADICIONAR OPORTUNIDADE' }}
           </button>
+        </div>
+
+        <div class="editor-card-brutal shadow-solid mb-10" v-if="discoveredLinks.length">
+           <div class="pane-header mb-4">
+              <div>
+                <h2 class="card-label-black mb-2">LINKS DESCOBERTOS (CURADORIA AUTOMÁTICA)</h2>
+                <p class="text-sm opacity-70">A IA encontrou estes links nos sites monitorados que ainda não estão no seu sistema.</p>
+              </div>
+              <button class="btn-tool-sm bg-lima-accent" @click="importSelectedLinks" :disabled="isSaving || selectedDiscoveryLinks.length === 0">
+                <Sparkles :size="14" /> IMPORTAR SELECIONADOS ({{ selectedDiscoveryLinks.length }})
+              </button>
+           </div>
+           <table class="table-brutal">
+              <thead>
+                 <tr>
+                    <th style="width: 40px;">
+                      <input type="checkbox" :checked="selectedDiscoveryLinks.length === discoveredLinks.length" @change="e => selectedDiscoveryLinks = e.target.checked ? discoveredLinks.map(l => l.url) : []" />
+                    </th>
+                    <th>URL / FONTE</th>
+                    <th>SCORE</th>
+                    <th>AÇÕES</th>
+                 </tr>
+              </thead>
+              <tbody>
+                 <tr v-for="link in discoveredLinks" :key="link.url">
+                    <td>
+                      <input type="checkbox" v-model="selectedDiscoveryLinks" :value="link.url" />
+                    </td>
+                    <td class="text-xs opacity-70 max-w-[400px] break-words">
+                      <strong>[{{ link.sourceLabel }}]</strong><br />
+                      {{ link.url }}
+                    </td>
+                    <td>
+                      <span class="badge-normal" :style="{ backgroundColor: link.score > 50 ? '#A4CD39' : '#FFE65A' }">{{ link.score }}%</span>
+                    </td>
+                    <td class="actions-td">
+                       <button class="icon-action" title="Abrir link" @click="window.open(link.url, '_blank')"><ExternalLink :size="16" /></button>
+                       <button class="icon-action" title="Importar este" @click="selectedDiscoveryLinks = [link.url]; importSelectedLinks()"><Sparkles :size="16" /></button>
+                    </td>
+                 </tr>
+              </tbody>
+           </table>
         </div>
 
         <div class="editor-card-brutal shadow-solid mb-10" v-if="reviewQueue.length">

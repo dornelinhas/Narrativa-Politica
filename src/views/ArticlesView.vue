@@ -133,7 +133,10 @@ const shareArticle = (post) => {
               <h2 class="font-display uppercase text-3xl tracking-tighter">{{ siteContent.articlesConfig?.column1Title || 'ARTIGOS E ANÁLISES' }}</h2>
             </div>
 
-            <div class="articles-grid-layout">
+            <div v-if="siteContent.isLoading" class="p-12 text-center text-dark opacity-40 font-black uppercase tracking-widest text-sm animate-pulse">
+              Carregando artigos...
+            </div>
+            <div v-else class="articles-grid-layout">
               <div v-for="(post, idx) in paginatedArticles" :key="post.id" 
                 class="article-card-item"
                 :class="{ 'featured-item': idx === 0 && !searchQuery && selectedCategory === 'Tudo' }"
@@ -191,7 +194,10 @@ const shareArticle = (post) => {
               <h2 class="font-display uppercase text-3xl tracking-tighter">{{ siteContent.articlesConfig?.column2Title || 'NOTÍCIAS' }}</h2>
             </div>
 
-            <div class="news-list-sidebar">
+            <div v-if="siteContent.isLoading" class="p-8 text-center text-dark opacity-40 font-black uppercase tracking-widest text-sm animate-pulse">
+              Carregando notícias...
+            </div>
+            <div v-else class="news-list-sidebar">
               <router-link v-for="news in newsItems" :key="news.id" :to="`/conteudo/${news.id}`" class="news-item-link group">
                 <span class="news-date-tag">{{ formatDate(news.date) }}</span>
                 <h4 class="news-title-link group-hover:text-red">{{ news.title }}</h4>

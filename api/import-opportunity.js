@@ -26,57 +26,69 @@ const isGenericOpportunityRecord = (payload = {}, sourceText = '') => {
 module.exports = async function handler(req, res) {
   try {
     const body = req.body || {}
-    const url = String(body.url || req.query.url || '').trim()
-    if (!url) return res.status(400).json({ error: 'URL necessária.' })
+    const input = String(body.url || req.query.url || '').trim()
+    if (!input) return res.status(400).json({ error: 'URL ou Texto é necessário.' })
     const rules = body.rules || {}
 
     const apiKey = process.env.GEMINI_API_KEY
     if (!apiKey) {
-      return res.status(500).json({ error: 'Chave de IA não configurada na Vercel.' })
+      return res.status(500).json({ error: 'Chave de IA não configurada.' })
     }
 
-    const sourcePage = await fetchPageText(url)
-    const pageScore = scoreOpportunityCandidate(sourcePage.text || '', url)
-    if (pageScore < 20) {
-      return res.status(200).json({
-        status: 'pending',
-        curationScore: 0,
-        curationDecision: 'pending',
-        curationNotes: 'Página sem sinais suficientes de oportunidade.',
-        fullDescription: '',
-        link: url,
-        sourceUrl: url,
-        skipped: true
-      })
+    let sourceText = ''
+    let sourceUrl = ''
+    
+    // Detecta se é URL ou texto puro
+    if (input.startsWith('http')) {
+      sourceUrl = input
+      try {
+        const sourcePage = await fetchPageText(input)
+        sourceText = sourcePage.text
+      } catch (e) {
+        // Se falhar o fetch (Mod_Security), retornamos o erro para o usuário saber que precisa colar o texto
+        return res.status(403).json({ 
+          error: e.message,
+          isSecurityBlock: true 
+        })
+      }
+    } else {
+      sourceText = input
+      sourceUrl = 'Texto Colado Manualmente'
     }
 
-    const aiData = await analyzeOpportunityText(sourcePage.text, apiKey, 'single')
-    const payload = normalizeOpportunityPayload(aiData, { sourceUrl: url, link: url, status: 'pending' })
-    if (isGenericOpportunityRecord(payload, sourcePage.text)) {
-      return res.status(200).json({
+    const pageScore = scoreOpportunityCandidate(sourceText, sourceUrl)
+    
+    // Se o texto for muito curto ou irrelevante
+    if (sourceText.length < 50) {
+      return res.status(400).json({ error: 'O conteúdo fornecido é muito curto para ser analisado.' })
+    }
+
+    const aiResponse = await analyzeOpportunityText(sourceText, apiKey, 'batch')
+    const rawItems = coerceOpportunityItems(aiResponse)
+    
+    const processedItems = rawItems.map(item => {
+      const payload = normalizeOpportunityPayload(item, { sourceUrl, link: sourceUrl, status: 'pending' })
+      const curation = evaluateOpportunityCuration(payload, rules)
+      const finalStatus = curation.decision === 'rejected' ? 'rejected' : 'pending'
+      
+      return {
         ...payload,
-        status: 'pending',
-        curationScore: 0,
-        curationDecision: 'pending',
-        curationNotes: 'Conteúdo genérico ignorado.',
-        skipped: true
-      })
-    }
-    const curation = evaluateOpportunityCuration(payload, rules)
-    const finalStatus = curation.decision === 'rejected' ? 'rejected' : 'pending'
+        status: finalStatus,
+        curationScore: curation.score,
+        curationDecision: curation.decision,
+        curationNotes: curation.notes,
+        fullDescription: `${payload.fullDescription}${sourceUrl.startsWith('http') ? `<p><strong>Fonte:</strong> <a href="${sourceUrl}" target="_blank">Acessar original</a></p>` : ''}`,
+        link: payload.link || sourceUrl,
+        sourceUrl: sourceUrl
+      }
+    })
 
     return res.status(200).json({
-      ...payload,
-      status: finalStatus,
-      curationScore: curation.score,
-      curationDecision: curation.decision,
-      curationNotes: curation.notes,
-      fullDescription: `${payload.fullDescription}<p><strong>Fonte:</strong> <a href="${url}" target="_blank">Acessar original</a></p>`,
-      link: url,
-      sourceUrl: url,
-      status: finalStatus
+      items: processedItems,
+      count: processedItems.length
     })
   } catch (error) {
+    console.error('Erro na API import-opportunity:', error)
     return res.status(500).json({ error: error.message })
   }
 }
