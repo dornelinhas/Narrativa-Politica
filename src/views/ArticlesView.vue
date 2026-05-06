@@ -1,6 +1,6 @@
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from 'vue'
-import { siteContent } from '../store/content'
+import { siteContent, filterPublicPosts } from '../store/content'
 import { Search, ArrowRight, Newspaper, FileText, BarChart3, Mail, Zap, Clock, Share2, Bookmark } from 'lucide-vue-next'
 
 const searchQuery = ref('')
@@ -9,7 +9,7 @@ const visibleCount = ref(7)
 const scrollProgress = ref(0)
 
 const categories = computed(() => ['Tudo', ...siteContent.categories])
-const allPosts = computed(() => siteContent.posts || [])
+const allPosts = computed(() => filterPublicPosts(siteContent.posts || []))
 
 // Progress bar logic
 const updateScrollProgress = () => {

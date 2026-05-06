@@ -1,10 +1,10 @@
 <script setup>
 import { ref, computed } from 'vue'
-import { siteContent } from '../store/content'
+import { siteContent, filterPublicLibrary } from '../store/content'
 import { FileText, Download, ExternalLink, Search } from 'lucide-vue-next'
 
 const config = computed(() => siteContent.libraryConfig || {})
-const libraryItems = computed(() => siteContent.library || [])
+const libraryItems = computed(() => filterPublicLibrary(siteContent.library || []))
 const searchQuery = ref('')
 const selectedCategory = ref('Todos')
 const categories = computed(() => ['Todos', ...new Set(libraryItems.value.map(i => i.category))])

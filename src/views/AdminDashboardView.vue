@@ -14,7 +14,7 @@ const { user, logout } = useAuth()
 const activeTab = ref('home')
 const isSaving = ref(false)
 
-const defaultArticleForm = () => ({ title: '', subtitle: '', author: '', type: 'Artigo', category: '', featured: false, content: '', image: '', imageDescription: '', imageCaption: '', references: '' })
+const defaultArticleForm = () => ({ title: '', subtitle: '', author: '', type: 'Artigo', category: '', featured: false, content: '', image: '', imageDescription: '', imageCaption: '', references: '', highlightQuote: '', status: 'publicado' })
 const defaultOpportunityForm = () => ({ title: '', category: 'Vagas de Emprego', type: 'Remoto', location: '', deadline: '', link: '', description: '', fullDescription: '', image: '', status: 'approved', sourceUrl: '', reviewNotes: '' })
 const defaultCurationForm = () => ({
   minScore: 60,
@@ -31,8 +31,8 @@ const defaultTrackForm = () => ({
   mod1: '', mod2: '', mod3: ''
 })
 const defaultServiceForm = () => ({ title: '', description: '', icon: 'Zap', bg: '#FF6BCA', textColor: '#FFFFFF' })
-const defaultProjectForm = () => ({ title: '', organization: '', description: '', impact: '', image: '', tags: '' })
-const defaultDocForm = () => ({ title: '', description: '', category: 'Relatório', fileUrl: '', externalLink: '' })
+const defaultProjectForm = () => ({ title: '', organization: '', description: '', impact: '', image: '', tags: '', status: 'publicado' })
+const defaultDocForm = () => ({ title: '', description: '', category: 'Relatório', fileUrl: '', externalLink: '', status: 'publicado' })
 
 const editingArtigoId = ref(null)
 const editingVagaId = ref(null)
@@ -500,7 +500,8 @@ const editArtigo = (art) => {
     image: art.image || '',
     imageDescription: art.imageDescription || '',
     references: art.references || '',
-    highlightQuote: art.highlightQuote || ''
+    highlightQuote: art.highlightQuote || '',
+    status: art.status || 'publicado'
   }
   scrollToForm('article-editor-form')
 }
@@ -511,7 +512,7 @@ const previewArtigo = (id) => {
 }
 
 // Version: 2026-04-26-FINAL-FIX
-const saveArtigo = async () => {
+const saveArtigo = async (statusOverride = null) => {
   if (!novoArtigo.value.title) {
     alert("O título do artigo é obrigatório.")
     return
@@ -528,6 +529,8 @@ const saveArtigo = async () => {
     const wordCount = novoArtigo.value.content ? novoArtigo.value.content.replace(/<[^>]*>/g, '').split(/\s+/).length : 0
     const calcReadingTime = Math.max(1, Math.ceil(wordCount / 200))
 
+    const finalStatus = statusOverride || novoArtigo.value.status || 'publicado'
+
     const payload = {
       title: novoArtigo.value.title,
       subtitle: novoArtigo.value.subtitle,
@@ -543,6 +546,7 @@ const saveArtigo = async () => {
       references: novoArtigo.value.references,
       highlightQuote: novoArtigo.value.highlightQuote,
       reading_time: calcReadingTime, // Novo campo calculado
+      status: finalStatus,
       date: existing?.date || new Date().toISOString()
     }
 
@@ -660,7 +664,7 @@ const previewVaga = (id) => {
   window.open(href, '_blank')
 }
 
-const saveVaga = async () => {
+const saveVaga = async (statusOverride = null) => {
   if (!novaVaga.value.title) {
     alert("O título da vaga é obrigatório.")
     return
@@ -673,9 +677,10 @@ const saveVaga = async () => {
   try {
     if (!siteContent.opportunities) siteContent.opportunities = []
     const normalizedDeadline = normalizeOpportunityDeadline(novaVaga.value.deadline)
+    const finalStatus = statusOverride || novaVaga.value.status || 'approved'
     const payload = {
       ...novaVaga.value,
-      status: novaVaga.value.status || 'approved',
+      status: finalStatus,
       deadline: normalizedDeadline,
       id: editingVagaId.value || Date.now()
     }
@@ -1068,12 +1073,13 @@ const editProject = (project) => {
     description: project.description || project.desc || '',
     impact: project.impact || '',
     image: project.image || '',
-    tags: Array.isArray(project.tags) ? project.tags.map(tag => tag.label).join(', ') : (project.tags || '')
+    tags: Array.isArray(project.tags) ? project.tags.map(tag => tag.label).join(', ') : (project.tags || ''),
+    status: project.status || 'publicado'
   }
   scrollToForm('project-editor-form')
 }
 
-const saveProject = async () => {
+const saveProject = async (statusOverride = null) => {
   if (!novoProjeto.value.title) {
     alert('O título do projeto é obrigatório.')
     return
@@ -1081,6 +1087,7 @@ const saveProject = async () => {
   isSaving.value = true
   try {
     if (!siteContent.projects) siteContent.projects = []
+    const finalStatus = statusOverride || novoProjeto.value.status || 'publicado'
     const payload = {
       id: editingProjectId.value || Date.now(),
       title: novoProjeto.value.title,
@@ -1089,6 +1096,7 @@ const saveProject = async () => {
       desc: novoProjeto.value.description,
       impact: novoProjeto.value.impact,
       image: novoProjeto.value.image,
+      status: finalStatus,
       tags: novoProjeto.value.tags
         ? novoProjeto.value.tags.split(',').map(tag => tag.trim()).filter(Boolean).map(label => ({ label }))
         : []
@@ -1168,12 +1176,13 @@ const editDoc = (doc) => {
     description: doc.description || '',
     category: doc.category || 'Relatório',
     fileUrl: doc.fileUrl || '',
-    externalLink: doc.externalLink || ''
+    externalLink: doc.externalLink || '',
+    status: doc.status || 'publicado'
   }
   scrollToForm('library-editor-form')
 }
 
-const saveBiblioteca = async () => {
+const saveBiblioteca = async (statusOverride = null) => {
   if (!novoDoc.value.title) {
     alert("O título do documento é obrigatório.")
     return
@@ -1181,7 +1190,8 @@ const saveBiblioteca = async () => {
   isSaving.value = true
   try {
     if (!siteContent.library) siteContent.library = []
-    const payload = { ...novoDoc.value, id: editingDocId.value || Date.now() }
+    const finalStatus = statusOverride || novoDoc.value.status || 'publicado'
+    const payload = { ...novoDoc.value, status: finalStatus, id: editingDocId.value || Date.now() }
     const wasEditing = isEditingDoc.value
     if (wasEditing) {
       const index = siteContent.library.findIndex(d => String(d.id) === String(editingDocId.value))
@@ -1697,11 +1707,16 @@ onUnmounted(() => {
                    </div>
                 </aside>
              </div>
-          <button class="btn-save-brutal" @click="saveArtigo" :disabled="isSaving">
-             <Save v-if="isEditingArtigo" :size="18" />
-             <Plus v-else :size="18" />
-             {{ isEditingArtigo ? 'SALVAR ALTERAÇÕES DO ARTIGO' : 'PUBLICAR ARTIGO' }}
-          </button>
+          <div class="flex gap-4">
+            <button class="btn-save-brutal flex-1" style="background: #FFF;" @click="saveArtigo('rascunho')" :disabled="isSaving">
+               <Clock :size="18" /> SALVAR COMO RASCUNHO
+            </button>
+            <button class="btn-save-brutal flex-1" @click="saveArtigo('publicado')" :disabled="isSaving">
+               <Save v-if="isEditingArtigo" :size="18" />
+               <Plus v-else :size="18" />
+               {{ isEditingArtigo ? 'SALVAR E PUBLICAR' : 'PUBLICAR ARTIGO' }}
+            </button>
+          </div>
         </div>
 
         <!-- LISTA DE ARTIGOS -->
@@ -1713,6 +1728,7 @@ onUnmounted(() => {
                     <th>TÍTULO</th>
                     <th>AUTOR</th>
                     <th>TIPO / CATEGORIA</th>
+                    <th>STATUS</th>
                     <th>DESTAQUE</th>
                     <th>AÇÕES</th>
                  </tr>
@@ -1724,6 +1740,10 @@ onUnmounted(() => {
                     </td>
                     <td>{{ art.author }}</td>
                     <td>{{ art.type }} <span class="opacity-50">({{ art.category }})</span></td>
+                    <td>
+                       <span v-if="art.status === 'rascunho'" class="badge-draft">RASCUNHO</span>
+                       <span v-else class="badge-published">PUBLICADO</span>
+                    </td>
                     <td>
                        <span v-if="art.featured" class="badge-featured">SIM</span>
                        <span v-else class="badge-normal">NÃO</span>
@@ -1947,11 +1967,16 @@ onUnmounted(() => {
              <label>LINK PARA INSCRIÇÃO</label>
              <input v-model="novaVaga.link" type="url" placeholder="https://..." />
           </div>
-          <button class="btn-save-brutal" @click="saveVaga" :disabled="isSaving">
-            <Save v-if="isEditingVaga" :size="18" />
-            <Plus v-else :size="18" />
-            {{ isEditingVaga ? 'SALVAR ALTERAÇÕES DA OPORTUNIDADE' : 'ADICIONAR OPORTUNIDADE' }}
-          </button>
+          <div class="flex gap-4">
+            <button class="btn-save-brutal flex-1" style="background: #FFF;" @click="saveVaga('pending')" :disabled="isSaving">
+              <Clock :size="18" /> SALVAR COMO RASCUNHO
+            </button>
+            <button class="btn-save-brutal flex-1" @click="saveVaga('approved')" :disabled="isSaving">
+              <Save v-if="isEditingVaga" :size="18" />
+              <Plus v-else :size="18" />
+              {{ isEditingVaga ? 'SALVAR E PUBLICAR' : 'ADICIONAR OPORTUNIDADE' }}
+            </button>
+          </div>
         </div>
 
         <!-- ÁREA DE IMPORTAÇÃO INTELIGENTE (BULK PASTE) -->
@@ -2233,11 +2258,16 @@ onUnmounted(() => {
                 <input v-model="novoDoc.externalLink" type="url" placeholder="https://" />
              </div>
           </div>
-          <button class="btn-save-brutal" @click="saveBiblioteca" :disabled="isSaving">
-            <Save v-if="isEditingDoc" :size="18" />
-            <Plus v-else :size="18" />
-            {{ isEditingDoc ? 'SALVAR ALTERAÇÕES DO DOCUMENTO' : 'CADASTRAR DOCUMENTO' }}
-          </button>
+          <div class="flex gap-4">
+            <button class="btn-save-brutal flex-1" style="background: #FFF;" @click="saveBiblioteca('rascunho')" :disabled="isSaving">
+              <Clock :size="18" /> SALVAR COMO RASCUNHO
+            </button>
+            <button class="btn-save-brutal flex-1" @click="saveBiblioteca('publicado')" :disabled="isSaving">
+              <Save v-if="isEditingDoc" :size="18" />
+              <Plus v-else :size="18" />
+              {{ isEditingDoc ? 'SALVAR E PUBLICAR' : 'CADASTRAR DOCUMENTO' }}
+            </button>
+          </div>
         </div>
 
         <div class="editor-card-brutal shadow-solid">
@@ -2811,11 +2841,16 @@ onUnmounted(() => {
           <div class="mb-6">
              <ImageUploader v-model="novoProjeto.image" label="IMAGEM DE CAPA DO PROJETO" />
           </div>
-          <button class="btn-save-brutal" @click="saveProject" :disabled="isSaving">
-            <Save v-if="isEditingProject" :size="18" />
-            <Plus v-else :size="18" />
-            {{ isEditingProject ? 'SALVAR ALTERAÇÕES DO PROJETO' : 'SALVAR PROJETO' }}
-          </button>
+          <div class="flex gap-4">
+            <button class="btn-save-brutal flex-1" style="background: #FFF;" @click="saveProject('rascunho')" :disabled="isSaving">
+              <Clock :size="18" /> SALVAR COMO RASCUNHO
+            </button>
+            <button class="btn-save-brutal flex-1" @click="saveProject('publicado')" :disabled="isSaving">
+              <Save v-if="isEditingProject" :size="18" />
+              <Plus v-else :size="18" />
+              {{ isEditingProject ? 'SALVAR E PUBLICAR' : 'SALVAR PROJETO' }}
+            </button>
+          </div>
         </div>
         <div class="editor-card-brutal shadow-solid">
            <h2 class="card-label-black mb-8">PROJETOS CADASTRADOS</h2>
@@ -3259,6 +3294,8 @@ onUnmounted(() => {
 .table-brutal td { padding: 20px 24px; border-bottom: 3px solid #F1F5F9; font-size: 1rem; font-weight: 700; color: #1C1C1C; vertical-align: middle; font-family: "Inter"; }
 .table-brutal tr:last-child td { border-bottom: none; }
 
+.badge-draft { background: #E2E8F0; color: #64748B; padding: 6px 12px; border-radius: 8px; font-weight: 900; font-family: "Archivo Black"; font-size: 10px; border: 2px solid #1C1C1C; }
+.badge-published { background: #A4CD39; color: #1C1C1C; padding: 6px 12px; border-radius: 8px; font-weight: 900; font-family: "Archivo Black"; font-size: 10px; border: 2px solid #1C1C1C; }
 .badge-featured { background: #FF6BCA; color: #1C1C1C; padding: 6px 12px; border-radius: 8px; font-weight: 900; font-family: "Archivo Black"; font-size: 10px; border: 2px solid #1C1C1C; }
 .badge-normal { background: #FFF; color: #1C1C1C; padding: 6px 12px; border-radius: 8px; font-weight: 900; font-family: "Archivo Black"; font-size: 10px; border: 2px solid #1C1C1C; }
 .badge-danger { background: #DF2028; color: #FFF; padding: 6px 12px; border-radius: 8px; font-weight: 900; font-family: "Archivo Black"; font-size: 10px; border: 2px solid #1C1C1C; }

@@ -247,7 +247,7 @@
 <script setup>
 import { computed, ref } from 'vue'
 import { ArrowRight, Globe, Users, Zap, Sun, Database, ShieldCheck, Mic2, Cpu } from 'lucide-vue-next'
-import { siteContent, filterPublicOpportunities } from '../store/content'
+import { siteContent, filterPublicOpportunities, filterPublicPosts } from '../store/content'
 import { sanitizeHtml } from '../utils/sanitizeHtml'
 
 const servicesIcons = { Globe, Users, Zap, Database, ShieldCheck, Mic2, Cpu }
@@ -323,7 +323,8 @@ const mockPosts = [
 
 const displayPosts = computed(() => {
   if (siteContent.isLoading) return []
-  return siteContent.posts && siteContent.posts.length > 0 ? siteContent.posts : mockPosts
+  const posts = siteContent.posts && siteContent.posts.length > 0 ? siteContent.posts : mockPosts
+  return filterPublicPosts(posts)
 })
 
 const filteredPosts = computed(() => {

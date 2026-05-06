@@ -462,12 +462,13 @@ const siteSettingKeys = [
 const normalizePost = (post) => ({
   ...post,
   title: post.title || post.titulo || '',
-  subtitle: post.subtitle || post.subtitulo || post.excerpt || '',
+  subtitle: post.subtitle || post.excerpt || post.subtitulo || '',
   excerpt: post.excerpt || post.subtitle || post.subtitulo || '',
   author: post.author || post.autor || '',
   type: post.type || post.tipo || 'Artigo',
   category: post.category || post.categoria || '',
   featured: post.featured ?? post.destaque_home ?? false,
+  status: post.status || 'publicado',
   content: post.content || post.conteudo || '',
   image: post.image || post.capa_url || '',
   imageDescription: post.imageDescription || post.imagedescription || '',
@@ -553,6 +554,15 @@ export const deleteItemFromSupabase = async (table, id) => {
   const { error } = await supabase.from(table).delete().eq('id', id)
   return error ? { success: false, error: error.message } : { success: true }
 }
+
+export const filterPublicPosts = (posts = []) => 
+  posts.filter(p => p.status === 'publicado' || !p.status)
+
+export const filterPublicProjects = (projects = []) =>
+  projects.filter(p => p.status === 'publicado' || !p.status)
+
+export const filterPublicLibrary = (library = []) =>
+  library.filter(i => i.status === 'publicado' || !i.status)
 
 export const saveContent = () => localStorage.setItem('np_content_v6', JSON.stringify(siteContent))
 export const logActivity = (title, type = 'Edição') => {

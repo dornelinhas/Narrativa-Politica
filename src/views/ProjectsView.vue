@@ -1,11 +1,11 @@
 <script setup>
 import { computed } from 'vue'
 import { useRouter } from 'vue-router'
-import { siteContent } from '../store/content'
+import { siteContent, filterPublicProjects } from '../store/content'
 import { ArrowRight, Zap } from 'lucide-vue-next'
 
 const router = useRouter()
-const projects = computed(() => siteContent.projects || [])
+const projects = computed(() => filterPublicProjects(siteContent.projects || []))
 
 const staticProjects = [
   { id: 1, title: 'Women in Leadership: Bridging the Gender Gap', desc: 'Empowering female voices in politics and business to create equitable decision-making spaces.', impact: '+500 Lideranças Formadas', tags: [{ label: 'Gender', cls: 'pink-bg' }, { label: 'Leadership', cls: 'blue-bg' }], image: '/images/projects/women-leadership.png' },
