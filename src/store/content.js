@@ -474,8 +474,85 @@ const normalizePost = (post) => ({
   imageDescription: post.imageDescription || post.imagedescription || '',
   references: post.references || '',
   highlightQuote: post.highlightQuote || post.highlightquote || '',
+  likes: post.likes || 0,
   date: post.date || post.created_at || ''
 })
+
+// --- ANALYTICS & LIKES ---
+
+export const trackPageView = async (path) => {
+  try {
+    // Tenta obter o contador atual
+    const { data, error } = await supabase
+      .from('page_views')
+      .select('count')
+      .eq('path', path)
+      .single()
+
+    if (error && error.code !== 'PGRST116') throw error
+
+    if (data) {
+      // Incrementa
+      await supabase
+        .from('page_views')
+        .update({ count: data.count + 1, updated_at: new Date() })
+        .eq('path', path)
+    } else {
+      // Cria novo
+      await supabase
+        .from('page_views')
+        .insert({ path, count: 1 })
+    }
+  } catch (e) {
+    console.warn('Erro ao rastrear view:', e)
+  }
+}
+
+export const getPageViews = async () => {
+  try {
+    const { data, error } = await supabase
+      .from('page_views')
+      .select('*')
+      .order('count', { ascending: false })
+    if (error) throw error
+    return data || []
+  } catch (e) {
+    console.error('Erro ao buscar analytics:', e)
+    return []
+  }
+}
+
+export const toggleLikeArtigo = async (articleId) => {
+  try {
+    const post = siteContent.posts.find(p => String(p.id) === String(articleId))
+    if (!post) return
+
+    // Verifica se o usuário já curtiu (usando localStorage para simplicidade sem auth forçado)
+    const likedKey = `liked_${articleId}`
+    const alreadyLiked = localStorage.getItem(likedKey)
+    
+    const newLikes = alreadyLiked ? Math.max(0, post.likes - 1) : post.likes + 1
+    
+    const { error } = await supabase
+      .from('articles')
+      .update({ likes: newLikes })
+      .eq('id', articleId)
+
+    if (error) throw error
+
+    // Atualiza localmente
+    post.likes = newLikes
+    if (alreadyLiked) {
+      localStorage.removeItem(likedKey)
+    } else {
+      localStorage.setItem(likedKey, 'true')
+    }
+    return true
+  } catch (e) {
+    console.error('Erro ao curtir artigo:', e)
+    return false
+  }
+}
 
 const mergeSettingValue = (currentValue, savedValue) => {
   if (Array.isArray(savedValue)) return savedValue

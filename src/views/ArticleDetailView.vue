@@ -21,6 +21,10 @@
           <ArrowLeft :size="16" /> {{ siteContent.articlesConfig?.backButtonText || 'Voltar ao Radar' }}
         </router-link>
         <div class="art-meta-actions">
+          <button @click="handleLike" class="art-btn-like" :class="{ liked: isLiked }" :title="isLiked ? 'Descurtir' : 'Curtir'">
+            <Heart :size="16" :class="{ 'fill-current': isLiked }" />
+            <span>{{ post.likes || 0 }}</span>
+          </button>
           <button v-if="post.references" @click="toggleRefs" class="art-btn-ref-premium" :class="{ active: showRefs }" title="Ver referências">
             <LinkIcon :size="14" /> {{ showRefs ? 'OCULTAR FONTES' : 'VER FONTES E REFERÊNCIAS' }}
           </button>
@@ -135,16 +139,33 @@
 <script setup>
 import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
-import { siteContent } from '../store/content'
+import { siteContent, toggleLikeArtigo } from '../store/content'
 import { sanitizeHtml } from '../utils/sanitizeHtml'
-import { Linkedin, MessageCircle, Link as LinkIcon, ArrowLeft } from 'lucide-vue-next'
+import { Linkedin, MessageCircle, Link as LinkIcon, ArrowLeft, Heart, X } from 'lucide-vue-next'
 
 const route = useRoute()
 const scrollProgress = ref(0)
 const showToast = ref(false)
 const showRefs = ref(false)
+const isLiked = ref(false)
 
 const post = computed(() => siteContent.posts?.find(p => String(p.id) === String(route.params.id)))
+
+const checkIfLiked = () => {
+  if (post.value) {
+    isLiked.value = !!localStorage.getItem(`liked_${post.value.id}`)
+  }
+}
+
+const handleLike = async () => {
+  if (!post.value) return
+  const success = await toggleLikeArtigo(post.value.id)
+  if (success) {
+    checkIfLiked()
+  }
+}
+
+watch(post, () => checkIfLiked(), { immediate: true })
 const authorProfile = computed(() => {
   const authorId = post.value?.authorId || 'anne'
   return siteContent.authors?.find(a => a.id === authorId) || siteContent.authors?.[0] || { name: 'Anne Dornelas' }
@@ -251,6 +272,35 @@ onUnmounted(() => window.removeEventListener('scroll', handleScroll))
   background: #FFE65A; 
   box-shadow: 2px 2px 0px #1C1C1C;
   transform: translate(2px, 2px);
+}
+
+.art-btn-like {
+  background: #FFF;
+  border: 2px solid #1C1C1C;
+  padding: 8px 16px;
+  font-family: var(--font-sans);
+  font-weight: 900;
+  font-size: 0.8rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  border-radius: 8px;
+  box-shadow: 4px 4px 0px #1C1C1C;
+}
+.art-btn-like:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0px #FF6BCA;
+}
+.art-btn-like.liked {
+  background: #FF6BCA;
+  color: #FFF;
+  box-shadow: 2px 2px 0px #1C1C1C;
+  transform: translate(2px, 2px);
+}
+.art-btn-like.liked .text-pink-500 {
+  color: #FFF;
 }
 
 .art-meta__tags { display: flex; gap: 8px; }

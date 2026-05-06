@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { useAuth } from '../store/auth'
+import { trackPageView } from '../store/content'
 
 const router = createRouter({
   history: createWebHistory(),
@@ -41,6 +42,12 @@ router.beforeEach((to, from, next) => {
   if (to.meta.requiresAdmin && (!isAuthenticated.value || user.value?.role !== 'admin')) next('/login')
   else if (to.meta.requiresAuth && !isAuthenticated.value) next('/login')
   else next()
+})
+
+router.afterEach((to) => {
+  if (!to.path.startsWith('/admin') && !to.path.startsWith('/login')) {
+    trackPageView(to.path)
+  }
 })
 
 export default router

@@ -1,6 +1,6 @@
 <script setup>
 import { ref, onMounted, watch } from 'vue'
-import { Bold, Italic, List, Heading2, Heading3, Image as ImageIcon, Type, Trash2, Quote, Link, MessageSquarePlus } from 'lucide-vue-next'
+import { Bold, Italic, List, Heading2, Heading3, Image as ImageIcon, Type, Trash2, Quote, Link, MessageSquarePlus, Link2Off, MessageSquareOff } from 'lucide-vue-next'
 import { uploadImage } from '../lib/supabaseStorage'
 
 const props = defineProps({
@@ -39,6 +39,10 @@ const addLink = () => {
   }
 }
 
+const removeLink = () => {
+  execCmd('unlink')
+}
+
 const addExplanation = () => {
   const selection = window.getSelection()
   if (!selection.rangeCount || selection.isCollapsed) {
@@ -57,6 +61,25 @@ const addExplanation = () => {
   range.insertNode(span)
   
   updateContent()
+}
+
+const removeExplanation = () => {
+  const selection = window.getSelection()
+  if (!selection.rangeCount) return
+
+  let node = selection.anchorNode
+  while (node && node !== editorRef.value) {
+    if (node.nodeType === 1 && node.classList.contains('explanation-trigger')) {
+      const parent = node.parentNode
+      while (node.firstChild) {
+        parent.insertBefore(node.firstChild, node)
+      }
+      parent.removeChild(node)
+      updateContent()
+      return
+    }
+    node = node.parentNode
+  }
 }
 
 const setFontSize = (size) => {
@@ -159,7 +182,9 @@ const deleteSelectedImage = () => {
 
       <div class="toolbar-group">
         <button type="button" @click="addLink" title="Adicionar Link"><Link :size="16" /></button>
+        <button type="button" @click="removeLink" title="Remover Link"><Link2Off :size="16" /></button>
         <button type="button" @click="addExplanation" title="Adicionar Balão de Explicação"><MessageSquarePlus :size="16" /></button>
+        <button type="button" @click="removeExplanation" title="Remover Balão de Explicação"><MessageSquareOff :size="16" /></button>
         <button type="button" @click="execCmd('insertUnorderedList')" title="Lista"><List :size="16" /></button>
         <button type="button" @click="triggerFileInput" title="Inserir Imagem"><ImageIcon :size="16" /></button>
       </div>

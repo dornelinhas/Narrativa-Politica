@@ -51,7 +51,16 @@ CREATE TABLE IF NOT EXISTS articles (
   "imageCaption" TEXT, -- Legenda da imagem de capa
   "highlightQuote" TEXT, -- Citação em destaque
   "reading_time" INTEGER, -- Tempo de leitura em minutos
+  "likes" INTEGER DEFAULT 0, -- Curtidas do artigo
   created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
+);
+
+-- 4. TABELA DE ANALYTICS (PAGE VIEWS)
+CREATE TABLE IF NOT EXISTS page_views (
+  id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+  path TEXT NOT NULL UNIQUE,
+  count INTEGER DEFAULT 0,
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
 );
 
 -- Migração de colunas para tabelas existentes (Articles)

@@ -7,12 +7,13 @@ import { Settings, LogOut, CheckCircle, Clock, Trash2, Home, Search, BookOpen, B
 import BrutalEditor from '../components/BrutalEditor.vue'
 import ImageUploader from '../components/ImageUploader.vue'
 import { sanitizeHtml } from '../utils/sanitizeHtml'
-import { siteContent, fetchAllContent, getOpportunityVisibilityState, logActivity, parseOpportunityDeadline } from '../store/content'
+import { siteContent, fetchAllContent, getOpportunityVisibilityState, logActivity, parseOpportunityDeadline, getPageViews } from '../store/content'
 
 const router = useRouter()
 const { user, logout } = useAuth()
 const activeTab = ref('home')
 const isSaving = ref(false)
+const analytics = ref([])
 
 const defaultArticleForm = () => ({ title: '', subtitle: '', author: '', type: 'Artigo', category: '', featured: false, content: '', image: '', imageDescription: '', imageCaption: '', references: '', highlightQuote: '', status: 'publicado' })
 const defaultOpportunityForm = () => ({ title: '', category: 'Vagas de Emprego', type: 'Remoto', location: '', deadline: '', link: '', description: '', fullDescription: '', image: '', status: 'approved', sourceUrl: '', reviewNotes: '' })
@@ -1431,6 +1432,40 @@ onUnmounted(() => {
 
       <!-- 1. GESTÃO DA HOME -->
       <section v-if="activeTab === 'home'" class="admin-section fade-in-up">
+        
+        <!-- ANALYTICS CARDS -->
+        <div class="metrics-grid-premium mb-10">
+           <div class="metric-card-glass shadow-solid">
+              <div class="metric-label">VISITAS TOTAIS</div>
+              <div class="metric-value">{{ analytics.reduce((acc, curr) => acc + curr.count, 0) }}</div>
+              <div class="metric-trend text-green-500">Visualizações de página</div>
+           </div>
+           <div class="metric-card-glass shadow-solid">
+              <div class="metric-label">PÁGINAS RASTREADAS</div>
+              <div class="metric-value">{{ analytics.length }}</div>
+              <div class="metric-trend text-blue-500">Rotas distintas</div>
+           </div>
+           <div class="metric-card-glass shadow-solid">
+              <div class="metric-label">LIKES TOTAIS</div>
+              <div class="metric-value">{{ siteContent.posts.reduce((acc, curr) => acc + (curr.likes || 0), 0) }}</div>
+              <div class="metric-trend text-pink-500">Engajamento editorial</div>
+           </div>
+        </div>
+
+        <div class="editor-card-brutal shadow-solid mb-10">
+          <div class="pane-header mb-4">
+            <div>
+              <h2 class="card-label-black mb-2">PÁGINAS MAIS VISITADAS</h2>
+              <p class="text-sm opacity-70">Ranking de acesso por rota.</p>
+            </div>
+          </div>
+          <div class="space-y-3">
+             <div v-for="page in analytics.slice(0, 5)" :key="page.path" class="flex items-center justify-between gap-4 border-b border-black/10 pb-3 last:border-b-0 last:pb-0">
+                <span class="font-bold text-sm">{{ page.path }}</span>
+                <span class="badge-normal">{{ page.count }} views</span>
+             </div>
+          </div>
+        </div>
         <div class="editor-card-brutal shadow-solid mb-10">
           <div class="pane-header mb-4">
             <div>
@@ -1729,6 +1764,7 @@ onUnmounted(() => {
                     <th>AUTOR</th>
                     <th>TIPO / CATEGORIA</th>
                     <th>STATUS</th>
+                    <th>CURTIDAS</th>
                     <th>DESTAQUE</th>
                     <th>AÇÕES</th>
                  </tr>
@@ -1743,6 +1779,12 @@ onUnmounted(() => {
                     <td>
                        <span v-if="art.status === 'rascunho'" class="badge-draft">RASCUNHO</span>
                        <span v-else class="badge-published">PUBLICADO</span>
+                    </td>
+                    <td class="text-center">
+                       <div class="flex items-center justify-center gap-2">
+                          <Heart :size="14" class="text-pink-500 fill-current" />
+                          <span>{{ art.likes || 0 }}</span>
+                       </div>
                     </td>
                     <td>
                        <span v-if="art.featured" class="badge-featured">SIM</span>
