@@ -459,50 +459,35 @@ const siteSettingKeys = [
   'servicesConfig', 'libraryConfig', 'lastActivity'
 ]
 
-const normalizePost = (post) => ({
-  ...post,
-  title: post.title || post.titulo || '',
-  subtitle: post.subtitle || post.excerpt || post.subtitulo || '',
-  excerpt: post.excerpt || post.subtitle || post.subtitulo || '',
-  author: post.author || post.autor || '',
-  type: post.type || post.tipo || 'Artigo',
-  category: post.category || post.categoria || '',
-  featured: post.featured ?? post.destaque_home ?? false,
-  status: post.status || 'publicado',
-  content: post.content || post.conteudo || '',
-  image: post.image || post.capa_url || '',
-  imageDescription: post.imageDescription || post.imagedescription || '',
-  references: post.references || '',
-  highlightQuote: post.highlightQuote || post.highlightquote || '',
-  likes: post.likes || 0,
-  date: post.date || post.created_at || ''
-})
+const normalizePost = (post) => {
+  const p = {
+    ...post,
+    title: post.title || post.titulo || '',
+    subtitle: post.subtitle || post.excerpt || post.subtitulo || '',
+    excerpt: post.excerpt || post.subtitle || post.subtitulo || '',
+    author: post.author || post.autor || '',
+    type: post.type || post.tipo || 'Artigo',
+    category: post.category || post.categoria || '',
+    featured: post.featured ?? post.destaque_home ?? false,
+    status: post.status || 'publicado',
+    content: post.content || post.conteudo || '',
+    image: post.image || post.capa_url || '',
+    imageDescription: post.imageDescription || post.imagedescription || '',
+    references: post.references || '',
+    highlightQuote: post.highlightQuote || post.highlightquote || '',
+    likes: post.likes || 0,
+    date: post.date || post.created_at || ''
+  }
+  return p
+}
 
 // --- ANALYTICS & LIKES ---
 
 export const trackPageView = async (path) => {
   try {
-    // Tenta obter o contador atual
-    const { data, error } = await supabase
-      .from('page_views')
-      .select('count')
-      .eq('path', path)
-      .single()
-
-    if (error && error.code !== 'PGRST116') throw error
-
-    if (data) {
-      // Incrementa
-      await supabase
-        .from('page_views')
-        .update({ count: data.count + 1, updated_at: new Date() })
-        .eq('path', path)
-    } else {
-      // Cria novo
-      await supabase
-        .from('page_views')
-        .insert({ path, count: 1 })
-    }
+    if (!supabase) return
+    // Usa RPC para incrementar views (mais robusto e evita problemas de RLS em UPDATE direto)
+    await supabase.rpc('track_page_view', { page_path: path })
   } catch (e) {
     console.warn('Erro ao rastrear view:', e)
   }
@@ -524,32 +509,34 @@ export const getPageViews = async () => {
 
 export const toggleLikeArtigo = async (articleId) => {
   try {
+    if (!supabase) throw new Error('Conexão com banco de dados não encontrada.')
     const post = siteContent.posts.find(p => String(p.id) === String(articleId))
-    if (!post) return
+    if (!post) return false
 
-    // Verifica se o usuário já curtiu (usando localStorage para simplicidade sem auth forçado)
     const likedKey = `liked_${articleId}`
     const alreadyLiked = localStorage.getItem(likedKey)
     
-    const newLikes = alreadyLiked ? Math.max(0, post.likes - 1) : post.likes + 1
-    
-    const { error } = await supabase
-      .from('articles')
-      .update({ likes: newLikes })
-      .eq('id', articleId)
+    // Usa RPC para incrementar/decrementar likes
+    const rpcName = alreadyLiked ? 'decrement_article_likes' : 'increment_article_likes'
+    const { error } = await supabase.rpc(rpcName, { article_id: articleId })
 
-    if (error) throw error
+    if (error) {
+      console.error('Erro RPC Supabase:', error)
+      throw new Error(`Erro no banco: ${error.message}. Você rodou o SQL de atualização?`)
+    }
 
-    // Atualiza localmente
-    post.likes = newLikes
+    // Atualiza localmente para feedback instantâneo
     if (alreadyLiked) {
+      post.likes = Math.max(0, (post.likes || 0) - 1)
       localStorage.removeItem(likedKey)
     } else {
+      post.likes = (post.likes || 0) + 1
       localStorage.setItem(likedKey, 'true')
     }
     return true
   } catch (e) {
     console.error('Erro ao curtir artigo:', e)
+    alert(e.message || 'Erro ao processar curtida.')
     return false
   }
 }

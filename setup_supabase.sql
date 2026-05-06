@@ -308,6 +308,39 @@ CREATE POLICY "Admin Full Access News" ON newsletters FOR ALL USING (true);
 DROP POLICY IF EXISTS "Admin Full Access Subs" ON subscribers;
 CREATE POLICY "Admin Full Access Subs" ON subscribers FOR ALL USING (true);
 
+-- --- NOVAS FUNÇÕES PARA LIKES E ANALYTICS ---
+
+-- Função para incrementar curtidas com segurança
+CREATE OR REPLACE FUNCTION increment_article_likes(article_id UUID)
+RETURNS void AS $$
+BEGIN
+  UPDATE articles
+  SET likes = COALESCE(likes, 0) + 1
+  WHERE id = article_id;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- Função para decrementar curtidas com segurança
+CREATE OR REPLACE FUNCTION decrement_article_likes(article_id UUID)
+RETURNS void AS $$
+BEGIN
+  UPDATE articles
+  SET likes = GREATEST(0, COALESCE(likes, 0) - 1)
+  WHERE id = article_id;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- Função para registrar visualização de página
+CREATE OR REPLACE FUNCTION track_page_view(page_path TEXT)
+RETURNS void AS $$
+BEGIN
+  INSERT INTO page_views (path, count)
+  VALUES (page_path, 1)
+  ON CONFLICT (path)
+  DO UPDATE SET count = page_views.count + 1, updated_at = now();
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
 -- =====================================================================================
 -- STORAGE (BUCKET "media")
 -- =====================================================================================
