@@ -52,6 +52,9 @@
           </div>
         </div>
         <div class="art-share-row">
+          <button @click="handleLike" class="art-share-btn btn-like-inline" :class="{ liked: isLiked }" :title="isLiked ? 'Descurtir' : 'Curtir'">
+            <Heart :size="18" :class="{ 'fill-current': isLiked }" />
+          </button>
           <span class="share-label hide-mobile">COMPARTILHAR:</span>
           <a :href="shareLinks.linkedin" target="_blank" rel="noopener" class="art-share-btn btn-li" title="LinkedIn"><Linkedin :size="18" /></a>
           <a :href="shareLinks.whatsapp" target="_blank" rel="noopener" class="art-share-btn btn-wa" title="WhatsApp"><MessageCircle :size="18" /></a>
@@ -63,6 +66,14 @@
 
       <!-- ARTICLE BODY -->
       <article class="art-body" v-html="sanitizeHtml(post.content)"></article>
+
+      <div class="art-interact-bottom">
+         <button @click="handleLike" class="art-btn-like-large" :class="{ liked: isLiked }">
+            <Heart :size="24" :class="{ 'fill-current': isLiked }" />
+            <span>{{ isLiked ? 'VOCÊ CURTIU' : 'CURTIR ESTE ARTIGO' }}</span>
+            <span class="like-count" v-if="post.likes > 0">{{ post.likes }}</span>
+         </button>
+      </div>
 
       <!-- REFERENCES (COLLAPSIBLE) -->
       <transition name="slide-fade">
@@ -139,7 +150,7 @@
 <script setup>
 import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
-import { siteContent, toggleLikeArtigo } from '../store/content'
+import { siteContent, toggleLikeArtigo, filterPublicPosts } from '../store/content'
 import { sanitizeHtml } from '../utils/sanitizeHtml'
 import { Linkedin, MessageCircle, Link as LinkIcon, ArrowLeft, Heart, X } from 'lucide-vue-next'
 
@@ -170,7 +181,7 @@ const authorProfile = computed(() => {
   const authorId = post.value?.authorId || 'anne'
   return siteContent.authors?.find(a => a.id === authorId) || siteContent.authors?.[0] || { name: 'Anne Dornelas' }
 })
-const relatedPosts = computed(() => siteContent.posts?.filter(p => p.id !== post.value?.id).slice(0, 3) || [])
+const relatedPosts = computed(() => filterPublicPosts(siteContent.posts || []).filter(p => String(p.id) !== String(post.value?.id)).slice(0, 3))
 const readingTime = computed(() => {
   if (!post.value?.content) return 1
   return Math.ceil(post.value.content.replace(/<[^>]*>?/gm, '').split(/\s+/).length / 200)
@@ -300,6 +311,64 @@ onUnmounted(() => window.removeEventListener('scroll', handleScroll))
   transform: translate(2px, 2px);
 }
 .art-btn-like.liked .text-pink-500 {
+  color: #FFF;
+}
+
+.art-interact-bottom {
+  display: flex;
+  justify-content: center;
+  padding: 40px 0;
+}
+
+.art-btn-like-large {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  background: #FFF;
+  border: 4px solid #1C1C1C;
+  padding: 16px 32px;
+  border-radius: 20px;
+  font-family: "Archivo Black", sans-serif;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  box-shadow: 8px 8px 0px #1C1C1C;
+}
+
+.art-btn-like-large:hover {
+  transform: translate(-4px, -4px);
+  box-shadow: 12px 12px 0px #FF6BCA;
+}
+
+.art-btn-like-large.liked {
+  background: #FF6BCA;
+  color: #FFF;
+  transform: translate(4px, 4px);
+  box-shadow: 4px 4px 0px #1C1C1C;
+}
+
+.art-btn-like-large .like-count {
+  background: #1C1C1C;
+  color: #FFF;
+  padding: 4px 12px;
+  border-radius: 10px;
+  font-size: 0.9rem;
+}
+
+.art-btn-like-large.liked .like-count {
+  background: #FFF;
+  color: #FF6BCA;
+}
+
+.btn-like-inline:hover {
+  background: #FF6BCA;
+  border-color: #FF6BCA;
+  color: #FFF;
+}
+
+.btn-like-inline.liked {
+  background: #FF6BCA;
+  border-color: #1C1C1C;
   color: #FFF;
 }
 
