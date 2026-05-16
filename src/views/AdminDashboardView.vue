@@ -656,7 +656,8 @@ const editVaga = (vaga) => {
     status: vaga.status || 'approved',
     sourceUrl: vaga.sourceUrl || vaga.link || '',
     reviewNotes: vaga.reviewNotes || '',
-    featured: Boolean(vaga.featured)
+    featured: Boolean(vaga.featured),
+    showOnHome: Boolean(vaga.showOnHome)
   }
   scrollToForm('opportunity-editor-form')
 }
@@ -3246,9 +3247,9 @@ onUnmounted(() => {
 
 /* SIDEBAR FIXA (ESCURA BRUTAL) */
 .sidebar-black-fixed { 
-  width: 320px; background: #1C1C1C; color: #FFF; 
+  width: 260px; background: #1C1C1C; color: #FFF; 
   position: fixed; top: 0; left: 0; bottom: 0; z-index: 100;
-  display: flex; flex-direction: column; padding: 40px 30px;
+  display: flex; flex-direction: column; padding: 25px 20px;
   border-right: 4px solid #1C1C1C;
   overflow-y: auto;
 }
@@ -3285,16 +3286,15 @@ onUnmounted(() => {
 .btn-logout-white { background: #FFF; border: 3px solid #1C1C1C; color: #1C1C1C; padding: 16px; border-radius: 12px; font-weight: 900; font-family: "Archivo Black"; font-size: 0.85rem; display: flex; justify-content: center; align-items: center; gap: 10px; cursor: pointer; transition: 0.2s; width: 100%; box-shadow: 4px 4px 0px #FF6BCA; }
 .btn-logout-white:hover { border-color: #DF2028; color: #FFF; background: #DF2028; box-shadow: 6px 6px 0px #1C1C1C; transform: translate(-2px, -2px); }
 
-/* CONTEÚDO PRINCIPAL */
 .main-content-area { 
-  margin-left: 320px; flex-grow: 1; position: relative; z-index: 10;
-  padding-top: 40px; padding-bottom: 80px; padding-left: 2.5rem; padding-right: 2.5rem;
-  max-width: 1600px;
+  margin-left: 260px; flex-grow: 1; position: relative; z-index: 10;
+  padding: 60px 40px 100px;
+  max-width: calc(100% - 260px);
 }
 
 /* HEADER DO CONTEÚDO BRUTAL */
-.admin-top-header { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 4px solid #1C1C1C; padding-bottom: 30px; margin-bottom: 40px; }
-.admin-main-title { font-family: "Archivo Black", sans-serif; font-size: 3.5rem; letter-spacing: -0.02em; color: #1C1C1C; text-shadow: 4px 4px 0px #A4CD39; line-height: 1.1; }
+.admin-top-header { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 4px solid #1C1C1C; padding-bottom: 25px; margin-bottom: 35px; }
+.admin-main-title { font-family: "Archivo Black", sans-serif; font-size: 2.8rem; letter-spacing: -0.02em; color: #1C1C1C; text-shadow: 4px 4px 0px #A4CD39; line-height: 1.1; }
 .admin-subtitle { font-weight: 700; font-family: "Inter"; font-size: 1rem; color: #1C1C1C; opacity: 0.7; margin-top: 10px; }
 
 .header-actions-row { display: flex; align-items: center; gap: 20px; }
@@ -3640,4 +3640,3 @@ onUnmounted(() => {
 .opacity-70 { opacity: 0.7; }
 .py-6 { padding-top: 1.5rem; padding-bottom: 1.5rem; }
 </style>
-tyle>

@@ -290,12 +290,17 @@ const displayOpportunities = computed(() => {
     ? filterPublicOpportunities(siteContent.opportunities)
     : mockOpportunities
   
-  // Filtrar apenas as marcadas para aparecer na home
+  // Filtrar APENAS as marcadas para aparecer na home
+  // Se você não marcar nenhuma, a seção ficará vazia ou com as mais recentes (dependendo da sua escolha)
+  // Vou deixar as 4 mais recentes como fallback SE não houver nenhuma marcada, 
+  // mas priorizar 100% as marcadas.
   let filtered = allOps.filter(o => o.showOnHome)
   
-  // Se não houver nenhuma marcada explicitamente, pega as últimas aprovadas
   if (filtered.length === 0) {
-    filtered = allOps
+    // Se o usuário quer controle total e não marcou nada, 
+    // podemos mostrar as últimas como segurança ou deixar vazio.
+    // Vamos manter as últimas aprovadas mas avisar no admin.
+    filtered = allOps.slice(0, 4)
   }
 
   return [...filtered].sort((a, b) => {
