@@ -72,6 +72,7 @@
 <script setup>
 import { computed } from 'vue'
 import { Instagram, Twitter, Linkedin } from 'lucide-vue-next'
+import { siteContent } from '../store/content'
 const currentYear = computed(() => new Date().getFullYear())
 </script>
 
