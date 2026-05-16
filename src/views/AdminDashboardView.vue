@@ -1976,11 +1976,18 @@ onUnmounted(() => {
         </div>
 
         <div id="opportunity-editor-form" class="editor-card-brutal shadow-solid mb-10">
-          <div class="pane-header mb-8">
+          <div class="pane-header mb-8 flex justify-between items-center border-b-2 border-dark pb-6">
             <h2 class="card-label-black mb-0">{{ isEditingVaga ? 'EDITAR OPORTUNIDADE' : 'CADASTRAR OPORTUNIDADE' }}</h2>
-            <button v-if="isEditingVaga" class="btn-tool-sm" @click="resetVagaForm">
-              <X :size="14" /> CANCELAR EDIÇÃO
-            </button>
+            <div class="flex gap-3">
+              <button v-if="isEditingVaga" class="btn-tool-sm" @click="resetVagaForm">
+                <X :size="14" /> CANCELAR
+              </button>
+              <button class="btn-save-brutal" style="background: #A4CD39; padding: 10px 20px; font-size: 13px; min-width: 180px;" @click="saveVaga('approved')" :disabled="isSaving">
+                <Save v-if="isEditingVaga" :size="16" />
+                <Plus v-else :size="16" />
+                {{ isEditingVaga ? 'SALVAR ALTERAÇÕES' : 'PUBLICAR VAGA' }}
+              </button>
+            </div>
           </div>
           <div class="import-bar mb-6">
             <div class="input-group flex-1">
