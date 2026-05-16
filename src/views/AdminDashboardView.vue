@@ -672,37 +672,43 @@ const saveVaga = async (statusOverride = null) => {
     alert("O título da vaga é obrigatório.")
     return
   }
-  if (!isValidHttpUrl(novaVaga.value.link) || !isValidHttpUrl(novaVaga.value.sourceUrl)) {
-    alert('A URL da oportunidade precisa ser válida.')
-    return
-  }
   isSaving.value = true
   try {
-    if (!siteContent.opportunities) siteContent.opportunities = []
+    const opportunitiesList = siteContent.opportunities ? [...siteContent.opportunities] : []
     const normalizedDeadline = normalizeOpportunityDeadline(novaVaga.value.deadline)
     const finalStatus = statusOverride || novaVaga.value.status || 'approved'
+    
     const payload = {
       ...novaVaga.value,
       status: finalStatus,
       deadline: normalizedDeadline,
       id: editingVagaId.value || Date.now()
     }
+    
     const wasEditing = isEditingVaga.value
     if (wasEditing) {
-      const index = siteContent.opportunities.findIndex(v => String(v.id) === String(editingVagaId.value))
-      if (index !== -1) siteContent.opportunities.splice(index, 1, payload)
+      const index = opportunitiesList.findIndex(v => String(v.id) === String(editingVagaId.value))
+      if (index !== -1) {
+        opportunitiesList[index] = payload
+      }
     } else {
-      siteContent.opportunities.unshift(payload)
+      opportunitiesList.unshift(payload)
     }
-    vagas.value = siteContent.opportunities
+    
+    // Atualiza o store global E a ref local clonando o array para garantir reatividade
+    siteContent.opportunities = [...opportunitiesList]
+    vagas.value = [...opportunitiesList]
+    
     await persistSiteSetting('opportunities', siteContent.opportunities)
     await recordActivity(`Oportunidade: ${payload.title}`, wasEditing ? 'Edição' : 'Criação')
+    
     resetVagaForm()
-    setTimeout(() => { isSaving.value = false; alert(wasEditing ? 'Oportunidade atualizada!' : 'Oportunidade salva!') }, 400)
+    isSaving.value = false
+    alert(wasEditing ? 'Oportunidade atualizada com sucesso!' : 'Oportunidade salva com sucesso!')
   } catch(e) {
     console.error(e)
     isSaving.value = false
-    alert('Erro ao salvar oportunidade: ' + (e.message || e))
+    alert('Erro ao salvar no banco: ' + (e.message || e))
   }
 }
 
