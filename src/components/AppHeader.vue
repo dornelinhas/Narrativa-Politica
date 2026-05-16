@@ -23,11 +23,11 @@
             ATUAÇÃO
           </button>
           <div v-show="isDropdownOpen" class="dropdown-menu-brutal">
-            <router-link v-if="siteContent.settings?.menuOpportunities !== false" to="/oportunidades" class="drop-link">Oportunidades</router-link>
-            <router-link v-if="siteContent.settings?.menuPaths !== false" to="/trilhas" class="drop-link">Trilhas</router-link>
-            <router-link v-if="siteContent.settings?.menuServices !== false" to="/servicos" class="drop-link">Serviços</router-link>
-            <router-link v-if="siteContent.settings?.menuProjects !== false" to="/projetos" class="drop-link">Projetos</router-link>
-            <router-link v-if="siteContent.settings?.menuLibrary !== false" to="/biblioteca" class="drop-link">Biblioteca</router-link>
+            <router-link v-if="siteContent.settings?.menuOpportunities" to="/oportunidades" class="drop-link">Oportunidades</router-link>
+            <router-link v-if="siteContent.settings?.menuPaths" to="/trilhas" class="drop-link">Trilhas</router-link>
+            <router-link v-if="siteContent.settings?.menuServices" to="/servicos" class="drop-link">Serviços</router-link>
+            <router-link v-if="siteContent.settings?.menuProjects" to="/projetos" class="drop-link">Projetos</router-link>
+            <router-link v-if="siteContent.settings?.menuLibrary" to="/biblioteca" class="drop-link">Biblioteca</router-link>
           </div>
         </div>
 

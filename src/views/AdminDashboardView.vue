@@ -758,15 +758,31 @@ const rejectVaga = async (vaga) => updateVagaStatus(vaga, 'rejected')
 const moveVagaToReview = async (vaga) => updateVagaStatus(vaga, 'pending')
 
 const toggleFeatured = async (vaga) => {
-  vaga.featured = !vaga.featured
-  vagas.value = [...siteContent.opportunities]
-  await persistSiteSetting('opportunities', siteContent.opportunities)
+  try {
+    vaga.featured = !vaga.featured
+    // Garantir reatividade total forçando atualização da lista
+    siteContent.opportunities = [...siteContent.opportunities]
+    vagas.value = siteContent.opportunities
+    await persistSiteSetting('opportunities', siteContent.opportunities)
+    await recordActivity(`Oportunidade ${vaga.featured ? 'em destaque' : 'removida do destaque'}: ${vaga.title}`, 'Edição')
+  } catch (e) {
+    console.error('Erro ao alternar destaque:', e)
+    alert('Erro ao salvar alteração de destaque.')
+  }
 }
 
 const toggleShowOnHome = async (vaga) => {
-  vaga.showOnHome = !vaga.showOnHome
-  vagas.value = [...siteContent.opportunities]
-  await persistSiteSetting('opportunities', siteContent.opportunities)
+  try {
+    vaga.showOnHome = !vaga.showOnHome
+    // Garantir reatividade total
+    siteContent.opportunities = [...siteContent.opportunities]
+    vagas.value = siteContent.opportunities
+    await persistSiteSetting('opportunities', siteContent.opportunities)
+    await recordActivity(`Oportunidade ${vaga.showOnHome ? 'exibida na home' : 'removida da home'}: ${vaga.title}`, 'Edição')
+  } catch (e) {
+    console.error('Erro ao alternar exibição na home:', e)
+    alert('Erro ao salvar alteração de exibição.')
+  }
 }
 
 const deleteVaga = async (vaga) => {
@@ -2130,7 +2146,7 @@ onUnmounted(() => {
                  </tr>
               </thead>
               <tbody>
-                 <tr v-for="vaga in siteContent.opportunities" :key="vaga.id">
+                 <tr v-for="vaga in vagas" :key="vaga.id">
                     <td class="font-bold">
                        <button class="table-title-btn" @click="editVaga(vaga)">{{ vaga.title }}</button>
                     </td>
@@ -2139,7 +2155,7 @@ onUnmounted(() => {
                        <div class="flex items-center gap-2">
                          <span v-if="vaga.featured" class="badge-featured">SIM</span>
                          <span v-else class="badge-normal">NÃO</span>
-                         <button @click="toggleFeatured(vaga)" class="btn-action-mini" :title="vaga.featured ? 'Remover Destaque' : 'Adicionar Destaque'">
+                         <button @click.stop="toggleFeatured(vaga)" class="btn-action-mini" :title="vaga.featured ? 'Remover Destaque' : 'Adicionar Destaque'">
                            <Star :size="14" :fill="vaga.featured ? 'currentColor' : 'none'" />
                          </button>
                        </div>
@@ -2148,7 +2164,7 @@ onUnmounted(() => {
                        <div class="flex items-center gap-2">
                          <span v-if="vaga.showOnHome" class="badge-published">SIM</span>
                          <span v-else class="badge-normal">NÃO</span>
-                         <button @click="toggleShowOnHome(vaga)" class="btn-action-mini" :title="vaga.showOnHome ? 'Remover da Home' : 'Exibir na Home'">
+                         <button @click.stop="toggleShowOnHome(vaga)" class="btn-action-mini" :title="vaga.showOnHome ? 'Remover da Home' : 'Exibir na Home'">
                            <Home :size="14" :fill="vaga.showOnHome ? 'currentColor' : 'none'" />
                          </button>
                        </div>
@@ -3297,13 +3313,19 @@ onUnmounted(() => {
 .btn-preview-solid:hover { background: #FFE65A; color: #1C1C1C; transform: translate(-2px, -2px); box-shadow: 6px 6px 0px #1C1C1C; }
 
 /* SEÇÕES E CARDS DE EDIÇÃO BRUTALISTAS */
-.editor-card-brutal { background: #FFFFFF; border: 4px solid #1C1C1C; border-radius: 20px; padding: 50px; box-shadow: 12px 12px 0px #1C1C1C; transition: all 0.3s ease; }
+.editor-card-brutal { background: #FFFFFF; border: 4px solid #1C1C1C; border-radius: 20px; padding: 30px; box-shadow: 12px 12px 0px #1C1C1C; transition: all 0.3s ease; }
 .editor-card-brutal:hover { box-shadow: 16px 16px 0px #FF6BCA; transform: translate(-2px, -2px); }
 
 .card-label-black { 
-  font-family: "Archivo Black", sans-serif; font-size: 1.2rem; color: #1C1C1C; 
-  letter-spacing: 1px; border-left: 8px solid #FFE65A; padding-left: 15px; text-transform: uppercase; margin-bottom: 30px; 
+  font-family: "Archivo Black", sans-serif; font-size: 1.1rem; color: #1C1C1C; 
+  letter-spacing: 1px; border-left: 8px solid #FFE65A; padding-left: 15px; text-transform: uppercase; margin-bottom: 25px; 
 }
+
+/* REDUZIR ZOOM NAS TABELAS E INPUTS */
+.table-brutal th, .table-brutal td { padding: 12px 15px; font-size: 13px; }
+.input-group label { font-size: 11px; margin-bottom: 6px; }
+.input-group input, .input-group textarea, .select-brutal { padding: 10px 15px; font-size: 14px; }
+.btn-save-brutal { padding: 12px 24px; font-size: 14px; }
 
 .form-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
 .form-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 30px; }
@@ -3468,6 +3490,27 @@ onUnmounted(() => {
 .icon-action { background: #FFF; border: 3px solid #1C1C1C; width: 40px; height: 40px; border-radius: 12px; cursor: pointer; color: #1C1C1C; display: flex; align-items: center; justify-content: center; transition: all 0.2s; box-shadow: 4px 4px 0px rgba(0,0,0,0.1); }
 .icon-action:hover { background: #FFE65A; transform: translate(-2px, -2px); box-shadow: 6px 6px 0px #1C1C1C; }
 .icon-action.text-red-500:hover { color: #FFF; background: #DF2028; }
+
+.btn-action-mini {
+  background: #FFF;
+  border: 2px solid #1C1C1C;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  color: #1C1C1C;
+}
+.btn-action-mini:hover {
+  background: #FFE65A;
+  transform: scale(1.1);
+  box-shadow: 2px 2px 0px #1C1C1C;
+}
+.btn-action-mini .lucide-star[fill="currentColor"] { color: #FFE65A; stroke: #1C1C1C; }
+.btn-action-mini .lucide-home[fill="currentColor"] { color: #A4CD39; stroke: #1C1C1C; }
 
 .mock-manager-box { width: 100%; height: 200px; background: #F8FAFC; border: 4px dashed #1C1C1C; border-radius: 20px; display: flex; align-items: center; justify-content: center; color: #1C1C1C; font-weight: 900; font-family: "Archivo Black"; font-size: 1.2rem; }
 

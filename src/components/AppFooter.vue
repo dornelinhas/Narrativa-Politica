@@ -31,11 +31,11 @@
               <div class="dot pink-bg"></div> PLATAFORMA
             </h4>
             <div class="links-list">
-              <router-link v-if="siteContent.settings?.menuArticles !== false" to="/conteudo">Artigos</router-link>
+              <router-link v-if="siteContent.settings?.menuArticles" to="/conteudo">Artigos</router-link>
               <a href="https://narrativapolitica.substack.com" target="_blank">Newsletter (Substack)</a>
-              <router-link v-if="siteContent.settings?.menuOpportunities !== false" to="/oportunidades">Oportunidades</router-link>
-              <router-link v-if="siteContent.settings?.menuTracks !== false" to="/trilhas">Trilhas</router-link>
-              <router-link v-if="siteContent.settings?.menuLibrary !== false" to="/biblioteca">Biblioteca</router-link>
+              <router-link v-if="siteContent.settings?.menuOpportunities" to="/oportunidades">Oportunidades</router-link>
+              <router-link v-if="siteContent.settings?.menuPaths" to="/trilhas">Trilhas</router-link>
+              <router-link v-if="siteContent.settings?.menuLibrary" to="/biblioteca">Biblioteca</router-link>
             </div>
           </div>
 
@@ -44,10 +44,10 @@
               <div class="square lime-bg"></div> INSTITUCIONAL
             </h4>
             <div class="links-list">
-              <router-link v-if="siteContent.settings?.menuAbout !== false" to="/sobre">Quem Somos</router-link>
-              <router-link v-if="siteContent.settings?.menuServices !== false" to="/servicos">Serviços</router-link>
+              <router-link v-if="siteContent.settings?.menuAbout" to="/sobre">Quem Somos</router-link>
+              <router-link v-if="siteContent.settings?.menuServices" to="/servicos">Serviços</router-link>
               <router-link to="/doacao">Apoie</router-link>
-              <router-link v-if="siteContent.settings?.menuContact !== false" to="/contatos">Contato</router-link>
+              <router-link v-if="siteContent.settings?.menuContact" to="/contatos">Contato</router-link>
             </div>
           </div>
         </div>
