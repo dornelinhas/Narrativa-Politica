@@ -655,7 +655,8 @@ const editVaga = (vaga) => {
     image: vaga.image || '',
     status: vaga.status || 'approved',
     sourceUrl: vaga.sourceUrl || vaga.link || '',
-    reviewNotes: vaga.reviewNotes || ''
+    reviewNotes: vaga.reviewNotes || '',
+    featured: Boolean(vaga.featured)
   }
   scrollToForm('opportunity-editor-form')
 }
@@ -2005,9 +2006,18 @@ onUnmounted(() => {
                 <input v-model="novaVaga.deadline" type="text" placeholder="Ex: ABERTO ou 25 MAI" />
              </div>
           </div>
-          <div class="input-group mb-6">
-             <label>LINK PARA INSCRIÇÃO</label>
-             <input v-model="novaVaga.link" type="url" placeholder="https://..." />
+          <div class="form-grid-2 mb-6">
+            <div class="input-group">
+               <label>LINK PARA INSCRIÇÃO</label>
+               <input v-model="novaVaga.link" type="url" placeholder="https://..." />
+            </div>
+            <div class="input-group flex items-center justify-start mt-8">
+               <label class="checkbox-container">
+                  <input type="checkbox" v-model="novaVaga.featured" />
+                  <span class="checkmark"></span>
+                  <span class="check-label font-bold text-dark">MARCAR COMO DESTAQUE</span>
+               </label>
+            </div>
           </div>
           <div class="flex gap-4">
             <button class="btn-save-brutal flex-1" style="background: #FFF;" @click="saveVaga('pending')" :disabled="isSaving">
@@ -2095,6 +2105,7 @@ onUnmounted(() => {
                  <tr>
                     <th>TÍTULO</th>
                     <th>STATUS</th>
+                    <th>DESTAQUE</th>
                     <th>CATEGORIA</th>
                     <th>PRAZO</th>
                     <th>AÇÕES</th>
@@ -2106,6 +2117,10 @@ onUnmounted(() => {
                        <button class="table-title-btn" @click="editVaga(vaga)">{{ vaga.title }}</button>
                     </td>
                     <td><span :class="opportunityStatusClass(vaga)">{{ opportunityStatusLabel(vaga) }}</span></td>
+                    <td>
+                       <span v-if="vaga.featured" class="badge-featured">SIM</span>
+                       <span v-else class="badge-normal">NÃO</span>
+                    </td>
                     <td>{{ vaga.category }}</td>
                     <td>{{ vaga.deadline }}</td>
                     <td class="actions-td">

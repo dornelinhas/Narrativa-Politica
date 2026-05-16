@@ -36,6 +36,14 @@ const mockOpportunities = [
 const filteredOpportunities = computed(() => {
   const source = siteContent.opportunities?.length ? siteContent.opportunities : mockOpportunities
   let ops = filterPublicOpportunities(source)
+  
+  // Primeiro, ordenar por destaque (true primeiro)
+  ops = [...ops].sort((a, b) => {
+    if (a.featured && !b.featured) return -1
+    if (!a.featured && b.featured) return 1
+    return 0
+  })
+
   if (selectedCategory.value !== 'Tudo') ops = ops.filter(op => op.category === selectedCategory.value)
   if (destaqueNordeste.value) ops = ops.filter(op => op.location?.toLowerCase().includes('pe') || op.location?.toLowerCase().includes('nordeste'))
   if (searchQuery.value) {
@@ -104,8 +112,13 @@ const toggleFavorite = (id) => {
           </div>
 
           <div class="card-header">
-            <div class="category-badge" :style="{ backgroundColor: getCategoryColor(op.category) }">
-              {{ op.category }}
+            <div class="flex items-center gap-2">
+              <div class="category-badge" :style="{ backgroundColor: getCategoryColor(op.category) }">
+                {{ op.category }}
+              </div>
+              <div v-if="op.featured" class="featured-badge shadow-sm">
+                <Sparkles :size="12" /> DESTAQUE
+              </div>
             </div>
             <button @click="toggleFavorite(op.id)" class="fav-btn" :class="{ 'is-fav': favorites.has(op.id) }">
               <Bookmark :size="20" :fill="favorites.has(op.id) ? 'currentColor' : 'none'" />
@@ -237,6 +250,19 @@ const toggleFavorite = (id) => {
 .category-badge { 
   padding: 8px 18px; border-radius: 10px; font-weight: 900; font-size: 10px; 
   text-transform: uppercase; color: #FFFFFF !important; border: 2px solid #000;
+}
+.featured-badge {
+  background: #FFE65A;
+  color: #1C1C1C;
+  padding: 8px 14px;
+  border-radius: 10px;
+  font-weight: 900;
+  font-size: 10px;
+  text-transform: uppercase;
+  border: 2px solid #000;
+  display: flex;
+  align-items: center;
+  gap: 4px;
 }
 .fav-btn { background: transparent; border: none; color: #DDD; cursor: pointer; transition: 0.3s; }
 .fav-btn.is-fav { color: #FF6BCA; }
