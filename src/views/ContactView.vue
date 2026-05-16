@@ -12,19 +12,40 @@ const types = [
 const isSubmitted = ref(false)
 const isLoading = ref(false)
 
-const handleSubmit = () => {
+const formData = ref({
+  name: '',
+  email: '',
+  subject: '',
+  message: ''
+})
+
+const handleSubmit = async () => {
   isLoading.value = true
   
-  // Como o frontend não envia email diretamente sem backend, 
-  // simulamos o sucesso e informamos o destino rígido.
-  // Em uma aplicação real, o backend ou serviço como EmailJS usaria este destino:
-  const targetEmail = 'contatonarrativapolitica@gmail.com'
-  console.log(`Enviando mensagem para: ${targetEmail}`)
-  
-  setTimeout(() => {
+  try {
+    const response = await fetch('/api/send-contact', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        ...formData.value,
+        type: activeType.value
+      })
+    })
+
+    if (response.ok) {
+      isSubmitted.value = true
+      // Limpa o form
+      formData.value = { name: '', email: '', subject: '', message: '' }
+    } else {
+      const err = await response.json()
+      alert(err.error || 'Erro ao enviar mensagem. Tente novamente.')
+    }
+  } catch (error) {
+    console.error('Erro de rede:', error)
+    alert('Erro de conexão. Verifique sua internet e tente novamente.')
+  } finally {
     isLoading.value = false
-    isSubmitted.value = true
-  }, 800)
+  }
 }
 
 const resetForm = () => {
@@ -64,11 +85,11 @@ const resetForm = () => {
           
           <form class="contact-form" @submit.prevent="handleSubmit">
             <div class="form-row">
-              <input type="text" placeholder="Nome" required>
-              <input type="email" placeholder="Email" required>
+              <input v-model="formData.name" type="text" placeholder="Nome" required>
+              <input v-model="formData.email" type="email" placeholder="Email" required>
             </div>
-            <input type="text" placeholder="Assunto" required>
-            <textarea placeholder="Mensagem" required></textarea>
+            <input v-model="formData.subject" type="text" placeholder="Assunto" required>
+            <textarea v-model="formData.message" placeholder="Mensagem" required class="contact-textarea"></textarea>
             
             <button type="submit" class="contact-submit" :disabled="isLoading">
               {{ isLoading ? 'ENVIANDO...' : 'ENVIAR MENSAGEM' }}
