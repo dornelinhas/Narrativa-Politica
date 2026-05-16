@@ -7,6 +7,8 @@ const searchQuery = ref('')
 const selectedCategory = ref('Tudo')
 const destaqueNordeste = ref(false)
 const favorites = ref(new Set())
+const currentPage = ref(1)
+const itemsPerPage = 6
 
 // MAPEAMENTO RÍGIDO DE CORES DA LOGO NP
 const colorMap = {
@@ -52,6 +54,17 @@ const filteredOpportunities = computed(() => {
   }
   return ops
 })
+
+const totalPages = computed(() => Math.ceil(filteredOpportunities.value.length / itemsPerPage))
+const paginatedOpportunities = computed(() => {
+  const start = (currentPage.value - 1) * itemsPerPage
+  return filteredOpportunities.value.slice(start, start + itemsPerPage)
+})
+
+const changePage = (page) => {
+  currentPage.value = page
+  window.scrollTo({ top: 0, behavior: 'smooth' })
+}
 
 const getCategoryColor = (cat) => colorMap[cat] || '#3D78E0'
 
@@ -102,45 +115,76 @@ const toggleFavorite = (id) => {
         </div>
       </header>
 
-      <div v-if="filteredOpportunities.length > 0" class="ops-grid-clean">
-        <div v-for="op in filteredOpportunities" :key="op.id" 
-          class="op-card-premium group"
-          :style="{ '--hover-color': getCategoryColor(op.category) }"
-        >
-          <div v-if="op.image" class="op-card-image-wrap">
-            <img :src="op.image" :alt="op.title" class="op-card-image" loading="lazy" />
-          </div>
+      <div v-if="paginatedOpportunities.length > 0">
+        <div class="ops-grid-clean">
+          <div v-for="op in paginatedOpportunities" :key="op.id" 
+            class="op-card-premium group"
+            :style="{ '--hover-color': getCategoryColor(op.category) }"
+          >
+            <div v-if="op.image" class="op-card-image-wrap">
+              <img :src="op.image" :alt="op.title" class="op-card-image" loading="lazy" />
+            </div>
 
-          <div class="card-header">
-            <div class="flex items-center gap-2">
-              <div class="category-badge" :style="{ backgroundColor: getCategoryColor(op.category) }">
-                {{ op.category }}
+            <div class="card-header">
+              <div class="flex items-center gap-2">
+                <div class="category-badge" :style="{ backgroundColor: getCategoryColor(op.category) }">
+                  {{ op.category }}
+                </div>
+                <div v-if="op.featured" class="featured-badge shadow-sm">
+                  <Sparkles :size="12" /> DESTAQUE
+                </div>
               </div>
-              <div v-if="op.featured" class="featured-badge shadow-sm">
-                <Sparkles :size="12" /> DESTAQUE
+              <button @click="toggleFavorite(op.id)" class="fav-btn" :class="{ 'is-fav': favorites.has(op.id) }">
+                <Bookmark :size="20" :fill="favorites.has(op.id) ? 'currentColor' : 'none'" />
+              </button>
+            </div>
+
+            <h3 class="op-title">{{ op.title }}</h3>
+            <p class="op-description">{{ op.description }}</p>
+
+            <div class="op-meta-info">
+              <div class="meta-tags">
+                <div class="tag-item"><MapPin :size="14" /> <span>{{ op.location }}</span></div>
+                <div class="tag-item"><Briefcase :size="14" /> <span>{{ op.type }}</span></div>
+              </div>
+              
+              <div class="action-footer">
+                <div class="deadline-pill">FECHA EM: <strong>{{ op.deadline }}</strong></div>
+                <router-link :to="`/oportunidades/${op.id}`" class="btn-details">
+                  VER DETALHES <ArrowRight :size="16" />
+                </router-link>
               </div>
             </div>
-            <button @click="toggleFavorite(op.id)" class="fav-btn" :class="{ 'is-fav': favorites.has(op.id) }">
-              <Bookmark :size="20" :fill="favorites.has(op.id) ? 'currentColor' : 'none'" />
+          </div>
+        </div>
+
+        <!-- PAGINAÇÃO -->
+        <div v-if="totalPages > 1" class="pagination-container-brutal">
+          <button 
+            class="pag-btn" 
+            :disabled="currentPage === 1"
+            @click="changePage(currentPage - 1)"
+          >
+            ANTERIOR
+          </button>
+          <div class="pages-list">
+            <button 
+              v-for="page in totalPages" 
+              :key="page"
+              class="page-num"
+              :class="{ 'active': currentPage === page }"
+              @click="changePage(page)"
+            >
+              {{ page }}
             </button>
           </div>
-
-          <h3 class="op-title">{{ op.title }}</h3>
-          <p class="op-description">{{ op.description }}</p>
-
-          <div class="op-meta-info">
-            <div class="meta-tags">
-              <div class="tag-item"><MapPin :size="14" /> <span>{{ op.location }}</span></div>
-              <div class="tag-item"><Briefcase :size="14" /> <span>{{ op.type }}</span></div>
-            </div>
-            
-            <div class="action-footer">
-              <div class="deadline-pill">FECHA EM: <strong>{{ op.deadline }}</strong></div>
-              <router-link :to="`/oportunidades/${op.id}`" class="btn-details">
-                VER DETALHES <ArrowRight :size="16" />
-              </router-link>
-            </div>
-          </div>
+          <button 
+            class="pag-btn" 
+            :disabled="currentPage === totalPages"
+            @click="changePage(currentPage + 1)"
+          >
+            PRÓXIMA
+          </button>
         </div>
       </div>
       <div v-else class="empty-opportunities-state">
@@ -302,6 +346,44 @@ const toggleFavorite = (id) => {
   color: #1C1C1C;
   opacity: 0.75;
 }
+
+/* PAGINAÇÃO BRUTALISTA */
+.pagination-container-brutal {
+  margin-top: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  position: relative;
+  z-index: 20;
+}
+.pages-list { display: flex; gap: 8px; }
+.pag-btn {
+  background: white;
+  border: 3px solid #1C1C1C;
+  padding: 10px 20px;
+  font-family: "Archivo Black", sans-serif;
+  font-size: 11px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+.pag-btn:hover:not(:disabled) { background: #FFE65A; transform: translateY(-2px); box-shadow: 4px 4px 0 #1C1C1C; }
+.pag-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+.page-num {
+  width: 40px;
+  height: 40px;
+  border: 3px solid #1C1C1C;
+  background: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: "Archivo Black", sans-serif;
+  font-size: 14px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+.page-num:hover { background: #A4CD39; }
+.page-num.active { background: #1C1C1C; color: white; }
 
 @media (max-width: 768px) { .ops-grid-clean { grid-template-columns: 1fr; } .editorial-title { font-size: 3.5rem; } }
 </style>

@@ -16,7 +16,7 @@ const isSaving = ref(false)
 const analytics = ref([])
 
 const defaultArticleForm = () => ({ title: '', subtitle: '', author: '', type: 'Artigo', category: '', featured: false, content: '', image: '', imageDescription: '', imageCaption: '', references: '', highlightQuote: '', status: 'publicado' })
-const defaultOpportunityForm = () => ({ title: '', category: 'Vagas de Emprego', type: 'Remoto', location: '', deadline: '', link: '', description: '', fullDescription: '', image: '', status: 'approved', sourceUrl: '', reviewNotes: '' })
+const defaultOpportunityForm = () => ({ title: '', category: 'Vagas de Emprego', type: 'Remoto', location: '', deadline: '', link: '', description: '', fullDescription: '', image: '', status: 'approved', sourceUrl: '', reviewNotes: '', featured: false, showOnHome: false })
 const defaultCurationForm = () => ({
   minScore: 60,
   maxAgeDays: 30,
@@ -2011,11 +2011,16 @@ onUnmounted(() => {
                <label>LINK PARA INSCRIÇÃO</label>
                <input v-model="novaVaga.link" type="url" placeholder="https://..." />
             </div>
-            <div class="input-group flex items-center justify-start mt-8">
+            <div class="input-group flex items-center justify-start mt-8 gap-6">
                <label class="checkbox-container">
                   <input type="checkbox" v-model="novaVaga.featured" />
                   <span class="checkmark"></span>
                   <span class="check-label font-bold text-dark">MARCAR COMO DESTAQUE</span>
+               </label>
+               <label class="checkbox-container">
+                  <input type="checkbox" v-model="novaVaga.showOnHome" />
+                  <span class="checkmark"></span>
+                  <span class="check-label font-bold text-dark">EXIBIR NA HOME</span>
                </label>
             </div>
           </div>
@@ -2106,6 +2111,7 @@ onUnmounted(() => {
                     <th>TÍTULO</th>
                     <th>STATUS</th>
                     <th>DESTAQUE</th>
+                    <th>HOME</th>
                     <th>CATEGORIA</th>
                     <th>PRAZO</th>
                     <th>AÇÕES</th>
@@ -2119,6 +2125,10 @@ onUnmounted(() => {
                     <td><span :class="opportunityStatusClass(vaga)">{{ opportunityStatusLabel(vaga) }}</span></td>
                     <td>
                        <span v-if="vaga.featured" class="badge-featured">SIM</span>
+                       <span v-else class="badge-normal">NÃO</span>
+                    </td>
+                    <td>
+                       <span v-if="vaga.showOnHome" class="badge-published">SIM</span>
                        <span v-else class="badge-normal">NÃO</span>
                     </td>
                     <td>{{ vaga.category }}</td>
@@ -3565,3 +3575,4 @@ onUnmounted(() => {
 .opacity-70 { opacity: 0.7; }
 .py-6 { padding-top: 1.5rem; padding-bottom: 1.5rem; }
 </style>
+tyle>

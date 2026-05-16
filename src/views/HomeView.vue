@@ -286,11 +286,19 @@ const mockOpportunities = [
 ]
 
 const displayOpportunities = computed(() => {
-  const ops = siteContent.opportunities && siteContent.opportunities.length > 0 
+  const allOps = siteContent.opportunities && siteContent.opportunities.length > 0 
     ? filterPublicOpportunities(siteContent.opportunities)
     : mockOpportunities
   
-  return [...ops].sort((a, b) => {
+  // Filtrar apenas as marcadas para aparecer na home
+  let filtered = allOps.filter(o => o.showOnHome)
+  
+  // Se não houver nenhuma marcada explicitamente, pega as últimas aprovadas
+  if (filtered.length === 0) {
+    filtered = allOps
+  }
+
+  return [...filtered].sort((a, b) => {
     if (a.featured && !b.featured) return -1
     if (!a.featured && b.featured) return 1
     return 0
