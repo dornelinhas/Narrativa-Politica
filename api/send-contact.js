@@ -48,8 +48,12 @@ export default async function handler(req, res) {
     if (response.ok) {
       return res.status(200).json({ success: true, id: data.id });
     } else {
-      console.error('Erro Resend:', data);
-      return res.status(response.status).json({ error: 'Erro ao enviar e-mail através do serviço.' });
+      console.error('Erro detalhado do Resend:', JSON.stringify(data, null, 2));
+      // Se for erro de domínio não verificado em conta free, o Resend retorna 403 ou 422
+      return res.status(response.status).json({ 
+        error: 'Erro no serviço de e-mail.', 
+        details: data.message || 'Verifique se o e-mail de destino está verificado no Resend (caso use conta gratuita).' 
+      });
     }
   } catch (error) {
     console.error('Erro de servidor ao enviar contato:', error);
