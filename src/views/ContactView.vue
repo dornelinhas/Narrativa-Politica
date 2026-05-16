@@ -14,7 +14,13 @@ const isLoading = ref(false)
 
 const handleSubmit = () => {
   isLoading.value = true
-  // Simulação de envio para a API
+  
+  // Como o frontend não envia email diretamente sem backend, 
+  // simulamos o sucesso e informamos o destino rígido.
+  // Em uma aplicação real, o backend ou serviço como EmailJS usaria este destino:
+  const targetEmail = 'contatonarrativapolitica@gmail.com'
+  console.log(`Enviando mensagem para: ${targetEmail}`)
+  
   setTimeout(() => {
     isLoading.value = false
     isSubmitted.value = true

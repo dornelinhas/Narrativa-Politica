@@ -5,7 +5,8 @@ import { Search, ArrowRight, Newspaper, FileText, BarChart3, Mail, Zap, Clock, S
 
 const searchQuery = ref('')
 const selectedCategory = ref('Tudo')
-const visibleCount = ref(7)
+const currentPage = ref(1)
+const itemsPerPage = 6
 const scrollProgress = ref(0)
 
 const categories = computed(() => ['Tudo', ...siteContent.categories])
@@ -35,9 +36,16 @@ const articlesItems = computed(() => {
   return posts
 })
 
-const paginatedArticles = computed(() => articlesItems.value.slice(0, visibleCount.value))
-const hasMore = computed(() => visibleCount.value < articlesItems.value.length)
-const loadMore = () => { visibleCount.value += 6 }
+const totalPages = computed(() => Math.ceil(articlesItems.value.length / itemsPerPage))
+const paginatedArticles = computed(() => {
+  const start = (currentPage.value - 1) * itemsPerPage
+  return articlesItems.value.slice(start, start + itemsPerPage)
+})
+
+const changePage = (page) => {
+  currentPage.value = page
+  window.scrollTo({ top: 0, behavior: 'smooth' })
+}
 
 const formatDate = (dateStr) => {
   if (!dateStr) return ''
@@ -139,7 +147,6 @@ const shareArticle = (post) => {
             <div v-else class="articles-grid-layout">
               <div v-for="(post, idx) in paginatedArticles" :key="post.id" 
                 class="article-card-item"
-                :class="{ 'featured-item': idx === 0 && !searchQuery && selectedCategory === 'Tudo' }"
               >
                 <div class="premium-card group" :style="{ '--accent-color': getMarkerColor(post.type) }">
                   <div class="card-image-box">
@@ -149,15 +156,6 @@ const shareArticle = (post) => {
                     <div class="marker-tag" :style="{ backgroundColor: getMarkerColor(post.type) }">
                       <component :is="getMarkerIcon(post.type)" :size="12" />
                       <span>{{ post.type || 'Artigo' }}</span>
-                    </div>
-
-                    <div class="card-actions-top-right">
-                      <button class="action-icon-btn bookmark-btn" title="Salvar para ler depois">
-                        <Bookmark :size="14" />
-                      </button>
-                      <button class="action-icon-btn share-btn" @click.stop.prevent="shareArticle(post)" title="Compartilhar">
-                        <Share2 :size="14" />
-                      </button>
                     </div>
                   </div>
 
@@ -182,8 +180,32 @@ const shareArticle = (post) => {
               </div>
             </div>
 
-            <div v-if="hasMore" class="load-more-center">
-              <button @click="loadMore" class="load-more-btn-v3">Carregar mais</button>
+            <div v-if="totalPages > 1" class="pagination-container-brutal">
+              <button 
+                class="pag-btn" 
+                :disabled="currentPage === 1"
+                @click="changePage(currentPage - 1)"
+              >
+                ANTERIOR
+              </button>
+              <div class="pages-list">
+                <button 
+                  v-for="page in totalPages" 
+                  :key="page"
+                  class="page-num"
+                  :class="{ 'active': currentPage === page }"
+                  @click="changePage(page)"
+                >
+                  {{ page }}
+                </button>
+              </div>
+              <button 
+                class="pag-btn" 
+                :disabled="currentPage === totalPages"
+                @click="changePage(currentPage + 1)"
+              >
+                PRÓXIMA
+              </button>
             </div>
           </div>
 
@@ -204,16 +226,17 @@ const shareArticle = (post) => {
               </router-link>
             </div>
 
-            <!-- NEWSLETTER PREMIUM -->
+            <!-- NEWSLETTER SUBSTACK EMBED -->
             <div class="newsletter-card-premium">
-              <div class="nl-inner-premium">
-                <div class="nl-icon-circle"><Mail :size="24" /></div>
-                <h3 class="nl-title-bold">NOSSA NEWSLETTER</h3>
-                <p class="nl-desc-text">As análises estratégicas direto no seu e-mail.</p>
-                <form @submit.prevent class="nl-form-row">
-                  <input type="email" placeholder="Seu e-mail..." class="nl-input-premium" />
-                  <button class="nl-btn-premium">ASSINAR</button>
-                </form>
+              <div class="nl-inner-premium" style="padding: 10px;">
+                <iframe 
+                  src="https://narrativapolitica.substack.com/embed" 
+                  width="100%" 
+                  height="320" 
+                  style="border:none; background:white; border-radius: 8px;" 
+                  frameborder="0" 
+                  scrolling="no">
+                </iframe>
               </div>
             </div>
           </aside>
@@ -384,17 +407,50 @@ const shareArticle = (post) => {
 .articles-grid-layout {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 40px;
+  gap: 32px;
 }
 @media (min-width: 768px) {
   .articles-grid-layout { grid-template-columns: 1fr 1fr; }
 }
-
-@media (min-width: 768px) {
-  .featured-item { grid-column: span 2; }
-  .featured-item .premium-card { flex-direction: row; min-height: 420px; }
-  .featured-item .card-image-box { width: 50%; height: auto; border-bottom: none; border-right: 3px solid #1C1C1C; }
+@media (min-width: 1280px) {
+  .articles-grid-layout { grid-template-columns: 1fr 1fr 1fr; }
 }
+
+/* PAGINAÇÃO BRUTALISTA */
+.pagination-container-brutal {
+  margin-top: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+}
+.pages-list { display: flex; gap: 8px; }
+.pag-btn {
+  background: white;
+  border: 3px solid #1C1C1C;
+  padding: 10px 20px;
+  font-family: "Archivo Black", sans-serif;
+  font-size: 11px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+.pag-btn:hover:not(:disabled) { background: #FFE65A; transform: translateY(-2px); box-shadow: 4px 4px 0 #1C1C1C; }
+.pag-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+.page-num {
+  width: 40px;
+  height: 40px;
+  border: 3px solid #1C1C1C;
+  background: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: "Archivo Black", sans-serif;
+  font-size: 14px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+.page-num:hover { background: #A4CD39; }
+.page-num.active { background: #1C1C1C; color: white; }
 
 /* PREMIUM CARDS */
 .premium-card {

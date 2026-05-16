@@ -11,41 +11,16 @@ const newsletters = ref([])
 const subscribeStatus = ref(null)
 
 onMounted(async () => {
-  if (siteContent.newsletters && siteContent.newsletters.length > 0) {
-    newsletters.value = siteContent.newsletters
-  } else {
-    const { data } = await supabase
-      .from('newsletters')
-      .select('*')
-      .order('enviado_em', { ascending: false })
-    if (data) newsletters.value = data
-  }
+  // Já estão disponíveis via computed
   window.scrollTo(0, 0)
 })
 
-const subscribe = async () => {
-  if (!email.value) return
-  isSubscribing.value = true
-  try {
-    const { error } = await supabase
-      .from('subscribers')
-      .insert([{ email: email.value }])
-    
-    if (error) {
-      if (error.code === '23505') alert('Este e-mail já está inscrito!')
-      else throw error
-    } else {
-      subscribeStatus.value = 'success'
-      email.value = ''
-      setTimeout(() => { subscribeStatus.value = null }, 4000)
-    }
-  } catch (e) {
-    console.error(e)
-    alert('Erro ao se inscrever. Tente novamente.')
-  } finally {
-    isSubscribing.value = false
-  }
-}
+const newslettersList = computed(() => {
+  if (siteContent.isLoading) return []
+  // Filtra posts que são do tipo Newsletter
+  const issues = siteContent.posts?.filter(p => p.type === 'Newsletter' || p.category === 'Newsletter') || []
+  return issues.sort((a, b) => new Date(b.date) - new Date(a.date))
+})
 </script>
 
 <template>
@@ -100,24 +75,24 @@ const subscribe = async () => {
           <h3 class="divider-title">EDIÇÕES ANTERIORES</h3>
         </div>
 
-        <div v-if="newsletters.length > 0" class="archive-grid">
+        <div v-if="newslettersList.length > 0" class="archive-grid">
           <router-link 
-            v-for="(ed, i) in newsletters" 
+            v-for="(ed, i) in newslettersList" 
             :key="i" 
-            :to="'/arquivo-newsletter/' + ed.id" 
+            :to="'/conteudo/' + ed.id" 
             class="nl-card-brutal shadow-solid"
           >
             <div class="nl-img-wrapper">
-              <img :src="ed.capa_url || 'https://images.unsplash.com/photo-1585829365234-781fcdb4c8ef?w=800&h=600&fit=crop'" :alt="ed.titulo" loading="lazy" />
+              <img :src="ed.image || 'https://images.unsplash.com/photo-1585829365234-781fcdb4c8ef?w=800&h=600&fit=crop'" :alt="ed.title" loading="lazy" />
               <div class="nl-img-overlay"></div>
               <div class="nl-tag">
-                <Mail :size="14" /> {{ ed.tag || 'Newsletter' }}
+                <Mail :size="14" /> {{ ed.category || 'Newsletter' }}
               </div>
             </div>
             <div class="nl-content">
-              <div class="nl-date">{{ new Date(ed.enviado_em).toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' }) }}</div>
-              <h3 class="nl-title">{{ ed.titulo }}</h3>
-              <p class="nl-desc">{{ ed.descricao }}</p>
+              <div class="nl-date">{{ new Date(ed.date).toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' }) }}</div>
+              <h3 class="nl-title">{{ ed.title }}</h3>
+              <p class="nl-desc">{{ ed.excerpt || ed.subtitle }}</p>
               <div class="nl-action">
                 <span>LER EDIÇÃO</span>
                 <ArrowRight :size="18" class="arrow-icon" />
