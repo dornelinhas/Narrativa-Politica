@@ -216,27 +216,24 @@
         </div>
         
         <div class="flex-1 w-full relative">
-          <form @submit.prevent="handleNewsletter" class="flex-col gap-4 relative z-10 bg-white border-dark-4" style="padding: 2.5rem;">
-             <div v-if="nlSuccess" class="bg-lime p-4 border-dark-4 text-center font-black text-dark mb-4 uppercase tracking-widest text-xs">
-               Você agora receberá nossas atualizações!
-             </div>
-             <input 
-               type="email" 
-               v-model="nlEmail"
-               required
-               :placeholder="siteContent.home?.newsletterPlaceholder || 'Digite seu email...'" 
-               class="w-full bg-light px-6 py-4 font-sans font-bold text-lg text-dark focus-outline transition-colors nl-input"
-               style="border: 4px solid #1C1C1C;"
-             />
-             <button type="submit" class="btn-red w-full" style="border: 4px solid #1C1C1C; padding: 1rem 1.5rem; justify-content: flex-start; font-size: 1rem;">{{ siteContent.home?.newsletterButton || 'QUERO FAZER PARTE' }}</button>
+          <div class="flex-col gap-4 relative z-10 bg-white border-dark-4" style="padding: 1.5rem; display: flex;">
+             <!-- Substack Embed Iframe -->
+             <iframe 
+               src="https://narrativapolitica.substack.com/embed" 
+               width="100%" 
+               height="320" 
+               style="border:none; background:white;" 
+               frameborder="0" 
+               scrolling="no">
+             </iframe>
              
              <!-- FRASE CLICÁVEL -->
-             <div class="mt-6 text-center">
+             <div class="mt-2 text-center">
                 <router-link to="/arquivo-newsletter" class="nl-archive-link">
                    Quer ler nossas últimas edições antes de assinar? <span class="underline">Clique aqui →</span>
                 </router-link>
              </div>
-          </form>
+          </div>
         </div>
       </div>
     </section>

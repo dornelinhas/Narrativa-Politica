@@ -32,6 +32,7 @@
             </h4>
             <div class="links-list">
               <router-link to="/conteudo">Artigos</router-link>
+              <a href="https://narrativapolitica.substack.com" target="_blank">Newsletter (Substack)</a>
               <router-link to="/oportunidades">Oportunidades</router-link>
               <router-link to="/trilhas">Trilhas</router-link>
               <router-link to="/biblioteca">Biblioteca</router-link>

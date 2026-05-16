@@ -80,21 +80,16 @@ const subscribe = async () => {
           </div>
           
           <div class="newsletter-form-container">
-            <form @submit.prevent="subscribe" class="newsletter-form-brutalist">
-              <div v-if="subscribeStatus === 'success'" class="success-banner">
-                Você agora receberá nossas atualizações!
-              </div>
-              <input 
-                type="email" 
-                v-model="email"
-                required
-                placeholder="Digite seu email..." 
-                class="nl-input-brutalist"
-              />
-              <button type="submit" class="btn-red-brutalist" :disabled="isSubscribing">
-                {{ isSubscribing ? 'ENVIANDO...' : (config.cardBtn || 'QUERO RECEBER') }} <ArrowRight v-if="!isSubscribing" :size="18" class="ml-2" />
-              </button>
-            </form>
+            <div class="newsletter-form-brutalist" style="padding: 10px; display: flex; justify-content: center; align-items: center; min-height: 320px;">
+              <iframe 
+                src="https://narrativapolitica.substack.com/embed" 
+                width="100%" 
+                height="320" 
+                style="border:none; background:white;" 
+                frameborder="0" 
+                scrolling="no">
+              </iframe>
+            </div>
           </div>
         </div>
       </section>
