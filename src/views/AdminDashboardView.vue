@@ -757,6 +757,18 @@ const approveVaga = async (vaga) => updateVagaStatus(vaga, 'approved')
 const rejectVaga = async (vaga) => updateVagaStatus(vaga, 'rejected')
 const moveVagaToReview = async (vaga) => updateVagaStatus(vaga, 'pending')
 
+const toggleFeatured = async (vaga) => {
+  vaga.featured = !vaga.featured
+  vagas.value = [...siteContent.opportunities]
+  await persistSiteSetting('opportunities', siteContent.opportunities)
+}
+
+const toggleShowOnHome = async (vaga) => {
+  vaga.showOnHome = !vaga.showOnHome
+  vagas.value = [...siteContent.opportunities]
+  await persistSiteSetting('opportunities', siteContent.opportunities)
+}
+
 const deleteVaga = async (vaga) => {
   if (!confirm(`Excluir a oportunidade "${vaga.title}"?`)) return
   isSaving.value = true
@@ -2124,12 +2136,22 @@ onUnmounted(() => {
                     </td>
                     <td><span :class="opportunityStatusClass(vaga)">{{ opportunityStatusLabel(vaga) }}</span></td>
                     <td>
-                       <span v-if="vaga.featured" class="badge-featured">SIM</span>
-                       <span v-else class="badge-normal">NÃO</span>
+                       <div class="flex items-center gap-2">
+                         <span v-if="vaga.featured" class="badge-featured">SIM</span>
+                         <span v-else class="badge-normal">NÃO</span>
+                         <button @click="toggleFeatured(vaga)" class="btn-action-mini" :title="vaga.featured ? 'Remover Destaque' : 'Adicionar Destaque'">
+                           <Star :size="14" :fill="vaga.featured ? 'currentColor' : 'none'" />
+                         </button>
+                       </div>
                     </td>
                     <td>
-                       <span v-if="vaga.showOnHome" class="badge-published">SIM</span>
-                       <span v-else class="badge-normal">NÃO</span>
+                       <div class="flex items-center gap-2">
+                         <span v-if="vaga.showOnHome" class="badge-published">SIM</span>
+                         <span v-else class="badge-normal">NÃO</span>
+                         <button @click="toggleShowOnHome(vaga)" class="btn-action-mini" :title="vaga.showOnHome ? 'Remover da Home' : 'Exibir na Home'">
+                           <Home :size="14" :fill="vaga.showOnHome ? 'currentColor' : 'none'" />
+                         </button>
+                       </div>
                     </td>
                     <td>{{ vaga.category }}</td>
                     <td>{{ vaga.deadline }}</td>
@@ -3250,8 +3272,8 @@ onUnmounted(() => {
 /* CONTEÚDO PRINCIPAL */
 .main-content-area { 
   margin-left: 320px; flex-grow: 1; position: relative; z-index: 10;
-  padding-top: 50px; padding-bottom: 120px; padding-left: 4rem; padding-right: 4rem;
-  max-width: 1400px;
+  padding-top: 40px; padding-bottom: 80px; padding-left: 2.5rem; padding-right: 2.5rem;
+  max-width: 1600px;
 }
 
 /* HEADER DO CONTEÚDO BRUTAL */
