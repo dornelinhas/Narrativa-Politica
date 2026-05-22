@@ -9,7 +9,7 @@
       <!-- MENU DE ABAS -->
       <nav class="nav-desktop">
         <router-link v-if="siteContent.settings?.menuHome !== false" to="/" class="nav-link" :class="{ active: $route.path === '/' }">MOVIMENTO</router-link>
-        <router-link v-if="siteContent.settings?.menuArticles !== false" to="/conteudo" class="nav-link" :class="{ active: $route.path.startsWith('/conteudo') }">ARTIGOS</router-link>
+        <router-link v-if="siteContent.settings?.menuArticles !== false" to="/conteudo" class="nav-link" :class="{ active: $route.path.startsWith('/conteudo') }">ARTIGOS & NOTÍCIAS</router-link>
         
         <div class="nav-dropdown" @mouseenter="isDropdownOpen = true" @mouseleave="isDropdownOpen = false" v-if="siteContent.settings?.menuAtuacao !== false">
           <router-link to="/#atuacao" class="nav-link dropdown-trigger" :class="{ active: isAtuacaoActive }">
@@ -56,6 +56,7 @@
           </transition>
         </div>
 
+        <router-link to="/agenda" class="nav-link" :class="{ active: $route.path === '/agenda' }">AGENDA</router-link>
         <router-link v-if="siteContent.settings?.menuAbout !== false" to="/sobre" class="nav-link" :class="{ active: $route.path === '/sobre' }">SOBRE MIM</router-link>
         
         <!-- CTA -->
@@ -93,12 +94,13 @@
     <transition name="mobile-slide">
       <div v-if="mobileOpen" class="mobile-menu">
         <router-link v-if="siteContent.settings?.menuHome !== false" to="/" class="mobile-link" @click="mobileOpen = false">Início</router-link>
-        <router-link v-if="siteContent.settings?.menuArticles !== false" to="/conteudo" class="mobile-link" @click="mobileOpen = false">Artigos</router-link>
+        <router-link v-if="siteContent.settings?.menuArticles !== false" to="/conteudo" class="mobile-link" @click="mobileOpen = false">Artigos & Notícias</router-link>
         <router-link v-if="siteContent.settings?.menuOpportunities !== false" to="/oportunidades" class="mobile-link" @click="mobileOpen = false">Oportunidades</router-link>
         <router-link v-if="siteContent.settings?.menuPaths !== false" to="/trilhas" class="mobile-link" @click="mobileOpen = false">Trilhas</router-link>
         <router-link v-if="siteContent.settings?.menuServices !== false" to="/servicos" class="mobile-link" @click="mobileOpen = false">Serviços</router-link>
         <router-link v-if="siteContent.settings?.menuProjects !== false" to="/projetos" class="mobile-link" @click="mobileOpen = false">Projetos</router-link>
         <router-link v-if="siteContent.settings?.menuLibrary !== false" to="/biblioteca" class="mobile-link" @click="mobileOpen = false">Biblioteca</router-link>
+        <router-link to="/agenda" class="mobile-link" @click="mobileOpen = false">Agenda</router-link>
         <router-link v-if="siteContent.settings?.menuAbout !== false" to="/sobre" class="mobile-link" @click="mobileOpen = false">Sobre</router-link>
         <router-link to="/contatos" class="mobile-link mobile-cta" @click="mobileOpen = false">Envolva-se</router-link>
         <router-link to="/doacao" class="mobile-link mobile-cta-secondary" @click="mobileOpen = false">Apoie Agora →</router-link>

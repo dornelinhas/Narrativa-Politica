@@ -5,25 +5,7 @@
       <div class="reading-progress-bar" :style="{ width: scrollPercent + '%' }"></div>
     </div>
     
-    <!-- TELA DE CARREGAMENTO GLOBAL -->
-    <transition name="fade-slow">
-      <div v-if="isLoading" class="editorial-loader">
-        <div class="loader-content">
-          <div class="loader-logo">
-            <span>NP</span>
-          </div>
-          <h2 class="loading-text">{{ loadingMessage }}</h2>
-          
-          <div v-if="hasError" class="error-state fade-in">
-            <p class="text-xs font-black text-vermelho mb-6 uppercase tracking-widest">Falha na conexão com o banco de dados</p>
-            <button @click="retryLoading" class="btn-brutal bg-white px-8 py-3 text-xs text-preto">Tentar Novamente</button>
-          </div>
-          <div v-else class="progress-bar">
-            <div class="progress-fill"></div>
-          </div>
-        </div>
-      </div>
-    </transition>
+
 
     <AppHeader v-if="!$route?.path?.startsWith('/admin') && !$route?.meta?.hideHeader" />
     
@@ -44,7 +26,6 @@
 <script setup>
 import { ref, onMounted, watch, computed } from 'vue'
 import { useRoute } from 'vue-router'
-import Lenis from 'lenis'
 import AppHeader from './components/AppHeader.vue'
 import AppFooter from './components/AppFooter.vue'
 import A11yWidget from './components/A11yWidget.vue'
@@ -125,11 +106,6 @@ const initApp = async () => {
 onMounted(() => {
   window.addEventListener('scroll', handleScroll)
   initApp()
-  
-  // Inicialização do Lenis (Smooth Scroll)
-  const lenis = new Lenis({
-    autoRaf: true,
-  });
 })
 
 // Lógica de SEO e Meta Tags Dinâmicas
