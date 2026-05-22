@@ -34,7 +34,7 @@
       <div class="hero-right">
         <!-- Foto Central Paper-Cut -->
         <div class="hero-img-wrap paper-cut paper-shadow">
-          <img :src="siteContent.home?.heroImage || 'https://images.unsplash.com/photo-1573164713988-8665fc963095?auto=format&fit=crop&q=80&w=800'" alt="Hero portrait" class="hero-halftone" @error="(e) => e.target.src = 'https://images.unsplash.com/photo-1573164713988-8665fc963095?w=800'" />
+          <img :src="siteContent.home?.heroImage || 'https://images.unsplash.com/photo-1529107386315-e1a2ed48a620?auto=format&fit=crop&q=80&w=800'" alt="Hero" class="hero-halftone" @error="(e) => e.target.src = 'https://images.unsplash.com/photo-1529107386315-e1a2ed48a620?auto=format&fit=crop&q=80&w=800'" />
         </div>
         <!-- Blobs (Verde) -->
         <div class="blob-verde"></div>
