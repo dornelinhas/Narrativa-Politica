@@ -1,67 +1,110 @@
 <template>
-  <header v-if="!isAdminPage" class="header" :class="{ 'header-scrolled': isScrolled, 'is-light-page': isLightPage, 'is-login-page': isLoginPage }">
+  <header v-if="!isAdminPage" class="header" :class="{ 'header-scrolled': isScrolled }">
     <div class="header-inner">
-      <!-- LOGO NP (PRETO) -->
+      <!-- LOGO NP -->
       <router-link to="/" class="logo-group">
-        <div class="logo-np-brutalist">
-          <div class="shape s1"></div>
-          <div class="shape s2"></div>
-          <div class="shape s3"></div>
-          <div class="shape s4"></div>
-          <div class="shape s5"></div>
-          <span class="logo-text">NP</span>
-        </div>
+        <span class="logo-wordmark">NARRATIVA POLÍTICA</span>
       </router-link>
 
-      <!-- MENU DE ABAS (PRETO) -->
+      <!-- MENU DE ABAS -->
       <nav class="nav-desktop">
-        <router-link v-if="siteContent.settings?.menuHome !== false" to="/" class="nav-tab">MOVIMENTO</router-link>
-        <router-link v-if="siteContent.settings?.menuArticles !== false" to="/conteudo" class="nav-tab">ARTIGOS</router-link>
+        <router-link v-if="siteContent.settings?.menuHome !== false" to="/" class="nav-link" :class="{ active: $route.path === '/' }">MOVIMENTO</router-link>
+        <router-link v-if="siteContent.settings?.menuArticles !== false" to="/conteudo" class="nav-link" :class="{ active: $route.path.startsWith('/conteudo') }">ARTIGOS</router-link>
         
-        <div class="nav-tab-dropdown" @mouseenter="isDropdownOpen = true" @mouseleave="isDropdownOpen = false" v-if="siteContent.settings?.menuAtuacao !== false">
-          <button class="nav-tab dropdown-btn">
+        <div class="nav-dropdown" @mouseenter="isDropdownOpen = true" @mouseleave="isDropdownOpen = false" v-if="siteContent.settings?.menuAtuacao !== false">
+          <router-link to="/#atuacao" class="nav-link dropdown-trigger" :class="{ active: isAtuacaoActive }">
             ATUAÇÃO
-          </button>
-          <div v-show="isDropdownOpen" class="dropdown-menu-brutal">
-            <router-link v-if="siteContent.settings?.menuOpportunities" to="/oportunidades" class="drop-link">Oportunidades</router-link>
-            <router-link v-if="siteContent.settings?.menuPaths" to="/trilhas" class="drop-link">Trilhas</router-link>
-            <router-link v-if="siteContent.settings?.menuServices" to="/servicos" class="drop-link">Serviços</router-link>
-            <router-link v-if="siteContent.settings?.menuProjects" to="/projetos" class="drop-link">Projetos</router-link>
-            <router-link v-if="siteContent.settings?.menuLibrary" to="/biblioteca" class="drop-link">Biblioteca</router-link>
-          </div>
+          </router-link>
+          <transition name="dropdown-fade">
+            <div v-show="isDropdownOpen" class="dropdown-panel paper-shadow">
+              <router-link v-if="siteContent.settings?.menuOpportunities !== false" to="/oportunidades" class="drop-item">
+                <span class="drop-icon drop-icon-vermelho"></span>
+                <div>
+                  <span class="drop-label">Oportunidades</span>
+                  <span class="drop-desc">Vagas e bolsas</span>
+                </div>
+              </router-link>
+              <router-link v-if="siteContent.settings?.menuPaths !== false" to="/trilhas" class="drop-item">
+                <span class="drop-icon drop-icon-lilas"></span>
+                <div>
+                  <span class="drop-label">Trilhas</span>
+                  <span class="drop-desc">Formação política</span>
+                </div>
+              </router-link>
+              <router-link v-if="siteContent.settings?.menuServices !== false" to="/servicos" class="drop-item">
+                <span class="drop-icon drop-icon-amarelo"></span>
+                <div>
+                  <span class="drop-label">Serviços</span>
+                  <span class="drop-desc">Consultoria e apoio</span>
+                </div>
+              </router-link>
+              <router-link v-if="siteContent.settings?.menuProjects !== false" to="/projetos" class="drop-item">
+                <span class="drop-icon drop-icon-verde"></span>
+                <div>
+                  <span class="drop-label">Projetos</span>
+                  <span class="drop-desc">Impacto social</span>
+                </div>
+              </router-link>
+              <router-link v-if="siteContent.settings?.menuLibrary !== false" to="/biblioteca" class="drop-item">
+                <span class="drop-icon drop-icon-azul"></span>
+                <div>
+                  <span class="drop-label">Biblioteca</span>
+                  <span class="drop-desc">Documentos e relatórios</span>
+                </div>
+              </router-link>
+            </div>
+          </transition>
         </div>
 
-        <router-link v-if="siteContent.settings?.menuAbout !== false" to="/sobre" class="nav-tab">SOBRE MIM</router-link>
+        <router-link v-if="siteContent.settings?.menuAbout !== false" to="/sobre" class="nav-link" :class="{ active: $route.path === '/sobre' }">SOBRE MIM</router-link>
         
-        <!-- ENVOLVA-SE VIVO -->
-        <router-link to="/contatos" class="envolva-btn-vibrant">
-          ENVOLVA-SE
-        </router-link>
+        <!-- CTA -->
+        <router-link to="/contatos" class="nav-link" :class="{ active: $route.path === '/contatos' }">ENVOLVA-SE</router-link>
       </nav>
 
       <div class="header-actions">
-        <!-- ÁREA DO USUÁRIO INTEGRADA -->
-        <div v-if="isAuthenticated" class="user-navigation-group">
-           <div class="user-access-row" @click="$router.push(loginRoute)">
-              <span class="user-name-label">{{ user?.nome_completo?.toUpperCase() || 'USUÁRIO' }}</span>
-              <div class="user-status-raio">
-                 <span>⚡</span>
+        <!-- ÁREA DO USUÁRIO -->
+        <div v-if="isAuthenticated" class="user-nav-group">
+           <div class="user-access" @click="$router.push(loginRoute)">
+              <div class="user-avatar">
+                {{ (user?.nome_completo || 'U').charAt(0).toUpperCase() }}
               </div>
+              <span class="user-name">{{ user?.nome_completo || 'Usuário' }}</span>
            </div>
-           <button class="logout-btn-minimal" @click="handleLogout">
-             SAIR
+           <button class="logout-btn" @click="handleLogout">
+             Sair
            </button>
         </div>
-        <button v-else-if="siteContent.settings?.showLogin" class="login-btn-header" @click="$router.push('/login')">
-          LOGIN
+        <button v-else-if="siteContent.settings?.showLogin !== false" class="login-btn" @click="$router.push('/login')">
+          Entrar
         </button>
 
-        <button class="mobile-toggle" @click="toggleMenu">
-          <div class="bar"></div>
-          <div class="bar"></div>
+        <!-- CTA DESKTOP REMOVIDO PARA O FOOTER -->
+
+        <button class="mobile-toggle" @click="toggleMobile" :class="{ 'is-open': mobileOpen }" aria-label="Abrir Menu">
+          <span></span>
+          <span></span>
+          <span></span>
         </button>
       </div>
     </div>
+
+    <!-- MOBILE MENU -->
+    <transition name="mobile-slide">
+      <div v-if="mobileOpen" class="mobile-menu">
+        <router-link v-if="siteContent.settings?.menuHome !== false" to="/" class="mobile-link" @click="mobileOpen = false">Início</router-link>
+        <router-link v-if="siteContent.settings?.menuArticles !== false" to="/conteudo" class="mobile-link" @click="mobileOpen = false">Artigos</router-link>
+        <router-link v-if="siteContent.settings?.menuOpportunities !== false" to="/oportunidades" class="mobile-link" @click="mobileOpen = false">Oportunidades</router-link>
+        <router-link v-if="siteContent.settings?.menuPaths !== false" to="/trilhas" class="mobile-link" @click="mobileOpen = false">Trilhas</router-link>
+        <router-link v-if="siteContent.settings?.menuServices !== false" to="/servicos" class="mobile-link" @click="mobileOpen = false">Serviços</router-link>
+        <router-link v-if="siteContent.settings?.menuProjects !== false" to="/projetos" class="mobile-link" @click="mobileOpen = false">Projetos</router-link>
+        <router-link v-if="siteContent.settings?.menuLibrary !== false" to="/biblioteca" class="mobile-link" @click="mobileOpen = false">Biblioteca</router-link>
+        <router-link v-if="siteContent.settings?.menuAbout !== false" to="/sobre" class="mobile-link" @click="mobileOpen = false">Sobre</router-link>
+        <router-link to="/contatos" class="mobile-link mobile-cta" @click="mobileOpen = false">Envolva-se</router-link>
+        <router-link to="/doacao" class="mobile-link mobile-cta-secondary" @click="mobileOpen = false">Apoie Agora →</router-link>
+        <router-link to="/login" class="mobile-admin-link" @click="mobileOpen = false">Administração</router-link>
+      </div>
+    </transition>
   </header>
 </template>
 
@@ -73,6 +116,7 @@ import { siteContent } from '../store/content'
 
 const isScrolled = ref(false)
 const isDropdownOpen = ref(false)
+const mobileOpen = ref(false)
 const { isAuthenticated, user, logout } = useAuth()
 const route = useRoute()
 const router = useRouter()
@@ -82,15 +126,11 @@ const handleLogout = () => {
   router.push('/login')
 }
 
-const isLightPage = computed(() => {
+const isAtuacaoActive = computed(() => {
   const path = route.path
-  // Páginas que devem ter o menu com texto preto (fundo claro)
-  if (path === '/conteudo' || path === '/arquivo-newsletter') return true
-  const lightPrefixes = ['/oportunidades', '/trilhas', '/servicos', '/sobre', '/login', '/area-do-aluno']
-  return lightPrefixes.some(p => path.startsWith(p))
+  return ['/oportunidades', '/trilhas', '/servicos', '/projetos', '/biblioteca'].some(p => path.startsWith(p))
 })
 
-const isLoginPage = computed(() => route.path === '/login')
 const isAdminPage = computed(() => route.path.startsWith('/admin'))
 
 const loginRoute = computed(() => {
@@ -99,198 +139,404 @@ const loginRoute = computed(() => {
 })
 
 const handleScroll = () => { isScrolled.value = window.scrollY > 50 }
-const toggleMenu = () => { }
+const toggleMobile = () => { mobileOpen.value = !mobileOpen.value }
 
 onMounted(() => { window.addEventListener('scroll', handleScroll) })
 onUnmounted(() => { window.removeEventListener('scroll', handleScroll) })
 </script>
 
 <style scoped>
+/* ── HEADER BASE ────────────────────────────── */
 .header {
-  position: fixed;
+  position: sticky;
   top: 0; left: 0; right: 0;
-  z-index: 9999;
-  height: 90px;
-  display: flex;
-  align-items: center;
-  background: transparent;
-  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: 9990;
+  background: var(--np-creme);
+  border-bottom: var(--border-thick);
+  transition: all 0.3s ease;
 }
 
 .header-scrolled {
-  height: 70px;
-  background: #FFFFFF !important;
-  border-bottom: 3px solid #1C1C1C;
+  background: var(--np-creme); /* Solid bg for scrolled state, no blur to keep it brutal */
 }
-
-.is-login-page { background: #DF2028 !important; border-bottom: 3px solid #1C1C1C; }
 
 .header-inner {
   width: 100%;
-  max-width: 1400px;
+  max-width: 1200px;
   margin: 0 auto;
-  padding: 0 40px;
+  padding: 0 32px;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  height: 80px; /* Thicker header */
 }
 
-.nav-desktop { display: flex; align-items: center; gap: 35px; }
+/* ── LOGO ────────────────────────────────────── */
+.logo-group {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  color: var(--np-black);
+}
 
-/* ESTILO ABAS - PRETO POR PADRÃO NAS PÁGINAS LIGHT */
-.nav-tab {
-  font-family: "Inter", sans-serif;
+.logo-wordmark {
+  font-family: var(--font-display);
   font-weight: 800;
-  font-size: 0.75rem;
-  letter-spacing: 0.1em;
+  font-size: 32px; /* Bigger logo following the reference */
+  line-height: 1;
   text-transform: uppercase;
-  color: #FFFFFF;
-  text-decoration: none;
-  transition: 0.3s;
+  color: var(--np-black);
+  letter-spacing: -1px;
 }
 
-.header-scrolled .nav-tab, .is-light-page .nav-tab { color: #1C1C1C !important; }
-.is-login-page .nav-tab { color: #FFFFFF !important; }
-
-.nav-tab-dropdown { position: relative; padding: 10px 0; }
-.nav-tab-dropdown::after { content: ""; position: absolute; top: 100%; left: 0; width: 100%; height: 20px; background: transparent; }
-.dropdown-btn { background: none; border: none; cursor: pointer; display: flex; align-items: center; gap: 6px; padding: 0; }
-
-.dropdown-menu-brutal {
-  position: absolute; top: 100%; left: 0; margin-top: 15px;
-  background: #FFF; border: 3px solid #1C1C1C;
-  min-width: 220px; box-shadow: 8px 8px 0 #1C1C1C;
-  display: flex; flex-direction: column;
-}
-.drop-link { padding: 12px 20px; font-weight: 800; font-size: 0.7rem; text-transform: uppercase; color: #1C1C1C; text-decoration: none; border-bottom: 1px solid #EEE; }
-.drop-link:hover { background: #FFE65A; }
-
-.envolva-btn-vibrant {
-  background: #DF2028;
-  color: #FFF !important;
-  padding: 10px 25px;
-  border-radius: 9999px;
-  font-weight: 900;
-  font-size: 0.7rem;
-  text-decoration: none;
-  border: 2px solid #1C1C1C;
-  transition: 0.3s;
-}
-.header-scrolled .envolva-btn-vibrant, .is-light-page .envolva-btn-vibrant {
-  background: #1C1C1C;
-  color: #FFE65A !important;
-}
-
-/* ÁREA DO USUÁRIO INTEGRADA NO MENU OFICIAL */
-.user-navigation-group {
+/* ── NAV LINKS ───────────────────────────────── */
+.nav-desktop {
   display: flex;
   align-items: center;
-  gap: 20px;
+  gap: 16px; /* More spacing */
 }
 
-.user-access-row {
-  display: flex;
+.nav-link {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 20px; /* Big brutalist nav */
+  color: var(--text-variant);
+  text-decoration: none;
+  padding: 8px 12px;
+  transition: all 0.2s;
+  position: relative;
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: inline-flex;
   align-items: center;
-  gap: 15px;
+  text-transform: uppercase;
+  letter-spacing: 0;
+}
+
+.nav-link:hover {
+  color: var(--np-black);
+}
+
+.nav-link.active {
+  color: var(--np-black);
+  font-weight: 800;
+}
+
+.nav-link.active::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 12px;
+  right: 12px;
+  height: 4px; /* Thick red border bottom */
+  background: var(--np-vermelho);
+}
+
+/* ── DROPDOWN ────────────────────────────────── */
+.nav-dropdown {
+  position: relative;
+}
+
+.dropdown-trigger {
   cursor: pointer;
 }
 
-.logout-btn-minimal {
+.dropdown-panel {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background: var(--np-white);
+  border: var(--border-thick);
+  min-width: 280px;
+  padding: 0;
+  z-index: 100;
+  margin-top: 8px; /* Added margin instead of top offset */
+}
+/* Bridge pseudo-element to prevent closing when moving from trigger to panel */
+.dropdown-panel::before {
+  content: '';
+  position: absolute;
+  top: -12px;
+  left: 0;
+  right: 0;
+  height: 12px;
   background: transparent;
-  color: #1C1C1C;
-  border: 2px solid #1C1C1C;
-  padding: 6px 15px;
-  border-radius: 9999px;
-  font-weight: 900;
-  font-size: 0.65rem;
-  cursor: pointer;
-  transition: 0.2s;
-  letter-spacing: 1px;
 }
 
-.logout-btn-minimal:hover {
-  background: #DF2028;
-  color: #FFF;
-  border-color: #DF2028;
+.drop-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+  text-decoration: none;
+  color: var(--np-black);
+  transition: all 0.2s;
+  border-bottom: 1px solid var(--np-black);
+}
+.drop-item:last-child {
+  border-bottom: none;
 }
 
-.is-login-page .logout-btn-minimal {
-  color: #FFF;
-  border-color: #FFF;
+.drop-item:hover {
+  background: var(--np-creme);
 }
 
-/* BOTÃO DE LOGIN RECUPERADO */
-.login-btn-header {
-  background: #FFE65A;
-  color: #1C1C1C;
-  border: 2px solid #1C1C1C;
-  padding: 8px 20px;
-  border-radius: 9999px;
-  font-weight: 900;
-  font-size: 0.7rem;
+.drop-icon {
+  width: 14px;
+  height: 14px;
+  display: block;
+  flex-shrink: 0;
+  border: 1px solid var(--np-black);
+  border-radius: 50%;
+}
+
+.drop-icon-vermelho { background: var(--np-vermelho); }
+.drop-icon-lilas { background: var(--np-lilas); }
+.drop-icon-amarelo { background: var(--np-amarelo); }
+.drop-icon-verde { background: var(--np-verde); }
+.drop-icon-azul { background: var(--np-azul); }
+
+.drop-label {
+  display: block;
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--np-black);
   text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.drop-desc {
+  display: block;
+  font-family: var(--font-sans);
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.dropdown-fade-enter-active,
+.dropdown-fade-leave-active {
+  transition: opacity 0.2s, transform 0.2s;
+}
+
+.dropdown-fade-enter-from,
+.dropdown-fade-leave-to {
+  opacity: 0;
+  transform: translateY(10px);
+}
+
+/* ── CTA BUTTON ──────────────────────────────── */
+.nav-cta-btn {
+  display: none;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  background: var(--np-black);
+  color: var(--np-white);
+  text-decoration: none;
+  transition: all 0.25s;
+  border: var(--border-thick);
+}
+
+.nav-cta-btn:hover {
+  background: var(--np-vermelho);
+}
+
+@media (min-width: 1025px) {
+  .nav-cta-btn {
+    display: inline-flex;
+  }
+}
+
+/* ── USER AREA ───────────────────────────────── */
+.user-nav-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.user-access {
+  display: flex;
+  align-items: center;
+  gap: 10px;
   cursor: pointer;
-  transition: 0.3s;
+  padding: 8px;
+  border: var(--border-thick);
+  background: var(--np-white);
+  box-shadow: var(--shadow-paper-sm);
+  transition: transform 0.2s;
+}
+
+.user-access:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: var(--shadow-paper);
+}
+
+.user-avatar {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 14px;
+  color: var(--np-white);
+  background: var(--np-black);
+}
+
+.user-name {
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 12px;
+  text-transform: uppercase;
+  color: var(--np-black);
+}
+
+.login-btn {
+  padding: 12px 24px;
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  background: var(--np-white);
+  color: var(--np-black);
+  border: var(--border-thick);
+  box-shadow: var(--shadow-paper-sm);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.login-btn:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: var(--shadow-paper);
+  background: var(--np-amarelo);
+}
+
+.logout-btn {
+  padding: 8px 12px;
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 10px;
+  text-transform: uppercase;
   letter-spacing: 1px;
-  box-shadow: 2px 2px 0 #1C1C1C;
+  background: var(--np-white);
+  color: var(--np-black);
+  border: var(--border-thick);
+  cursor: pointer;
 }
 
-.login-btn-header:hover {
-  background: #FF6BCA;
-  transform: translateY(-2px);
-  box-shadow: 4px 4px 0 #1C1C1C;
+.logout-btn:hover {
+  background: var(--np-vermelho);
+  color: var(--np-white);
 }
 
-.header-scrolled .login-btn-header, .is-light-page .login-btn-header {
-  background: #FFFFFF;
-  color: #1C1C1C;
+/* ── MOBILE TOGGLE ───────────────────────────── */
+.mobile-toggle {
+  display: none;
+  flex-direction: column;
+  gap: 6px;
+  background: var(--np-white);
+  border: 2px solid var(--np-black);
+  cursor: pointer;
+  padding: 8px;
+  width: 44px;
+  height: 44px;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-paper-sm);
 }
 
-.header-scrolled .login-btn-header:hover, .is-light-page .login-btn-header:hover {
-  background: #1C1C1C;
-  color: #FFE65A;
+.mobile-toggle:hover {
+  background: var(--np-amarelo);
 }
 
-.is-login-page .login-btn-header {
-  background: #1C1C1C;
-  color: #FFFFFF;
-  border-color: #FFFFFF;
+.mobile-toggle span {
+  display: block;
+  width: 24px;
+  height: 3px;
+  background: var(--np-black);
+  transition: all 0.3s;
 }
 
-.user-name-label {
-  font-family: "Archivo Black", sans-serif;
-  font-size: 0.85rem;
-  color: #1C1C1C;
-  letter-spacing: 1px;
+.mobile-toggle.is-open span:nth-child(1) {
+  transform: translateY(9px) rotate(45deg);
 }
-.is-login-page .user-name-label { color: #FFF; }
-
-.user-status-raio {
-  width: 40px; height: 40px; background: #FFE65A;
-  border: 2px solid #1C1C1C; border-radius: 50%;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 1.1rem; transition: 0.3s;
+.mobile-toggle.is-open span:nth-child(2) { opacity: 0; }
+.mobile-toggle.is-open span:nth-child(3) {
+  transform: translateY(-9px) rotate(-45deg);
 }
 
-/* LOGO NP EM PRETO */
-.logo-group { text-decoration: none; color: inherit; }
-.logo-np-brutalist { position: relative; width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; }
-.logo-text { font-family: "Archivo Black", sans-serif; font-weight: 900; font-size: 1.5rem; z-index: 5; color: #FFF; }
-.header-scrolled .logo-text, .is-light-page .logo-text { color: #1C1C1C !important; }
-.is-login-page .logo-text { color: #FFFFFF !important; }
+/* ── MOBILE MENU ─────────────────────────────── */
+.mobile-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: var(--np-white);
+  padding: 0;
+  border-bottom: var(--border-thick);
+  box-shadow: var(--shadow-paper);
+}
 
-.logo-np-brutalist .shape { position: absolute; border: 2px solid #1C1C1C; }
-.s1 { top: -4px; left: -4px; width: 14px; height: 14px; background: #DF2028; border-radius: 50% !important; }
-.s2 { top: 4px; right: -10px; width: 18px; height: 12px; background: #FF6BCA; }
-.s3 { bottom: -4px; right: -6px; width: 12px; height: 12px; background: #A4CD39; }
-.s4 { bottom: -6px; left: 4px; width: 12px; height: 20px; background: #FFE65A; }
-.s5 { top: 8px; right: 0; width: 10px; height: 10px; background: #3D78E0; border-radius: 50% !important; }
+.mobile-link {
+  display: block;
+  padding: 20px 24px;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 24px;
+  color: var(--np-black);
+  text-decoration: none;
+  text-transform: uppercase;
+  border-bottom: 2px solid var(--np-black);
+  transition: background 0.2s;
+}
 
-.mobile-toggle { display: none; background: none; border: none; flex-direction: column; gap: 6px; cursor: pointer; color: currentColor; }
-.header-scrolled .mobile-toggle, .is-light-page .mobile-toggle { color: #1C1C1C; }
+.mobile-link:hover {
+  background: var(--np-creme);
+  color: var(--np-vermelho);
+}
 
-@media (max-width: 1100px) {
+.mobile-cta {
+  background: var(--np-black);
+  color: var(--np-white) !important;
+  text-align: center;
+}
+.mobile-cta:hover { background: var(--np-vermelho); color: var(--np-white) !important; }
+
+.mobile-cta-secondary {
+  background: var(--np-amarelo);
+  color: var(--np-black) !important;
+  text-align: center;
+  border-bottom: none;
+}
+
+.mobile-admin-link {
+  display: block;
+  padding: 12px;
+  text-align: center;
+  font-family: var(--font-sans);
+  font-size: 10px;
+  text-transform: uppercase;
+  color: var(--np-black);
+  opacity: 0.3;
+  text-decoration: none;
+}
+
+.mobile-slide-enter-active, .mobile-slide-leave-active { transition: opacity 0.3s, transform 0.3s; }
+.mobile-slide-enter-from, .mobile-slide-leave-to { opacity: 0; transform: translateY(-12px); }
+
+@media (max-width: 991px) {
   .nav-desktop { display: none; }
+  .nav-cta-btn { display: none; }
   .mobile-toggle { display: flex; }
+  .header-inner { padding: 0 20px; }
 }
 </style>

@@ -3,7 +3,7 @@ import { ref, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuth } from '../store/auth'
 import { supabase } from '../lib/supabase'
-import { Settings, LogOut, CheckCircle, Clock, Trash2, Home, Search, BookOpen, Briefcase, ChevronDown, Package, FileText, User, Mail, Folder, Download, Eye, Heart, Library, Save, Plus, Edit, Trash, Zap, Calendar, X, ExternalLink, ArrowUp, Sparkles } from 'lucide-vue-next'
+import { Settings, LogOut, CheckCircle, Clock, Trash2, Home, Search, BookOpen, Briefcase, ChevronDown, Package, FileText, User, Mail, Folder, Download, Eye, Heart, Library, Save, Plus, Edit, Trash, Zap, Calendar, X, ExternalLink, ArrowUp, Sparkles, Menu, ChevronLeft } from 'lucide-vue-next'
 import BrutalEditor from '../components/BrutalEditor.vue'
 import ImageUploader from '../components/ImageUploader.vue'
 import { sanitizeHtml } from '../utils/sanitizeHtml'
@@ -13,6 +13,7 @@ const router = useRouter()
 const { user, logout } = useAuth()
 const activeTab = ref('home')
 const isSaving = ref(false)
+const isSidebarOpen = ref(true)
 const analytics = ref([])
 
 const defaultArticleForm = () => ({ title: '', subtitle: '', author: '', type: 'Artigo', category: '', featured: false, content: '', image: '', imageDescription: '', imageCaption: '', references: '', highlightQuote: '', status: 'publicado' })
@@ -28,10 +29,10 @@ const defaultCurationForm = () => ({
   requireSourceMatch: true
 })
 const defaultTrackForm = () => ({
-  name: '', description: '', hours: '', status: 'GRATUITO', hasCertificate: true, color: '#FF6BCA',
+  name: '', description: '', hours: '', status: 'GRATUITO', hasCertificate: true, color: '#EFEFEF',
   mod1: '', mod2: '', mod3: ''
 })
-const defaultServiceForm = () => ({ title: '', description: '', icon: 'Zap', bg: '#FF6BCA', textColor: '#FFFFFF' })
+const defaultServiceForm = () => ({ title: '', description: '', icon: 'Zap', bg: '#EFEFEF', textColor: '#FFFFFF' })
 const defaultProjectForm = () => ({ title: '', organization: '', description: '', impact: '', image: '', tags: '', status: 'publicado' })
 const defaultDocForm = () => ({ title: '', description: '', category: 'Relatório', fileUrl: '', externalLink: '', status: 'publicado' })
 
@@ -313,8 +314,8 @@ const saveNewsletter = async () => {
       const emails = inscritos.value.map(s => s.email).filter(e => e)
       if (emails.length > 0) {
         const htmlBody = `
-          <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; border: 10px solid #1C1C1C; padding: 40px;">
-            <h1 style="font-size: 24px; text-transform: uppercase; border-bottom: 5px solid #1C1C1C; padding-bottom: 10px;">${novaNewsletter.value.titulo}</h1>
+          <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #EFEFEF; padding: 40px;">
+            <h1 style="font-size: 24px; text-transform: uppercase; border-bottom: 5px solid #202020; padding-bottom: 10px;">${novaNewsletter.value.titulo}</h1>
             <p style="font-size: 16px; line-height: 1.6; color: #333;">${novaNewsletter.value.descricao}</p>
             <div style="margin: 30px 0;">
               ${novaNewsletter.value.conteudo}
@@ -858,7 +859,7 @@ const editServico = (srv) => {
     title: srv.title || '',
     description: srv.description || '',
     icon: srv.icon || 'Zap',
-    bg: srv.bg || '#FF6BCA',
+    bg: srv.bg || '#EFEFEF',
     textColor: srv.textColor || '#FFFFFF'
   }
   scrollToForm('service-editor-form')
@@ -1386,10 +1387,10 @@ onUnmounted(() => {
     <div class="film-grain-bg"></div>
 
     <!-- SIDEBAR LATERAL FIXA (PRETA) -->
-    <aside class="sidebar-black-fixed">
+    <aside class="sidebar-black-fixed" :class="{ 'collapsed': !isSidebarOpen }">
       <div class="sidebar-header">
-        <div class="logo-brutal-white">
-          <span class="logo-txt">NP</span>
+        <div class="sidebar-logo-block">
+          <h2 class="sidebar-logo-text">NARRATIVA<br/>POLÍTICA</h2>
         </div>
         <span class="badge-admin">SISTEMA ADMIN</span>
       </div>
@@ -1439,27 +1440,36 @@ onUnmounted(() => {
       </nav>
       
       <div class="sidebar-footer mt-auto">
+        <div class="sidebar-user-info">
+          <div class="sidebar-avatar">{{ (user?.nome_completo || 'A').charAt(0) }}</div>
+          <div>
+            <p class="sidebar-user-name">{{ user?.nome_completo || 'Anne Dornelas' }}</p>
+            <p class="sidebar-user-role">Administradora</p>
+          </div>
+        </div>
         <button class="btn-logout-white" @click="handleLogout">
-          <LogOut :size="18" /> SAIR DO PAINEL
+          <LogOut :size="18" /> SAIR
         </button>
       </div>
     </aside>
 
     <!-- CONTEÚDO PRINCIPAL (COM RESPIRO pt-48 E px-12) -->
-    <main class="main-content-area pt-48 pb-32 px-12">
+    <main class="main-content-area" :class="{ 'expanded': !isSidebarOpen }">
       
       <!-- HEADER DO CONTEÚDO -->
       <header class="admin-top-header mb-12">
-        <div class="header-titles">
-           <h1 class="admin-main-title">{{ activeTab.toUpperCase() }}</h1>
-           <p class="admin-subtitle">Gerencie os dados e publicações da plataforma em tempo real.</p>
+        <div class="header-titles flex items-center gap-4">
+           <button class="btn-toggle-sidebar" @click="isSidebarOpen = !isSidebarOpen">
+             <Menu :size="24" v-if="!isSidebarOpen" />
+             <ChevronLeft :size="24" v-else />
+           </button>
+           <div>
+             <h1 class="admin-main-title">VISÃO GERAL</h1>
+             <p class="admin-subtitle">Bem-vinda de volta, {{ user?.nome_completo || 'Anne' }}. Aqui está o impacto da Narrativa Política hoje.</p>
+           </div>
         </div>
         
         <div class="header-actions-row">
-           <div class="user-pill-brutal">
-              <span>{{ user?.nome_completo || 'Administradora' }}</span>
-              <div class="avatar-sm">A</div>
-           </div>
            <button class="btn-preview-solid" @click="router.push('/')">
               <Eye :size="18" /> VOLTAR PARA O SITE
            </button>
@@ -1471,24 +1481,24 @@ onUnmounted(() => {
         
         <!-- ANALYTICS CARDS -->
         <div class="metrics-grid-premium mb-10">
-           <div class="metric-card-glass shadow-solid">
+           <div class="metric-card-glass shadow-md">
               <div class="metric-label">VISITAS TOTAIS</div>
               <div class="metric-value">{{ analytics.reduce((acc, curr) => acc + curr.count, 0) }}</div>
               <div class="metric-trend text-green-500">Visualizações de página</div>
            </div>
-           <div class="metric-card-glass shadow-solid">
+           <div class="metric-card-glass shadow-md">
               <div class="metric-label">PÁGINAS RASTREADAS</div>
               <div class="metric-value">{{ analytics.length }}</div>
               <div class="metric-trend text-blue-500">Rotas distintas</div>
            </div>
-           <div class="metric-card-glass shadow-solid">
+           <div class="metric-card-glass shadow-md">
               <div class="metric-label">LIKES TOTAIS</div>
               <div class="metric-value">{{ siteContent.posts.reduce((acc, curr) => acc + (curr.likes || 0), 0) }}</div>
               <div class="metric-trend text-pink-500">Engajamento editorial</div>
            </div>
         </div>
 
-        <div class="editor-card-brutal shadow-solid mb-10">
+        <div class="editor-card-premium shadow-md mb-10">
           <div class="pane-header mb-4">
             <div>
               <h2 class="card-label-black mb-2">PÁGINAS MAIS VISITADAS</h2>
@@ -1496,13 +1506,13 @@ onUnmounted(() => {
             </div>
           </div>
           <div class="space-y-3">
-             <div v-for="page in analytics.slice(0, 5)" :key="page.path" class="flex items-center justify-between gap-4 border-b border-black/10 pb-3 last:border-b-0 last:pb-0">
+             <div v-for="page in analytics.slice(0, 5)" :key="page.path" class="flex items-center justify-between gap-4 border-b border-[#202020]/10 pb-3 last:border-b-0 last:pb-0">
                 <span class="font-bold text-sm">{{ page.path }}</span>
                 <span class="badge-normal">{{ page.count }} views</span>
              </div>
           </div>
         </div>
-        <div class="editor-card-brutal shadow-solid mb-10">
+        <div class="editor-card-premium shadow-md mb-10">
           <div class="pane-header mb-4">
             <div>
               <h2 class="card-label-black mb-2">ATIVIDADE RECENTE</h2>
@@ -1510,7 +1520,7 @@ onUnmounted(() => {
             </div>
           </div>
           <div v-if="recentActivity.length" class="space-y-3">
-            <div v-for="entry in recentActivity" :key="entry.id" class="flex items-center justify-between gap-4 border-b border-black/10 pb-3 last:border-b-0 last:pb-0">
+            <div v-for="entry in recentActivity" :key="entry.id" class="flex items-center justify-between gap-4 border-b border-[#202020]/10 pb-3 last:border-b-0 last:pb-0">
               <div>
                 <p class="font-bold">{{ entry.title }}</p>
                 <p class="text-xs opacity-60">{{ entry.type }}</p>
@@ -1521,7 +1531,7 @@ onUnmounted(() => {
           <p v-else class="text-sm opacity-70">Nenhuma atividade registrada ainda.</p>
         </div>
 
-        <div class="editor-card-brutal shadow-solid">
+        <div class="editor-card-premium shadow-md">
           <h2 class="card-label-black mb-8">HERO SECTION (TOPO)</h2>
           <div class="form-grid-2">
              <div class="input-group">
@@ -1539,7 +1549,7 @@ onUnmounted(() => {
           </div>
         </div>
 
-        <div class="editor-card-brutal shadow-solid mt-10">
+        <div class="editor-card-premium shadow-md mt-10">
           <h2 class="card-label-black mb-8">RADAR EDITORIAL</h2>
           <div class="form-grid-2">
              <div class="input-group">
@@ -1553,7 +1563,7 @@ onUnmounted(() => {
           </div>
         </div>
 
-        <div class="editor-card-brutal shadow-solid mt-10">
+        <div class="editor-card-premium shadow-md mt-10">
           <h2 class="card-label-black mb-8">NOSSOS EIXOS DE AÇÃO</h2>
           <div class="form-grid-2">
              <div class="input-group">
@@ -1567,7 +1577,7 @@ onUnmounted(() => {
           </div>
         </div>
 
-        <div class="editor-card-brutal shadow-solid mt-10">
+        <div class="editor-card-premium shadow-md mt-10">
           <h2 class="card-label-black mb-8">OPORTUNIDADES</h2>
           <div class="form-grid-2 mb-4">
              <div class="input-group">
@@ -1585,7 +1595,7 @@ onUnmounted(() => {
           </div>
         </div>
 
-        <div class="editor-card-brutal shadow-solid mt-10 mb-10">
+        <div class="editor-card-premium shadow-md mt-10 mb-10">
           <h2 class="card-label-black mb-8">NEWSLETTER</h2>
           <div class="form-grid-2 mb-4">
              <div class="input-group">
@@ -1621,7 +1631,7 @@ onUnmounted(() => {
       <!-- 2. HUB EDITORIAL -->
       <section v-if="activeTab === 'editorial'" class="admin-section fade-in-up">
         
-        <div class="editor-card-brutal shadow-solid mb-10" id="project-editor-form">
+        <div class="editor-card-premium shadow-md mb-10" id="project-editor-form">
           <h2 class="card-label-black mb-8">CONFIGURAÇÕES DA PÁGINA (TEXTOS FIXOS)</h2>
           <div class="form-grid-3 mb-4">
              <div class="input-group">
@@ -1662,7 +1672,7 @@ onUnmounted(() => {
           </button>
         </div>
 
-        <div id="article-editor-form" class="editor-card-brutal shadow-solid mb-10">
+        <div id="article-editor-form" class="editor-card-premium shadow-md mb-10">
           <div class="pane-header mb-8">
             <h2 class="card-label-black mb-0">{{ isEditingArtigo ? 'EDITAR ARTIGO PUBLICADO' : 'PUBLICAR NOVO ARTIGO' }}</h2>
             <button v-if="isEditingArtigo" class="btn-tool-sm" @click="resetArtigoForm">
@@ -1751,11 +1761,11 @@ onUnmounted(() => {
                 </div>
                 
                 <!-- SEO & SOCIAL SIDEBAR -->
-                <aside class="seo-sidebar shadow-solid">
+                <aside class="seo-sidebar shadow-md">
                    <div class="seo-card mb-6">
                       <h4 class="card-label-black text-xs mb-4">SEO SCORECARD</h4>
                       <div class="score-circle-container">
-                         <div class="score-circle" :style="{ borderColor: seoScore > 70 ? '#A4CD39' : '#FFE65A' }">
+                         <div class="score-circle" :style="{ borderColor: seoScore > 70 ? '#DF2028' : '#F5F0E8' }">
                             {{ seoScore }}
                          </div>
                          <span class="score-label">OTIMIZAÇÃO</span>
@@ -1779,7 +1789,7 @@ onUnmounted(() => {
                 </aside>
              </div>
           <div class="flex gap-4">
-            <button class="btn-save-brutal flex-1" style="background: #FFF;" @click="saveArtigo('rascunho')" :disabled="isSaving">
+            <button class="btn-save-brutal btn-white flex-1" @click="saveArtigo('rascunho')" :disabled="isSaving">
                <Clock :size="18" /> SALVAR COMO RASCUNHO
             </button>
             <button class="btn-save-brutal flex-1" @click="saveArtigo('publicado')" :disabled="isSaving">
@@ -1791,7 +1801,7 @@ onUnmounted(() => {
         </div>
 
         <!-- LISTA DE ARTIGOS -->
-        <div class="editor-card-brutal shadow-solid">
+        <div class="editor-card-premium shadow-md">
            <h2 class="card-label-black mb-8">ARTIGOS PUBLICADOS</h2>
            <table class="table-brutal">
               <thead>
@@ -1843,7 +1853,7 @@ onUnmounted(() => {
       <!-- 3. VAGAS E OPORTUNIDADES -->
       <section v-if="activeTab === 'vagas'" class="admin-section fade-in-up">
         
-        <div class="editor-card-brutal shadow-solid mb-10">
+        <div class="editor-card-premium shadow-md mb-10">
           <h2 class="card-label-black mb-8">CONFIGURAÇÕES GERAIS (TEXTOS FIXOS)</h2>
           <div class="form-grid-2 mb-4">
              <div class="input-group">
@@ -1890,7 +1900,7 @@ onUnmounted(() => {
           </button>
         </div>
 
-        <div class="editor-card-brutal shadow-solid mb-10">
+        <div class="editor-card-premium shadow-md mb-10">
           <div class="pane-header mb-4">
             <div>
               <h2 class="card-label-black mb-2">SITES PARA PESQUISAR</h2>
@@ -1920,7 +1930,7 @@ onUnmounted(() => {
           </div>
         </div>
 
-        <div class="editor-card-brutal shadow-solid mb-10">
+        <div class="editor-card-premium shadow-md mb-10">
           <div class="pane-header mb-4">
             <div>
               <h2 class="card-label-black mb-2">{{ siteContent.opportunitiesCurationConfig?.sectionTitle || 'REGRAS DE CURADORIA' }}</h2>
@@ -1981,14 +1991,14 @@ onUnmounted(() => {
           </button>
         </div>
 
-        <div id="opportunity-editor-form" class="editor-card-brutal shadow-solid mb-10">
+        <div id="opportunity-editor-form" class="editor-card-premium shadow-md mb-10">
           <div class="pane-header mb-8 flex justify-between items-center border-b-2 border-dark pb-6">
             <h2 class="card-label-black mb-0">{{ isEditingVaga ? 'EDITAR OPORTUNIDADE' : 'CADASTRAR OPORTUNIDADE' }}</h2>
             <div class="flex gap-3">
               <button v-if="isEditingVaga" class="btn-tool-sm" @click="resetVagaForm">
                 <X :size="14" /> CANCELAR
               </button>
-              <button class="btn-save-brutal" style="background: #A4CD39; padding: 10px 20px; font-size: 13px; min-width: 180px;" @click="saveVaga('approved')" :disabled="isSaving">
+              <button class="btn-save-brutal" style="background: #DF2028; padding: 10px 20px; font-size: 13px; min-width: 180px;" @click="saveVaga('approved')" :disabled="isSaving">
                 <Save v-if="isEditingVaga" :size="16" />
                 <Plus v-else :size="16" />
                 {{ isEditingVaga ? 'SALVAR ALTERAÇÕES' : 'PUBLICAR VAGA' }}
@@ -2079,7 +2089,7 @@ onUnmounted(() => {
         </div>
 
         <!-- ÁREA DE IMPORTAÇÃO INTELIGENTE (BULK PASTE) -->
-        <div class="editor-card-brutal shadow-solid mb-10">
+        <div class="editor-card-premium shadow-md mb-10">
            <div class="pane-header mb-6">
               <div>
                 <h2 class="card-label-black mb-2">IMPORTAÇÃO TURBO (COLE O TEXTO DO SITE)</h2>
@@ -2112,7 +2122,7 @@ onUnmounted(() => {
            </div>
         </div>
 
-        <div class="editor-card-brutal shadow-solid mb-10" v-if="reviewQueue.length">
+        <div class="editor-card-premium shadow-md mb-10" v-if="reviewQueue.length">
            <h2 class="card-label-black mb-4">FILA DE REVISÃO</h2>
            <p class="text-sm opacity-70 mb-6">Itens importados da internet aguardando sua validação antes de aparecerem publicamente.</p>
            <table class="table-brutal">
@@ -2144,7 +2154,7 @@ onUnmounted(() => {
            </table>
         </div>
 
-        <div class="editor-card-brutal shadow-solid">
+        <div class="editor-card-premium shadow-md">
            <h2 class="card-label-black mb-4">OPORTUNIDADES CADASTRADAS</h2>
            <p class="text-sm opacity-70 mb-6">Mostra o conjunto inteiro com o status atual de cada item.</p>
            <table class="table-brutal">
@@ -2200,7 +2210,7 @@ onUnmounted(() => {
 
       <!-- 4. GESTÃO LMS (TRILHAS) -->
       <section v-if="activeTab === 'trilhas'" class="admin-section fade-in-up">
-        <div class="editor-card-brutal shadow-solid mb-10">
+        <div class="editor-card-premium shadow-md mb-10">
           <h2 class="card-label-black mb-8">CRIAR NOVA TRILHA</h2>
           <div class="form-grid-2 mb-6">
              <div class="input-group">
@@ -2210,10 +2220,10 @@ onUnmounted(() => {
              <div class="input-group">
                 <label>COR DO TEMA</label>
                 <select v-model="novaTrilha.color" class="select-brutal">
-                   <option value="#FF6BCA">Magenta (Rosa)</option>
+                   <option value="#EFEFEF">Magenta (Rosa)</option>
                    <option value="#20B2AA">Verde Água</option>
                    <option value="#3D78E0">Azul</option>
-                   <option value="#FFE65A">Amarelo</option>
+                   <option value="#F5F0E8">Amarelo</option>
                 </select>
              </div>
           </div>
@@ -2259,7 +2269,7 @@ onUnmounted(() => {
           <button class="btn-save-brutal" @click="saveTrilha" :disabled="isSaving"><Plus :size="18" /> SALVAR TRILHA</button>
         </div>
 
-        <div class="editor-card-brutal shadow-solid mb-10">
+        <div class="editor-card-premium shadow-md mb-10">
            <h2 class="card-label-black mb-8">TRILHAS CADASTRADAS</h2>
            <table class="table-brutal">
               <thead>
@@ -2290,7 +2300,7 @@ onUnmounted(() => {
            </table>
         </div>
 
-        <div class="editor-card-brutal shadow-solid">
+        <div class="editor-card-premium shadow-md">
            <h2 class="card-label-black mb-6">GERENCIADOR DE MÓDULOS E AULAS</h2>
            <p class="text-sm opacity-70 mb-8">Selecione uma trilha existente para adicionar módulos, links de vídeo (YouTube/Vimeo) e PDFs de apoio.</p>
            <!-- Exemplo visual do gerenciador -->
@@ -2302,7 +2312,7 @@ onUnmounted(() => {
 
       <!-- 5. BIBLIOTECA TÉCNICA -->
       <section v-if="activeTab === 'biblioteca'" class="admin-section fade-in-up">
-        <div class="editor-card-brutal shadow-solid mb-10">
+        <div class="editor-card-premium shadow-md mb-10">
           <h2 class="card-label-black mb-8">CONFIGURAÇÕES GERAIS (PÁGINA DA BIBLIOTECA)</h2>
           <div class="form-grid-2 mb-4">
              <div class="input-group">
@@ -2342,7 +2352,7 @@ onUnmounted(() => {
           <button class="btn-save-brutal" @click="saveLibraryConfig" :disabled="isSaving"><Save :size="18" /> SALVAR CONFIGURAÇÕES DA PÁGINA</button>
         </div>
 
-        <div id="library-editor-form" class="editor-card-brutal shadow-solid mb-10">
+        <div id="library-editor-form" class="editor-card-premium shadow-md mb-10">
           <div class="pane-header mb-8">
             <h2 class="card-label-black mb-0">{{ isEditingDoc ? 'EDITAR DOCUMENTO' : 'ADICIONAR DOCUMENTO' }}</h2>
             <button v-if="isEditingDoc" class="btn-tool-sm" @click="resetDocForm">
@@ -2389,7 +2399,7 @@ onUnmounted(() => {
           </div>
         </div>
 
-        <div class="editor-card-brutal shadow-solid">
+        <div class="editor-card-premium shadow-md">
            <h2 class="card-label-black mb-8">ACERVO CADASTRADO</h2>
            <table class="table-brutal">
               <thead>
@@ -2420,17 +2430,17 @@ onUnmounted(() => {
         
         <!-- HEADER METRICS (PREMIUM GLASS) -->
         <div class="metrics-grid-premium mb-12">
-           <div class="metric-card-glass shadow-solid">
+           <div class="metric-card-glass shadow-md">
               <div class="metric-label">INSCRITOS TOTAIS</div>
               <div class="metric-value">{{ siteContent.subscribers?.length || 0 }}</div>
               <div class="metric-trend text-green-500">+12% esta semana</div>
            </div>
-           <div class="metric-card-glass shadow-solid">
+           <div class="metric-card-glass shadow-md">
               <div class="metric-label">TAXA DE ABERTURA</div>
               <div class="metric-value">68.4%</div>
               <div class="metric-trend text-blue-500">Acima da média</div>
            </div>
-           <div class="metric-card-glass shadow-solid">
+           <div class="metric-card-glass shadow-md">
               <div class="metric-label">EDIÇÕES ENVIADAS</div>
               <div class="metric-value">{{ siteContent.newsletters?.length || 0 }}</div>
               <div class="metric-trend opacity-50">Histórico completo</div>
@@ -2438,7 +2448,7 @@ onUnmounted(() => {
         </div>
 
         <!-- CONFIGURAÇÕES DA PÁGINA DE ACERVO -->
-        <div class="editor-card-brutal shadow-solid mb-12">
+        <div class="editor-card-premium shadow-md mb-12">
           <div class="flex justify-between items-center mb-8">
              <h2 class="card-label-black mb-0">CONFIGURAÇÕES DA PÁGINA (ACERVO)</h2>
           </div>
@@ -2489,7 +2499,7 @@ onUnmounted(() => {
         </div>
 
         <!-- CONFIGURAÇÕES DA PÁGINA DE DOAÇÃO -->
-        <div class="editor-card-brutal shadow-solid mb-12">
+        <div class="editor-card-premium shadow-md mb-12">
           <div class="flex justify-between items-center mb-8">
              <h2 class="card-label-black mb-0">CONFIGURAÇÕES DA PÁGINA (DOAÇÃO)</h2>
           </div>
@@ -2564,7 +2574,7 @@ onUnmounted(() => {
         <div class="creator-workspace">
            
            <!-- ESQUERDA: EDITOR -->
-           <div class="editor-pane shadow-solid">
+           <div class="editor-pane shadow-md">
               <div class="pane-header mb-8">
                  <h2 class="card-label-black mb-0">COMPOSIÇÃO DE ELITE</h2>
                  <div class="flex gap-2">
@@ -2601,7 +2611,7 @@ onUnmounted(() => {
            <!-- DIREITA: LIVE PREVIEW (MOCKUP) -->
            <div class="preview-pane">
               <div class="sticky-preview">
-                 <div class="device-mockup shadow-solid">
+                 <div class="device-mockup shadow-md">
                     <div class="device-screen">
                        <div class="email-preview-content">
                           <div class="email-header-mock">
@@ -2628,7 +2638,7 @@ onUnmounted(() => {
         </div>
 
         <!-- LISTA DE INSCRITOS (ESTILO TABELA DE LUXO) -->
-        <div class="editor-card-brutal shadow-solid mt-12">
+        <div class="editor-card-premium shadow-md mt-12">
              <div class="flex justify-between items-center mb-8">
                 <h2 class="card-label-black mb-0">GESTÃO DA REDE (INSCRITOS)</h2>
                 <button class="btn-preview-solid" @click="exportarInscritos">
@@ -2665,7 +2675,7 @@ onUnmounted(() => {
 
       <!-- 6. SOBRE MIM -->
       <section v-if="activeTab === 'sobre'" class="admin-section fade-in-up">
-        <div class="editor-card-brutal shadow-solid mb-10">
+        <div class="editor-card-premium shadow-md mb-10">
           <h2 class="card-label-black mb-8">HERO (CABEÇALHO)</h2>
           <div class="form-grid-2 mb-4">
              <div class="input-group">
@@ -2683,7 +2693,7 @@ onUnmounted(() => {
           </div>
         </div>
 
-        <div class="editor-card-brutal shadow-solid mb-10">
+        <div class="editor-card-premium shadow-md mb-10">
           <h2 class="card-label-black mb-8">DOSSIÊ DO PERFIL</h2>
           <div class="form-grid-2 mb-6">
              <div class="input-group">
@@ -2710,7 +2720,7 @@ onUnmounted(() => {
           </div>
         </div>
 
-        <div class="editor-card-brutal shadow-solid">
+        <div class="editor-card-premium shadow-md">
           <h2 class="card-label-black mb-8">CTA DE FECHAMENTO (CHAMADA)</h2>
           <div class="form-grid-2 mb-4">
              <div class="input-group">
@@ -2730,18 +2740,18 @@ onUnmounted(() => {
              <div class="input-group">
                 <label>COR DE FUNDO DO HERO</label>
                 <select v-model="sobreData.heroBgColor" class="select-brutal">
-                   <option value="#1C1C1C">Preto (Padrão)</option>
-                   <option value="#FF6BCA">Magenta</option>
-                   <option value="#A4CD39">Verde Lima</option>
+                   <option value="#202020">Preto (Padrão)</option>
+                   <option value="#EFEFEF">Magenta</option>
+                   <option value="#DF2028">Verde Lima</option>
                    <option value="#3D78E0">Azul</option>
                 </select>
              </div>
              <div class="input-group">
                 <label>COR DO BOTÃO CTA</label>
                 <select v-model="sobreData.ctaBtnColor" class="select-brutal">
-                   <option value="#FFE65A">Amarelo (Padrão)</option>
-                   <option value="#FF6BCA">Magenta</option>
-                   <option value="#A4CD39">Verde Lima</option>
+                   <option value="#F5F0E8">Amarelo (Padrão)</option>
+                   <option value="#EFEFEF">Magenta</option>
+                   <option value="#DF2028">Verde Lima</option>
                 </select>
              </div>
           </div>
@@ -2759,7 +2769,7 @@ onUnmounted(() => {
       </section>
       <!-- 6. SERVIÇOS E EIXOS -->
       <section v-if="activeTab === 'servicos'" class="admin-section fade-in-up">
-        <div class="editor-card-brutal shadow-solid mb-10">
+        <div class="editor-card-premium shadow-md mb-10">
           <h2 class="card-label-black mb-8">CONFIGURAÇÕES GERAIS (PÁGINA DE EIXOS)</h2>
           <div class="form-grid-2 mb-4">
              <div class="input-group">
@@ -2816,7 +2826,7 @@ onUnmounted(() => {
           <button class="btn-save-brutal" @click="saveServicesConfig" :disabled="isSaving"><Save :size="18" /> SALVAR CONFIGURAÇÕES DA PÁGINA</button>
         </div>
 
-        <div id="service-editor-form" class="editor-card-brutal shadow-solid mb-10">
+        <div id="service-editor-form" class="editor-card-premium shadow-md mb-10">
           <div class="pane-header mb-8">
             <h2 class="card-label-black mb-0">{{ isEditingServico ? 'EDITAR EIXO DE AÇÃO / SERVIÇO' : 'ADICIONAR EIXO DE AÇÃO / SERVIÇO' }}</h2>
             <button v-if="isEditingServico" class="btn-tool-sm" @click="resetServicoForm">
@@ -2844,11 +2854,11 @@ onUnmounted(() => {
              <div class="input-group">
                 <label>COR DE FUNDO (CARD)</label>
                 <select v-model="novoServico.bg" class="select-brutal">
-                   <option value="#FF6BCA">Magenta (Rosa)</option>
-                   <option value="#A4CD39">Verde Água (Lima)</option>
+                   <option value="#EFEFEF">Magenta (Rosa)</option>
+                   <option value="#DF2028">Verde Água (Lima)</option>
                    <option value="#3D78E0">Azul</option>
-                   <option value="#FFE65A">Amarelo</option>
-                   <option value="#1C1C1C">Preto</option>
+                   <option value="#F5F0E8">Amarelo</option>
+                   <option value="#202020">Preto</option>
                 </select>
              </div>
              <div class="input-group">
@@ -2870,7 +2880,7 @@ onUnmounted(() => {
           </button>
         </div>
 
-        <div class="editor-card-brutal shadow-solid">
+        <div class="editor-card-premium shadow-md">
            <h2 class="card-label-black mb-8">EIXOS DE AÇÃO CADASTRADOS</h2>
            <table class="table-brutal">
               <thead>
@@ -2903,7 +2913,7 @@ onUnmounted(() => {
 
       <!-- 7. PROJETOS -->
       <section v-if="activeTab === 'projetos'" class="admin-section fade-in-up">
-        <div class="editor-card-brutal shadow-solid mb-10">
+        <div class="editor-card-premium shadow-md mb-10">
           <h2 class="card-label-black mb-8">ADICIONAR PROJETO / CASE DE SUCESSO</h2>
           <div class="form-grid-2 mb-6">
              <div class="input-group">
@@ -2971,7 +2981,7 @@ onUnmounted(() => {
             </button>
           </div>
         </div>
-        <div class="editor-card-brutal shadow-solid">
+        <div class="editor-card-premium shadow-md">
            <h2 class="card-label-black mb-8">PROJETOS CADASTRADOS</h2>
            <table class="table-brutal">
               <thead>
@@ -3004,7 +3014,7 @@ onUnmounted(() => {
 
       <!-- 8. CONFIGURAÇÕES GLOBAIS -->
       <section v-if="activeTab === 'configuracoes'" class="admin-section fade-in-up">
-        <div class="editor-card-brutal shadow-solid mb-10">
+        <div class="editor-card-premium shadow-md mb-10">
           <h2 class="card-label-black mb-8">ESTÉTICA DA PLATAFORMA (CORES E LOGO)</h2>
           <div class="mb-6">
              <ImageUploader v-model="siteContent.settings.siteLogo" label="LOGO PRINCIPAL DO SITE (Fundo Escuro)" />
@@ -3012,11 +3022,11 @@ onUnmounted(() => {
           <div class="form-grid-2 mb-6">
              <div class="input-group">
                 <label>COR PRIMÁRIA (AÇÕES PRINCIPAIS)</label>
-                <input type="color" value="#FFE65A" style="height: 50px; padding: 5px; cursor: pointer;" class="select-brutal" />
+                <input type="color" value="#F5F0E8" style="height: 50px; padding: 5px; cursor: pointer;" class="select-brutal" />
              </div>
              <div class="input-group">
                 <label>COR SECUNDÁRIA (DESTAQUES)</label>
-                <input type="color" value="#FF6BCA" style="height: 50px; padding: 5px; cursor: pointer;" class="select-brutal" />
+                <input type="color" value="#EFEFEF" style="height: 50px; padding: 5px; cursor: pointer;" class="select-brutal" />
              </div>
           </div>
           <div class="form-grid-2 mb-6">
@@ -3037,7 +3047,7 @@ onUnmounted(() => {
           </div>
         </div>
 
-        <div class="editor-card-brutal shadow-solid">
+        <div class="editor-card-premium shadow-md">
           <h2 class="card-label-black mb-8">SEO E REDES SOCIAIS</h2>
           <div class="form-grid-2 mb-6">
              <div class="input-group">
@@ -3084,7 +3094,7 @@ onUnmounted(() => {
 
       <!-- TAB DOAÇÕES -->
       <section v-if="activeTab === 'doacao'" class="admin-section fade-in-up">
-        <div class="editor-card-brutal shadow-solid mb-10">
+        <div class="editor-card-premium shadow-md mb-10">
           <h2 class="card-label-black mb-8">HEADLINE DA PÁGINA</h2>
           <div class="form-grid-2 mb-6">
              <div class="input-group">
@@ -3116,7 +3126,7 @@ onUnmounted(() => {
           </div>
         </div>
 
-        <div class="editor-card-brutal shadow-solid mb-10">
+        <div class="editor-card-premium shadow-md mb-10">
           <h2 class="card-label-black mb-8">ESTATÍSTICAS DE IMPACTO</h2>
           <div class="form-grid-3">
              <div class="input-group">
@@ -3141,7 +3151,7 @@ onUnmounted(() => {
 
       <!-- TAB VISIBILIDADE / MÓDULOS -->
       <section v-if="activeTab === 'visibilidade'" class="admin-section fade-in-up">
-        <div class="editor-card-brutal shadow-solid mb-10">
+        <div class="editor-card-premium shadow-md mb-10">
           <h2 class="card-label-black mb-8">VISIBILIDADE DAS PÁGINAS</h2>
           <p class="mb-6 text-sm" style="font-family: 'Inter'; font-weight: 700;">Ative ou desative páginas e botões no menu principal da plataforma.</p>
           
@@ -3189,7 +3199,7 @@ onUnmounted(() => {
           </div>
         </div>
 
-        <div class="editor-card-brutal shadow-solid mt-10 mb-10">
+        <div class="editor-card-premium shadow-md mt-10 mb-10">
           <h2 class="card-label-black mb-8">ÁREA DO USUÁRIO</h2>
           <p class="mb-6 text-sm" style="font-family: 'Inter'; font-weight: 700;">Controle se as pessoas podem acessar a área do aluno ou criar novas contas.</p>
           <div class="form-grid-2">
@@ -3218,7 +3228,7 @@ onUnmounted(() => {
       <button 
         v-if="showScrollTop" 
         @click="scrollToTop" 
-        class="btn-back-to-top shadow-solid"
+        class="btn-back-to-top shadow-md"
         title="Voltar ao topo"
       >
         <ArrowUp :size="24" />
@@ -3228,428 +3238,410 @@ onUnmounted(() => {
       </template>
 
       <style scoped>
-      .admin-dashboard-premium { display: flex; min-height: 100vh; background: #F1F5F9; position: relative; font-family: "Inter", sans-serif; }
+/* ==========================================
+   ADMIN DASHBOARD — EDITORIAL BRUTALIST
+   Paleta: #1C1C1C (preto), #F5F0E8 (creme), #DF2028 (vermelho), #E5C600 (amarelo), #FF3C82 (rosa)
+   ========================================== */
 
-      /* BOTÃO VOLTAR AO TOPO */
-      .btn-back-to-top {
-      position: fixed;
-      bottom: 40px;
-      right: 40px;
-      width: 60px;
-      height: 60px;
-      background: #A4CD39;
-      border: 4px solid #1C1C1C;
-      border-radius: 15px;
-      color: #1C1C1C;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      z-index: 1000;
-      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-      box-shadow: 6px 6px 0px #1C1C1C;
-      }
-      .btn-back-to-top:hover {
-      transform: translateY(-5px) scale(1.1);
-      background: #FFE65A;
-      }
-      .fade-enter-active, .fade-leave-active { transition: opacity 0.3s, transform 0.3s; }
-      .fade-enter-from, .fade-leave-to { opacity: 0; transform: translateY(20px); }
-/* FUNDO TEXTURA */
-.film-grain-bg { position: fixed; inset: 0; z-index: 1; pointer-events: none; background-image: radial-gradient(#1C1C1C 1px, transparent 1px); background-size: 20px 20px; opacity: 0.05; }
+.admin-dashboard-premium {
+  display: flex; min-height: 100vh;
+  background: #F5F0E8;
+  font-family: "DM Sans", "Inter", sans-serif;
+  color: #1C1C1C;
+}
 
-/* SIDEBAR FIXA (ESCURA BRUTAL) */
-.sidebar-black-fixed { 
-  width: 260px; background: #1C1C1C; color: #FFF; 
+/* SIDEBAR */
+.sidebar-black-fixed {
+  width: 260px; background: #1C1C1C; color: #FFF;
   position: fixed; top: 0; left: 0; bottom: 0; z-index: 100;
-  display: flex; flex-direction: column; padding: 25px 20px;
-  border-right: 4px solid #1C1C1C;
+  display: flex; flex-direction: column; padding: 0;
   overflow-y: auto;
+  transition: transform 0.3s ease;
+}
+.sidebar-black-fixed.collapsed {
+  transform: translateX(-100%);
 }
 .sidebar-black-fixed::-webkit-scrollbar { width: 4px; }
-.sidebar-black-fixed::-webkit-scrollbar-track { background: transparent; }
 .sidebar-black-fixed::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 10px; }
 
-.sidebar-header { display: flex; align-items: center; gap: 15px; margin-bottom: 40px; padding-left: 10px; flex-shrink: 0; }
-.logo-brutal-white { width: 50px; height: 50px; border: 3px solid #FFF; display: flex; align-items: center; justify-content: center; border-radius: 12px; background: #FF6BCA; box-shadow: 4px 4px 0px #FFF; }
-.logo-txt { font-family: "Archivo Black", sans-serif; font-size: 1.5rem; color: #1C1C1C; }
-.badge-admin { background: #A4CD39; color: #1C1C1C; padding: 6px 12px; font-weight: 900; font-family: "Archivo Black"; font-size: 10px; border-radius: 6px; letter-spacing: 1px; border: 2px solid #1C1C1C; }
+.sidebar-header {
+  padding: 30px 20px 20px;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+.sidebar-logo-block { margin-bottom: 0; }
+.sidebar-logo-text {
+  font-family: "Archivo Black", "Barlow Condensed", sans-serif;
+  font-size: 1.4rem; font-weight: 900; line-height: 1.1;
+  color: #FFF; text-transform: uppercase; letter-spacing: -0.5px;
+  margin: 0;
+}
+.badge-admin {
+  display: inline-block; margin-top: 10px;
+  background: #DF2028; color: #FFF; padding: 4px 10px;
+  font-weight: 800; font-size: 9px; border-radius: 4px;
+  letter-spacing: 1.5px; text-transform: uppercase;
+}
 
+.sidebar-nav-stack {
+  display: flex; flex-direction: column; padding: 15px 12px; flex: 1;
+}
 .nav-section-label {
-  font-family: "Archivo Black", sans-serif;
-  font-size: 9px;
-  letter-spacing: 2px;
-  color: rgba(255,255,255,0.35);
-  text-transform: uppercase;
-  padding: 20px 20px 8px;
-  display: block;
+  font-family: "DM Sans", sans-serif; font-weight: 700;
+  font-size: 0.65rem; color: rgba(255,255,255,0.35);
+  margin: 20px 0 8px 8px; display: block;
+  letter-spacing: 1.5px; text-transform: uppercase;
 }
-.nav-section-label:first-child { padding-top: 0; }
-
-.sidebar-nav-stack { display: flex; flex-direction: column; gap: 12px; }
-.nav-btn { 
-  background: transparent; color: rgba(255,255,255,0.7); border: 3px solid transparent; 
-  padding: 16px 20px; border-radius: 12px; font-weight: 800; font-size: 0.9rem; font-family: "Archivo Black";
-  display: flex; align-items: center; gap: 15px; cursor: pointer; transition: all 0.2s ease; text-transform: uppercase;
+.nav-btn {
+  background: transparent; color: rgba(255,255,255,0.7);
+  padding: 10px 12px; border-radius: 8px;
+  font-family: "DM Sans", sans-serif; font-weight: 600; font-size: 0.8rem;
+  display: flex; align-items: center; gap: 10px;
+  transition: all 0.15s; cursor: pointer; border: none;
+  text-align: left; width: 100%; margin-bottom: 2px;
 }
-.nav-btn:hover { color: #FFF; border-color: rgba(255,255,255,0.2); }
-.nav-btn.active { background: #FF6BCA; color: #1C1C1C; border-color: #1C1C1C; box-shadow: 6px 6px 0px #A4CD39; transform: translate(-2px, -2px); }
+.nav-btn:hover { background: rgba(255,255,255,0.08); color: #FFF; }
+.nav-btn.active { background: #DF2028; color: #FFF; font-weight: 700; }
 
-.sidebar-footer { padding: 0 10px; }
-.btn-logout-white { background: #FFF; border: 3px solid #1C1C1C; color: #1C1C1C; padding: 16px; border-radius: 12px; font-weight: 900; font-family: "Archivo Black"; font-size: 0.85rem; display: flex; justify-content: center; align-items: center; gap: 10px; cursor: pointer; transition: 0.2s; width: 100%; box-shadow: 4px 4px 0px #FF6BCA; }
-.btn-logout-white:hover { border-color: #DF2028; color: #FFF; background: #DF2028; box-shadow: 6px 6px 0px #1C1C1C; transform: translate(-2px, -2px); }
+/* Sidebar Footer */
+.sidebar-footer {
+  padding: 16px; border-top: 1px solid rgba(255,255,255,0.1);
+}
+.sidebar-user-info {
+  display: flex; align-items: center; gap: 10px; margin-bottom: 12px;
+}
+.sidebar-avatar {
+  width: 36px; height: 36px; border-radius: 50%;
+  background: #DF2028; color: #FFF;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 800; font-size: 0.9rem;
+}
+.sidebar-user-name { font-weight: 700; font-size: 0.85rem; color: #FFF; margin: 0; }
+.sidebar-user-role { font-size: 0.7rem; color: rgba(255,255,255,0.5); margin: 0; }
+.btn-logout-white {
+  background: transparent; color: rgba(255,255,255,0.5);
+  padding: 10px; border-radius: 6px; font-weight: 700; font-size: 0.75rem;
+  display: flex; align-items: center; justify-content: center;
+  gap: 8px; cursor: pointer; transition: 0.2s;
+  width: 100%; border: 1px solid rgba(255,255,255,0.1);
+}
+.btn-logout-white:hover { background: rgba(255,255,255,0.08); color: #FFF; }
 
-.main-content-area { 
-  margin-left: 260px; flex-grow: 1; position: relative; z-index: 10;
-  padding: 60px 40px 100px;
+/* MAIN CONTENT AREA */
+.main-content-area {
+  flex-grow: 1; margin-left: 260px;
+  padding: 40px 80px 80px;
+  overflow-x: hidden;
   max-width: calc(100% - 260px);
+  transition: all 0.3s ease;
 }
-
-/* HEADER DO CONTEÚDO BRUTAL */
-.admin-top-header { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 4px solid #1C1C1C; padding-bottom: 25px; margin-bottom: 35px; }
-.admin-main-title { font-family: "Archivo Black", sans-serif; font-size: 2.8rem; letter-spacing: -0.02em; color: #1C1C1C; text-shadow: 4px 4px 0px #A4CD39; line-height: 1.1; }
-.admin-subtitle { font-weight: 700; font-family: "Inter"; font-size: 1rem; color: #1C1C1C; opacity: 0.7; margin-top: 10px; }
-
-.header-actions-row { display: flex; align-items: center; gap: 20px; }
-.user-pill-brutal { 
-  display: flex; align-items: center; gap: 15px; background: #FFF; border: 3px solid #1C1C1C; 
-  padding: 8px 15px 8px 20px; border-radius: 9999px; font-weight: 900; font-size: 0.8rem; color: #1C1C1C;
-  box-shadow: 4px 4px 0px #1C1C1C; text-transform: uppercase;
+.main-content-area.expanded {
+  margin-left: 0;
+  max-width: 100%;
 }
-.avatar-sm { width: 32px; height: 32px; background: #FF6BCA; border: 2px solid #1C1C1C; border-radius: 50%; color: #1C1C1C; display: flex; align-items: center; justify-content: center; font-weight: 900; }
-
-.btn-preview-solid { 
-  background: #3D78E0; color: #FFF; padding: 14px 28px; border-radius: 9999px; border: 3px solid #1C1C1C; 
-  font-weight: 900; font-family: "Archivo Black"; font-size: 0.8rem; display: flex; align-items: center; gap: 10px; cursor: pointer; 
-  transition: all 0.2s; box-shadow: 4px 4px 0px #1C1C1C; 
+.btn-toggle-sidebar {
+  background: transparent; border: none; color: #1C1C1C;
+  cursor: pointer; padding: 8px; border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  transition: 0.2s;
 }
-.btn-preview-solid:hover { background: #FFE65A; color: #1C1C1C; transform: translate(-2px, -2px); box-shadow: 6px 6px 0px #1C1C1C; }
+.btn-toggle-sidebar:hover { background: rgba(0,0,0,0.05); }
+.film-grain-bg { display: none; }
 
-/* SEÇÕES E CARDS DE EDIÇÃO BRUTALISTAS */
-.editor-card-brutal { background: #FFFFFF; border: 4px solid #1C1C1C; border-radius: 20px; padding: 30px; box-shadow: 12px 12px 0px #1C1C1C; transition: all 0.3s ease; }
-.editor-card-brutal:hover { box-shadow: 16px 16px 0px #FF6BCA; transform: translate(-2px, -2px); }
-
-.card-label-black { 
-  font-family: "Archivo Black", sans-serif; font-size: 1.1rem; color: #1C1C1C; 
-  letter-spacing: 1px; border-left: 8px solid #FFE65A; padding-left: 15px; text-transform: uppercase; margin-bottom: 25px; 
+/* HEADER */
+.admin-top-header {
+  display: flex; justify-content: space-between; align-items: flex-start;
+  margin-bottom: 40px; padding-bottom: 0;
 }
-
-/* REDUZIR ZOOM NAS TABELAS E INPUTS */
-.table-brutal th, .table-brutal td { padding: 12px 15px; font-size: 13px; }
-.input-group label { font-size: 11px; margin-bottom: 6px; }
-.input-group input, .input-group textarea, .select-brutal { padding: 10px 15px; font-size: 14px; }
-.btn-save-brutal { padding: 12px 24px; font-size: 14px; }
-
-.form-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
-.form-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 30px; }
-
-.input-group { display: flex; flex-direction: column; gap: 10px; }
-.input-group label { font-family: "Archivo Black"; font-size: 12px; color: #1C1C1C; letter-spacing: 1px; text-transform: uppercase; }
-.input-group input, .input-group textarea, .select-brutal { 
-  width: 100%; padding: 18px 20px; border: 3px solid #1C1C1C; border-radius: 12px; 
-  font-family: "Inter", sans-serif; font-weight: 700; font-size: 1rem; color: #1C1C1C; outline: none; transition: all 0.2s; background: #FFF; box-shadow: 4px 4px 0px rgba(0,0,0,0.05);
+.admin-main-title {
+  font-family: "Archivo Black", "Barlow Condensed", sans-serif;
+  font-weight: 900; font-size: 2.5rem; color: #1C1C1C;
+  margin: 0 0 6px; letter-spacing: -1px; text-transform: uppercase;
 }
-.input-group input:focus, .input-group textarea:focus, .select-brutal:focus { 
-  border-color: #3D78E0; box-shadow: 6px 6px 0px #1C1C1C; transform: translate(-2px, -2px);
+.admin-subtitle {
+  font-size: 0.95rem; color: rgba(28,28,28,0.6); font-weight: 500; margin: 0;
 }
-.input-group input::placeholder, .input-group textarea::placeholder { color: #1C1C1C; opacity: 0.4; font-weight: 500; }
-
-/* PILLS PARA CATEGORIA BRUTAL */
-.category-pill-group { display: flex; flex-wrap: wrap; gap: 10px; }
-.cat-pill { 
-  background: #FFF; border: 3px solid #1C1C1C; color: #1C1C1C; 
-  padding: 12px 20px; border-radius: 12px; font-weight: 800; font-size: 0.85rem; 
-  cursor: pointer; transition: all 0.2s; white-space: nowrap; font-family: "Archivo Black", sans-serif; box-shadow: 4px 4px 0px rgba(0,0,0,0.1); text-transform: uppercase;
-}
-.cat-pill:hover { transform: translate(-2px, -2px); box-shadow: 6px 6px 0px #1C1C1C; background: #F1F5F9; }
-.cat-pill.active { background: #A4CD39; color: #1C1C1C; border-color: #1C1C1C; box-shadow: 6px 6px 0px #1C1C1C; transform: translate(-2px, -2px); }
-
-/* CHECKBOX CUSTOM */
-.checkbox-container { display: flex; align-items: center; gap: 12px; cursor: pointer; position: relative; margin-top: 5px; }
-.checkbox-container input { position: absolute; opacity: 0; width: 0; }
-.checkmark { height: 26px; width: 26px; background-color: #FFF; border: 3px solid #1C1C1C; border-radius: 8px; position: relative; transition: 0.2s; box-shadow: 2px 2px 0px #1C1C1C; }
-.checkbox-container input:checked ~ .checkmark { background-color: #FF6BCA; }
-.checkmark:after { content: ""; position: absolute; display: none; left: 8px; top: 3px; width: 6px; height: 12px; border: solid #1C1C1C; border-width: 0 3px 3px 0; transform: rotate(45deg); }
-.checkbox-container input:checked ~ .checkmark:after { display: block; }
-.check-label { font-weight: 900; font-size: 13px; color: #1C1C1C; font-family: "Inter"; text-transform: uppercase; }
-
-/* TOGGLE BRUTAL (ON/OFF) */
-.toggle-brutal-container { display: flex; align-items: center; gap: 15px; cursor: pointer; background: #F1F5F9; padding: 15px 20px; border-radius: 12px; border: 3px solid #1C1C1C; box-shadow: 4px 4px 0px rgba(0,0,0,0.05); transition: all 0.2s; margin-bottom: 5px; }
-.toggle-brutal-container:hover { box-shadow: 6px 6px 0px #1C1C1C; transform: translate(-2px, -2px); }
-.toggle-brutal-container input { position: absolute; opacity: 0; width: 0; }
-.toggle-slider { width: 54px; height: 30px; background-color: #FFF; border: 3px solid #1C1C1C; border-radius: 30px; position: relative; transition: 0.3s; flex-shrink: 0; }
-.toggle-slider::before { content: ""; position: absolute; height: 18px; width: 18px; left: 4px; bottom: 3px; background-color: #1C1C1C; border-radius: 50%; transition: 0.3s; }
-.toggle-brutal-container input:checked + .toggle-slider { background-color: #A4CD39; border-color: #1C1C1C; }
-.toggle-brutal-container input:checked + .toggle-slider::before { transform: translateX(24px); }
-.toggle-label { font-weight: 900; font-family: "Inter", sans-serif; font-size: 0.95rem; color: #1C1C1C; }
-
-/* BOTÕES DE AÇÃO BRUTALISTAS */
-.btn-save-brutal { 
-  background: #FFE65A; color: #1C1C1C; padding: 22px 45px; 
-  border-radius: 16px; border: 4px solid #1C1C1C; font-family: "Archivo Black"; font-size: 1rem; text-transform: uppercase; 
-  cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 12px; 
-  box-shadow: 8px 8px 0px #1C1C1C; transition: all 0.2s ease;
-}
-.btn-save-brutal:hover:not(:disabled) { background: #A4CD39; transform: translate(-4px, -4px); box-shadow: 12px 12px 0px #1C1C1C; }
-.btn-save-brutal:disabled { opacity: 0.6; cursor: not-allowed; background: #CBD5E1; }
-.tag-editor-preview { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
-.tag-chip, .tag-suggestion {
-  border: 2px solid #1C1C1C;
-  background: #FFE65A;
-  color: #1C1C1C;
-  font-family: "Archivo Black", sans-serif;
-  font-size: 11px;
-  text-transform: uppercase;
-  padding: 8px 12px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-.tag-chip { display: inline-flex; align-items: center; gap: 6px; }
-.tag-chip:hover, .tag-suggestion:hover { background: #FF6BCA; color: #fff; transform: translate(-2px, -2px); box-shadow: 4px 4px 0 #1C1C1C; }
-.tag-chip-empty { background: #F1F5F9; color: #64748B; cursor: default; }
-.tag-chip-empty:hover { transform: none; box-shadow: none; }
-.tag-suggestions { display: flex; flex-wrap: wrap; gap: 8px; }
-.import-bar { display: flex; gap: 16px; align-items: end; flex-wrap: wrap; }
-.import-btn { white-space: nowrap; }
-
-/* TABELA DE REGISTROS BRUTAL */
-.table-brutal { width: 100%; border-collapse: separate; border-spacing: 0; border: 4px solid #1C1C1C; border-radius: 16px; overflow: hidden; background: #FFF; box-shadow: 8px 8px 0px #1C1C1C; }
-.table-brutal th { background: #1C1C1C; color: #FFF; font-family: "Archivo Black"; font-size: 11px; padding: 20px 24px; text-align: left; letter-spacing: 1px; border-bottom: 4px solid #1C1C1C; text-transform: uppercase; }
-.table-brutal td { padding: 20px 24px; border-bottom: 3px solid #F1F5F9; font-size: 1rem; font-weight: 700; color: #1C1C1C; vertical-align: middle; font-family: "Inter"; }
-.table-brutal tr:last-child td { border-bottom: none; }
-
-.badge-draft { background: #E2E8F0; color: #64748B; padding: 6px 12px; border-radius: 8px; font-weight: 900; font-family: "Archivo Black"; font-size: 10px; border: 2px solid #1C1C1C; }
-.badge-published { background: #A4CD39; color: #1C1C1C; padding: 6px 12px; border-radius: 8px; font-weight: 900; font-family: "Archivo Black"; font-size: 10px; border: 2px solid #1C1C1C; }
-.badge-featured { background: #FF6BCA; color: #1C1C1C; padding: 6px 12px; border-radius: 8px; font-weight: 900; font-family: "Archivo Black"; font-size: 10px; border: 2px solid #1C1C1C; }
-.badge-normal { background: #FFF; color: #1C1C1C; padding: 6px 12px; border-radius: 8px; font-weight: 900; font-family: "Archivo Black"; font-size: 10px; border: 2px solid #1C1C1C; }
-.badge-danger { background: #DF2028; color: #FFF; padding: 6px 12px; border-radius: 8px; font-weight: 900; font-family: "Archivo Black"; font-size: 10px; border: 2px solid #1C1C1C; }
-.badge-pill { padding: 8px 16px; border-radius: 12px; font-weight: 900; font-family: "Archivo Black"; font-size: 11px; display: inline-block; border: 2px solid #1C1C1C; }
-
-.sites-grid-square {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: 16px;
-}
-
-.site-research-card {
-  background: #fff;
-  border: 3px solid #1C1C1C;
-  border-radius: 18px;
-  padding: 20px;
-  box-shadow: 8px 8px 0 rgba(0,0,0,0.08);
-  min-height: 180px;
-}
-
-.source-pill {
-  display: inline-flex;
-  padding: 6px 12px;
-  background: #A4CD39;
-  color: #1C1C1C;
-  border: 2px solid #1C1C1C;
-  border-radius: 9999px;
-  font-size: 10px;
-  font-weight: 900;
-  text-transform: uppercase;
-  margin-bottom: 12px;
-}
-
-.source-url {
-  font-size: 12px;
-  line-height: 1.6;
-  color: #1C1C1C;
-  word-break: break-word;
-  opacity: 0.78;
-}
-
-.site-research-note {
-  margin: 0 0 8px;
-  font-size: 12px;
-  font-weight: 800;
-  color: #DF2028;
-  text-transform: uppercase;
+.header-actions-row { display: flex; align-items: center; gap: 12px; }
+.btn-preview-solid {
+  background: #1C1C1C; color: #FFF; padding: 12px 24px;
+  border: 3px solid #1C1C1C; font-weight: 800; font-size: 0.8rem;
+  display: flex; align-items: center; gap: 8px;
+  cursor: pointer; transition: 0.2s; text-transform: uppercase;
   letter-spacing: 0.5px;
 }
+.btn-preview-solid:hover { background: #FFF; color: #1C1C1C; }
 
-.metrics-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
+/* METRIC CARDS */
+.metrics-grid-premium {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;
+}
+.metric-card-glass {
+  background: #FFF; border: 3px solid #1C1C1C; padding: 28px;
+  box-shadow: 6px 6px 0px #1C1C1C;
+  position: relative;
+}
+.metric-label {
+  font-size: 0.7rem; font-weight: 800; color: rgba(28,28,28,0.5);
+  text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 8px;
+}
+.metric-value {
+  font-family: "Archivo Black", "Barlow Condensed", sans-serif;
+  font-size: 3rem; font-weight: 900; color: #1C1C1C;
+  line-height: 1; margin-bottom: 6px;
+}
+.metric-trend { font-size: 0.75rem; font-weight: 700; }
+
+/* EDITOR CARDS */
+.editor-card-premium {
+  background: #FFF; border: 3px solid #1C1C1C; padding: 35px;
+  box-shadow: 6px 6px 0px #1C1C1C; margin-bottom: 30px;
+}
+.editor-card-brutal {
+  background: #FFF; border: 3px solid #1C1C1C; padding: 35px;
+  box-shadow: 6px 6px 0px #1C1C1C; margin-bottom: 30px;
+}
+.card-label-black {
+  font-family: "Archivo Black", "Barlow Condensed", sans-serif;
+  font-weight: 900; font-size: 1.1rem; color: #1C1C1C;
+  text-transform: uppercase; letter-spacing: -0.3px;
+  border-bottom: 3px solid #1C1C1C; padding-bottom: 8px;
+  display: inline-block;
+}
+.pane-header { display: flex; justify-content: space-between; align-items: flex-start; }
+
+/* FORMS */
+.form-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+.form-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 24px; }
+.input-group { display: flex; flex-direction: column; margin-bottom: 16px; }
+.input-group label {
+  display: block; font-weight: 800; font-size: 0.7rem;
+  color: rgba(28,28,28,0.5); margin-bottom: 8px;
+  text-transform: uppercase; letter-spacing: 1px;
+}
+.input-group input, .input-group textarea, .input-group select {
+  width: 100%; background: #FFF;
+  border: 3px solid #1C1C1C; padding: 14px 16px;
+  font-family: "DM Sans", sans-serif; font-weight: 600;
+  color: #1C1C1C; font-size: 0.95rem; transition: 0.2s;
+}
+.input-group input:focus, .input-group textarea:focus, .input-group select:focus {
+  outline: none; box-shadow: 4px 4px 0px #1C1C1C;
+  transform: translate(-2px, -2px);
 }
 
-.metric-chip {
-  padding: 8px 12px;
-  border-radius: 9999px;
-  background: #F7F7F5;
-  border: 2px solid #1C1C1C;
-  font-size: 11px;
-  font-weight: 900;
+/* BUTTONS */
+.btn-save-brutal {
+  display: inline-flex; align-items: center; gap: 10px;
+  background: #1C1C1C; color: #FFF; padding: 16px 32px;
+  border: 3px solid #1C1C1C;
+  font-family: "DM Sans", sans-serif; font-size: 14px; font-weight: 800;
+  text-transform: uppercase; letter-spacing: 0.5px;
+  cursor: pointer; transition: all 0.2s;
+  box-shadow: 6px 6px 0px #DF2028;
+}
+.btn-save-brutal:hover {
+  background: #FFF; color: #1C1C1C;
+  transform: translate(-2px, -2px); box-shadow: 8px 8px 0px #DF2028;
+}
+.btn-save-brutal:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.btn-save-fixed {
+  position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
+  background: #DF2028; color: #FFF; padding: 16px 40px;
+  border: 3px solid #1C1C1C; font-weight: 800; font-size: 1rem;
+  display: flex; align-items: center; gap: 12px;
+  box-shadow: 6px 6px 0px #1C1C1C;
+  cursor: pointer; transition: 0.2s; z-index: 1000;
   text-transform: uppercase;
 }
+.btn-save-fixed:hover { transform: translateX(-50%) translateY(-3px); box-shadow: 8px 8px 0px #1C1C1C; }
 
+.btn-black-pill {
+  background: #1C1C1C; color: #FFF; padding: 10px 20px;
+  border: 2px solid #1C1C1C; font-weight: 800; font-size: 0.8rem;
+  cursor: pointer; transition: 0.2s; text-transform: uppercase;
+}
+.btn-black-pill:hover { background: #FFF; color: #1C1C1C; }
+.btn-red-pill {
+  background: #DF2028; color: #FFF; padding: 10px 20px;
+  border: 2px solid #1C1C1C; font-weight: 800; font-size: 0.8rem;
+  cursor: pointer; transition: 0.2s; text-transform: uppercase;
+}
+.btn-red-pill:hover { background: #FFF; color: #DF2028; }
+.btn-outline-pill {
+  background: #FFF; color: #1C1C1C; padding: 10px 20px;
+  border: 2px solid #1C1C1C; font-weight: 800; font-size: 0.8rem;
+  cursor: pointer; transition: 0.2s; text-transform: uppercase;
+}
+.btn-outline-pill:hover { background: #1C1C1C; color: #FFF; }
+
+/* TABLES */
+.table-brutal {
+  width: 100%; border-collapse: collapse; background: #FFF;
+  border: 3px solid #1C1C1C;
+}
+.table-brutal th {
+  background: #F5F0E8; padding: 14px 16px; text-align: left;
+  font-weight: 800; font-size: 0.7rem; color: rgba(28,28,28,0.5);
+  text-transform: uppercase; letter-spacing: 1px;
+  border-bottom: 3px solid #1C1C1C;
+}
+.table-brutal td {
+  padding: 14px 16px; border-bottom: 1px solid rgba(28,28,28,0.1);
+  font-weight: 600; font-size: 0.9rem; color: #1C1C1C;
+}
 .table-title-btn {
-  appearance: none;
-  background: transparent;
-  border: 0;
-  padding: 0;
-  font: inherit;
-  font-weight: 900;
-  color: #1C1C1C;
-  text-align: left;
-  cursor: pointer;
+  background: none; border: none; color: #1C1C1C; font-weight: 700;
+  font-size: 0.9rem; cursor: pointer; text-align: left; padding: 0;
 }
-.table-title-btn:hover { color: #3D78E0; text-decoration: underline; text-underline-offset: 4px; }
+.table-title-btn:hover { color: #DF2028; }
 
-.actions-td { display: flex; gap: 15px; }
-.icon-action { background: #FFF; border: 3px solid #1C1C1C; width: 40px; height: 40px; border-radius: 12px; cursor: pointer; color: #1C1C1C; display: flex; align-items: center; justify-content: center; transition: all 0.2s; box-shadow: 4px 4px 0px rgba(0,0,0,0.1); }
-.icon-action:hover { background: #FFE65A; transform: translate(-2px, -2px); box-shadow: 6px 6px 0px #1C1C1C; }
-.icon-action.text-red-500:hover { color: #FFF; background: #DF2028; }
-
-.btn-action-mini {
-  background: #FFF;
-  border: 2px solid #1C1C1C;
-  width: 32px;
-  height: 32px;
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all 0.2s;
-  color: #1C1C1C;
+/* BADGES */
+.badge-featured {
+  background: #FF3C82; color: #FFF; padding: 4px 10px;
+  border: 2px solid #1C1C1C; font-size: 10px; font-weight: 800;
+  text-transform: uppercase; display: inline-block;
 }
-.btn-action-mini:hover {
-  background: #FFE65A;
-  transform: scale(1.1);
+.badge-normal {
+  background: #FFF; color: #1C1C1C; padding: 4px 10px;
+  border: 2px solid #1C1C1C; font-size: 10px; font-weight: 800;
+  text-transform: uppercase; display: inline-block;
   box-shadow: 2px 2px 0px #1C1C1C;
 }
-.btn-action-mini .lucide-star[fill="currentColor"] { color: #FFE65A; stroke: #1C1C1C; }
-.btn-action-mini .lucide-home[fill="currentColor"] { color: #A4CD39; stroke: #1C1C1C; }
-
-.mock-manager-box { width: 100%; height: 200px; background: #F8FAFC; border: 4px dashed #1C1C1C; border-radius: 20px; display: flex; align-items: center; justify-content: center; color: #1C1C1C; font-weight: 900; font-family: "Archivo Black"; font-size: 1.2rem; }
-
-/* ANIMAÇÃO */
-.fade-in-up { opacity: 0; transform: translateY(20px); animation: fadeInUp 0.5s forwards; }
-@keyframes fadeInUp { to { opacity: 1; transform: translateY(0); } }
-
-@media (max-width: 1100px) {
-  .sidebar-black-fixed { width: 90px; padding: 30px 15px; }
-  .logo-txt { display: none; }
-  .badge-admin, .sidebar-nav-stack span, .sidebar-footer span { display: none; }
-  .nav-btn { padding: 15px; justify-content: center; }
-  .main-content-area { margin-left: 90px; padding: 100px 20px 80px; }
-  .admin-main-title { font-size: 2.5rem; }
-  .form-grid-2, .form-grid-3 { grid-template-columns: 1fr; }
-  .header-actions-row .btn-preview-solid span { display: none; }
+.badge-danger {
+  background: #DF2028; color: #FFF; padding: 4px 10px;
+  border: 2px solid #1C1C1C; font-size: 10px; font-weight: 800;
+  text-transform: uppercase; display: inline-block;
 }
 
-/* --- NEWSLETTER CREATOR SUITE (PREMIUM) --- */
-.metrics-grid-premium { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; }
-.metric-card-glass { 
-  background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(10px); 
-  border: 3px solid #1C1C1C; padding: 30px; border-radius: 24px; 
+/* TOGGLES */
+.toggle-brutal-container {
+  display: flex; align-items: center; cursor: pointer; padding: 12px 0;
 }
-.metric-label { font-family: "Archivo Black"; font-size: 11px; opacity: 0.6; letter-spacing: 1px; margin-bottom: 10px; }
-.metric-value { font-family: "Archivo Black"; font-size: 3rem; color: #1C1C1C; line-height: 1; margin-bottom: 5px; }
-.metric-trend { font-size: 12px; font-weight: 800; }
-
-.creator-workspace { display: grid; grid-template-columns: 1.4fr 0.6fr; gap: 40px; align-items: start; }
-
-.editor-pane { background: #FFF; border: 4px solid #1C1C1C; border-radius: 30px; padding: 50px; }
-.input-premium { 
-  background: #F8FAFC; border: 3px solid #1C1C1C !important; border-radius: 16px !important; 
-  font-size: 1.1rem !important; padding: 20px !important; 
+.toggle-brutal-container input { display: none; }
+.toggle-slider {
+  position: relative; width: 50px; height: 28px;
+  background: #FFF; border: 3px solid #1C1C1C;
+  transition: 0.3s; margin-right: 12px; flex-shrink: 0;
 }
-
-.btn-tool-sm { background: #F1F5F9; border: 2px solid #1C1C1C; padding: 8px 15px; border-radius: 8px; font-weight: 800; font-size: 10px; cursor: pointer; display: flex; align-items: center; gap: 6px; }
-.btn-tool-sm:hover { background: #FFE65A; }
-
-.btn-launch-premium { 
-  background: #FF6BCA; color: #1C1C1C; padding: 22px 40px; border-radius: 16px; border: 4px solid #1C1C1C;
-  font-family: "Archivo Black"; font-size: 1.1rem; cursor: pointer; display: flex; align-items: center; gap: 15px;
-  box-shadow: 8px 8px 0px #1C1C1C; flex-grow: 1; justify-content: center;
+.toggle-slider::before {
+  content: ""; position: absolute; top: 3px; left: 3px;
+  width: 16px; height: 16px; background: #1C1C1C; transition: 0.3s;
 }
-.btn-launch-premium:hover { transform: translate(-4px, -4px); box-shadow: 12px 12px 0px #3D78E0; background: #FFE65A; }
-
-.btn-schedule-premium { 
-  background: #FFF; color: #1C1C1C; padding: 22px 30px; border-radius: 16px; border: 4px solid #1C1C1C;
-  font-family: "Archivo Black"; cursor: pointer; box-shadow: 8px 8px 0px #1C1C1C;
+.toggle-brutal-container input:checked + .toggle-slider { background: #DF2028; }
+.toggle-brutal-container input:checked + .toggle-slider::before { transform: translateX(22px); background: #FFF; }
+.toggle-label {
+  font-weight: 700; font-size: 0.85rem; color: #1C1C1C;
 }
 
-/* MOCKUP DE DISPOSITIVO */
-.device-mockup { 
-  width: 100%; max-width: 320px; height: 640px; background: #1C1C1C; border: 12px solid #1C1C1C; 
-  border-radius: 50px; position: relative; overflow: hidden; margin: 0 auto;
-}
-.device-screen { width: 100%; height: 100%; background: #FFF; overflow-y: auto; padding: 20px; }
-.device-screen::-webkit-scrollbar { width: 0px; }
-.device-home-bar { position: absolute; bottom: 8px; left: 50%; transform: translateX(-50%); width: 100px; height: 4px; background: #000; border-radius: 10px; opacity: 0.2; }
-
-.email-header-mock { display: flex; items-center: center; gap: 10px; padding-bottom: 20px; border-bottom: 1px solid #EEE; margin-bottom: 20px; }
-.logo-circle { width: 30px; height: 30px; background: #FF6BCA; color: #1C1C1C; font-weight: 900; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; border: 1.5px solid #1C1C1C; }
-.email-header-mock span { font-weight: 900; font-size: 12px; }
-
-.preview-img-mock { width: 100%; border-radius: 12px; margin-bottom: 20px; border: 2px solid #1C1C1C; }
-.preview-title-mock { font-family: "Archivo Black"; font-size: 1.4rem; line-height: 1.2; margin-bottom: 15px; }
-.preview-text-mock { font-size: 0.9rem; line-height: 1.5; color: #444; }
-.preview-footer-mock { margin-top: 30px; padding-top: 20px; border-top: 1px solid #EEE; font-size: 10px; opacity: 0.5; text-align: center; }
-
-/* TABELA PREMIUM */
-.table-premium { width: 100%; border-collapse: separate; border-spacing: 0 10px; }
-.table-premium th { font-family: "Archivo Black"; font-size: 11px; opacity: 0.5; text-align: left; padding: 0 20px; }
-.table-premium td { background: #FFF; padding: 20px; border-top: 2px solid #1C1C1C; border-bottom: 2px solid #1C1C1C; font-weight: 800; font-size: 14px; }
-.table-premium td:first-child { border-left: 2px solid #1C1C1C; border-radius: 15px 0 0 15px; }
-.table-premium td:last-child { border-right: 2px solid #1C1C1C; border-radius: 0 15px 15px 0; }
-
-.avatar-table { width: 35px; height: 35px; background: #FFE65A; border: 2px solid #1C1C1C; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 14px; }
-.badge-tag { background: #F1F5F9; padding: 5px 12px; border-radius: 6px; font-size: 10px; border: 1.5px solid #1C1C1C; }
-.badge-status-active { background: #A4CD39; padding: 5px 12px; border-radius: 6px; font-size: 10px; border: 1.5px solid #1C1C1C; }
-
-.sticky-preview { position: sticky; top: 120px; }
-
-/* REAJUSTES DE CORES E FORMAS */
-.card-label-black { border-left: 12px solid #FF6BCA; font-size: 1.4rem; }
-.pane-header { display: flex; justify-content: space-between; align-items: center; }
-
-@media (max-width: 1400px) {
-   .creator-workspace { grid-template-columns: 1fr; }
-   .preview-pane { display: none; }
+/* SEO SIDEBAR */
+.seo-sidebar {
+  background: #E5C600; border: 3px solid #1C1C1C; padding: 24px;
+  box-shadow: 6px 6px 0px #1C1C1C;
 }
 
-/* --- SEO & SOCIAL SIDEBAR --- */
-.editor-workspace-dual { display: grid; grid-template-columns: 1fr 300px; gap: 30px; align-items: start; }
-.seo-sidebar { background: #F8FAFC; border: 3px solid #1C1C1C; border-radius: 20px; padding: 25px; position: sticky; top: 120px; }
+/* SCROLL TOP */
+.btn-back-to-top {
+  position: fixed; bottom: 40px; right: 40px;
+  width: 56px; height: 56px; background: #E5C600;
+  border: 3px solid #1C1C1C; color: #1C1C1C;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; z-index: 1000; transition: 0.2s;
+  box-shadow: 4px 4px 0px #1C1C1C;
+}
+.btn-back-to-top:hover { transform: translate(-2px, -2px); box-shadow: 6px 6px 0px #1C1C1C; }
 
-.seo-card, .social-helper-card { border-bottom: 2px solid #E2E8F0; padding-bottom: 20px; }
-.score-circle-container { display: flex; flex-direction: column; align-items: center; margin: 20px 0; }
-.score-circle { width: 80px; height: 80px; border: 6px solid #FFE65A; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: "Archivo Black"; font-size: 1.5rem; color: #1C1C1C; background: #FFF; box-shadow: 4px 4px 0px rgba(0,0,0,0.05); }
-.score-label { font-family: "Archivo Black"; font-size: 10px; margin-top: 10px; opacity: 0.5; }
+/* ANIMATIONS */
+.fade-in-up { animation: fadeInUp 0.4s ease-out; }
+@keyframes fadeInUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+.fade-enter-active, .fade-leave-active { transition: opacity 0.3s, transform 0.3s; }
+.fade-enter-from, .fade-leave-to { opacity: 0; transform: translateY(20px); }
 
-.seo-checklist { list-style: none; padding: 0; margin-top: 20px; }
-.seo-checklist li { font-size: 11px; font-weight: 700; color: #64748B; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
-.seo-checklist li::before { content: "○"; color: #CBD5E1; font-weight: 900; }
-.seo-checklist li.ok { color: #1C1C1C; }
-.seo-checklist li.ok::before { content: "●"; color: #A4CD39; }
+/* UTILITIES */
+.flex { display: flex; } .items-center { align-items: center; } .gap-4 { gap: 1rem; }
+.mb-2 { margin-bottom: 0.5rem; } .mb-4 { margin-bottom: 1rem; }
+.mb-6 { margin-bottom: 1.5rem; } .mb-8 { margin-bottom: 2rem; }
+.mb-10 { margin-bottom: 2.5rem; } .mb-12 { margin-bottom: 3rem; }
+.mt-6 { margin-top: 1.5rem; } .mt-8 { margin-top: 2rem; }
+.mt-10 { margin-top: 2.5rem; } .mt-12 { margin-top: 3rem; }
+.mt-auto { margin-top: auto; } .w-full { width: 100%; }
+.shadow-md { /* overridden by brutalist shadows above */ }
+.pt-48 { padding-top: 0; } .pb-32 { padding-bottom: 0; } .px-12 { padding-left: 0; padding-right: 0; }
 
-.caption-box { background: #FFF; border: 2px solid #1C1C1C; border-radius: 10px; padding: 15px; font-size: 11px; font-weight: 600; line-height: 1.4; color: #475569; max-height: 150px; overflow-y: auto; white-space: pre-wrap; }
-.btn-copy-sm { background: #1C1C1C; color: #FFF; border: none; padding: 8px 15px; border-radius: 6px; font-family: "Archivo Black"; font-size: 9px; cursor: pointer; transition: 0.2s; width: 100%; }
-.btn-copy-sm:hover { background: #3D78E0; transform: translateY(-2px); }
+/* WORKSPACE DUAL */
+.editor-workspace-dual { display: grid; grid-template-columns: 2fr 1fr; gap: 24px; }
 
-/* CLASSES UTILITÁRIAS FALTANTES */
-.mb-6 { margin-bottom: 1.5rem; }
-.mb-0 { margin-bottom: 0; }
-.mb-8 { margin-bottom: 2.5rem; }
-.mb-10 { margin-bottom: 3.5rem; }
-.mb-12 { margin-bottom: 4rem; }
-.mt-4 { margin-top: 1rem; }
-.mt-8 { margin-top: 2rem; }
-.mt-10 { margin-top: 3rem; }
-.flex { display: flex; }
-.items-center { align-items: center; }
-.justify-start { justify-content: flex-start; }
-.gap-4 { gap: 1rem; }
-.font-bold { font-weight: 700; }
-.text-center { text-align: center; }
-.opacity-50 { opacity: 0.5; }
-.opacity-70 { opacity: 0.7; }
-.py-6 { padding-top: 1.5rem; padding-bottom: 1.5rem; }
+/* CATEGORY PILLS */
+.category-pill-group { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
+.cat-pill {
+  background: #F5F0E8; border: 2px solid #1C1C1C; color: #1C1C1C;
+  padding: 8px 16px; font-weight: 800; font-size: 0.75rem;
+  border-radius: 20px; cursor: pointer; transition: 0.2s;
+  text-transform: uppercase;
+}
+.cat-pill:hover { background: #E5C600; }
+.cat-pill.active { background: #1C1C1C; color: #FFF; }
+.btn-add-cat { border-style: dashed; background: transparent; display: flex; align-items: center; gap: 4px; }
+.btn-add-cat:hover { background: #F5F0E8; }
+
+/* SMALL BUTTONS & TAGS */
+.btn-tool-sm {
+  background: #F5F0E8; color: #1C1C1C; border: 2px solid #1C1C1C; padding: 6px 12px;
+  font-weight: 800; font-size: 0.7rem; cursor: pointer; transition: 0.2s;
+  text-transform: uppercase; border-radius: 4px; display: inline-flex; align-items: center; gap: 4px;
+}
+.btn-tool-sm:hover { background: #E5C600; }
+.btn-tool-sm.bg-yellow { background: #E5C600; }
+.btn-tool-sm.bg-yellow:hover { background: #1C1C1C; color: #FFF; }
+
+.btn-copy-sm {
+  background: #1C1C1C; color: #FFF; border: 2px solid #1C1C1C; padding: 10px 20px;
+  font-weight: 800; font-size: 0.75rem; cursor: pointer; transition: 0.2s;
+  text-transform: uppercase; border-radius: 4px; display: inline-flex;
+}
+.btn-copy-sm:hover { background: #FF3C82; color: #FFF; }
+
+.tag-editor-preview { display: flex; flex-wrap: wrap; gap: 8px; }
+.tag-chip {
+  background: #E5C600; color: #1C1C1C; border: 2px solid #1C1C1C;
+  padding: 6px 12px; font-weight: 800; font-size: 0.75rem;
+  border-radius: 4px; display: inline-flex; align-items: center; gap: 6px;
+  cursor: pointer; text-transform: uppercase; transition: 0.2s;
+}
+.tag-chip:hover { background: #DF2028; color: #FFF; }
+.tag-chip-empty { background: #F5F0E8; color: rgba(28,28,28,0.5); border-style: dashed; cursor: default; }
+.tag-chip-empty:hover { background: #F5F0E8; color: rgba(28,28,28,0.5); }
+
+.tag-suggestions { display: flex; gap: 8px; margin-top: 12px; }
+.tag-suggestion {
+  background: transparent; color: #1C1C1C; border: 1px solid rgba(28,28,28,0.2);
+  padding: 6px 10px; font-weight: 700; font-size: 0.7rem; cursor: pointer;
+  border-radius: 4px; transition: 0.2s;
+}
+.tag-suggestion:hover { background: #1C1C1C; color: #FFF; border-color: #1C1C1C; }
+
+/* FIX SALVAR RASCUNHO BUTTON */
+.btn-save-brutal.btn-white {
+  background: #FFF; color: #1C1C1C;
+}
+.btn-save-brutal.btn-white:hover {
+  background: #F5F0E8;
+}
+
+/* RESPONSIVE */
+@media (max-width: 1024px) {
+  .sidebar-black-fixed { width: 220px; }
+  .main-content-area { margin-left: 220px; padding: 30px 30px 60px; }
+  .main-content-area.expanded { margin-left: 0; }
+  .metrics-grid-premium { grid-template-columns: 1fr 1fr; }
+  .form-grid-2 { grid-template-columns: 1fr; }
+  .form-grid-3 { grid-template-columns: 1fr; }
+  .editor-workspace-dual { grid-template-columns: 1fr; }
+}
+@media (max-width: 768px) {
+  .sidebar-black-fixed { display: none; }
+  .main-content-area { margin-left: 0; padding: 20px; }
+  .metrics-grid-premium { grid-template-columns: 1fr; }
+  .admin-main-title { font-size: 1.8rem; }
+}
 </style>
+

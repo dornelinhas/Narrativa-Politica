@@ -1,94 +1,103 @@
 <template>
-  <div class="about-premium-page">
-    <!-- TEXTURA FILM GRAIN (AUMENTADA CONFORME PEDIDO) -->
-    <div class="film-grain-heavy-bg"></div>
-    <div class="soft-mesh-accents"></div>
-
-    <div class="content-wrapper">
+  <div class="about-page-v4 bg-creme min-h-screen font-body-md">
+    <div class="noise-bg-fixed"></div>
+    
+    <div class="container-max section-padding">
+      <!-- VOLTAR AO INICIO -->
+      <router-link to="/" class="btn-back-brutal mb-16">
+        <span class="material-symbols-outlined">arrow_back</span> VOLTAR PARA O INÍCIO
+      </router-link>
       
-      <!-- 1. HERO & TÍTULO (REDUZIDO E ALINHADO) -->
-      <header class="editorial-hero-top fade-in-up">
-        <h1 class="solid-impact-title">
-          {{ siteContent.about.heroTitlePart1 || 'IDEIAS QUE' }} <br/>
-          <span class="text-red-solid">{{ siteContent.about.heroTitlePart2 || 'MOVEM ESTRUTURAS' }}</span>
-        </h1>
-        <p class="serif-editorial-subtitle-aligned">
-          {{ siteContent.about.subtitle || 'Estratégia focada em traduzir teoria econômica para a ação política.' }}
-        </p>
+      <!-- HERO -->
+      <header class="about-hero-v4 border-b-thick pb-16 mb-16">
+        <div class="flex flex-col items-start">
+           <span class="tag-solid bg-preto text-white mb-8 rotate-neg-2">● QUEM SOMOS</span>
+           <h1 class="display-xl text-preto uppercase leading-none">
+             {{ siteContent.about?.heroTitlePart1 || 'IDEIAS QUE' }} <br/>
+             <span class="text-rosa">{{ siteContent.about?.heroTitlePart2 || 'MOVEM ESTRUTURAS' }}</span>
+           </h1>
+           <p class="body-lg text-variant mt-8 max-w-xl font-bold leading-relaxed">
+             {{ siteContent.about?.subtitle || 'Estratégia focada em traduzir teoria econômica para a ação política no território.' }}
+           </p>
+        </div>
       </header>
 
-      <div class="container-editorial dossier-grid">
+      <!-- CONTENT GRID -->
+      <div class="about-grid-v4">
         
-        <!-- ALINHAMENTO DO DOSSIÊ: FOTO -->
-        <aside class="sidebar-profile-dossier fade-in-up" style="animation-delay: 0.2s">
-          <div class="profile-card-anchored">
-            <div class="photo-frame-matte-thick">
-              <img :src="siteContent.about.image || '/images/anne-dornelas.png'" alt="Anne Dornelas" />
+        <!-- SIDEBAR -->
+        <aside class="about-sidebar-v4">
+          <div class="card-editorial bg-white paper-shadow p-8 border-thick relative">
+            <div class="accent-bar-top bg-amarelo"></div>
+            
+            <div class="profile-photo-v4 halftone border-thick mb-8 overflow-hidden">
+              <img :src="siteContent.about?.image || 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=800'" alt="Anne Dornelas" class="w-full h-full object-cover" />
             </div>
-            <div class="profile-meta-minimal">
-              <h2 class="name-black-archivo">{{ siteContent.about.name || 'ANNE DORNELAS' }}</h2>
-              <p class="role-sans-bold">{{ siteContent.about.role || 'Estrategista Política & Administradora' }}</p>
+            
+            <div class="profile-info-v4 text-center">
+              <h2 class="headline-md m-0 uppercase font-black">{{ siteContent.about?.name || 'ANNE DORNELAS' }}</h2>
+              <p class="label-bold opacity-40 mt-4 tracking-widest">{{ siteContent.about?.role || 'ESTRATEGISTA POLÍTICA' }}</p>
               
-              <div class="social-row-editorial mt-6">
-                <a href="#" class="s-icon-colored linkedin"><Linkedin :size="20" /></a>
-                <a href="#" class="s-icon-colored instagram"><Instagram :size="20" /></a>
-                <a href="#" class="s-icon-colored mail"><Mail :size="20" /></a>
+              <div class="flex justify-center gap-4 mt-8">
+                 <a href="#" class="icon-btn-brutal"><Linkedin :size="20" /></a>
+                 <a href="#" class="icon-btn-brutal"><Instagram :size="20" /></a>
+                 <a href="#" class="icon-btn-brutal"><Mail :size="20" /></a>
               </div>
 
-              <router-link
-                v-if="siteContent.settings?.menuProjects !== false"
-                to="/projetos"
-                class="projects-profile-link"
-              >
-                Ver projetos
+              <router-link v-if="siteContent.settings?.menuProjects !== false" to="/projetos" class="btn-brutal btn-amarelo w-full mt-10 uppercase font-black">
+                VER PROJETOS →
               </router-link>
             </div>
           </div>
         </aside>
 
-        <!-- ALINHAMENTO DO DOSSIÊ: CAIXAS -->
-        <main class="editorial-boxes-column">
-          
-          <!-- CAIXA TRAJETÓRIA -->
-          <section class="yellow-box-editorial-anchored fade-in-up" style="animation-delay: 0.4s">
-            <h3 class="box-label-black">TRAJETÓRIA & VISÃO</h3>
-            <div class="serif-content-black" v-html="sanitizeHtml(formatBio(siteContent.about.bioInstitucional || defaultBio))"></div>
-          </section>
+        <!-- MAIN -->
+        <div class="about-main-v4 space-y-12">
+           <!-- TRAJETÓRIA -->
+           <section class="card-editorial bg-white paper-shadow p-12 border-thick relative">
+              <div class="accent-bar-top bg-rosa"></div>
+              <h3 class="label-bold text-vermelho mb-8 uppercase tracking-widest">TRAJETÓRIA & VISÃO</h3>
+              <div class="body-lg bio-prose" v-html="sanitizeHtml(formatBio(siteContent.about?.bioInstitucional || defaultBio))"></div>
+           </section>
 
-          <!-- CAIXA ATUAÇÃO (HABILIDADES COMO CARDS COLORIDOS COM MARGEM E PADDING) -->
-          <section class="yellow-box-editorial-anchored fade-in-up" style="animation-delay: 0.6s">
-            <h3 class="box-label-black">ÁREAS DE ATUAÇÃO</h3>
-            <div class="expertise-multi-grid">
-              <div v-for="(skill, index) in expertiseList" :key="skill" 
-                class="skill-card-colored"
-                :class="dotColors[index % 4]"
-              >
-                <span>{{ skill }}</span>
+           <!-- EXPERTISE -->
+           <section class="card-editorial bg-white paper-shadow p-12 border-thick relative">
+              <div class="accent-bar-top bg-azul"></div>
+              <h3 class="label-bold text-azul mb-10 uppercase tracking-widest">ÁREAS DE EXPANSÃO</h3>
+              <div class="expertise-grid-v4">
+                 <div v-for="(skill, index) in expertiseList" :key="skill" class="skill-tag-v4 border-thick p-6 flex flex-col items-center justify-center text-center font-black uppercase text-sm bg-creme hover:bg-amarelo transition-colors">
+                    <div class="accent-dot mb-4" :class="'bg-' + getColorClass(index)"></div>
+                    {{ skill }}
+                 </div>
               </div>
-            </div>
-          </section>
-        </main>
+           </section>
+        </div>
+
       </div>
 
-      <!-- 2. CTA FINAL (ESTILO NEWSLETTER DA HOME) -->
-      <section class="cta-newsletter-zone fade-in-up" style="animation-delay: 0.8s">
-        <div class="cta-container-brutalist">
-          <div class="cta-text-content">
-            <div class="inline-flex-center gap-2 mb-4">
-               <Zap class="text-red-icon" />
-               <span class="eyebrow-news">{{ siteContent.about.ctaEyebrow || 'Conexão de Impacto' }}</span>
-            </div>
-            <h2 class="cta-title-home" v-html="sanitizeHtml(siteContent.about.ctaTitle || 'VAMOS MONTAR OU <br /> CRIAR ALGO JUNTOS?')"></h2>
-            <p class="cta-desc-home">
-              {{ siteContent.about.ctaDesc || 'Construímos tecnologias sociais e infraestruturas estratégicas que permitem aos movimentos pautarem o debate público com total autonomia.' }}
-            </p>
-          </div>
-          
-          <div class="cta-action-side">
-            <router-link to="/contatos" class="btn-black-pill-giant">
-              {{ siteContent.about.ctaBtn || 'FALAR AGORA' }}
-            </router-link>
-          </div>
+      <!-- CTA -->
+      <section class="mt-32">
+        <div class="nl-premium-card paper-shadow-lg border-thick">
+           <div class="nl-brand-side bg-amarelo text-preto">
+              <div class="nl-brand-content">
+                 <div class="flex items-center gap-4 mb-8">
+                    <Zap class="text-preto" :size="32" />
+                    <span class="tag-solid bg-preto text-white">CONEXÃO DE IMPACTO</span>
+                 </div>
+                 <h2 class="display-lg text-preto uppercase leading-tight m-0" v-html="sanitizeHtml(siteContent.about?.ctaTitle || 'VAMOS CONSTRUIR <br/> ALGO JUNTOS?')"></h2>
+                 <p class="body-lg text-preto mt-8 max-w-xl font-bold">
+                    {{ siteContent.about?.ctaDesc || 'Criamos infraestruturas que permitem aos movimentos pautarem o debate público com autonomia.' }}
+                 </p>
+              </div>
+           </div>
+           <div class="nl-action-side bg-preto text-white">
+              <div class="nl-action-inner items-center justify-center w-full">
+                 <router-link to="/contatos" class="btn-brutal btn-amarelo px-12 py-6 text-xl font-black uppercase shadow-white w-full text-center hover:bg-white hover:text-preto">
+                    {{ siteContent.about?.ctaBtn || 'FALAR AGORA →' }}
+                 </router-link>
+                 <p class="text-[10px] font-black uppercase text-white opacity-40 mt-6 text-center">Agenda aberta para parcerias estratégicas</p>
+              </div>
+           </div>
         </div>
       </section>
 
@@ -102,185 +111,105 @@ import { siteContent } from '../store/content'
 import { sanitizeHtml } from '../utils/sanitizeHtml'
 import { Linkedin, Instagram, Mail, Zap } from 'lucide-vue-next'
 
-const dotColors = ['bg-magenta', 'bg-blue', 'bg-lime', 'bg-yellow-dark']
+const getColorClass = (index) => {
+  const colors = ['vermelho', 'verde', 'amarelo', 'rosa', 'azul', 'lilas']
+  return colors[index % colors.length]
+}
+
 const defaultExpertise = ['Análise Econométrica', 'Advocacy de Gênero', 'Estratégia de Impacto Social', 'Articulação Política', 'Comunicação Estratégica', 'Pesquisa de Território']
-const expertiseList = computed(() => siteContent.about.expertise?.split(',').map(s => s.trim()) || defaultExpertise)
+const expertiseList = computed(() => siteContent.about?.expertise?.split(',').map(s => s.trim()) || defaultExpertise)
 
 const defaultBio = "Sou uma estrategista focada em traduzir teoria econômica para a ação política. Nos últimos anos, dediquei minha carreira a construir pontes entre dados quantitativos rigorosos e as necessidades urgentes de movimentos sociais."
-const formatBio = (text) => text.split('\n\n').map(p => `<p class="paragraph-serif">${p}</p>`).join('')
+const formatBio = (text) => text.split('\n\n').map(p => `<p class="mb-6">${p}</p>`).join('')
 
 onMounted(() => window.scrollTo(0, 0))
 </script>
 
 <style scoped>
-.about-premium-page { background-color: #FFFFFF; min-height: 100vh; position: relative; overflow-x: hidden; }
+.about-page-v4 { position: relative; overflow-x: hidden; }
+.noise-bg-fixed { position: fixed; inset: 0; pointer-events: none; background: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E"); z-index: 1; }
 
-/* TEXTURA FILM GRAIN (AUMENTADA) */
-.film-grain-heavy-bg {
-  position: fixed; inset: 0; z-index: 5; pointer-events: none;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
-  opacity: 0.15; /* TEXTURA MAIS FORTE */
-  mix-blend-mode: multiply;
-}
+.container-max { max-width: 1200px; margin: 0 auto; }
+.section-padding { padding: 100px 32px; }
 
-.soft-mesh-accents {
-  position: fixed; inset: 0; z-index: 1;
-  background: radial-gradient(at 0% 0%, rgba(255, 107, 202, 0.03) 0%, transparent 40%),
-              radial-gradient(at 100% 0%, rgba(164, 205, 57, 0.03) 0%, transparent 40%);
-}
-
-.content-wrapper { position: relative; z-index: 10; max-width: 1200px; margin: 0 auto; padding: 0 40px; }
-
-/* 1. HERO & TÍTULO (pt-60 = 240px) */
-.editorial-hero-top { padding-top: 240px; margin-bottom: 60px; text-align: left; }
-
-.solid-impact-title {
-  font-family: "Archivo Black", sans-serif;
-  font-size: clamp(2.5rem, 5vw, 4.5rem); /* REDUZIDO CONFORME PEDIDO */
-  line-height: 0.85;
-  text-transform: uppercase;
-  color: #000;
-  letter-spacing: -0.05em;
-}
-
-.text-red-solid { color: #DF2028; } /* VERMELHO ATIVISTA SÓLIDO */
-
-.serif-editorial-subtitle-aligned {
-  font-family: "Georgia", serif;
-  font-size: 1.1rem; /* SUBTÍTULO PEQUENO */
-  color: #1C1C1C;
-  margin-top: 20px;
-  max-width: 450px;
-  line-height: 1.5;
-}
-
-/* ALINHAMENTO DO DOSSIÊ */
-.dossier-grid { display: grid; grid-template-columns: 350px 1fr; gap: 80px; align-items: start; margin-bottom: 120px; }
-
-.sidebar-profile-dossier { position: sticky; top: 140px; }
-.photo-frame-matte-thick { border-radius: 2.5rem; overflow: hidden; border: 3px solid #000; box-shadow: 0 20px 40px rgba(0,0,0,0.05); margin-bottom: 30px; }
-.photo-frame-matte-thick img { width: 100%; height: 100%; object-fit: cover; }
-
-.name-black-archivo { font-family: "Archivo Black", sans-serif; font-weight: 900; font-size: 1.8rem; color: #000; text-transform: uppercase; }
-.role-sans-bold { font-family: "Inter", sans-serif; font-weight: 800; color: #64748b; font-size: 0.85rem; text-transform: uppercase; }
-
-.social-row-editorial { display: flex; gap: 15px; }
-.s-icon-colored { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; transition: 0.3s; }
-.s-icon-colored:hover { transform: translateY(-5px); }
-.linkedin { color: #0077B5; }
-.instagram { color: #E1306C; }
-.mail { color: #DF2028; }
-
-.projects-profile-link {
+.btn-back-brutal {
   display: inline-flex;
-  margin-top: 18px;
-  padding: 10px 16px;
-  border: 2px solid #000;
-  border-radius: 9999px;
-  font-family: "Inter", sans-serif;
-  font-size: 0.72rem;
+  align-items: center;
+  gap: 12px;
+  background: var(--np-black);
+  color: white;
+  padding: 14px 28px;
+  border: var(--border-thick);
   font-weight: 900;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: #000;
   text-decoration: none;
-  transition: 0.2s;
+  transition: all 0.2s;
+  box-shadow: 6px 6px 0 var(--np-amarelo);
+}
+.btn-back-brutal:hover { transform: translate(-2px, -2px); box-shadow: 8px 8px 0 var(--np-amarelo); }
+
+/* GRID */
+.about-grid-v4 { display: grid; grid-template-columns: 360px 1fr; gap: 80px; align-items: start; }
+.about-sidebar-v4 { position: sticky; top: 120px; }
+
+.profile-photo-v4 { 
+  aspect-ratio: 1/1.2; 
+  background: #000; 
+  width: 100%;
+  border: 4px solid var(--np-black);
+}
+.profile-photo-v4 img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
 }
 
-.projects-profile-link:hover {
-  background: #FFE65A;
-  transform: translateY(-2px);
+.icon-btn-brutal {
+  width: 44px; height: 44px; border: 2px solid var(--np-black);
+  display: flex; align-items: center; justify-content: center;
+  color: var(--np-black); transition: all 0.2s;
+  background: white;
+}
+.icon-btn-brutal:hover { background: var(--np-black); color: white; transform: translateY(-4px); box-shadow: 4px 4px 0 var(--np-rosa); }
+
+.expertise-grid-v4 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+.skill-tag-v4 { 
+  position: relative; 
+  min-height: 120px;
+  box-shadow: 6px 6px 0 var(--np-black);
+  background: white;
+  transition: all 0.2s;
+}
+.skill-tag-v4:hover {
+  transform: translate(-3px, -3px);
+  box-shadow: 10px 10px 0 var(--np-black);
+  background: var(--np-amarelo);
+}
+.accent-dot { width: 10px; height: 10px; border-radius: 50%; border: 2px solid var(--np-black); }
+
+.bio-prose :deep(p) { line-height: 1.8; color: var(--np-black); font-weight: 700; font-size: 1.1rem; }
+
+.shadow-white { box-shadow: 8px 8px 0 white; }
+
+.bg-vermelho { background: var(--np-vermelho); }
+.bg-verde { background: var(--np-verde); }
+.bg-amarelo { background: var(--np-amarelo); }
+.bg-rosa { background: var(--np-rosa); }
+.bg-azul { background: var(--np-azul); }
+.bg-lilas { background: var(--np-lilas); }
+
+.bio-prose :deep(p) { line-height: 1.8; color: var(--np-black); font-weight: 500; }
+
+@media (max-width: 1023px) {
+  .about-grid-v4 { grid-template-columns: 1fr; gap: 64px; }
+  .about-sidebar-v4 { position: relative; top: 0; max-width: 440px; margin: 0 auto; }
+  .display-xl { font-size: 60px; }
 }
 
-/* CAIXAS AMARELAS */
-.editorial-boxes-column { display: flex; flex-direction: column; gap: 40px; }
-.yellow-box-editorial-anchored {
-  background-color: #FFDE59;
-  border: 4px solid #000;
-  padding: 60px;
-  box-shadow: 12px 12px 0px #000;
-}
-
-.box-label-black { font-family: "Archivo Black", sans-serif; font-size: 0.9rem; color: #000; letter-spacing: 0.2em; margin-bottom: 35px; }
-.serif-content-black { font-family: "Georgia", serif; font-size: 1.45rem; line-height: 1.8; color: #000; }
-.paragraph-serif { margin-bottom: 2rem; }
-
-/* HABILIDADES (CARDS COLORIDOS COM MARGEM E PADDING) */
-.expertise-multi-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-.skill-card-colored { 
-  display: flex; align-items: center; justify-content: center; text-align: center;
-  font-family: "Inter", sans-serif; font-weight: 800; font-size: 0.85rem; text-transform: uppercase; 
-  padding: 20px 25px; /* PADDING GENEROSO */
-  border-radius: 1.5rem; border: 3px solid #1C1C1C; box-shadow: 6px 6px 0px #1C1C1C;
-  transition: 0.2s;
-}
-.skill-card-colored:hover { transform: translate(-3px, -3px); box-shadow: 9px 9px 0px #1C1C1C; }
-
-/* CORES DOS CARDS DE HABILIDADE */
-.bg-magenta { background: #FF6BCA; color: #FFF; }
-.bg-blue { background: #3D78E0; color: #FFF; }
-.bg-lime { background: #A4CD39; color: #1C1C1C; }
-.bg-yellow-dark { background: #FFFFFF; color: #1C1C1C; }
-
-/* 2. CTA FINAL (ESTILO NEWSLETTER DA HOME) */
-.cta-newsletter-zone { margin: 120px 0 176px; width: 100%; display: flex; justify-content: center; }
-.cta-container-brutalist {
-  width: 100%; max-width: 1100px;
-  background-color: #FFE65A; /* AMARELO NEWSLETTER */
-  border: 4px solid #1C1C1C;
-  padding: 80px;
-  display: flex;
-  gap: 60px;
-  align-items: center;
-  box-shadow: 15px 15px 0px #1C1C1C;
-}
-
-.cta-text-content { flex: 1.5; }
-.cta-action-side { flex: 1; display: flex; justify-content: flex-end; }
-
-.inline-flex-center { display: flex; align-items: center; }
-.text-red-icon { fill: #DF2028; color: #DF2028; width: 28px; height: 28px; margin-right: 10px; }
-.eyebrow-news { font-family: "Inter", sans-serif; font-weight: 900; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.15em; color: #1C1C1C; }
-
-.cta-title-home {
-  font-family: "Archivo Black", sans-serif;
-  font-size: 3.2rem;
-  text-transform: uppercase;
-  line-height: 1;
-  color: #1C1C1C;
-  margin-bottom: 20px;
-}
-
-.cta-desc-home { font-family: "Inter", sans-serif; font-weight: 700; color: rgba(28,28,28,0.8); line-height: 1.5; font-size: 1.1rem; }
-
-.btn-black-pill-giant {
-  background: #1C1C1C;
-  color: #FFFFFF !important;
-  padding: 24px 64px;
-  border-radius: 9999px;
-  font-family: "Inter", sans-serif; font-weight: 900; font-size: 1.1rem; text-transform: uppercase;
-  text-decoration: none; transition: all 0.3s;
-  border: none;
-  text-align: center;
-}
-
-.btn-black-pill-giant:hover {
-  background: #000000;
-  transform: scale(1.05);
-  box-shadow: 0 10px 20px rgba(0,0,0,0.2);
-}
-
-.fade-in-up { opacity: 0; transform: translateY(30px); animation: fadeInUp 1s forwards; }
-@keyframes fadeInUp { to { opacity: 1; transform: translateY(0); } }
-
-@media (max-width: 1100px) {
-  .editorial-hero-top { padding-top: 180px; }
-  .dossier-grid { grid-template-columns: 1fr; }
-  .sidebar-profile-dossier { position: relative; top: 0; margin-bottom: 60px; text-align: center; }
-  .social-row-editorial { justify-content: center; }
-  .expertise-multi-grid { grid-template-columns: 1fr; }
-  .cta-container-brutalist { flex-direction: column; padding: 50px; text-align: center; }
-  .cta-action-side { justify-content: center; width: 100%; }
-  .cta-title-home { font-size: 2.2rem; }
+@media (max-width: 768px) {
+  .expertise-grid-v4 { grid-template-columns: 1fr; }
+  .section-padding { padding: 64px 20px; }
+  .display-xl { font-size: 48px; }
 }
 </style>

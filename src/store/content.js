@@ -244,11 +244,25 @@ const initialContent = {
     { id: 6, title: 'Advocacy em Tempos de Crise', description: 'Estudo de caso sobre campanhas vitoriosas durante o período de retração democrática.', category: 'Relatório', fileUrl: '#', externalLink: '#' }
   ],
   subscribers: [],
+  newsletterEditions: [],
+  opportunitySourceWebsites: [],
   settings: {
     siteName: "Narrativa Politica",
     siteTagline: "Transformando Teoria Econômica em Impacto",
     siteDescription: "Plataforma de economia e dados.",
+    footerDescription: "",
+    siteKeywords: "",
+    basePageTitle: "Narrativa Política",
     contactEmail: "contatonarrativapolitica@gmail.com",
+    instagramLink: "",
+    linkedinLink: "",
+    whatsappLink: "",
+    pixKey: "",
+    siteLogo: "",
+    primaryColor: "#FF3C82",
+    darkMode: false,
+    brutalShadows: true,
+    shadowStyle: "solid",
     showLogin: true,
     allowRegistration: false,
     menuHome: true,
@@ -403,13 +417,20 @@ const initialContent = {
     subtitle: 'Estratégia focada em traduzir teoria econômica para a ação política.',
     name: 'Anne Dornelas', 
     role: 'Estrategista Política & Administradora', 
+    label: 'Estrategista',
     bioInstitucional: "Sou uma estrategista focada em traduzir teoria econômica para a ação política. Nos últimos anos, dediquei minha carreira a construir pontes entre dados quantitativos rigorosos e as necessidades urgentes de movimentos sociais.", 
     expertise: 'Análise Econométrica, Advocacy de Gênero, Estratégia de Impacto Social, Articulação Política, Comunicação Estratégica, Pesquisa de Território',
     image: '',
+    analysisTitle: 'ATUAÇÃO E ANÁLISE',
+    analysisDesc: '',
+    analysisText: '',
     ctaEyebrow: 'Conexão de Impacto',
     ctaTitle: 'VAMOS MONTAR OU <br /> CRIAR ALGO JUNTOS?',
     ctaDesc: 'Construímos tecnologias sociais e infraestruturas estratégicas que permitem aos movimentos pautarem o debate público com total autonomia.',
-    ctaBtn: 'FALAR AGORA'
+    ctaBtn: 'FALAR AGORA',
+    ctaBgColor: '#0F0F0F',
+    ctaBtnColor: '#FF3C82',
+    ctaBtnLink: '/contatos'
   },
   opportunities: [
     {
@@ -456,7 +477,8 @@ const siteSettingKeys = [
   'home', 'about', 'settings', 'donateConfig', 'services', 'opportunities', 'tracks',
   'library', 'projects', 'newsletterArchiveConfig', 'articlesConfig', 'opportunitiesConfig',
   'opportunitiesCurationConfig',
-  'servicesConfig', 'libraryConfig', 'lastActivity'
+  'servicesConfig', 'libraryConfig', 'lastActivity',
+  'newsletterEditions', 'opportunitySourceWebsites'
 ]
 
 const normalizePost = (post) => {
@@ -550,43 +572,79 @@ const mergeSettingValue = (currentValue, savedValue) => {
   return savedValue ?? currentValue
 }
 
-export const fetchAllContent = async () => {
+export const fetchAllContent = async (options = { isAdmin: false }) => {
   if (!supabase) {
     siteContent.isLoading = false
     return { success: false, error: 'Supabase não inicializado' }
   }
+
+  // Safety timeout: abort after 8 seconds
+  const timeoutPromise = new Promise((_, reject) => 
+    setTimeout(() => reject(new Error('Tempo limite excedido ao buscar conteúdo')), 8000)
+  )
+
   try {
     const fetchTable = async (table, opt = {}) => {
       let q = supabase.from(table).select('*')
       if (opt.order) q = q.order(opt.order, opt.orderOptions)
-      const { data } = opt.single ? await q.maybeSingle() : await q
+      if (opt.limit) q = q.limit(opt.limit)
+      
+      const { data, error } = opt.single ? await q.maybeSingle() : await q
+      if (error) {
+        console.warn(`Erro ao buscar tabela ${table}:`, error)
+        return opt.single ? null : []
+      }
       return data || (opt.single ? null : [])
     }
 
-    const [articles, newsletters, subscribers, settings] = await Promise.all([
-      fetchTable('articles', { order: 'date', orderOptions: { ascending: false } }),
-      fetchTable('newsletters', { order: 'created_at', orderOptions: { ascending: false } }),
-      fetchTable('subscribers'),
-      fetchTable('site_settings')
+    const fetchAll = async () => {
+      const promises = [
+        fetchTable('articles', { order: 'date', orderOptions: { ascending: false }, limit: 100 }),
+        fetchTable('newsletters', { order: 'created_at', orderOptions: { ascending: false }, limit: 50 }),
+        fetchTable('site_settings'),
+        fetchTable('opportunities'),
+        fetchTable('services'),
+        fetchTable('projects'),
+        fetchTable('library'),
+        fetchTable('learning_tracks')
+      ]
+
+      if (options.isAdmin) {
+        promises.push(fetchTable('subscribers'))
+      }
+
+      return await Promise.all(promises)
+    }
+
+    // Race against timeout
+    const results = await Promise.race([
+      fetchAll(),
+      timeoutPromise
     ])
+
+    const [articles, newsletters, settings, opportunities, services, projects, library, tracks, subscribers] = results
 
     if (articles && articles.length > 0) siteContent.posts = articles.map(normalizePost)
     if (newsletters && newsletters.length > 0) siteContent.newsletters = newsletters
     if (subscribers) siteContent.subscribers = subscribers
+    if (opportunities) siteContent.opportunities = opportunities
+    if (services) siteContent.services = services
+    if (projects) siteContent.projects = projects
+    if (library) siteContent.library = library
+    if (tracks) siteContent.tracks = tracks
     
     if (settings) {
       settings.forEach(s => {
-        // Se a chave for 'home', 'about', etc, mapeia para o objeto correto
         if (siteSettingKeys.includes(s.key)) {
            siteContent[s.key] = mergeSettingValue(siteContent[s.key], s.value)
         } else {
-           // Outras chaves de configuração no siteContent.settings
            siteContent.settings[s.key] = s.value
         }
       })
     }
 
     siteContent.isLoading = false
+    saveContent() // Update local cache with fresh data
     return { success: true }
   } catch (e) {
     console.error('Erro ao buscar conteúdo:', e)

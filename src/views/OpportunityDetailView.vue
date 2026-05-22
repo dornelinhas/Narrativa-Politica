@@ -101,18 +101,20 @@
 
   <div v-else class="op-magazine-layout expired-opportunity-layout">
     <div class="film-grain-overlay"></div>
-    <div class="container-mag expired-state">
-      <router-link to="/oportunidades" class="back-link-mag">
-        <ArrowLeft :size="16" /> {{ siteContent.opportunitiesConfig?.detailBackBtn || 'PORTAL DE TALENTOS' }}
-      </router-link>
-
-      <div class="expired-card">
-        <span class="expired-badge" :class="stateBadgeClass">{{ stateBadgeText }}</span>
-        <h1 class="huge-magazine-title expired-title">{{ stateTitle }}</h1>
-        <p class="expired-text">{{ stateDescription }}</p>
-        <router-link to="/oportunidades" class="pill-btn-black-matte">
-          VOLTAR PARA O HUB DE TALENTOS <ArrowRight :size="18" />
+    <div class="container-mag">
+      <div class="expired-view-wrapper flex flex-col items-center">
+        <router-link to="/oportunidades" class="back-link-mag self-start">
+          <ArrowLeft :size="16" /> {{ siteContent.opportunitiesConfig?.detailBackBtn || 'PORTAL DE TALENTOS' }}
         </router-link>
+
+        <div class="expired-card mt-10">
+          <span class="expired-badge" :class="stateBadgeClass">{{ stateBadgeText }}</span>
+          <h1 class="huge-magazine-title expired-title">{{ stateTitle }}</h1>
+          <p class="expired-text">{{ stateDescription }}</p>
+          <router-link to="/oportunidades" class="pill-btn-black-matte">
+            VOLTAR PARA O HUB DE TALENTOS <ArrowRight :size="18" />
+          </router-link>
+        </div>
       </div>
     </div>
   </div>
@@ -191,32 +193,67 @@ const copyLink = () => { navigator.clipboard.writeText(window.location.href); al
   opacity: 0.1;
 }
 
-.container-mag { max-width: 1200px; margin: 0 auto; padding: 180px 2rem 140px 2rem; position: relative; z-index: 10; }
-.expired-state { min-height: 100vh; display: flex; align-items: center; }
-.back-link-mag { display: inline-flex; align-items: center; gap: 8px; font-weight: 900; font-size: 11px; color: #000; text-decoration: none; opacity: 0.4; margin-bottom: 40px; }
+.container-mag { max-width: 960px; margin: 0 auto; padding: 120px 2rem; position: relative; z-index: 10; }
+.back-link-mag { 
+  display: inline-flex; align-items: center; gap: 10px; 
+  font-weight: 900; font-size: 11px; color: #000; 
+  text-decoration: none; opacity: 1; 
+  margin-bottom: 40px; 
+  background: var(--np-amarelo);
+  padding: 10px 20px;
+  border: 2px solid #000;
+  box-shadow: 4px 4px 0 #000;
+  transition: all 0.2s;
+}
+.back-link-mag:hover { transform: translate(-2px, -2px); box-shadow: 6px 6px 0 #000; }
 
-.magazine-columns-grid { display: grid; grid-template-columns: 1fr 380px; gap: 100px; }
-.sidebar-area { position: sticky; top: 140px; align-self: start; }
+.magazine-columns-grid { display: grid; grid-template-columns: 1fr 320px; gap: 60px; }
+.sidebar-area { position: sticky; top: 120px; align-self: start; }
 
-.cat-pill { padding: 8px 18px; font-weight: 900; font-size: 11px; border-radius: 6px; text-transform: uppercase; color: #000 !important; border: 2px solid #000; box-shadow: 3px 3px 0px #000; }
-.huge-magazine-title { font-family: "Archivo Black", sans-serif; font-size: clamp(3rem, 6vw, 5.5rem); line-height: 0.9; color: #000; letter-spacing: -0.05em; }
+.huge-magazine-title { 
+  font-family: "Archivo Black", sans-serif; 
+  font-size: clamp(2rem, 5vw, 4rem); 
+  line-height: 0.95; 
+  color: #000; 
+  letter-spacing: -0.05em;
+  word-break: break-word;
+  overflow-wrap: break-word;
+  margin-bottom: 2rem;
+}
 
 .op-cover-frame {
-  border: 4px solid #000;
-  border-radius: 2rem;
+  border: 3px solid #000;
+  border-radius: 1rem;
   overflow: hidden;
-  margin: -2rem 0 4rem;
-  box-shadow: 12px 12px 0 #A4CD39;
-  background: #FFE65A;
+  margin: 0 0 3rem;
+  box-shadow: 8px 8px 0 var(--np-rosa);
+  background: #FFF;
 }
 .op-cover-image {
   display: block;
   width: 100%;
-  max-height: 440px;
+  max-height: 380px;
   object-fit: cover;
 }
 
-.serif-magazine-desc { font-family: "Georgia", serif; font-size: 1.35rem; line-height: 1.8; color: #1e293b; }
+.serif-magazine-desc { 
+  font-family: "Georgia", serif; 
+  font-size: 1.15rem; 
+  line-height: 1.7; 
+  color: #000;
+  word-break: break-word;
+  overflow-wrap: break-word;
+  font-weight: 500;
+}
+
+.magazine-article-content :deep(p) { margin-bottom: 1.8rem; }
+.magazine-article-content :deep(h2), .magazine-article-content :deep(h3) { 
+  font-family: "Archivo Black", sans-serif;
+  text-transform: uppercase;
+  margin: 3rem 0 1.5rem;
+  line-height: 1.1;
+  word-break: break-word;
+}
 .editorial-intro { font-size: 1.6rem; font-weight: 800; color: #000; margin-bottom: 4rem; border-left: 6px solid #A4CD39; padding-left: 2.5rem; }
 
 .content-block-editorial { margin-bottom: 4rem; }

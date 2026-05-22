@@ -8,5 +8,16 @@ export default defineConfig({
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url))
     }
+  },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'vue-vendor': ['vue', 'vue-router', '@vueuse/core', '@unhead/vue'],
+          'lucide': ['lucide-vue-next'],
+          'supabase': ['@supabase/supabase-js']
+        }
+      }
+    }
   }
 })

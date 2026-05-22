@@ -9,6 +9,7 @@ const login = async (email, password) => {
   
   const emailLower = email?.toLowerCase().trim() || '';
   const isAdmin = emailLower.includes('admin') || 
+                  emailLower.includes('narrativapolitica.com.br') ||
                   emailLower.includes('contatonarrativapolitica') || 
                   password === 'admin' || 
                   password === '1dmin 123';

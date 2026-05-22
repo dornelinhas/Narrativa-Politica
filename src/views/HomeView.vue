@@ -1,780 +1,728 @@
 <template>
-  <div class="home-brutalist antialiased selection-custom">
-    
-    <!-- HERO SECTION -->
-    <section class="hero-section activist-gradient border-hero-bottom">
-      <!-- Floating GeoShapes -->
-      <div class="floating-shape shape-pill-y pink-bg shape-1"></div>
-      <div class="floating-shape shape-square yellow-bg shape-2"></div>
-      <div class="floating-shape shape-circle blue-bg shape-4"></div>
-      <div class="floating-shape shape-pill-x yellow-bg shape-7"></div>
-
-      <div class="hero-content z-20">
-        <h1 class="hero-title font-hero text-white drop-shadow-md uppercase" :style="{ fontSize: heroFontSize }">
-          {{ siteContent.home.heroTitle }} <br />
-          <span class="text-yellow">{{ siteContent.home.heroTitleAccent }}</span>
+<div class="home">
+  <!-- CSS Noise Overlay from Global -->
+  
+  <!-- HERO SECTION -->
+  <section v-reveal class="home-hero">
+    <div class="container-max home-hero-grid">
+      
+      <!-- Lado Esquerdo: Textos -->
+      <div class="hero-left">
+        <!-- Blobs (Amarelo) -->
+        <div class="blob-amarelo"></div>
+        
+        <div class="hero-badge">
+          IMPACTO & TRANSFORMAÇÃO
+        </div>
+        
+        <h1 class="hero-title">
+          {{ siteContent.home?.heroTitle || 'O HUB DE IMPACTO PARA QUEM ATUA NA' }}<br>
+          <span>{{ siteContent.home?.heroTitleAccent || 'TRANSFORMAÇÃO SOCIAL.' }}</span>
         </h1>
+        
+        <p class="hero-subtitle">
+          {{ siteContent.home?.heroSubtitle || 'Uma curadoria Narrativa para ampliar repertório crítico sobre o mundo contemporâneo, política, sociedade e gênero.' }}
+        </p>
+        
+        <div class="hero-actions">
+          <router-link to="/conteudo" class="btn-brutal btn-preto paper-shadow">EXPLORAR HUB</router-link>
+          <a href="#newsletter" class="btn-brutal btn-outline paper-shadow">ASSINAR NEWSLETTER</a>
+        </div>
       </div>
-    </section>
 
-    <!-- MARQUEE -->
-    <div class="marquee-wrapper pink-bg border-marquee-bottom" :style="{ padding: marqueePadding + 'rem 0' }">
-      <div class="marquee-track font-display uppercase text-lg text-dark">
-        <span v-for="n in 16" :key="n" class="marquee-item-rel">
-          {{ siteContent.home.marqueeText }}
-          <div class="sun-container-abs">
-            <svg viewBox="0 0 100 100" class="sun-icon-mini" xmlns="http://www.w3.org/2000/svg">
-              <path fill="#1C1C1C" d="M50 30c-11 0-20 9-20 20s9 20 20 20 20-9 20-20-9-20-20-20zm0-5c2-10-5-15 0-25 5 10-2 15 0 25zm18 7c8-8 15-2 20-10-10 5-2 15-20 10zm12 18c10-2 15 5 25 0-10-5-15 2-25 0zm-7 18c8 8 2 15 10 20-5-10-15-2-10-20zm-18 12c-2 10 5 15 0 25-5-10 2-15 0-25zm-18-7c-8 8-15 2-20 10 10-5 2-15 20-10zm-12-18c-10 2-15-5-25 0 10 5 15-2 25 0zm7-18c-8-8-2-15-10-20 5 10 15 2 10 20z" />
-            </svg>
+      <!-- Lado Direito: Imagem Grayscale Brutalista -->
+      <div class="hero-right">
+        <!-- Foto Central Paper-Cut -->
+        <div class="hero-img-wrap paper-cut paper-shadow">
+          <img :src="siteContent.home?.heroImage || 'https://images.unsplash.com/photo-1573164713988-8665fc963095?auto=format&fit=crop&q=80&w=800'" alt="Hero portrait" class="hero-halftone" @error="(e) => e.target.src = 'https://images.unsplash.com/photo-1573164713988-8665fc963095?w=800'" />
+        </div>
+        <!-- Blobs (Verde) -->
+        <div class="blob-verde"></div>
+        <!-- Selo flutuante -->
+        <div class="hero-floating-seal paper-shadow">
+          <span class="material-symbols-outlined">campaign</span>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- MOVIMENTO SECTION (ARTICLES/POSTS) -->
+  <section v-reveal class="section-padding bg-creme home-movimento pb-12">
+    <div class="container-max">
+      <div class="movimento-header">
+        <div>
+          <h2 class="display-xl m-0">Movimento</h2>
+          <p class="body-lg text-variant mt-2">Destaque para impacto social e ações em andamento.</p>
+        </div>
+        <router-link to="/conteudo" class="movimento-link">
+          VER TODAS AS AÇÕES <span class="material-symbols-outlined">arrow_forward</span>
+        </router-link>
+      </div>
+
+      <!-- GRID CARDS -->
+      <div class="grid-3">
+        <!-- Card 1 -->
+        <router-link v-if="displayPosts[0]" :to="`/conteudo/${displayPosts[0].id}`" class="card-editorial paper-shadow group">
+          <div class="accent-bar-top bg-azul-bar"></div>
+          <div class="card-tags">
+            <span class="tag-solid bg-preto text-white">{{ displayPosts[0].category || 'MOBILIZAÇÃO' }}</span>
           </div>
-        </span>
+          <h3 class="card-title hover-azul">{{ displayPosts[0].title }}</h3>
+          <p class="card-excerpt line-clamp-3">{{ displayPosts[0].excerpt || '' }}</p>
+          <div class="card-footer">
+            <span class="label-bold text-preto">LER ARTIGO</span>
+            <span class="material-symbols-outlined text-azul">auto_stories</span>
+          </div>
+        </router-link>
+
+        <!-- Card 2 (Centro) -->
+        <router-link v-if="displayPosts[1]" :to="`/conteudo/${displayPosts[1].id}`" class="card-editorial paper-shadow group card-inverted">
+          <div class="accent-bar-top bg-amarelo-bar"></div>
+          <div class="card-tags">
+            <span class="tag-solid bg-amarelo text-preto">{{ displayPosts[1].category || 'SOCIEDADE' }}</span>
+          </div>
+          <h3 class="card-title hover-amarelo">{{ displayPosts[1].title }}</h3>
+          <p class="card-excerpt line-clamp-3">{{ displayPosts[1].excerpt || '' }}</p>
+          <div class="card-footer">
+            <span class="label-bold text-preto">LER ARTIGO</span>
+            <span class="material-symbols-outlined text-amarelo">diversity_3</span>
+          </div>
+        </router-link>
+
+        <!-- Card 3 -->
+        <router-link v-if="displayPosts[2]" :to="`/conteudo/${displayPosts[2].id}`" class="card-editorial paper-shadow group">
+          <div class="accent-bar-top bg-rosa-bar"></div>
+          <div class="card-tags">
+            <span class="tag-solid bg-preto text-white">{{ displayPosts[2].category || 'GÊNERO' }}</span>
+          </div>
+          <h3 class="card-title hover-rosa">{{ displayPosts[2].title }}</h3>
+          <p class="card-excerpt line-clamp-3">{{ displayPosts[2].excerpt || '' }}</p>
+          <div class="card-footer">
+            <span class="label-bold text-preto">LER ARTIGO</span>
+            <span class="material-symbols-outlined text-rosa">female</span>
+          </div>
+        </router-link>
       </div>
     </div>
+  </section>
 
-    <!-- FEATURED WRITING (Radar Editorial) -->
-    <section id="essays" class="pt-6 pb-32 px-6 md-px-12 bg-light text-dark relative overflow-hidden" style="z-index: 10; position: relative;">
-      
-      <div class="absolute inset-0 grid-pattern-light pointer-events-none z-0"></div>
-      <div class="max-w-7xl mx-auto relative z-10">
-        <div class="mb-16 flex flex-col items-center">
-          <h2 class="font-display text-5xl md-text-7xl uppercase tracking-tighter leading-none inline-block transform md:-translateX-12 text-center text-dark">
-            {{ siteContent.home.radarEditorialTitle || 'Conteúdos e' }} <br /> 
-            <span class="activist-gradient-text block mt-2 padding-left-step">{{ siteContent.home.radarEditorialSubtitle || 'Artigos' }}</span>
-          </h2>
-          
-          <!-- FUNCTIONAL TABS SYSTEM (Medium-like Brutalist) -->
-          <div class="flex gap-8 mt-12 border-b-dark w-full justify-center overflow-x-auto no-scrollbar">
-            <button 
-              v-for="tab in ['TODOS', 'MOBILIZAÇÃO', 'EDUCAÇÃO', 'CLIMA', 'DADOS']" 
-              :key="tab"
-              class="tab-medium-brutalist" 
-              :class="{ 'active-tab': selectedTab === tab }"
-              @click="selectedTab = tab"
-            >
-              {{ tab }}
-            </button>
-          </div>
+  <!-- ÁREAS DE ATUAÇÃO (TABBED INTERFACE) -->
+  <section v-reveal id="atuacao" class="section-padding bg-white border-y-thick">
+    <div class="container-max">
+      <div class="atuacao-header-flex">
+        <div class="atuacao-title-group">
+          <h2 class="headline-lg">ÁREAS DE ATUAÇÃO</h2>
+          <div class="title-underline bg-azul"></div>
         </div>
+        
+        <!-- ABAS (Tabs) -->
+        <div class="atuacao-tabs-nav">
+           <button v-for="(item, idx) in atuacaoItems" :key="idx" 
+                   @click="activeAtuacao = idx"
+                   class="btn-tab-brutal" :class="{ active: activeAtuacao === idx }">
+             {{ item.title }}
+           </button>
+        </div>
+      </div>
 
-        <div class="grid-writing gap-8">
-          <!-- Coluna Maior (Mais Recente) -->
-          <div class="flex-col h-full large-col">
-            <div class="flex-center-left gap-3 mb-4">
-              <div class="geo-circle pink-bg border-dark" style="width: 24px; height: 24px; flex-shrink: 0;"></div>
-              <div class="font-sans font-black text-xs uppercase opacity-60" style="letter-spacing: 0.15em;">
-                {{ selectedTab === 'TODOS' ? 'Mais Recente' : selectedTab }}
-              </div>
+      <div class="atuacao-display-area">
+        <!-- Card Ativo (Destaque) -->
+        <div v-if="atuacaoItems[activeAtuacao]" class="card-atuacao-active bg-creme paper-shadow">
+          
+          <div class="accent-bar-top" :style="{ backgroundColor: atuacaoItems[activeAtuacao].accentColor || 'var(--np-rosa)' }"></div>
+          
+          <!-- Lado do Texto -->
+          <div class="atuacao-main-info">
+            <div class="atuacao-icon-large">
+              <span class="material-symbols-outlined" :style="{ color: atuacaoItems[activeAtuacao].iconColor || 'var(--np-black)' }">
+                {{ atuacaoItems[activeAtuacao].icon || 'groups' }}
+              </span>
             </div>
             
-            <div v-if="siteContent.isLoading" class="large-card group border-dark bg-white flex-col p-12 justify-center items-center flex-1">
-              <div class="font-sans font-bold text-dark opacity-40 animate-pulse uppercase tracking-widest text-sm">Carregando editorial...</div>
-            </div>
-            <router-link v-else-if="filteredPosts.length > 0" :to="`/conteudo/${filteredPosts[0].id}`" class="large-card group cursor-pointer border-dark bg-white flex-col md-flex-row flex-1 no-underline text-dark" style="min-height: 450px; display: flex;">
-               <div class="large-card-img-wrapper relative border-b-dark md-border-r-dark w-full md-w-half h-64 md-h-auto overflow-hidden bg-dark">
-                 <img
-                   :src="filteredPosts[0].image || 'https://images.unsplash.com/photo-1541844053589-346841d0b34c?auto=format&fit=crop&q=80&w=800'"
-                   class="full-img object-cover transition-all duration-500 w-full h-full"
-                   style="display: block; min-height: 100%;"
-                   :alt="filteredPosts[0].title"
-                 />
+            <h3 class="display-md mb-4">{{ atuacaoItems[activeAtuacao].title }}</h3>
+            <p class="body-lg text-variant m-0 max-w-xl">
+              {{ atuacaoItems[activeAtuacao].description }}
+            </p>
 
-                <div class="img-overlay bg-lime-20 transition-colors absolute inset-0"></div>
-                <div class="absolute top-4 left-4">
-                  <div class="tag yellow-bg text-dark font-sans font-bold uppercase tracking-widest">{{ filteredPosts[0].category || 'Editorial' }}</div>
-                </div>
-              </div>
-              <div class="large-card-content w-full md-w-half p-6 lg-p-8 flex-col justify-center">
-                <h3 class="font-display text-2xl md-text-3xl uppercase tracking-tighter leading-tight mb-4 text-dark">
-                  {{ filteredPosts[0].title }}
-                </h3>
-                <p class="font-sans text-xs font-medium opacity-80 leading-relaxed mb-6 text-dark">
-                  {{ filteredPosts[0].excerpt || filteredPosts[0].subtitle || 'Sem descrição.' }}
-                </p>
-                <div class="mt-auto">
-                  <span class="read-more font-sans font-black text-xs uppercase tracking-widest flex-center-left gap-2 transition-colors text-dark">
-                    Ler Ensaio Completo <ArrowRight class="w-4 h-4" />
-                  </span>
-                </div>
-              </div>
-            </router-link>
-            <div v-else class="large-card group border-dark bg-white flex-col p-12 justify-center items-center flex-1">
-              <p class="font-sans font-bold text-dark opacity-60">Nenhum ensaio publicado nesta categoria.</p>
+            <div class="atuacao-footer-hint">
+              <router-link to="/servicos" class="label-bold text-azul hover-underline">Explorar serviços nesta área →</router-link>
             </div>
           </div>
 
-          <!-- Coluna Menor (Mais Lidos / Outros) -->
-          <div class="flex-col h-full" v-if="filteredPosts.length > 1">
-            <div class="flex-center-left gap-3 mb-4">
-              <div class="geo-circle blue-bg border-dark" style="width: 24px; height: 24px; flex-shrink: 0;"></div>
-              <div class="font-sans font-black text-xs uppercase opacity-60" style="letter-spacing: 0.15em;">
-                Próximas Leituras
-              </div>
+          <!-- Lado da Imagem (Halftone) -->
+          <div class="atuacao-side-media">
+             <img :src="atuacaoItems[activeAtuacao].image || 'https://images.unsplash.com/photo-1531206715517-5c0ba140b2b8?auto=format&fit=crop&q=80&w=600'" 
+                  :alt="atuacaoItems[activeAtuacao].title" 
+                  class="halftone" />
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- OPPORTUNITIES -->
+  <section v-reveal class="section-padding bg-lilas text-white border-top-thick align-radar">
+    <div class="container-max opp-grid">
+      <div class="opp-info">
+        <span class="tag-solid bg-preto text-white">O RADAR</span>
+        <h2 class="opp-title">
+          {{ siteContent.home?.opportunitiesTitle || 'OPORTUNIDADES' }}
+        </h2>
+        <p class="opp-desc">
+          {{ siteContent.home?.opportunitiesDesc || 'Vagas, bolsas e projetos para lideranças que constroem mudança social.' }}
+        </p>
+        <div class="opp-action">
+          <router-link to="/oportunidades" class="btn-brutal btn-amarelo paper-shadow">VER TODAS AS VAGAS</router-link>
+        </div>
+      </div>
+
+      <div class="opp-cards-wrapper">
+        <router-link v-for="opp in displayOpportunities" :key="opp.id" :to="`/oportunidades/${opp.id}`" class="card-editorial bg-white paper-shadow opp-card">
+          <div class="accent-bar-left bg-amarelo-bar"></div>
+          <div class="opp-card-content">
+            <div>
+              <span class="tag-solid bg-verde text-preto">{{ opp.category }}</span>
+              <h4 class="opp-card-title">{{ opp.title }}</h4>
+              <span class="label-bold text-vermelho">PRAZO: {{ opp.deadline }}</span>
             </div>
-            <div class="flex-col gap-8 flex-1">
-              <router-link v-for="(article, idx) in filteredPosts.slice(1, 3)" :key="article.id" :to="`/conteudo/${article.id}`" class="small-card group cursor-pointer border-dark p-8 bg-white transition-all h-full flex-col no-underline text-dark" style="display: flex;">
-                <div class="flex-between items-start mb-6">
-                  <div class="tag text-white font-sans font-bold uppercase tracking-widest" :class="idx === 0 ? 'pink-bg rounded-full' : 'blue-bg'">{{ article.category || 'News' }}</div>
-                  <ArrowRight class="w-6 h-6 opacity-30 transition-all card-arrow text-dark" />
-                </div>
-                <h4 class="font-display text-2xl uppercase tracking-tighter leading-tight mt-auto text-dark">
-                  {{ article.title }}
-                </h4>
+            <span class="material-symbols-outlined text-icon-32 text-preto">arrow_outward</span>
+          </div>
+        </router-link>
+      </div>
+    </div>
+  </section>
+
+  <!-- NEWSLETTER (SUBSCRIBE BLOCK) -->
+  <section v-reveal id="newsletter" class="section-padding bg-amarelo border-y-thick">
+    <div class="container-max">
+      <div class="nl-premium-card paper-shadow-lg">
+        
+        <!-- LADO A: IDENTIDADE (PRETO) -->
+        <div class="nl-brand-side">
+           <div class="nl-texture-overlay"></div>
+           <div class="nl-brand-content">
+              <div class="nl-exclusive-badge">
+                 <span class="tag-solid bg-vermelho text-white">CONTEÚDO EXCLUSIVO</span>
+              </div>
+              <h2 class="display-xl text-white uppercase leading-none mb-6">
+                 NEWSLETTER <br><span class="text-amarelo">NARRATIVA</span>
+              </h2>
+              <p class="body-lg text-white opacity-60 font-bold max-w-sm">
+                 Inteligência política, curadoria de oportunidades e análises estratégicas direto na sua caixa de entrada.
+              </p>
+           </div>
+           
+           <div class="nl-meta">
+              <div class="nl-meta-icon bg-rosa">
+                 <Mail :size="24" class="text-preto" />
+              </div>
+              <span class="label-bold text-white uppercase tracking-widest">+5.000 INSCRITOS ATIVOS</span>
+           </div>
+        </div>
+
+        <!-- LADO B: AÇÃO (BRANCO) -->
+        <div class="nl-action-side bg-white">
+           <div class="nl-action-inner">
+              <h3 class="headline-lg uppercase mb-4 text-preto">Faça parte do movimento</h3>
+              <p class="body-md text-preto font-bold mb-10 leading-relaxed">
+                 Junte-se à nossa rede e receba newsletters semanais sobre as frentes que estão movendo o Brasil. Inteligência direta no seu e-mail.
+              </p>
+              
+              <!-- SUBSTACK INTEGRATION BOX -->
+              <div class="substack-box-brutal border-thick bg-amarelo p-8 text-center relative overflow-hidden shadow-brutal">
+                 <div class="accent-bar-top bg-preto"></div>
+                 <h4 class="label-bold uppercase mb-6 text-preto tracking-widest">Assinatura Gratuita</h4>
+                 
+                 <a href="https://substack.com/@narrativapolitica" target="_blank" class="btn-brutal btn-preto w-full py-6 text-xl font-black uppercase flex items-center justify-center gap-4 hover-white-shadow">
+                    ASSINAR NO SUBSTACK <span class="material-symbols-outlined">rocket_launch</span>
+                 </a>
+                 
+                 <p class="text-[10px] font-black uppercase text-preto mt-6 tracking-tighter opacity-40">
+                    Você será levado ao portal oficial da Narrativa Política.
+                 </p>
+              </div>
+           </div>
+           
+           <div class="nl-archive-footer mt-12 pt-8 border-t-thick">
+              <router-link to="/arquivo-newsletter" class="label-bold text-vermelho uppercase hover-underline flex items-center gap-2">
+                 EXPLORAR EDIÇÕES ANTERIORES <span class="material-symbols-outlined">arrow_forward</span>
               </router-link>
-            </div>
-          </div>
+           </div>
         </div>
+
       </div>
-    </section>
+    </div>
+  </section>
 
-    <!-- OPPORTUNITIES -->
-    <section id="opportunities" class="bg-lime py-24 px-6 md-px-12 border-y-dark relative" style="z-index: 10;">
-      <div class="max-w-7xl mx-auto grid-opps gap-12 relative z-10">
-        <div class="flex-col justify-start">
-          <div class="mb-8">
-            <div class="inline-flex-center gap-3 mb-6">
-              <div class="geo-square red-bg border-dark" style="width: 20px; height: 20px; flex-shrink: 0;"></div>
-              <span class="font-sans font-black text-sm uppercase tracking-widest text-dark">{{ siteContent.home?.opportunitiesEyebrow || 'O Radar Ativista' }}</span>
-            </div>
-            <h2 class="font-display text-4xl md-text-5xl lg-text-6xl leading-none tracking-tighter uppercase mb-6 text-dark" style="letter-spacing: -0.06em; word-break: keep-all; white-space: nowrap;">
-              {{ siteContent.home?.opportunitiesTitle || 'Oportunidades' }}
-            </h2>
-          </div>
-          <p class="font-sans font-semibold text-lg text-dark mb-8 bg-white p-6 border-dark-4 shadow-solid">
-            {{ siteContent.home?.opportunitiesDesc || 'Vagas, subsídios e bolsas para lideranças que constroem a base e não apenas a marca. Atualizado pela nossa rede.' }}
-          </p>
-        </div>
-        
-        <div v-if="displayOpportunities.length > 0" class="grid-opps-list gap-6 flex-col">
-          <router-link v-for="(opp, idx) in displayOpportunities" :key="opp.id" :to="`/oportunidades/${opp.id}`" class="opp-item-brutalist group border-dark bg-white flex-col sm-flex-row justify-between no-underline transition-all" style="display: flex;">
-            <div class="opp-content p-6 md-p-8 flex-1">
-              <div class="flex-center-left gap-3 mb-4">
-                <div class="tag text-dark font-sans font-bold uppercase tracking-widest" :class="idx % 2 === 0 ? 'pink-bg rounded-full' : 'blue-bg'">{{ opp.category }}</div>
-              </div>
-              <h4 class="font-display text-3xl uppercase tracking-tighter leading-tight text-dark mb-2 group-hover:text-red transition-colors">{{ opp.title }}</h4>
-              <p class="font-sans font-semibold mt-2 opacity-80 text-dark">{{ opp.description }}</p>
-            </div>
-            <div class="opp-action flex-col items-center justify-center border-t-dark sm-border-t-0 sm-border-l-dark p-6 md-p-8 bg-light group-hover:bg-yellow transition-colors shrink-0" style="display: flex;">
-              <div class="font-sans font-black text-xs uppercase tracking-widest text-dark mb-2 opacity-60">PRAZO</div>
-              <div class="font-display text-xl uppercase text-dark text-center">{{ opp.deadline }}</div>
-              <div class="mt-4 text-dark opacity-0 group-hover:opacity-100 transition-opacity flex items-center font-black text-xs uppercase">
-                Ver Detalhes <ArrowRight :size="16" class="ml-1" />
-              </div>
-            </div>
-          </router-link>
-        </div>
-        <div v-else class="opp-empty-state bg-white border-dark p-8 shadow-solid">
-          <h3 class="font-display text-2xl uppercase tracking-tighter text-dark mb-3">Nenhuma oportunidade ativa</h3>
-          <p class="font-sans font-semibold text-dark opacity-80">Quando o prazo vence, a oportunidade some automaticamente da vitrine pública.</p>
-        </div>
-      </div>
-    </section>
-
-    <!-- SERVICES / EIXOS DE AÇÃO (PREMIUM DARK UI) -->
-    <section id="services" class="bg-dark py-48 px-6 md-px-12 text-light relative overflow-hidden" style="z-index: 10;">
-      <!-- Grid Background -->
-      <div class="absolute inset-0 opacity-10 grid-pattern-bg"></div>
-      
-      <div class="max-w-7xl mx-auto relative z-10">
-        <div class="mb-32 flex flex-col items-center">
-          <h2 class="font-display text-5xl md-text-7xl uppercase tracking-tighter leading-none inline-block text-center text-white">
-            {{ siteContent.home?.eixosTitle || 'NOSSOS' }} <span class="text-yellow">{{ siteContent.home?.eixosSubtitle || 'EIXOS DE AÇÃO' }}</span>
-          </h2>
-        </div>
-
-        <!-- BRUTALIST 3-GRID -->
-        <div class="grid-services-brutalist mb-24">
-          <router-link 
-            v-for="(service, idx) in displayServices.slice(0, 3)" 
-            :key="idx" 
-            :to="service.link || '/servicos'" 
-            :class="['service-card-brutalist group', idx === 0 ? 'card-pink' : idx === 1 ? 'card-lime' : 'card-blue']"
-          >
-            <div class="service-icon-box mb-8 transition-colors" :class="service.textClass"><component :is="service.icon" :size="48" /></div>
-            <h3 class="font-display text-3xl md-text-4xl uppercase mb-6 leading-none text-white transition-colors">{{ service.title }}</h3>
-            <p class="font-sans font-bold opacity-80 text-base leading-relaxed mb-10 text-white transition-colors">{{ service.description }}</p>
-            <div class="brutalist-link-action mt-auto flex-between items-center text-white opacity-60 transition-all font-sans font-black text-sm uppercase tracking-widest">
-              <span>EXPLORAR</span>
-              <ArrowRight :size="24" class="transform group-hover:translate-x-2 transition-transform" />
-            </div>
-          </router-link>
-        </div>
-      </div>
-    </section>
-
-    <!-- NEWSLETTER -->
-    <section class="bg-blue-primary py-24 px-6 md-px-12" style="z-index: 10; position: relative;">
-      <div class="max-w-5xl mx-auto bg-yellow border-dark-4 p-8 md-p-16 flex-col md-flex-row gap-12 items-center shadow-solid-lg relative">
-        <div class="flex-1">
-          <div class="inline-flex-center gap-2 mb-4">
-             <Zap class="text-red" style="fill: #DF2028; color: #DF2028; width: 24px; height: 24px; flex-shrink: 0;" />
-             <span class="font-sans font-black text-xs uppercase tracking-widest text-dark">{{ siteContent.home?.newsletterEyebrow || 'Rede de Mobilização' }}</span>
-          </div>
-          <h2 class="font-display text-4xl md-text-5xl uppercase tracking-tighter text-dark leading-none mb-4" v-html="sanitizeHtml(siteContent.home?.newsletterTitle || 'Junte-se ao <br /> Movimento.')"></h2>
-          <p class="font-sans font-bold text-dark-80">
-            {{ siteContent.home?.newsletterDescription || 'Receba despachos estratégicos, convocações de ação e atualizações das frentes de luta. Sem spam.' }}
-          </p>
-        </div>
-        
-        <div class="flex-1 w-full relative">
-          <div class="flex-col gap-4 relative z-10 bg-white border-dark-4" style="padding: 1.5rem; display: flex;">
-             <!-- Substack Embed Iframe -->
-             <iframe 
-               src="https://narrativapolitica.substack.com/embed" 
-               width="100%" 
-               height="320" 
-               style="border:none; background:white;" 
-               frameborder="0" 
-               scrolling="no">
-             </iframe>
-             
-             <!-- FRASE CLICÁVEL -->
-             <div class="mt-2 text-center">
-                <router-link to="/arquivo-newsletter" class="nl-archive-link">
-                   Quer ler nossas últimas edições antes de assinar? <span class="underline">Clique aqui →</span>
-                </router-link>
-             </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-  </div>
+</div>
 </template>
 
 <script setup>
-import { computed, ref } from 'vue'
-import { ArrowRight, Globe, Users, Zap, Sun, Database, ShieldCheck, Mic2, Cpu } from 'lucide-vue-next'
+import { computed, ref, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 import { siteContent, filterPublicOpportunities, filterPublicPosts } from '../store/content'
-import { sanitizeHtml } from '../utils/sanitizeHtml'
 
-const servicesIcons = { Globe, Users, Zap, Database, ShieldCheck, Mic2, Cpu }
-
-const nlSuccess = ref(false)
-const nlEmail = ref('')
-const selectedTab = ref('TODOS')
-
-const handleNewsletter = () => {
-  if (nlEmail.value) {
-    nlSuccess.value = true
-    nlEmail.value = ''
-    setTimeout(() => { nlSuccess.value = false }, 5000)
-  }
-}
-
-const heroFontSize = computed(() => {
-  const size = siteContent.home.heroFontSize || '11'
-  return window.innerWidth < 768 ? '16vw' : `${size}vw`
-})
-
-const marqueePadding = computed(() => siteContent.home.marqueePadding || '2.2')
-
-const mockOpportunities = [
-  {
-    id: 1,
-    category: "ECONOMIA DE GÊNERO",
-    title: "FORMAÇÃO EM POLÍTICAS PÚBLICAS",
-    description: "Impacto focado em economia de gênero",
-    deadline: "ABERTO"
-  },
-  {
-    id: 2,
-    category: "LIDERANÇA STEM",
-    title: "BOLSAS PARA MULHERES EM DADOS",
-    description: "Impacto focado em liderança stem",
-    deadline: "ABERTO"
-  }
+const mockOps = [
+  { id:1, category:"GÊNERO", title:"FORMAÇÃO EM POLÍTICAS PÚBLICAS", description:"Impacto focado em economia de gênero", deadline:"ABERTO" },
+  { id:2, category:"LIDERANÇA", title:"BOLSAS PARA MULHERES EM DADOS", description:"Impacto focado em liderança stem", deadline:"ABERTO" },
+  { id:3, category:"CLIMA", title:"INCIDÊNCIA CLIMÁTICA PARA JOVENS", description:"Programa de 6 meses para jovens ativistas", deadline:"15/06/2026" }
+]
+const mockPosts = [
+  { id:1, title:"Por que o ativismo corporativo fracassa.", excerpt:"Um mergulho profundo na cooptação corporativa frente às demandas sociais.", category:"MOBILIZAÇÃO" },
+  { id:2, title:"Construção de Novas Narrativas", excerpt:"Projetos focados em dar voz a comunidades marginalizadas e reescrever a história local.", category:"SOCIEDADE" },
+  { id:3, title:"Liderança Feminina na Política", excerpt:"Capacitação e mentoria para mulheres que desejam ingressar na política.", category:"GÊNERO" }
 ]
 
 const displayOpportunities = computed(() => {
-  const allOps = siteContent.opportunities && siteContent.opportunities.length > 0 
-    ? filterPublicOpportunities(siteContent.opportunities)
-    : mockOpportunities
-  
-  // Filtrar APENAS as marcadas para aparecer na home
-  // Se você não marcar nenhuma, a seção ficará vazia ou com as mais recentes (dependendo da sua escolha)
-  // Vou deixar as 4 mais recentes como fallback SE não houver nenhuma marcada, 
-  // mas priorizar 100% as marcadas.
-  let filtered = allOps.filter(o => o.showOnHome)
-  
-  if (filtered.length === 0) {
-    // Se o usuário quer controle total e não marcou nada, 
-    // podemos mostrar as últimas como segurança ou deixar vazio.
-    // Vamos manter as últimas aprovadas mas avisar no admin.
-    filtered = allOps.slice(0, 4)
-  }
-
-  return [...filtered].sort((a, b) => {
-    if (a.featured && !b.featured) return -1
-    if (!a.featured && b.featured) return 1
-    return 0
-  }).slice(0, 4)
+  const all = siteContent.opportunities?.length ? filterPublicOpportunities(siteContent.opportunities) : mockOps
+  let filtered = all.filter(o => o.showOnHome)
+  if (!filtered.length) filtered = all.slice(0,4)
+  return [...filtered].sort((a,b) => (a.featured&&!b.featured?-1:!a.featured&&b.featured?1:0)).slice(0,3)
 })
-
-const mockPosts = [
-  {
-    id: 1,
-    title: "Por que o ativismo corporativo fracassa.",
-    excerpt: "Um mergulho profundo na cooptação de movimentos radicais e o que o impacto autêntico exige dos organizadores comunitários no cenário atual.",
-    category: "MOBILIZAÇÃO",
-    image: "https://images.unsplash.com/photo-1541844053589-346841d0b34c?auto=format&fit=crop&q=80&w=800",
-    date: "2026-04-18"
-  },
-  {
-    id: 2,
-    title: "Como estruturar um sindicato local no modelo 2026",
-    excerpt: "A nova onda de sindicalismo que está transformando a relação entre capital e trabalho nas cidades.",
-    category: "EDUCAÇÃO",
-    image: "",
-    date: "2026-04-15"
-  },
-  {
-    id: 3,
-    title: "A geopolítica da descarbonização nos países em desenvolvimento",
-    excerpt: "Como o sul global está liderando e sofrendo com a transição energética global.",
-    category: "CLIMA",
-    image: "",
-    date: "2026-04-10"
-  }
-]
 
 const displayPosts = computed(() => {
-  if (siteContent.isLoading) return []
-  const posts = siteContent.posts && siteContent.posts.length > 0 ? siteContent.posts : mockPosts
-  return filterPublicPosts(posts)
+  return filterPublicPosts(siteContent.posts?.length ? siteContent.posts : mockPosts)
 })
 
-const filteredPosts = computed(() => {
-  if (selectedTab.value === 'TODOS') return displayPosts.value
-  return displayPosts.value.filter(post => post.category?.toUpperCase() === selectedTab.value)
+const activeAtuacao = ref(0)
+const atuacaoItems = computed(() => {
+  if (siteContent.home?.atuacao && siteContent.home.atuacao.length > 0) {
+    return siteContent.home.atuacao
+  }
+  return defaultAtuacao
 })
 
-const featuredArticle = computed(() => {
-  return displayPosts.value.length > 0 ? displayPosts.value[0] : null
-})
-
-const secondaryArticles = computed(() => {
-  return displayPosts.value.length > 1 ? displayPosts.value.slice(1, 3) : []
-})
-
-const defaultServices = [
-  { title: 'Escola de Formação', description: 'Cursos e materiais para desenvolvimento de novas lideranças comunitárias.', icon: Users, textClass: 'text-pink', link: '/trilhas' },
-  { title: 'Incidência Política', description: 'Acompanhamento legislativo e construção de campanhas de pressão pública.', icon: Globe, textClass: 'text-lime', link: '/oportunidades' },
-  { title: 'Apoio a Territórios', description: 'Suporte logístico e intelectual para movimentos sociais na linha de frente.', icon: Zap, textClass: 'text-blue', link: '/servicos' },
-  { title: 'Pesquisa & Dados', description: 'Produção de conhecimento estratégico, mapeamento de atores e análise de conjuntura.', icon: Database, textClass: 'text-yellow', link: '/biblioteca' }
+const defaultAtuacao = [
+  { title: 'GÊNERO', description: 'Análise e construção de narrativas que expõem e combatem as desigualdades estruturais, promovendo a equidade e a representatividade em todos os espaços de poder.', icon: 'groups', iconColor: 'var(--np-rosa)', accentColor: 'var(--np-rosa)' },
+  { title: 'POLÍTICA', description: 'Estratégias de comunicação para campanhas, mandatos e movimentos sociais. Transformando dados e discursos em ação política concreta e engajamento popular.', icon: 'campaign', iconColor: 'var(--np-black)', accentColor: 'var(--np-amarelo)', bgColor: 'var(--np-black)', bgIcon: 'unarchive' },
+  { title: 'IMPACTO SOCIAL', description: 'Consultoria e desenvolvimento de projetos para organizações que buscam gerar impacto real e mensurável nas comunidades em que atuam, unindo teoria e prática.', icon: 'public', iconColor: 'var(--np-verde)', accentColor: 'var(--np-verde)', image: 'https://images.unsplash.com/photo-1531206715517-5c0ba140b2b8?auto=format&fit=crop&q=80&w=600' }
 ]
-const displayServices = computed(() => siteContent.services?.length ? siteContent.services : defaultServices)
 </script>
 
 <style scoped>
-/* CORES BASE */
-.text-dark { color: #1C1C1C; }
-.text-white { color: #FFFFFF; }
-.text-light { color: #F7F7F5; }
-.text-yellow { color: #FFE65A; }
-.text-red { color: #DF2028; }
-.text-pink { color: #FF6BCA; }
-.text-lime { color: #A4CD39; }
-.text-blue { color: #3D78E0; }
-.text-dark-80 { color: rgba(28,28,28,0.8); }
+/* ── LOCAL UTILS ──────────────────────────────── */
+.home { background: var(--np-creme); font-family: var(--font-sans); color: var(--np-black); }
+.border-top-thick { border-top: var(--border-thick); }
+.border-y-thick { border-top: var(--border-thick); border-bottom: var(--border-thick); }
+.bg-preto { background: var(--np-black) !important; }
+.text-preto { color: var(--np-black) !important; }
+.text-white { color: var(--np-white) !important; }
+.text-icon-32 { font-size: 32px !important; }
+.text-icon-80 { font-size: 80px !important; }
 
-.bg-white { background-color: #FFFFFF; }
-.bg-light { background-color: #F7F7F5; }
-.bg-dark { background-color: #1C1C1C; }
-.bg-lime { background-color: #A4CD39; }
-.bg-blue-primary { background-color: #3D78E0; }
-.bg-gray-dark { background-color: #2A2A2A; }
+.m-0 { margin: 0; }
+.mt-2 { margin-top: 8px; }
+.mt-4 { margin-top: 16px; }
+.mt-6 { margin-top: 24px; }
+.mt-8 { margin-top: 32px; }
+.mb-2 { margin-bottom: 8px; }
+.mb-4 { margin-bottom: 16px; }
 
-.yellow-bg { background-color: #FFE65A; }
-.pink-bg { background-color: #FF6BCA; }
-.blue-bg { background-color: #3D78E0; }
-.red-bg { background-color: #DF2028; }
-.lime-bg { background-color: #A4CD39; }
-.mint-bg { background-color: #A2E3B1; }
-.dark-bg { background-color: #1C1C1C; }
-.fill-dark { fill: #1C1C1C; }
+.hover-underline:hover { text-decoration: underline; text-underline-offset: 4px; }
 
-/* LAYOUT & SPACING */
-.max-w-7xl { max-width: 80rem; }
-.max-w-5xl { max-width: 64rem; }
-.max-w-xs { max-width: 20rem; }
-.w-full { width: 100%; }
-.h-full { height: 100%; }
-.mx-auto { margin-left: auto; margin-right: auto; }
-.py-24 { padding-top: 6rem; padding-bottom: 6rem; }
-.py-32 { padding-top: 8rem; padding-bottom: 8rem; }
-.py-5 { padding-top: 1.25rem; padding-bottom: 1.25rem; }
-.px-6 { padding-left: 1.5rem; padding-right: 1.5rem; }
-.p-8 { padding: 2rem; }
-.p-6 { padding: 1.5rem; }
-.pb-32 { padding-bottom: 8rem; }
-.mb-16 { margin-bottom: 4rem; }
-.mb-24 { margin-bottom: 6rem; }
-.mb-12 { margin-bottom: 3rem; }
-.mb-8 { margin-bottom: 2rem; }
-.mb-6 { margin-bottom: 1.5rem; }
-.mb-4 { margin-bottom: 1rem; }
-.mb-3 { margin-bottom: 0.75rem; }
-.mt-auto { margin-top: auto; }
-.mt-8 { margin-top: 2rem; }
-.mt-2 { margin-top: 0.5rem; }
-.pl-4 { padding-left: 1rem; }
-.gap-12 { gap: 3rem; }
-.gap-8 { gap: 2rem; }
-.gap-6 { gap: 1.5rem; }
-.gap-4 { gap: 1rem; }
-.gap-3 { gap: 0.75rem; }
-.gap-2 { gap: 0.5rem; }
-.flex-1 { flex: 1 1 0%; }
-.shrink-0 { flex-shrink: 0; }
-
-.absolute { position: absolute; }
-.relative { position: relative; }
-.inset-0 { top: 0; right: 0; bottom: 0; left: 0; }
-.z-0 { z-index: 0; }
-.z-10 { z-index: 10; }
-.z-20 { z-index: 20; }
-.overflow-hidden { overflow: hidden; }
-.inline-block { display: inline-block; }
-
-/* FLEXBOX */
-.flex-col { display: flex; flex-direction: column; }
-.flex-between { display: flex; justify-content: space-between; }
-.flex-center { display: flex; align-items: center; justify-content: center; }
-.flex-center-left { display: flex; align-items: center; }
-.inline-flex-center { display: inline-flex; align-items: center; }
-.items-center { align-items: center; }
-.items-end { align-items: flex-end; }
-.items-start { align-items: flex-start; }
-.justify-center { justify-content: center; }
-.justify-between { justify-content: space-between; }
-
-/* TYPOGRAPHY */
-.font-display { font-family: "Archivo Black", sans-serif; }
-.font-hero { font-family: "Space Grotesk", sans-serif; font-weight: 800; letter-spacing: -0.05em; }
-.font-sans { font-family: "Inter", sans-serif; }
-.uppercase { text-transform: uppercase; }
-.tracking-tighter { letter-spacing: -0.04em; }
-.tracking-widest { letter-spacing: 0.1em; }
-.leading-none { line-height: 1; }
-.leading-tight { line-height: 1.1; }
-.leading-relaxed { line-height: 1.625; }
-.font-bold { font-weight: 700; }
-.font-semibold { font-weight: 600; }
-.font-medium { font-weight: 500; }
-.font-black { font-weight: 900; }
-.text-5xl { font-size: 3rem; }
-.text-7xl { font-size: 4.5rem; }
-.text-4xl { font-size: 2.25rem; }
-.text-3xl { font-size: 1.875rem; }
-.text-2xl { font-size: 1.5rem; }
-.text-lg { font-size: 1.125rem; }
-.text-sm { font-size: 0.875rem; }
-.text-xs { font-size: 0.75rem; }
-.text-center { text-align: center; }
-.text-right { text-align: right; }
-
-/* BORDERS & SHADOWS */
-.border-dark { border: 4px solid #1C1C1C; }
-.border-dark-4 { border: 4px solid #1C1C1C; }
-.border-dark-2 { border: 2px solid #1C1C1C; }
-.border-y-dark { border-top: 4px solid #1C1C1C; border-bottom: 4px solid #1C1C1C; }
-.border-b-dark { border-bottom: 4px solid #1C1C1C; }
-.border-b-brutalist { border-bottom: 4px solid #1C1C1C; }
-.border-l-lime { border-left: 4px solid #A4CD39; }
-.border-white-20 { border: 4px solid rgba(255,255,255,0.2); }
-.border-white-2 { border: 2px solid #FFFFFF; }
-.border-pink { border-color: #FF6BCA; }
-.border-2 { border-width: 2px; border-style: solid; }
-.border-t-white-10 { border-top: 1px solid rgba(255,255,255,0.1); }
-.shadow-solid { box-shadow: 6px 6px 0px #1C1C1C; }
-.shadow-solid-lg { box-shadow: 12px 12px 0px #1C1C1C; }
-.drop-shadow-md { filter: drop-shadow(0 4px 3px rgba(0,0,0,0.07)) drop-shadow(0 2px 2px rgba(0,0,0,0.06)); }
-
-/* OPACITY & EFFECTS */
-.opacity-5 { opacity: 0.05; }
-.opacity-30 { opacity: 0.3; }
-.opacity-50 { opacity: 0.5; }
-.opacity-70 { opacity: 0.7; }
-.opacity-80 { opacity: 0.8; }
-.mix-blend-multiply { mix-blend-mode: multiply; }
-.grayscale { filter: grayscale(100%); }
-.backdrop-blur-sm { backdrop-filter: blur(4px); }
-.transition-all { transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
-.transition-colors { transition: background-color 0.3s, border-color 0.3s, color 0.3s; }
-.cursor-pointer { cursor: pointer; }
-
-/* --- HERO SPECIFIC --- */
-.hero-section {
+/* ── HERO SECTION ────────────────────────────── */
+.home-hero {
   position: relative;
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  padding-top: 0;
-  padding-bottom: 0;
+  padding: 80px 0 120px 0;
   overflow: hidden;
-}
-.activist-gradient { background: linear-gradient(110deg, #A80022 0%, #DF2028 35%, #A4CD39 75%, #1D976C 100%); }
-.border-hero-bottom { border-bottom: 6px solid #1C1C1C; }
-
-.hero-content {
-  display: flex; flex-direction: column; align-items: center;
-  justify-content: center;
-  flex-grow: 1; max-width: 80rem; margin: 0 auto; width: 100%;
-}
-.hero-title { 
-  font-size: 16vw; 
-  line-height: 1.1;
-  margin-bottom: 1.5rem; 
-  text-align: left;
-  transform: translate(-10%, -15%);
-}
-.hero-title span {
-  display: block;
-  margin-top: 0.1em;
-  padding-left: 0.8em;
-}
-@media (min-width: 768px) { 
-  .hero-title { 
-    font-size: 11vw; 
-    line-height: 1.05;
-    transform: translate(-15%, -20%);
-  } 
-  .hero-title span {
-    padding-left: 1.2em;
-  }
+  border-bottom: var(--border-thick);
+  background: var(--np-creme);
+  z-index: 10;
 }
 
-/* GEOMETRIC SHAPES */
-.geo-circle { border-radius: 50%; aspect-ratio: 1/1; }
-.geo-square { border-radius: 0; aspect-ratio: 1/1; }
-.shape-pill-y { border-radius: 9999px; height: 8rem; width: 3rem; }
-.shape-pill-x { border-radius: 9999px; height: 1.5rem; width: 3rem; }
-@media (min-width: 768px) { 
-  .shape-pill-y { height: 12rem; width: 5rem; }
-  .shape-pill-x { height: 2.5rem; width: 5rem; }
-}
-
-.floating-shape { position: absolute; z-index: 10; border: 4px solid #1C1C1C; }
-.shape-1 { top: 20%; right: 10%; box-shadow: 8px 8px 0px rgba(28,28,28,0.5); animation: float-1 4s ease-in-out infinite; }
-@media (min-width: 768px) { .shape-1 { right: 20%; } }
-.shape-2 { bottom: 15%; left: 5%; width: 4rem; height: 4rem; box-shadow: -8px 8px 0px rgba(28,28,28,0.5); transform: rotate(12deg); animation: float-2 5s ease-in-out infinite 1s; }
-@media (min-width: 768px) { .shape-2 { left: 10%; width: 6rem; height: 6rem; } }
-.shape-4 { bottom: 30%; right: 5%; width: 2.5rem; height: 2.5rem; border-radius: 50%; animation: pulse-1 5s ease-in-out infinite 1s; }
-.shape-7 { bottom: 22%; right: 12%; animation: float-1 6s ease-in-out infinite 0.5s; }
-
-@keyframes float-1 { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }
-@keyframes float-2 { 0%, 100% { transform: translateY(0) rotate(12deg); } 50% { transform: translateY(30px) rotate(12deg); } }
-@keyframes pulse-1 { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1); } }
-
-/* BUTTONS */
-.btn-red {
-  display: inline-flex; align-items: center; gap: 1rem; padding: 1rem 2rem;
-  font-family: "Inter", sans-serif; text-transform: uppercase; font-weight: 900;
-  letter-spacing: 0.1em; font-size: 0.875rem; border: 2px solid #1C1C1C;
-  background-color: #DF2028; color: #F7F7F5; transition: all 0.3s; cursor: pointer;
-}
-.btn-red:hover { transform: translateY(-4px); box-shadow: 4px 4px 0px #1C1C1C; }
-
-/* MARQUEE */
-.marquee-wrapper { 
-  display: flex; 
-  overflow-x: hidden; 
-  padding: 2.2rem 0;
-}
-.border-marquee-bottom { border-bottom: 6px solid #1C1C1C; }
-.marquee-track { display: flex; white-space: nowrap; animation: marquee-scroll 25s linear infinite; }
-.marquee-item-rel { 
-  display: inline-flex; 
-  align-items: center; 
-  padding-left: 2rem; 
-  padding-right: 4rem;
-  white-space: nowrap; 
-  position: relative;
-}
-.sun-container-abs {
-  position: absolute;
-  right: 0;
-  width: 4rem;
-  display: flex;
-  justify-content: center;
+.home-hero-grid {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
   align-items: center;
+  gap: 32px;
 }
-.sun-icon-mini { width: 1.5rem; height: 1.5rem; flex-shrink: 0; }
-@keyframes marquee-scroll { 0% { transform: translateX(0%); } 100% { transform: translateX(-50%); } }
 
-/* FEATURED WRITING */
-.activist-gradient-text {
-  background: linear-gradient(110deg, #DF2028 0%, #A4CD39 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+.hero-left {
+  position: relative;
+  z-index: 10;
 }
-.padding-left-step { padding-left: 1.5em; }
-@media (max-width: 768px) { .padding-left-step { padding-left: 1em; } }
-.md--translateX-12 { transform: translateX(-3rem); }
-.grid-writing { display: grid; grid-template-columns: 1fr; }
-@media (min-width: 768px) { .grid-writing { grid-template-columns: repeat(2, 1fr); } }
-@media (min-width: 1024px) { .grid-writing { grid-template-columns: repeat(3, 1fr); } }
-.large-col { grid-column: span 1; }
-@media (min-width: 768px) { .large-col { grid-column: span 2; } }
-.large-card { display: flex; overflow: hidden; }
-.large-card:hover { box-shadow: 8px 8px 0px #A4CD39; }
-.large-card:hover .full-img { filter: grayscale(0%); opacity: 1; }
-.large-card:hover .img-overlay { background-color: transparent; }
-.large-card:hover .read-more { color: #DF2028; }
-.bg-lime-20 { background-color: rgba(164, 205, 57, 0.2); }
-.tag { padding: 0.5rem 1rem; font-size: 0.6875rem; display: inline-flex; align-items: center; justify-content: center; }
-.small-card:hover { box-shadow: 8px 8px 0px #FF6BCA; }
-.small-card:hover .card-arrow { opacity: 1; transform: rotate(-45deg); }
 
-/* OPPORTUNITIES */
-.grid-opps { display: grid; grid-template-columns: 1fr; }
-@media (min-width: 1024px) { .grid-opps { grid-template-columns: repeat(12, minmax(0, 1fr)); } .grid-opps > div:first-child { grid-column: span 4 / span 4; } .grid-opps > div:last-child { grid-column: span 8 / span 8; } }
-.opp-item:hover { transform: translateY(-4px); box-shadow: 8px 8px 0px #1C1C1C; }
-.bg-gradient-hover { background-image: linear-gradient(to right, transparent, transparent); background-size: 100% 12px; background-repeat: no-repeat; background-position: bottom; }
-.opp-item:hover .bg-gradient-hover { background-image: linear-gradient(to right, #FFE65A, #FFE65A); }
-.opp-item:hover .opp-deadline { background-color: #1C1C1C; color: #FFFFFF; }
-
-/* MEDIUM-LIKE BRUTALIST TABS */
-.tab-medium-brutalist {
-  background: transparent;
-  border: none;
-  font-family: "Inter", sans-serif;
-  font-weight: 800;
-  font-size: 0.85rem;
+.hero-badge {
+  display: inline-block;
+  background: var(--np-rosa);
+  color: var(--np-white);
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 13px;
+  padding: 6px 16px;
+  border: var(--border-thick);
   letter-spacing: 0.05em;
   text-transform: uppercase;
-  color: #1C1C1C;
-  opacity: 0.4;
-  cursor: pointer;
-  padding: 0.5rem 1rem 1rem 1rem;
-  position: relative;
-  transition: all 0.2s;
-  white-space: nowrap;
+  transform: rotate(-2deg);
+  margin-bottom: 32px;
 }
-.tab-medium-brutalist:hover { opacity: 0.8; }
-.tab-medium-brutalist.active-tab { opacity: 1; }
-.tab-medium-brutalist.active-tab::after {
-  content: '';
-  position: absolute;
-  bottom: -4px; /* matches border-b-dark */
-  left: 0;
-  width: 100%;
-  height: 4px;
-  background: #1C1C1C;
-}
-.no-scrollbar::-webkit-scrollbar { display: none; }
-.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
-/* SERVICES BRUTALIST 3 GRID */
-.grid-services-brutalist {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 1.5rem;
+.hero-title {
+  font-family: var(--font-display);
+  font-size: 80px;
+  line-height: 0.95;
+  font-weight: 800;
+  color: var(--np-black);
+  text-transform: uppercase;
+  margin-bottom: 24px;
+  letter-spacing: -1px;
 }
-@media (min-width: 1024px) {
-  .grid-services-brutalist { grid-template-columns: repeat(3, 1fr); }
+.hero-title span { color: var(--np-black); }
+
+.hero-subtitle {
+  font-family: var(--font-sans);
+  font-size: 18px;
+  color: var(--text-variant);
+  max-width: 500px;
+  border-left: 4px solid var(--np-azul);
+  padding-left: 16px;
+  margin-bottom: 32px;
+  line-height: 1.6;
 }
-.service-card-brutalist {
-  background: transparent;
-  padding: 3rem;
+
+.hero-actions {
+  display: flex;
+  gap: 16px;
+}
+.btn-preto { background: var(--np-black); color: var(--np-white); }
+.btn-outline { background: transparent; color: var(--np-black); }
+.btn-outline:hover { background: var(--np-black); color: var(--np-white); }
+
+.hero-right {
+  position: relative;
+  margin-top: 48px;
+}
+
+.hero-img-wrap {
+  position: relative;
+  height: 520px;
+  width: 100%;
+  max-width: 440px;
+  margin: 0 auto;
+  background: var(--surface-container-high);
+  overflow: hidden;
+  z-index: 10;
+}
+
+.hero-halftone {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: grayscale(100%) contrast(1.25);
+  mix-blend-mode: luminosity;
+}
+
+.hero-floating-seal {
+  position: absolute;
+  bottom: -20px;
+  left: -20px;
+  z-index: 20;
+  background: var(--np-vermelho);
+  color: var(--np-white);
+  padding: 16px;
+  border: var(--border-thick);
+  transform: rotate(-12deg);
+}
+
+.hero-floating-seal .material-symbols-outlined {
+  font-size: 40px;
+}
+
+.blob-amarelo {
+  position: absolute;
+  top: -40px; left: -40px;
+  width: 140px; height: 140px;
+  background: var(--np-amarelo);
+  border-radius: 50%;
+  mix-blend-mode: multiply;
+  opacity: 0.8;
+  filter: blur(8px);
+  z-index: -1;
+}
+
+.blob-verde {
+  position: absolute;
+  bottom: -20px; right: 2rem;
+  width: 220px; height: 220px;
+  background: var(--np-verde);
+  border-radius: 50%;
+  mix-blend-mode: multiply;
+  opacity: 0.9;
+  filter: blur(8px);
+  z-index: -1;
+}
+
+/* ── MOVIMENTO SECTION ──────────────────────── */
+.home-movimento { position: relative; z-index: 10; }
+
+.movimento-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  border-bottom: 4px solid var(--np-black);
+  padding-bottom: 16px;
+  margin-bottom: 48px;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.movimento-link {
+  font-family: var(--font-sans);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: var(--np-black);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+}
+.movimento-link span { font-size: 16px; }
+.movimento-link:hover { text-decoration: underline; text-underline-offset: 4px; }
+
+/* Cards */
+.card-tags { margin-top: 8px; margin-bottom: 12px; }
+.card-title {
+  font-family: var(--font-display);
+  font-size: 32px;
+  font-weight: 700;
+  margin-bottom: 12px;
+  line-height: 1.1;
+  transition: color 0.2s;
+}
+.group:hover .hover-azul { color: var(--np-azul); }
+.group:hover .hover-rosa { color: var(--np-rosa); }
+
+.card-excerpt {
+  font-family: var(--font-sans);
+  font-size: 16px;
+  color: var(--text-variant);
+  line-height: 1.5;
+  flex-grow: 1;
+}
+.text-white-opacity { color: rgba(255,255,255,0.8) !important; }
+
+.card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 24px;
+}
+
+.card-inverted {
+  transform: translateY(0);
+}
+.card-editorial:hover .card-inverted,
+.card-editorial:hover {
+  transform: translateY(-8px);
+}
+
+/* ── ÁREAS DE ATUAÇÃO (TABBED) ──────────────── */
+.atuacao-header-flex {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 24px;
+  flex-wrap: wrap;
+  margin-bottom: 48px;
+}
+
+.title-underline {
+  width: 128px;
+  height: 4px;
+  margin-top: 8px;
+}
+
+.atuacao-tabs-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.btn-tab-brutal {
+  padding: 12px 24px;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 18px;
+  text-transform: uppercase;
+  background: var(--np-white);
+  color: var(--text-variant);
+  border: var(--border-thick);
+  cursor: pointer;
+  transition: all 0.2s;
+  letter-spacing: 0;
+}
+
+.btn-tab-brutal:hover {
+  background: var(--np-creme);
+  color: var(--np-black);
+}
+
+.btn-tab-brutal.active {
+  background: var(--np-black);
+  color: var(--np-white);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-paper-sm);
+}
+
+.card-atuacao-active {
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  background: var(--np-creme);
+  border: var(--border-thick);
+  position: relative;
+  overflow: hidden;
+  min-height: 400px;
+  padding: 0 !important; /* Resetting card padding */
+  transition: all 0.3s ease;
+}
+
+.atuacao-main-info {
+  flex: 1;
+  padding: 48px;
   display: flex;
   flex-direction: column;
-  transition: all 0.3s;
-  text-decoration: none;
-  border: 1px solid rgba(255,255,255,0.2);
+  justify-content: center;
+  position: relative;
+  z-index: 10;
 }
 
-/* BACKGROUND PATTERNS */
-.grid-pattern-bg {
-  background-image: linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px),
-                    linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px);
-  background-size: 40px 40px;
-  background-position: center center;
+.atuacao-icon-large .material-symbols-outlined {
+  font-size: 64px !important;
+  margin-bottom: 24px;
+  display: block;
 }
 
-.grid-pattern-light {
-  background-image: radial-gradient(circle at center, rgba(0,0,0,0.08) 2px, transparent 2px);
-  background-size: 24px 24px;
-}
-
-/* Card Specific Colors */
-.card-pink { border-color: #FF6BCA; }
-.card-pink:hover { background-color: #FF6BCA; }
-
-.card-lime { border-color: #A4CD39; }
-.card-lime:hover { background-color: #A4CD39; }
-
-.card-blue { border-color: #3D78E0; }
-.card-blue:hover { background-color: #3D78E0; }
-
-.service-card-brutalist:hover h3, 
-.service-card-brutalist:hover p, 
-.service-card-brutalist:hover .brutalist-link-action,
-.service-card-brutalist:hover .service-icon-box {
-  color: #1C1C1C !important;
-  opacity: 1;
-}
-
-/* OPPORTUNITIES REWORK */
-.opp-item-brutalist:hover {
-  transform: translateY(-4px);
-  box-shadow: 8px 8px 0px #1C1C1C;
-}
-.group-hover\:text-red:hover { color: #DF2028; }
-.group-hover\:bg-yellow:hover { background-color: #FFE65A; }
-.group-hover\:opacity-100:hover { opacity: 1; }
-.sm-border-l-dark { border-left: none; }
-.sm-border-t-0 { border-top: 4px solid #1C1C1C; }
-@media (min-width: 640px) {
-  .sm-border-l-dark { border-left: 4px solid #1C1C1C; }
-  .sm-border-t-0 { border-top: none; }
-}
-
-/* NEWSLETTER */
-.nl-input { border: 4px solid #1C1C1C; }
-.nl-archive-link {
-  font-family: 'Inter', sans-serif;
+.display-md {
+  font-size: 48px;
+  line-height: 1;
   font-weight: 800;
-  font-size: 13px;
-  color: #1C1C1C;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  text-decoration: none;
-  opacity: 0.7;
-  transition: 0.2s;
-  display: inline-block;
-  cursor: pointer;
+  margin-bottom: 16px;
 }
-.nl-archive-link:hover {
-  opacity: 1;
-  color: #DF2028;
-  transform: scale(1.02);
-}
-.focus-outline:focus { outline: none; background-color: #FFFFFF; }
 
-/* RESPONSIVE UTILS */
+.atuacao-footer-hint {
+  margin-top: 32px;
+}
+
+.atuacao-bg-icon-hint {
+  position: absolute;
+  bottom: -40px;
+  right: -20px;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.05;
+}
+
+.atuacao-bg-icon-hint .material-symbols-outlined {
+  font-size: 160px;
+  color: var(--np-black);
+}
+
+.atuacao-side-media {
+  width: 35%;
+  border-left: var(--border-thick);
+  background: var(--surface-container);
+  overflow: hidden;
+  display: block;
+}
+
+.atuacao-side-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+@media (max-width: 1024px) {
+  .atuacao-side-media { width: 40%; }
+}
+
 @media (max-width: 768px) {
-  .md-flex-row { flex-direction: column; }
-  .md-w-half { width: 100%; }
-  .md-h-auto { height: 16rem; }
-  .md-border-r-dark { border-right: none; }
-  .border-b-dark { border-bottom: 4px solid #1C1C1C; }
+  .display-md { font-size: 32px; }
+  .atuacao-main-info { padding: 32px; }
+  .card-atuacao-active { flex-direction: column; min-height: auto; }
+  .atuacao-side-media { width: 100%; height: 250px; border-left: none; border-top: var(--border-thick); }
 }
-@media (min-width: 768px) {
-  .md-px-12 { padding-left: 3rem; padding-right: 3rem; }
-  .md-text-7xl { font-size: 4.5rem; }
-  .md-text-6xl { font-size: 3.75rem; }
-  .md-text-5xl { font-size: 3rem; }
-  .md-text-4xl { font-size: 2.25rem; }
-  .md-flex-row { flex-direction: row; }
-  .md-w-half { width: 50%; }
-  .md-h-auto { height: auto; }
-  .md-p-12 { padding: 3rem; }
-  .md-p-16 { padding: 4rem; }
-  .md-p-8 { padding: 2rem; }
-  .md-border-r-dark { border-right: 4px solid #1C1C1C; }
-  .sm-flex-row { flex-direction: row; }
-  .sm-items-center { align-items: center; }
+
+/* ── OPPORTUNITIES ──────────────────────────── */
+.align-radar { position: relative; z-index: 10; }
+
+.opp-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.2fr;
+  gap: 64px;
 }
+
+.opp-info { padding-right: 32px; }
+.opp-info .tag-solid { margin-bottom: 16px; }
+
+.opp-title {
+  font-family: var(--font-display);
+  font-size: 80px;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -2px;
+  margin-bottom: 16px;
+  text-transform: uppercase;
+  color: var(--np-white);
+}
+
+.opp-desc {
+  font-family: var(--font-sans);
+  font-size: 18px;
+  max-width: 400px;
+  opacity: 0.9;
+  line-height: 1.6;
+  margin-bottom: 32px;
+}
+
+.opp-cards-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.opp-card {
+  display: flex;
+  align-items: center;
+  padding: 24px 32px;
+  gap: 24px;
+  position: relative;
+}
+
+.opp-card-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.opp-card-title {
+  font-family: var(--font-display);
+  font-size: 32px;
+  font-weight: 700;
+  margin-top: 8px;
+  margin-bottom: 8px;
+  color: var(--np-black);
+}
+
+.border-t-thin { border-top: var(--border-thin); }
+
+/* ── RESPONSIVO V4 ───────────────────────────── */
+@media (max-width: 1100px) {
+  .nl-premium-card { flex-direction: column; min-height: auto; }
+  .nl-brand-side { padding: 48px; min-height: auto; }
+  .nl-action-side { padding: 48px; }
+  .nl-meta { margin-top: 32px; }
+}
+
+@media (max-width: 768px) {
+  .nl-brand-side, .nl-action-side { padding: 32px; }
+  .display-xl { font-size: 48px; }
+  .headline-lg { font-size: 32px; }
+  .substack-box-brutal { padding: 24px !important; }
+}
+
+
 </style>

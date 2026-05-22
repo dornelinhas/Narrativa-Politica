@@ -8,8 +8,8 @@ const router = useRouter()
 const projects = computed(() => filterPublicProjects(siteContent.projects || []))
 
 const staticProjects = [
-  { id: 1, title: 'Women in Leadership: Bridging the Gender Gap', desc: 'Empowering female voices in politics and business to create equitable decision-making spaces.', impact: '+500 Lideranças Formadas', tags: [{ label: 'Gender', cls: 'pink-bg' }, { label: 'Leadership', cls: 'blue-bg' }], image: '/images/projects/women-leadership.png' },
-  { id: 2, title: 'The Future of Green Economics', desc: 'Analyzing the shift towards sustainable and circular models for long-term prosperity.', impact: '3 Leis Aprovadas', tags: [{ label: 'Economy', cls: 'yellow-bg' }, { label: 'Sustainability', cls: 'lime-bg' }], image: '/images/projects/green-economics.png' }
+  { id: 1, title: 'Liderança Feminina Reestruturando as Bases', desc: 'Projeto focado em capacitar vozes femininas na política local.', impact: '+500 LIDERANÇAS', tags: [{ label: 'GÊNERO' }, { label: 'EDUCAÇÃO' }], image: 'https://images.unsplash.com/photo-1573164713988-8665fc963095?auto=format&fit=crop&q=80&w=800' },
+  { id: 2, title: 'Incidência Climática no Parlamento', desc: 'Análise e advocacy no congresso nacional focado em transição verde.', impact: '3 LEIS APROVADAS', tags: [{ label: 'CLIMA' }, { label: 'ADVOCACY' }], image: 'https://images.unsplash.com/photo-1611270402409-e85d8d3215be?auto=format&fit=crop&q=80&w=800' }
 ]
 
 const displayProjects = computed(() => {
@@ -19,9 +19,14 @@ const displayProjects = computed(() => {
 const normalizeProjectTags = (tags) => {
   if (Array.isArray(tags)) return tags
   if (typeof tags === 'string' && tags.trim()) {
-    return tags.split(',').map(label => ({ label: label.trim(), cls: 'yellow-bg' }))
+    return tags.split(',').map(label => ({ label: label.trim() }))
   }
   return []
+}
+
+const getTagBg = (index) => {
+  const bgs = ['bg-amarelo', 'bg-rosa', 'bg-verde', 'bg-azul']
+  return bgs[index % bgs.length]
 }
 
 const openProject = (id) => {
@@ -30,311 +35,114 @@ const openProject = (id) => {
 </script>
 
 <template>
-  <div class="projects-page">
-    <section class="projects-hero">
-      <div class="projects-hero__grid"></div>
-      <div class="container-custom projects-hero__content">
-        <div class="projects-kicker">
-          <span class="projects-kicker__dot"></span>
-          <span>Lab de Impacto</span>
-        </div>
-        <h1 class="projects-title">
-          Nossos <span>Projetos</span>
+  <div class="projects-page bg-creme">
+    <div class="container-max section-padding">
+      
+      <header class="page-hero-np text-center border-b-thick mb-16 pt-12 pb-16">
+        <span class="tag-solid bg-preto text-white">● LAB DE IMPACTO</span>
+        <h1 class="display-xl mt-4 text-preto uppercase">
+          PORTFÓLIO DE <br/><span class="text-lilas">PROJETOS</span>
         </h1>
-        <p class="projects-subtitle">
+        <p class="body-lg mt-4 mx-auto max-w-md text-variant">
           Mapeamento de impacto, incidência direta e desenvolvimento de tecnologias sociais nos territórios.
         </p>
-      </div>
-    </section>
+      </header>
 
-    <section class="projects-section">
-      <div class="container-custom">
-        <div class="projects-grid-vibrant">
-          <button v-for="p in displayProjects" :key="p.id" class="project-card-vibrant group" type="button" @click="openProject(p.id)">
-            <div class="project-media-vibrant">
-              <img :src="p.image || 'https://images.unsplash.com/photo-1541844053589-346841d0b34c?auto=format&fit=crop&q=80&w=800'" :alt="p.title" />
-              <div class="project-overlay-vibrant">
-                <span class="view-case-text">ABRIR PROJETO</span>
+      <section class="projects-section">
+        <div class="projects-grid">
+          <router-link v-for="(p, idx) in displayProjects" :key="p.id" :to="`/projetos/${p.id}`" class="card-editorial bg-white paper-shadow flex-col h-full p-0 fade-in-up group" :style="{ animationDelay: `${idx * 0.15}s` }">
+            <div class="accent-bar-top" :class="getTagBg(idx) + '-bar'"></div>
+            
+            <div class="project-media halftone border-b-thick group-hover:filter-none">
+              <img :src="p.image || 'https://images.unsplash.com/photo-1541844053589-346841d0b34c?auto=format&fit=crop&q=80&w=800'" :alt="p.title" class="w-full h-full object-cover" />
+            </div>
+            
+            <div class="p-8 flex-col flex-grow">
+              <div class="project-tags-row mb-4 flex flex-wrap gap-2">
+                <span v-for="(tag, ti) in normalizeProjectTags(p.tags)" :key="ti" class="tag-solid text-preto" :class="getTagBg(ti)">
+                  {{ tag.label }}
+                </span>
+              </div>
+              
+              <h3 class="headline-md mb-4 group-hover-color-vermelho">{{ p.title }}</h3>
+              <p class="body-md text-variant mb-6 flex-grow">{{ p.desc || p.description || p.excerpt }}</p>
+              
+              <div class="project-impact pb-4 mb-4 border-b-thick" v-if="p.impact">
+                <div class="flex align-center gap-2 label-bold">
+                  <Zap class="text-vermelho" :size="16" />
+                  <span>IMPACTO: <span class="text-vermelho">{{ p.impact }}</span></span>
+                </div>
+              </div>
+              
+              <div class="mt-auto pt-4 flex-between align-center label-bold hover-red">
+                <span>LER CASE COMPLETO</span>
+                <span class="material-symbols-outlined arrow">arrow_forward</span>
               </div>
             </div>
-            <div class="project-content-vibrant">
-              <div class="project-tags-row">
-                <span v-for="(tag, ti) in normalizeProjectTags(p.tags)" :key="ti" class="tag-vibrant" :class="tag.cls">{{ tag.label }}</span>
-              </div>
-              <h3 class="project-title-vibrant group-hover:text-red transition-colors">
-                {{ p.title }}
-              </h3>
-              <p class="project-excerpt-vibrant flex-1">
-                {{ p.desc || p.description || p.excerpt }}
-              </p>
-              <div class="project-impact-box-vibrant" v-if="p.impact">
-                <Zap class="w-5 h-5" />
-                <span><strong>IMPACTO:</strong> {{ p.impact }}</span>
-              </div>
-              <div class="project-footer-vibrant">
-                <span class="learn-more-text">LER MAIS <ArrowRight :size="16" /></span>
-              </div>
-            </div>
-          </button>
+          </router-link>
         </div>
-      </div>
-    </section>
+      </section>
+    </div>
   </div>
 </template>
 
 <style scoped>
-.projects-page {
-  min-height: 100vh;
-  background:
-    radial-gradient(circle at top left, rgba(255, 230, 90, 0.22), transparent 28%),
-    radial-gradient(circle at top right, rgba(223, 32, 40, 0.09), transparent 22%),
-    #f6f2ea;
-  color: #1c1c1c;
-}
+/* UTILS */
+.bg-preto { background: var(--np-black) !important; }
+.text-preto { color: var(--np-black) !important; }
+.text-white { color: var(--np-white) !important; }
+.border-b-thick { border-bottom: var(--border-thick); }
 
-.container-custom {
-  max-width: 90rem;
-  margin: 0 auto;
-  padding: 0 2.5rem;
-  position: relative;
-  z-index: 2;
-}
+.mt-4 { margin-top: 16px; }
+.mt-auto { margin-top: auto; }
+.mb-4 { margin-bottom: 16px; }
+.mb-6 { margin-bottom: 24px; }
+.mb-16 { margin-bottom: 64px; }
+.pt-4 { padding-top: 16px; }
+.pt-12 { padding-top: 48px; }
+.pb-4 { padding-bottom: 16px; }
+.pb-16 { padding-bottom: 64px; }
+.p-0 { padding: 0 !important; }
+.p-8 { padding: 32px; }
 
-.projects-hero {
-  position: relative;
-  padding: 190px 0 72px;
-  overflow: hidden;
-}
+.mx-auto { margin-left: auto; margin-right: auto; }
+.max-w-md { max-width: 500px; }
+.w-full { width: 100%; }
+.h-full { height: 100%; }
+.gap-2 { gap: 8px; }
+.flex { display: flex; }
+.flex-col { display: flex; flex-direction: column; }
+.flex-grow { flex-grow: 1; }
+.flex-between { display: flex; justify-content: space-between; align-items: center; }
+.flex-wrap { flex-wrap: wrap; }
+.align-center { align-items: center; }
+.text-center { text-align: center; }
+.uppercase { text-transform: uppercase; }
+.object-cover { object-fit: cover; }
 
-.projects-hero__grid {
-  position: absolute;
-  inset: 0;
-  background-image:
-    linear-gradient(rgba(28, 28, 28, 0.04) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(28, 28, 28, 0.04) 1px, transparent 1px);
-  background-size: 48px 48px;
-  opacity: 0.6;
-}
+/* PROJECTS HUB */
+.projects-page { min-height: 100vh; position: relative; padding-bottom: 100px; }
 
-.projects-hero__content {
-  display: flex;
-  flex-direction: column;
-  gap: 18px;
-}
+/* GRID E CARDS */
+.projects-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 48px; }
 
-.projects-kicker {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  font-family: "Inter", sans-serif;
-  font-size: 0.72rem;
-  font-weight: 900;
-  text-transform: uppercase;
-  letter-spacing: 0.18em;
-}
+.project-media { height: 280px; overflow: hidden; position: relative; }
+.project-media img { transition: transform 0.4s; }
+.group:hover .project-media img { transform: scale(1.05); }
 
-.projects-kicker__dot {
-  width: 10px;
-  height: 10px;
-  border-radius: 9999px;
-  background: #df2028;
-  box-shadow: 0 0 0 6px rgba(223, 32, 40, 0.12);
-}
+.group-hover-color-vermelho { transition: color 0.2s; }
+.group:hover .group-hover-color-vermelho { color: var(--np-vermelho); }
 
-.projects-title {
-  font-family: "Archivo Black", sans-serif;
-  font-size: clamp(3rem, 8vw, 6.2rem);
-  line-height: 0.9;
-  letter-spacing: -0.06em;
-  text-transform: uppercase;
-  max-width: 10ch;
-}
+.hover-red { color: var(--np-black); transition: color 0.2s; }
+.group:hover .hover-red { color: var(--np-vermelho); }
 
-.projects-title span {
-  color: #df2028;
-}
+.arrow { transition: transform 0.2s; }
+.group:hover .arrow { transform: translateX(8px); }
 
-.projects-subtitle {
-  font-family: "Georgia", serif;
-  font-size: 1.25rem;
-  line-height: 1.7;
-  max-width: 720px;
-  color: #4b5563;
-}
+.fade-in-up { opacity: 0; transform: translateY(30px); animation: fadeInUp 0.8s forwards; }
+@keyframes fadeInUp { to { opacity: 1; transform: translateY(0); } }
 
-.projects-section {
-  padding: 10px 0 120px;
-}
-
-.projects-grid-vibrant {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 2rem;
-}
-
-.project-card-vibrant {
-  appearance: none;
-  text-align: left;
-  width: 100%;
-  background: #ffffff;
-  border: 3px solid #1c1c1c;
-  display: flex;
-  flex-direction: column;
-  transition: transform 0.28s ease, box-shadow 0.28s ease, border-color 0.28s ease;
-  cursor: pointer;
-  border-radius: 1.75rem;
-  overflow: hidden;
-  box-shadow: 10px 10px 0 rgba(28, 28, 28, 1);
-  padding: 0;
-}
-
-.project-card-vibrant:hover {
-  transform: translate(-6px, -6px);
-  box-shadow: 16px 16px 0 rgba(28, 28, 28, 1);
-  border-color: #df2028;
-}
-
-.project-media-vibrant {
-  height: 250px;
-  position: relative;
-  overflow: hidden;
-  background: #1c1c1c;
-}
-
-.project-media-vibrant img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  opacity: 0.88;
-  transition: transform 0.55s ease, opacity 0.55s ease;
-}
-
-.project-card-vibrant:hover .project-media-vibrant img {
-  transform: scale(1.06);
-  opacity: 1;
-}
-
-.project-overlay-vibrant {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(180deg, rgba(223, 32, 40, 0.15), rgba(28, 28, 28, 0.72));
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  opacity: 0;
-  transition: opacity 0.28s ease;
-}
-
-.project-card-vibrant:hover .project-overlay-vibrant {
-  opacity: 1;
-}
-
-.view-case-text {
-  color: #fff;
-  font-family: "Inter", sans-serif;
-  font-weight: 900;
-  text-transform: uppercase;
-  font-size: 0.8rem;
-  letter-spacing: 0.18em;
-  border: 2px solid rgba(255, 255, 255, 0.7);
-  background: rgba(28, 28, 28, 0.55);
-  padding: 12px 22px;
-  backdrop-filter: blur(4px);
-}
-
-.project-content-vibrant {
-  padding: 2rem 2rem 2.25rem;
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  background: #fff;
-}
-
-.project-tags-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-bottom: 1.2rem;
-}
-
-.tag-vibrant {
-  font-family: "Inter", sans-serif;
-  font-weight: 900;
-  font-size: 0.65rem;
-  text-transform: uppercase;
-  padding: 6px 12px;
-  border: 2px solid #1c1c1c;
-  border-radius: 9999px;
-}
-
-.pink-bg { background: #ff6bca; color: #fff; border-color: #ff6bca; }
-.blue-bg { background: #3d78e0; color: #fff; border-color: #3d78e0; }
-.yellow-bg { background: #ffe65a; color: #000; border-color: #ffe65a; }
-.lime-bg { background: #a4cd39; color: #000; border-color: #a4cd39; }
-
-.project-title-vibrant {
-  font-family: "Archivo Black", sans-serif;
-  font-size: 1.7rem;
-  text-transform: uppercase;
-  margin-bottom: 1rem;
-  line-height: 1.05;
-  letter-spacing: -0.04em;
-  color: #1c1c1c;
-}
-
-.project-excerpt-vibrant {
-  font-family: "Inter", sans-serif;
-  font-size: 0.98rem;
-  font-weight: 600;
-  color: #5b6472;
-  line-height: 1.65;
-  margin-bottom: 1.5rem;
-}
-
-.project-impact-box-vibrant {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  background: rgba(255, 230, 90, 0.28);
-  padding: 12px 16px;
-  border: 2px solid rgba(28, 28, 28, 0.12);
-  border-radius: 14px;
-  font-family: "Inter", sans-serif;
-  font-size: 0.82rem;
-  font-weight: 900;
-  color: #1c1c1c;
-  margin-bottom: 1.4rem;
-}
-
-.project-footer-vibrant {
-  margin-top: auto;
-  padding-top: 1rem;
-  border-top: 1px solid #ece7dc;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.learn-more-text {
-  font-family: "Inter", sans-serif;
-  font-weight: 900;
-  font-size: 0.76rem;
-  text-transform: uppercase;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  color: #df2028;
-  letter-spacing: 0.12em;
-}
-
-@media (max-width: 1200px) {
-  .projects-grid-vibrant { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-}
-
-@media (max-width: 768px) {
-  .projects-hero { padding-top: 140px; }
-  .projects-grid-vibrant { grid-template-columns: 1fr; }
-  .projects-title { max-width: 100%; }
-  .container-custom { padding: 0 1.25rem; }
+@media (max-width: 1024px) {
+  .projects-grid { grid-template-columns: 1fr; max-width: 600px; margin: 0 auto; }
 }
 </style>

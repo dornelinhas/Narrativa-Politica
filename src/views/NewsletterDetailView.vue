@@ -69,13 +69,19 @@ const share = () => {
       <div class="nl-content shadow-solid" v-html="sanitizeHtml(newsletter.conteudo)"></div>
 
       <!-- RODAPÉ DE AÇÃO -->
-      <footer class="nl-footer mt-12 flex justify-between items-center">
-        <button @click="share" class="btn-share">
-          <Share2 :size="18" /> COMPARTILHAR EDIÇÃO
+      <footer class="nl-footer mt-20 border-t-thick pt-12 flex flex-col md:flex-row justify-between items-center gap-12">
+        <button @click="share" class="btn-share-v2 paper-shadow uppercase font-black tracking-widest flex items-center gap-4">
+          <Share2 :size="20" /> COMPARTILHAR EDIÇÃO
         </button>
-        <div class="subscribe-mini shadow-solid">
-          <span>Gostou? Assine para receber as próximas.</span>
-          <button @click="router.push('/arquivo-newsletter')" class="btn-mini-sub">ASSINAR</button>
+        
+        <div class="nl-mini-promo bg-amarelo border-thick p-8 paper-shadow flex flex-col sm:flex-row align-center gap-8">
+           <div class="flex-1">
+              <h4 class="font-black uppercase mb-2">Gostou desta edição?</h4>
+              <p class="text-xs font-bold opacity-60">Receba as próximas análises direto na sua rede.</p>
+           </div>
+           <a href="https://substack.com/@narrativapolitica" target="_blank" class="btn-brutal btn-preto px-8 py-3 text-sm text-center">
+              ASSINAR AGORA
+           </a>
         </div>
       </footer>
     </article>
@@ -112,10 +118,28 @@ const share = () => {
 .subscribe-mini { padding: 1rem 1.5rem; display: flex; align-items: center; gap: 15px; font-weight: 800; font-size: 13px; }
 .btn-mini-sub { background: #FF6BCA; border: 2px solid #1C1C1C; padding: 6px 12px; font-family: 'Archivo Black', sans-serif; font-size: 10px; cursor: pointer; }
 
+.btn-share-v2 { 
+  background: var(--np-black); 
+  color: var(--np-white); 
+  border: var(--border-thick); 
+  padding: 16px 32px; 
+  cursor: pointer; 
+  transition: all 0.2s; 
+  box-shadow: 4px 4px 0 var(--np-amarelo);
+}
+.btn-share-v2:hover { transform: translate(-2px, -2px); box-shadow: 6px 6px 0 var(--np-amarelo); background: var(--np-vermelho); }
+
+.nl-mini-promo { max-width: 500px; }
+
 .loader-brutal { font-family: 'Archivo Black', sans-serif; font-size: 2rem; animation: pulse 1s infinite alternate; }
 @keyframes pulse { from { opacity: 0.5; } to { opacity: 1; } }
 
+.border-t-thick { border-top: var(--border-thick); }
+.border-thick { border: var(--border-thick); }
+.paper-shadow { box-shadow: var(--shadow-paper); }
+
 @media (max-width: 768px) {
-  .nl-footer { flex-direction: column; gap: 2rem; align-items: flex-start; }
+  .nl-footer { flex-direction: column; gap: 2rem; align-items: stretch; }
+  .nl-mini-promo { max-width: 100%; }
 }
 </style>

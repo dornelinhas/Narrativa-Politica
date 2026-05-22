@@ -1,68 +1,50 @@
 <template>
-  <footer class="footer-brutalist bg-light border-t-dark-2">
-    <div class="footer-container">
-      <div class="footer-main-grid">
-        
-        <!-- COLUNA 1: BRAND -->
-        <div class="footer-brand-section">
-          <div class="brand-header-flex">
-            <div class="logo-np-brutalist small">
-              <div class="shape s1"></div>
-              <div class="shape s2"></div>
-              <div class="shape s3"></div>
-              <div class="shape s4"></div>
-              <div class="shape s5"></div>
-              <span class="logo-text">NP</span>
-            </div>
-            <h2 class="brand-name-stacked">
-              NARRATIVA <br/>
-              <span class="text-red">POLÍTICA</span>
-            </h2>
+  <footer class="footer">
+    <!-- MAIN FOOTER -->
+    <div class="footer-main">
+      <div class="footer-container">
+        <div class="footer-grid">
+          <!-- BRAND -->
+          <div class="footer-brand">
+            <h3 class="footer-brand-name">NARRATIVA POLÍTICA</h3>
+            <p class="footer-description">
+              Impacto Social, Política e Gênero. Um hub para transformação.
+            </p>
+            <p class="footer-copy-inline">© {{ currentYear }} Narrativa Política.</p>
           </div>
-          <p class="brand-description">
-            Apoio estratégico, comunicação e infraestrutura financeira para os movimentos que ousam desenhar um novo amanhã.
-          </p>
-        </div>
 
-        <!-- COLUNA 2: LINKS (LADO A LADO) -->
-        <div class="footer-links-columns">
-          <div class="link-group">
-            <h4 class="group-title">
-              <div class="dot pink-bg"></div> PLATAFORMA
-            </h4>
-            <div class="links-list">
-              <router-link v-if="siteContent.settings?.menuArticles" to="/conteudo">Artigos</router-link>
-              <a href="https://narrativapolitica.substack.com" target="_blank">Newsletter (Substack)</a>
-              <router-link v-if="siteContent.settings?.menuOpportunities" to="/oportunidades">Oportunidades</router-link>
-              <router-link v-if="siteContent.settings?.menuPaths" to="/trilhas">Trilhas</router-link>
-              <router-link v-if="siteContent.settings?.menuLibrary" to="/biblioteca">Biblioteca</router-link>
+          <!-- COLUNA 1 — LINKS ÚTEIS -->
+          <div class="footer-col">
+            <div class="footer-links">
+              <router-link v-if="siteContent.settings?.menuAbout !== false" to="/sobre">INSTITUCIONAL</router-link>
+              <a href="#" @click.prevent>TRANSPARÊNCIA</a>
+              <router-link v-if="siteContent.settings?.menuContact !== false" to="/contatos">CONTATO</router-link>
+              <router-link to="/login" class="footer-admin-link">ADMINISTRAÇÃO</router-link>
             </div>
           </div>
 
-          <div class="link-group">
-            <h4 class="group-title">
-              <div class="square lime-bg"></div> INSTITUCIONAL
-            </h4>
-            <div class="links-list">
-              <router-link v-if="siteContent.settings?.menuAbout" to="/sobre">Quem Somos</router-link>
-              <router-link v-if="siteContent.settings?.menuServices" to="/servicos">Serviços</router-link>
-              <router-link to="/doacao">Apoie</router-link>
-              <router-link v-if="siteContent.settings?.menuContact" to="/contatos">Contato</router-link>
+          <!-- COLUNA 2 -->
+          <div class="footer-col">
+            <div class="footer-links">
+              <a href="https://substack.com/@narrativapolitica" target="_blank">NEWSLETTER</a>
+              <router-link to="/privacidade">PRIVACIDADE</router-link>
+            </div>
+            
+            <div class="mt-8">
+              <router-link to="/doacao" class="btn-brutal paper-shadow-sm border-white" style="background: var(--np-white); color: var(--np-black); padding: 12px 24px; font-size: 14px;">
+                APOIE AGORA
+              </router-link>
+            </div>
+
+            <div class="social-row">
+              <a href="#" class="social-btn" aria-label="Compartilhar">
+                <span class="material-symbols-outlined dropdown-icon">share</span>
+              </a>
+              <a href="#" class="social-btn" aria-label="WhatsApp">
+                <span class="material-symbols-outlined dropdown-icon">chat</span>
+              </a>
             </div>
           </div>
-        </div>
-
-      </div>
-
-      <!-- BARRA INFERIOR -->
-      <div class="footer-bottom-bar">
-        <div class="social-links-horizontal">
-          <a href="#" class="social-box pink-bg"><Instagram :size="18" /></a>
-          <a href="#" class="social-box lime-bg"><Twitter :size="18" /></a>
-          <a href="#" class="social-box yellow-bg"><Linkedin :size="18" /></a>
-        </div>
-        <div class="copyright-text">
-          © {{ currentYear }} NARRATIVA POLÍTICA.
         </div>
       </div>
     </div>
@@ -71,71 +53,132 @@
 
 <script setup>
 import { computed } from 'vue'
-import { Instagram, Twitter, Linkedin } from 'lucide-vue-next'
 import { siteContent } from '../store/content'
 const currentYear = computed(() => new Date().getFullYear())
 </script>
 
 <style scoped>
-.footer-brutalist { background-color: #F7F7F5; border-top: 3px solid #1C1C1C; padding: 80px 0 40px; }
-.footer-container { max-width: 1300px; margin: 0 auto; padding: 0 40px; }
+/* ── MAIN FOOTER ─────────────────────────────── */
+.footer-main {
+  background: var(--np-black);
+  padding: 64px 0 48px;
+  border-top: 4px solid var(--np-amarelo);
+}
 
-/* GRID PRINCIPAL */
-.footer-main-grid {
+.footer-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 32px;
+}
+
+.footer-grid {
   display: grid;
-  grid-template-columns: 1.2fr 1fr;
-  gap: 80px;
-  margin-bottom: 60px;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 48px;
 }
 
-/* MARCA */
-.brand-header-flex { display: flex; align-items: center; gap: 20px; margin-bottom: 24px; }
-.brand-name-stacked { font-family: "Archivo Black", sans-serif; font-size: 1.8rem; line-height: 0.9; text-transform: uppercase; color: #1C1C1C; }
-.text-red { color: #DF2028; }
-.brand-description { font-family: "Inter", sans-serif; font-weight: 700; font-size: 0.9rem; color: #1C1C1C; max-width: 450px; line-height: 1.6; opacity: 0.8; }
+/* BRAND */
+.footer-brand-name {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 32px;
+  color: var(--np-white);
+  margin: 0 0 16px;
+  letter-spacing: -1px;
+  text-transform: uppercase;
+  line-height: 1;
+}
 
-/* LINKS LADO A LADO */
-.footer-links-columns { display: flex; gap: 60px; }
-.link-group { flex: 1; }
-.group-title { display: flex; align-items: center; gap: 10px; font-family: "Inter", sans-serif; font-weight: 900; font-size: 0.75rem; letter-spacing: 0.1em; color: #1C1C1C; margin-bottom: 24px; }
-.dot { width: 12px; height: 12px; border-radius: 50%; border: 2px solid #1C1C1C; }
-.square { width: 12px; height: 12px; border: 2px solid #1C1C1C; }
-.pink-bg { background: #FF6BCA; }
-.lime-bg { background: #A4CD39; }
-.yellow-bg { background: #FFE65A; }
+.footer-description {
+  font-family: var(--font-sans);
+  font-size: 16px;
+  color: var(--np-white);
+  line-height: 1.6;
+  margin-bottom: 24px;
+  max-width: 280px;
+  opacity: 0.8;
+}
 
-.links-list { display: flex; flex-direction: column; gap: 12px; }
-.links-list a { font-family: "Inter", sans-serif; font-weight: 700; font-size: 0.9rem; color: #1C1C1C; text-decoration: none; transition: 0.2s; }
-.links-list a:hover { color: #DF2028; transform: translateX(5px); }
+.footer-copy-inline {
+  font-family: var(--font-sans);
+  font-size: 12px;
+  color: var(--np-white);
+  opacity: 0.6;
+}
 
-/* BARRA INFERIOR HORIZONTAL */
-.footer-bottom-bar {
-  border-top: 3px solid #1C1C1C;
-  padding-top: 30px;
+/* SOCIAL */
+.social-row {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  gap: 16px;
+  margin-top: 32px;
 }
 
-.social-links-horizontal { display: flex; gap: 12px; }
-.social-box { width: 40px; height: 40px; border: 2px solid #1C1C1C; display: flex; align-items: center; justify-content: center; color: #1C1C1C; transition: 0.2s; }
-.social-box:hover { transform: translateY(-4px); box-shadow: 4px 4px 0px #1C1C1C; }
+.social-btn {
+  width: 48px;
+  height: 48px;
+  border: 1px solid var(--np-white);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--np-white);
+  transition: all 0.25s;
+}
 
-.copyright-text { font-family: "Inter", sans-serif; font-weight: 900; font-size: 11px; text-transform: uppercase; color: #1C1C1C; }
+.social-btn:hover {
+  color: var(--np-black);
+  background: var(--np-white);
+}
 
-/* LOGO NP */
-.logo-np-brutalist.small { position: relative; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; }
-.logo-text { font-family: "Archivo Black", sans-serif; font-weight: 900; font-size: 1.2rem; z-index: 5; color: #1C1C1C; }
-.logo-np-brutalist .shape { position: absolute; border: 1.5px solid #1C1C1C; }
-.s1 { top: -2px; left: -2px; width: 12px; height: 12px; background: #DF2028; border-radius: 50% !important; }
-.s2 { top: 2px; right: -8px; width: 14px; height: 10px; background: #FF6BCA; }
-.s3 { bottom: -2px; right: -4px; width: 10px; height: 10px; background: #A4CD39; }
-.s4 { bottom: -4px; left: 2px; width: 10px; height: 16px; background: #FFE65A; }
-.s5 { top: 6px; right: 0; width: 8px; height: 8px; background: #3D78E0; border-radius: 50% !important; }
+/* COLUMNS */
+.footer-links {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
 
-@media (max-width: 1000px) {
-  .footer-main-grid { grid-template-columns: 1fr; gap: 40px; }
-  .footer-links-columns { gap: 30px; }
-  .footer-bottom-bar { flex-direction: column; gap: 30px; text-align: center; }
+.footer-links a {
+  font-family: var(--font-sans);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: var(--np-white);
+  text-decoration: none;
+  transition: all 0.25s;
+}
+
+.footer-admin-link {
+  font-size: 10px !important;
+  opacity: 0.3;
+  margin-top: 24px;
+}
+.footer-admin-link:hover {
+  opacity: 1 !important;
+  text-decoration: none !important;
+  color: var(--np-amarelo) !important;
+}
+
+.footer-links a:hover {
+  color: var(--np-white);
+  text-decoration: underline;
+  text-decoration-color: var(--np-rosa);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 4px;
+}
+
+.mt-8 { margin-top: 32px; }
+
+
+/* ── RESPONSIVE ──────────────────────────────── */
+@media (max-width: 1024px) {
+  .footer-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .footer-grid {
+    grid-template-columns: 1fr;
+    gap: 48px;
+  }
 }
 </style>

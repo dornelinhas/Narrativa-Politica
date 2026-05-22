@@ -1,405 +1,597 @@
-@import url('https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Archivo+Black&family=Barlow+Condensed:ital,wght@0,400;0,700;0,800;1,400&family=DM+Sans:ital,wght@0,400;0,500;0,700;1,400&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap');
 
 /* ============================================================
-   NARRATIVA POLÍTICA — Design System (Referência Exata)
-   Estética: Ativismo Brutalista × ONG de Alto Impacto
-   Fonte de Verdade: pasta /referencia
+   NARRATIVA POLÍTICA — Design System 
+   Identidade: Editorial Collage Brutalista
+   Paleta: Preto, Creme (fundo), Rosa, Amarelo, Verde, Azul, Vermelho, Lilás
+   Tipografia: Barlow Condensed (display) + DM Sans (body)
    ============================================================ */
 
 :root {
-  /* PALETA ATIVISTA — EXATA DA REFERÊNCIA */
-  --color-red: #DF2028;
-  --color-pink: #FF6BCA;
-  --color-yellow: #FFE65A;
-  --color-lime: #A4CD39;
-  --color-mint: #A2E3B1;
-  --color-blue: #3D78E0;
-  --color-dark: #1C1C1C;
-  --color-bg: #F7F7F5;
-  --color-gray-dark: #2A2A2A;
-
-  /* TEXTO */
-  --text-main: #1C1C1C;
-  --text-light: #F7F7F5;
-
-  /* FONTES — EXATAS DA REFERÊNCIA */
-  --font-display: "Archivo Black", sans-serif;
-  --font-hero: "Space Grotesk", sans-serif;
-  --font-sans: "Inter", sans-serif;
-
-  /* UTILITÁRIOS BRUTALISTAS (DESIGN TOKENS) */
-  --border-width: 4px;
-  --border-thick: 8px;
-  --shadow-base: 6px 6px 0px var(--color-dark);
-  --shadow-hard: 8px 8px 0px var(--color-dark);
-  --shadow-hard-lg: 12px 12px 0px var(--color-dark);
-  --shadow-hover: 15px 15px 0px var(--color-dark);
+  /* PALETA NP — NOVA IDENTIDADE EDITORIAL */
+  --np-black:    #121212; /* Refined from #000000 per DESIGN.md */
+  --np-white:    #FFFFFF;
+  --np-creme:    #F5F0E8; /* Soft paper background */
   
-  --transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-  
+  --np-rosa:     #FF3C82; /* Mentorship & Gender */
+  --np-amarelo:  #FFDC00; /* High-impact CTAs & Movement */
+  --np-verde:    #A0D246; /* Data & Analysis */
+  --np-azul:     #3C64E6; /* Leadership */
+  --np-vermelho: #D22828; /* Editorial labels */
+  --np-lilas:    #9660E0; /* Educational Paths */
+
+  /* SUPERFÍCIES */
+  --surface:              #F5F0E8; /* Maps to creme */
+  --surface-bright:       #FFFFFF;
+  --surface-container:    #EAE5DD;
+  --surface-container-high: #DFDACF;
+
+  /* TEXTOS */
+  --text-main:      #1c1b1b;
+  --text-variant:   #444748;
+  --text-muted:     #747878;
+  --text-light:     #FFFFFF;
+
+  /* FONTES — EDITORIAL COLLAGE */
+  --font-display:  "Barlow Condensed", sans-serif;
+  --font-sans:     "DM Sans", sans-serif;
+
+  /* DESIGN TOKENS — BRUTALISTA */
+  --radius-xs:  0.25rem;
+  --radius-sm:  0.25rem;
+  --radius-md:  0.5rem;
+  --radius-lg:  1rem;
+  --radius-xl:  1.5rem;
+  --radius-pill: 9999px;
+
+  /* BRUTALIST SHADOWS (100% Solid) */
+  --shadow-paper:    4px 4px 0px var(--np-black);
+  --shadow-paper-sm: 2px 2px 0px var(--np-black);
+  --shadow-paper-lg: 8px 8px 0px var(--np-black);
+  --shadow-hover:    6px 6px 0px var(--np-black);
+
+  --transition: all 0.2s ease-in-out;
+
+  /* BORDERS */
+  --border-thick: 3px solid var(--np-black);
+  --border-thin: 1.5px solid var(--np-black);
+
   /* ESPAÇAMENTOS */
-  --section-py: 96px;
-  --container-max: 1200px;
+  --section-py:     100px;
+  --container-max:  1200px;
+  --gutter:         32px;
+  --stack-sm:       12px;
+  --stack-md:       24px;
+  --stack-lg:       48px;
+  --nav-h:          72px;
 }
 
-/* REDUÇÃO DE PESO NO MOBILE (OTIMIZAÇÃO DE LUXO) */
 @media (max-width: 768px) {
   :root {
-    --border-width: 2px;
-    --border-thick: 4px;
-    --shadow-base: 4px 4px 0px var(--color-dark);
-    --shadow-hard: 6px 6px 0px var(--color-dark);
-    --shadow-hard-lg: 8px 8px 0px var(--color-dark);
-    --shadow-hover: 10px 10px 0px var(--color-dark);
+    --section-py: 64px;
+    --nav-h: 60px;
+    --gutter: 20px;
   }
 }
 
 /* ── RESET & BASE ─────────────────────────────── */
-* {
-  box-sizing: border-box;
-}
-
+* { box-sizing: border-box; }
 html { scroll-behavior: smooth; }
 
+img { max-width: 100%; height: auto; display: block; }
+
 body {
-  margin: 0;
-  padding: 0;
-  background: var(--color-bg);
+  margin: 0; padding: 0;
+  background: var(--np-creme);
   color: var(--text-main);
   font-family: var(--font-sans);
+  font-size: 16px; line-height: 1.6;
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
   min-height: 100vh;
+  position: relative;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+* {
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+}
+
+/* TEXTURA DE RUÍDO GLOBAL
+   Aplica um leve granulado (ruído fractal) fixo em toda a tela.
+   Usa mix-blend-mode multiply para não estragar cores brilhantes.
+*/
+.texture-noise {
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.08'/%3E%3C/svg%3E");
+  pointer-events: none;
+  mix-blend-mode: multiply;
+  opacity: 0.6;
+}
+
+/* Ruído global fixo no fundo */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.08'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 9999;
+  mix-blend-mode: multiply;
+  opacity: 0.6;
 }
 
 img { max-width: 100%; display: block; }
 a { text-decoration: none; color: inherit; }
+ul { list-style: none; padding: 0; margin: 0; }
 
 /* ── TYPOGRAPHY ───────────────────────────────── */
-h1, h2, h3, h4, h5, h6, .font-display {
+h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-display);
   text-transform: uppercase;
-  letter-spacing: -0.04em;
-  line-height: 0.9;
-}
-
-p, .font-sans {
-  font-family: var(--font-sans);
-}
-
-/* ── GRADIENTES (EXATOS DA REFERÊNCIA) ────────── */
-.activist-gradient {
-  background: linear-gradient(110deg, #A80022 0%, #DF2028 35%, #A4CD39 75%, #1D976C 100%);
-}
-
-.activist-gradient-text {
-  background: linear-gradient(110deg, #DF2028 0%, #A4CD39 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  -webkit-text-fill-color: transparent;
-}
-
-/* ── BRUTALIST COMPONENTS ─────────────────────── */
-.brutalist-card {
-  background: white;
-  border: var(--border-width) solid var(--color-dark);
-  transition: var(--transition);
-}
-
-.brutalist-card:hover {
-  transform: translate(-4px, -4px);
-  box-shadow: var(--shadow-hard);
-}
-
-.brutalist-button {
-  display: inline-flex;
-  align-items: center;
-  gap: 1rem;
-  padding: 1rem 2rem;
-  font-family: var(--font-sans);
-  font-weight: 900;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  font-size: 0.875rem;
-  border: calc(var(--border-width) / 2) solid var(--color-dark);
-  background: var(--color-yellow);
-  color: var(--color-dark);
-  transition: var(--transition);
-  text-decoration: none;
-}
-
-.brutalist-button:hover {
-  transform: translateY(-4px);
-  box-shadow: var(--shadow-base);
-}
-
-.brutalist-button.dark {
-  background: var(--color-dark);
-  color: var(--text-light);
-}
-
-.brutalist-button.dark:hover {
-  box-shadow: var(--shadow-base);
-}
-
-.brutalist-button.red {
-  background: var(--color-red);
-  color: var(--text-light);
-}
-
-.brutalist-button.secondary {
-  background: white;
-  color: var(--color-dark);
-}
-
-.brutalist-button-mini {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.5rem 1rem;
-  font-family: var(--font-sans);
-  font-weight: 900;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  font-size: 0.7rem;
-  border: calc(var(--border-width) / 2) solid var(--color-dark);
-  background: var(--color-yellow);
-  color: var(--color-dark);
-  transition: var(--transition);
-}
-
-.brutalist-button-mini:hover {
-  transform: translateY(-2px);
-  box-shadow: calc(var(--shadow-base) / 2);
-}
-
-/* ── TAG COMPONENT ────────────────────────────── */
-.tag {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0.5rem 1rem;
-  font-family: var(--font-sans);
+  letter-spacing: -0.02em;
+  line-height: 1.0;
+  margin: 0;
   font-weight: 800;
-  font-size: 0.6875rem;
+  color: var(--np-black);
+}
+
+p, .font-sans { font-family: var(--font-sans); }
+
+/* Typographic Scale from DESIGN.md */
+.display-xl {
+  font-family: var(--font-display);
+  font-size: 80px;
+  font-weight: 800;
+  line-height: 1.0;
+  letter-spacing: -3px;
+}
+
+.headline-lg {
+  font-family: var(--font-display);
+  font-size: 52px;
+  font-weight: 800;
+  line-height: 1.0;
+  letter-spacing: -2px;
+}
+
+.headline-md {
+  font-family: var(--font-display);
+  font-size: 32px;
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -1px;
+}
+
+.body-lg {
+  font-family: var(--font-sans);
+  font-size: 18px;
+  font-weight: 400;
+  line-height: 1.6;
+}
+
+.body-md {
+  font-family: var(--font-sans);
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.6;
+}
+
+.label-bold {
+  font-family: var(--font-sans);
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: 4px;
   text-transform: uppercase;
-  letter-spacing: 0.1em;
-  background: var(--color-yellow);
-  color: var(--color-dark);
 }
 
-/* ── UTILITIES ────────────────────────────────── */
-.container { max-width: var(--container-max); margin: 0 auto; padding: 0 24px; }
-.section { padding: var(--section-py) 0; }
-
-/* Color classes */
-.text-dark { color: var(--color-dark); }
-.text-white { color: var(--text-light); }
-.text-yellow { color: var(--color-yellow); }
-.text-red { color: var(--color-red); }
-.text-pink { color: var(--color-pink); }
-.text-lime { color: var(--color-lime); }
-.text-blue { color: var(--color-blue); }
-
-.bg-white { background-color: #FFFFFF; }
-.bg-light { background-color: var(--color-bg); }
-.bg-dark { background-color: var(--color-dark); }
-.bg-lime { background-color: var(--color-lime); }
-.bg-yellow { background-color: var(--color-yellow); }
-.bg-pink { background-color: var(--color-pink); }
-.bg-red { background-color: var(--color-red); }
-.bg-blue { background-color: var(--color-blue); }
-.bg-mint { background-color: var(--color-mint); }
-
-.mb-20 { margin-bottom: 5rem; }
-
-.grid-light {
-  background-image: linear-gradient(rgba(0,0,0,0.05) 1px,transparent 1px),
-                    linear-gradient(90deg,rgba(0,0,0,0.05) 1px,transparent 1px);
-  background-size: 40px 40px;
+.caption {
+  font-family: var(--font-sans);
+  font-size: 10px;
+  font-weight: 400;
+  line-height: 1.2;
+  letter-spacing: 2px;
+  text-transform: uppercase;
 }
-.border-dark-thick { border: var(--border-thick) solid var(--color-dark); }
-.border-dark-2 { border: calc(var(--border-width) / 2) solid var(--color-dark); }
-.shadow-solid { box-shadow: var(--shadow-base); }
-.shadow-solid-lg { box-shadow: var(--shadow-hard-lg); }
-
-/* Flex & Grid Utils */
-.flex-between { display: flex; justify-content: space-between; align-items: center; }
-.flex-center { display: flex; align-items: center; justify-content: center; }
-.flex-col { display: flex; flex-direction: column; }
-.grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 2rem; }
-.grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; }
 
 @media (max-width: 768px) {
-  .grid-2, .grid-3 { grid-template-columns: 1fr; }
+  .display-xl { font-size: 56px; letter-spacing: -1px; }
+  .headline-lg { font-size: 36px; letter-spacing: -1px; }
+  .headline-md { font-size: 28px; }
 }
 
-/* ── LOGO NP BRUTALIST (EXATO DA REFERÊNCIA) ─── */
-.logo-np-brutalist {
-  position: relative;
-  width: 45px;
-  height: 45px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: var(--font-display);
-  font-size: 1.6rem;
+/* ── PAPER & COLLAGE EFFECTS ──────────────────── */
+/* Sombra sólida Brutalista */
+.paper-shadow {
+  box-shadow: var(--shadow-paper);
+  border: var(--border-thick);
+}
+
+.paper-shadow-sm {
+  box-shadow: var(--shadow-paper-sm);
+  border: var(--border-thin);
+}
+
+.paper-shadow-lg {
+  box-shadow: var(--shadow-paper-lg);
+  border: var(--border-thick);
+}
+
+/* Recorte imperfeito (Collage cut) */
+.paper-cut {
+  clip-path: polygon(1% 1%, 99% 0%, 98% 99%, 0% 100%);
+}
+.paper-cut-alt {
+  clip-path: polygon(0% 2%, 100% 0%, 99% 98%, 2% 100%);
+}
+
+/* Halftone photo treatment */
+.halftone {
+  filter: grayscale(100%) contrast(1.3) brightness(0.9);
+  mix-blend-mode: multiply;
+  background-color: var(--surface-container);
+}
+
+.halftone-hover:hover .halftone {
+  filter: none;
+  mix-blend-mode: normal;
+}
+
+/* ── GRID HELPER ────────────────────────────── */
+.grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--stack-md); }
+.grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--stack-md); }
+.grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--stack-md); }
+
+@media (max-width: 768px) {
+  .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+}
+
+/* ── LINE CLAMP UTILS ───────────────────────── */
+.line-clamp-1 { display: -webkit-box; -webkit-line-clamp: 1; line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; }
+.line-clamp-2 { display: -webkit-box; -webkit-line-clamp: 2; line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.line-clamp-3 { display: -webkit-box; -webkit-line-clamp: 3; line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+
+.border-thick { border: var(--border-thick) !important; }
+.border-thin { border: var(--border-thin) !important; }
+.border-b-thick { border-bottom: var(--border-thick) !important; }
+.border-t-thick { border-top: var(--border-thick) !important; }
+.border-y-thick { border-top: var(--border-thick) !important; border-bottom: var(--border-thick) !important; }
+.border-none { border: none !important; }
+
+/* ── COMPONENTS (BUTTONS & CARDS) ────────────── */
+.btn-brutal {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  padding: 16px 32px;
+  font-family: var(--font-sans); font-weight: 700;
+  font-size: 13px; text-transform: uppercase; letter-spacing: 2px;
+  border: var(--border-thick);
+  border-radius: var(--radius-md);
+  cursor: pointer; transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.25s ease;
   text-decoration: none;
-  color: inherit;
+  background: var(--np-black); color: var(--np-white);
+  box-shadow: var(--shadow-paper-sm);
 }
 
-.logo-np-brutalist .shape { position: absolute; border-radius: 2px; }
-.logo-np-brutalist .s1 { top: -4px; left: -4px; width: 12px; height: 12px; background: var(--color-red); border-radius: 50% !important; }
-.logo-np-brutalist .s2 { top: 4px; right: -12px; width: 16px; height: 12px; background: var(--color-pink); }
-.logo-np-brutalist .s3 { bottom: -4px; right: -8px; width: 12px; height: 12px; background: var(--color-lime); }
-.logo-np-brutalist .s4 { bottom: -8px; left: 4px; width: 12px; height: 20px; background: var(--color-yellow); }
-.logo-np-brutalist .s5 { top: 8px; right: 0; width: 8px; height: 8px; background: var(--color-lime); border-radius: 50% !important; }
+.btn-brutal:hover {
+  transform: translate(-4px, -4px);
+  box-shadow: 8px 8px 0px var(--np-black);
+}
 
-/* ── PAGE HERO TEMPLATE (Para sub-páginas) ────── */
-.page-hero-brutalist {
+.btn-brutal.btn-amarelo { background: var(--np-amarelo); color: var(--np-black); }
+.btn-brutal.btn-amarelo:hover { background: #E5C600; }
+
+.btn-brutal.btn-vermelho { background: var(--np-vermelho); color: var(--np-white); }
+.btn-brutal.btn-vermelho:hover { background: #b01f1f; }
+
+.btn-brutal.btn-rosa { background: var(--np-rosa); color: var(--np-white); }
+.btn-brutal.btn-outline { background: transparent; color: var(--np-black); }
+.btn-brutal.btn-outline:hover { background: var(--np-black); color: var(--np-white); }
+
+/* EDITORIAL CARD */
+.card-editorial {
+  background: var(--np-creme);
+  border: var(--border-thick);
+  border-radius: var(--radius-lg);
+  padding: 24px;
   position: relative;
-  padding: 180px 0 100px;
-  border-bottom: var(--border-thick) solid var(--color-dark);
+  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s ease;
   overflow: hidden;
-  text-align: left;
 }
 
-.page-hero-brutalist .hero-title {
-  font-family: var(--font-display);
-  font-size: clamp(3rem, 10vw, 7rem);
-  color: white;
-  line-height: 0.85;
-  margin-bottom: 30px;
-  text-transform: uppercase;
+.card-editorial:hover {
+  transform: translate(-4px, -4px);
+  box-shadow: 10px 10px 0px var(--np-black);
 }
 
-.page-hero-brutalist .hero-subtitle {
-  font-family: var(--font-sans);
-  font-weight: 700;
-  font-size: 1.3rem;
-  color: white;
-  max-width: 700px;
-  line-height: 1.5;
-  opacity: 0.9;
+/* ── ACCENT BARS (category color coding) ──────── */
+.accent-bar-top { position: absolute; top: 0; left: 0; width: 100%; height: 6px; }
+.accent-bar-top.rosa, .bg-rosa-bar { background: var(--np-rosa); }
+.accent-bar-top.azul, .bg-azul-bar { background: var(--np-azul); }
+.accent-bar-top.amarelo, .bg-amarelo-bar { background: var(--np-amarelo); }
+.accent-bar-top.verde, .bg-verde-bar { background: var(--np-verde); }
+.accent-bar-top.vermelho, .bg-vermelho-bar { background: var(--np-vermelho); }
+.accent-bar-top.lilas, .bg-lilas-bar { background: var(--np-lilas); }
+
+.accent-bar-left { position: absolute; top: 0; left: 0; width: 6px; height: 100%; border-right: 2px solid var(--np-black); }
+.accent-bar-left.rosa { background: var(--np-rosa); }
+.accent-bar-left.azul { background: var(--np-azul); }
+.accent-bar-left.amarelo { background: var(--np-amarelo); }
+.accent-bar-left.verde { background: var(--np-verde); }
+.accent-bar-left.vermelho { background: var(--np-vermelho); }
+.accent-bar-left.lilas { background: var(--np-lilas); }
+
+/* ── TAGS E PILLS ────────────────────────────── */
+.tag-solid {
+  display: inline-flex; align-items: center;
+  padding: 6px 14px;
+  font-family: var(--font-sans); font-weight: 700;
+  font-size: 11px; text-transform: uppercase; letter-spacing: 2px;
+  border: var(--border-thin);
+  border-radius: var(--radius-sm);
+  background: var(--np-black); color: var(--np-white);
 }
 
-.page-hero-brutalist .eyebrow {
-  font-family: var(--font-sans);
-  font-weight: 900;
-  letter-spacing: 0.4em;
-  font-size: 0.8rem;
-  color: white;
-  display: block;
-  margin-bottom: 20px;
-  opacity: 0.8;
-  text-transform: uppercase;
-}
+.tag-solid.amarelo { background: var(--np-amarelo); color: var(--np-black); }
+.tag-solid.rosa { background: var(--np-rosa); color: var(--np-white); }
+.tag-solid.verde { background: var(--np-verde); color: var(--np-black); }
+.tag-solid.azul { background: var(--np-azul); color: var(--np-white); }
+.tag-solid.lilas { background: var(--np-lilas); color: var(--np-white); }
 
-/* GEOMETRIC SHAPES for pages */
-.geo-shape-float {
-  border: var(--border-width) solid var(--color-dark);
-  position: absolute;
-  z-index: 1;
-}
-
-.geo-shape-float.pill-y { width: 80px; height: 160px; border-radius: 100px; }
-.geo-shape-float.circle { border-radius: 50%; }
-.geo-shape-float.square { border-radius: 0; }
-
-/* MODULE FOOTER (for sub-page cards) */
-.module-footer-brutalist {
-  padding: 25px 40px;
-  border-top: var(--border-width) solid var(--color-dark);
+/* ── SHARED NEWSLETTER COMPONENTS ────────────── */
+.nl-premium-card {
   display: flex;
+  flex-direction: row;
+  background: var(--np-white);
+  border: var(--border-thick);
+  overflow: hidden;
+  min-height: 400px;
+}
+
+.nl-brand-side {
+  flex: 1;
+  background: var(--np-black);
+  color: var(--np-white);
+  padding: 48px;
+  display: flex;
+  flex-direction: column;
   justify-content: space-between;
-  align-items: center;
-  font-family: var(--font-sans);
-  font-weight: 900;
-  text-transform: uppercase;
-  font-size: 0.8rem;
-  letter-spacing: 0.1em;
-  text-decoration: none;
-  color: var(--color-dark);
-  transition: background 0.2s, color 0.2s;
-}
-
-.module-footer-brutalist:hover { background: var(--color-dark); color: white; }
-
-/* ── SCROLLBAR CUSTOM (EXATA DA REFERÊNCIA) ──── */
-::-webkit-scrollbar { width: 10px; }
-::-webkit-scrollbar-track { background: var(--color-bg); }
-::-webkit-scrollbar-thumb {
-  background: var(--color-red);
-  border-radius: 10px;
-}
-
-/* OTMIZAÇÃO DO TEXTURE GRAIN */
-.optimal-grain-bg {
-  position: fixed; inset: 0; z-index: 1; pointer-events: none;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
-  opacity: 0.08; mix-blend-mode: multiply;
-}
-
-#app {
   position: relative;
-  width: 100%;
-  min-height: 100vh;
+  overflow: hidden;
 }
 
-/* ── ESTILOS PARA CONTEÚDO EDITORIAL (ARTIGOS/VAGAS) ── */
-/* Links dentro de blocos de texto */
-.editor-content a, 
-.article-body a,
-.opportunity-detail a {
-  color: var(--color-blue);
-  text-decoration: underline;
-  text-decoration-thickness: 2px;
-  text-underline-offset: 3px;
-  font-weight: 700;
-  transition: 0.2s;
-}
-
-.editor-content a:hover, 
-.article-body a:hover,
-.opportunity-detail a:hover {
-  background: var(--color-blue);
-  color: white;
-}
-
-/* Balão de Explicação (Tooltips) */
-.explanation-trigger {
-  text-decoration: underline dotted var(--color-pink) 3px;
-  cursor: help;
-  position: relative;
-  font-weight: 600;
-  display: inline;
-}
-
-.explanation-trigger:hover::after {
-  content: "INFO: " attr(data-explanation);
+.nl-texture-overlay {
   position: absolute;
-  bottom: 120%;
-  left: 50%;
-  transform: translateX(-50%);
-  background: var(--color-dark);
-  color: white;
-  padding: 12px 18px;
-  border-radius: 12px;
-  font-size: 0.85rem;
-  width: 300px;
-  z-index: 9999;
-  box-shadow: 6px 6px 0 var(--color-pink);
-  font-family: var(--font-sans);
-  font-weight: 500;
-  line-height: 1.5;
-  text-transform: none;
+  inset: 0;
+  background-image: radial-gradient(rgba(255,255,255,0.1) 1px, transparent 1px);
+  background-size: 20px 24px;
+  opacity: 0.5;
   pointer-events: none;
-  animation: tooltip-fade-in 0.2s ease-out;
 }
 
-@keyframes tooltip-fade-in {
-  from { opacity: 0; transform: translateX(-50%) translateY(10px); }
-  to { opacity: 1; transform: translateX(-50%) translateY(0); }
+.nl-brand-content { position: relative; z-index: 10; }
+.nl-exclusive-badge { margin-bottom: 32px; }
+.nl-brand-title { color: var(--np-white); margin-bottom: 24px; text-transform: uppercase; font-weight: 800; line-height: 1.1; }
+.nl-brand-desc { color: var(--np-white); opacity: 0.9; max-width: 320px; font-weight: 700; font-size: 1.1rem; line-height: 1.5; }
+
+.nl-action-side {
+  flex: 1.2;
+  padding: 48px;
+  background: var(--np-white);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  position: relative;
 }
+
+.nl-action-inner { position: relative; z-index: 10; }
+.nl-action-title { margin-bottom: 16px; color: var(--np-black); font-weight: 800; text-transform: uppercase; }
+.nl-action-desc { margin-bottom: 40px; font-weight: 700; color: var(--np-black); line-height: 1.6; }
+
+.hover-white-shadow:hover {
+  box-shadow: 8px 8px 0 white;
+  transform: translate(-4px, -4px);
+}
+
+@media (max-width: 1024px) {
+  .nl-premium-card { flex-direction: column; min-height: auto; }
+  .nl-brand-side { padding: 32px; min-height: 300px; }
+  .nl-action-side { padding: 32px; }
+}
+
+/* ── UTILITIES (MUST BE LAST) ────────────────── */
+.container-max { max-width: var(--container-max); margin: 0 auto; padding: 0 var(--gutter); }
+.section-padding { padding: var(--section-py) 0; }
+
+/* FLEX & GRID UTILS */
+.flex { display: flex; }
+.inline-flex { display: inline-flex; }
+.flex-col { flex-direction: column; }
+.flex-row { flex-direction: row; }
+.flex-wrap { flex-wrap: wrap; }
+.items-center { align-items: center; }
+.items-start { align-items: flex-start; }
+.items-end { align-items: flex-end; }
+.items-stretch { align-items: stretch; }
+.justify-center { justify-content: center; }
+.justify-between { justify-content: space-between; }
+.justify-start { justify-content: flex-start; }
+.justify-end { justify-content: flex-end; }
+
+.grid { display: grid; }
+.grid-cols-1 { grid-template-columns: repeat(1, minmax(0, 1fr)); }
+.grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.grid-cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+
+.gap-1 { gap: 0.25rem; }
+.gap-2 { gap: 0.5rem; }
+.gap-4 { gap: 1rem; }
+.gap-6 { gap: 1.5rem; }
+.gap-8 { gap: 2rem; }
+.gap-12 { gap: 3rem; }
+.gap-16 { gap: 4rem; }
+
+/* SPACING UTILS */
+.space-y-4 > * + * { margin-top: 1rem; }
+.space-y-6 > * + * { margin-top: 1.5rem; }
+.space-y-8 > * + * { margin-top: 2rem; }
+.space-y-12 > * + * { margin-top: 3rem; }
+
+.m-0 { margin: 0; }
+.mb-2 { margin-bottom: 0.5rem; }
+.mb-4 { margin-bottom: 1rem; }
+.mb-6 { margin-bottom: 1.5rem; }
+.mb-8 { margin-bottom: 2rem; }
+.mb-10 { margin-bottom: 2.5rem; }
+.mb-12 { margin-bottom: 3rem; }
+.mb-16 { margin-bottom: 4rem; }
+.mb-20 { margin-bottom: 5rem; }
+
+.mt-2 { margin-top: 0.5rem; }
+.mt-4 { margin-top: 1rem; }
+.mt-6 { margin-top: 1.5rem; }
+.mt-8 { margin-top: 2rem; }
+.mt-10 { margin-top: 2.5rem; }
+.mt-12 { margin-top: 3rem; }
+.mt-16 { margin-top: 4rem; }
+.mt-20 { margin-top: 5rem; }
+.mt-24 { margin-top: 6rem; }
+.mt-32 { margin-top: 8rem; }
+
+.p-4 { padding: 1rem; }
+.p-6 { padding: 1.5rem; }
+.p-8 { padding: 2rem; }
+.p-10 { padding: 2.5rem; }
+.p-12 { padding: 3rem; }
+
+.py-4 { padding-top: 1rem; padding-bottom: 1rem; }
+.py-5 { padding-top: 1.25rem; padding-bottom: 1.25rem; }
+.py-6 { padding-top: 1.5rem; padding-bottom: 1.5rem; }
+.py-8 { padding-top: 2rem; padding-bottom: 2rem; }
+.py-10 { padding-top: 2.5rem; padding-bottom: 2.5rem; }
+.py-12 { padding-top: 3rem; padding-bottom: 3rem; }
+.py-24 { padding-top: 6rem; padding-bottom: 6rem; }
+
+.px-4 { padding-left: 1rem; padding-right: 1rem; }
+.px-6 { padding-left: 1.5rem; padding-right: 1.5rem; }
+.px-8 { padding-left: 2rem; padding-right: 2rem; }
+.px-12 { padding-left: 3rem; padding-right: 3rem; }
+
+/* SIZE UTILS */
+.w-full { width: 100%; }
+.h-full { height: 100%; }
+.max-w-sm { max-width: 24rem; }
+.max-w-xl { max-width: 36rem; }
+.max-w-4xl { max-width: 56rem; }
+
+/* DISPLAY & POSITION UTILS */
+.hidden { display: none; }
+.block { display: block; }
+.inline-block { display: inline-block; }
+.relative { position: relative; }
+.absolute { position: absolute; }
+.inset-0 { top: 0; right: 0; bottom: 0; left: 0; }
+
+.z-10 { z-index: 10; }
+.z-20 { z-index: 20; }
+
+/* TEXT UTILS */
+.text-center { text-align: center; }
+.text-left { text-align: left; }
+.text-right { text-align: right; }
+.uppercase { text-transform: uppercase; }
+
+/* OPACITY UTILS */
+.opacity-20 { opacity: 0.2; }
+.opacity-30 { opacity: 0.3; }
+.opacity-40 { opacity: 0.4; }
+.opacity-60 { opacity: 0.6; }
+.opacity-70 { opacity: 0.7; }
+.opacity-80 { opacity: 0.8; }
+.opacity-90 { opacity: 0.9; }
+
+/* ROUNDED UTILS */
+.rounded-full { border-radius: 9999px; }
+
+.text-preto { color: var(--np-black); }
+.text-white { color: var(--np-white); }
+.text-vermelho { color: var(--np-vermelho); }
+.text-rosa { color: var(--np-rosa); }
+.text-amarelo { color: var(--np-amarelo); }
+.text-verde { color: var(--np-verde); }
+.text-azul { color: var(--np-azul); }
+.text-lilas { color: var(--np-lilas); }
+.text-muted { color: var(--text-muted); }
+
+.bg-white { background: var(--np-white) !important; }
+.bg-creme { background: var(--np-creme); }
+.bg-preto, .bg-black { background: var(--np-black) !important; }
+.bg-vermelho { background: var(--np-vermelho) !important; }
+.bg-rosa { background: var(--np-rosa) !important; }
+.bg-amarelo { background: var(--np-amarelo) !important; }
+.bg-verde { background: var(--np-verde) !important; }
+.bg-azul { background: var(--np-azul) !important; }
+.bg-lilas { background: var(--np-lilas) !important; }
+.bg-surface { background: var(--surface-container); }
+
+/* Material Symbols Overrides */
+.material-symbols-outlined {
+  font-variation-settings:
+  'FILL' 1,
+  'wght' 700,
+  'GRAD' 0,
+  'opsz' 24;
+}
+
+/* ── SCROLLBAR NP ────────────────────────────── */
+::-webkit-scrollbar { width: 12px; }
+::-webkit-scrollbar-track { background: var(--np-creme); border-left: 2px solid var(--np-black); }
+::-webkit-scrollbar-thumb { background: var(--np-preto); border-radius: 0; border: 2px solid var(--np-black); }
+::-webkit-scrollbar-thumb:hover { background: var(--np-vermelho); }
+
+/* Remove default link hover */
+a:not(.btn-brutal) {
+  transition: color 0.15s ease;
+}
+a:not(.btn-brutal):hover {
+  text-decoration: none;
+}
+
+#app { position:relative; width:100%; min-height:100vh; display: flex; flex-direction: column; }
+main { flex-grow: 1; }
+
+/* ── EDITORIAL UTILS ─────────────────────────── */
+.halftone {
+  filter: grayscale(100%) contrast(1.25) brightness(0.9);
+  mix-blend-mode: multiply;
+  transition: all 0.3s ease;
+}
+
+.group:hover .halftone,
+.card-editorial:hover .halftone,
+.art-featured-card:hover .featured-img,
+.hero-img-wrap:hover .hero-halftone {
+  filter: none !important;
+  mix-blend-mode: normal !important;
+  background-color: transparent !important;
+}
+
+/* ── DOT GRID ────────────────────────────────── */
+.dot-grid {
+  background-image: radial-gradient(var(--np-black) 1.5px, transparent 1.5px);
+  background-size: 24px 24px;
+}
+
+/* ── SCROLL REVEAL ANIMATIONS (v-reveal) ─────── */
+.reveal-hidden {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: all 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);
+  will-change: opacity, transform;
+}
+.reveal-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
