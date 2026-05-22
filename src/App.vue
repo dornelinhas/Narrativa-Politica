@@ -130,13 +130,6 @@ onMounted(() => {
   const lenis = new Lenis({
     autoRaf: true,
   });
-
-  // Opcional: Se a versão do Lenis instalada exigir raf manual:
-  function raf(time) {
-    lenis.raf(time)
-    requestAnimationFrame(raf)
-  }
-  requestAnimationFrame(raf)
 })
 
 // Lógica de SEO e Meta Tags Dinâmicas
