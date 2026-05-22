@@ -17,6 +17,13 @@
           </router-link>
           <transition name="dropdown-fade">
             <div v-show="isDropdownOpen" class="dropdown-panel paper-shadow">
+              <router-link to="/agenda" class="drop-item">
+                <span class="drop-icon" style="background-color: var(--np-black);"></span>
+                <div>
+                  <span class="drop-label">Agenda</span>
+                  <span class="drop-desc">Eventos e Aulas</span>
+                </div>
+              </router-link>
               <router-link v-if="siteContent.settings?.menuOpportunities !== false" to="/oportunidades" class="drop-item">
                 <span class="drop-icon drop-icon-vermelho"></span>
                 <div>
@@ -56,7 +63,6 @@
           </transition>
         </div>
 
-        <router-link to="/agenda" class="nav-link" :class="{ active: $route.path === '/agenda' }">AGENDA</router-link>
         <router-link v-if="siteContent.settings?.menuAbout !== false" to="/sobre" class="nav-link" :class="{ active: $route.path === '/sobre' }">SOBRE MIM</router-link>
         
         <!-- CTA -->
