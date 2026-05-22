@@ -8,6 +8,10 @@ import BrutalEditor from '../components/BrutalEditor.vue'
 import ImageUploader from '../components/ImageUploader.vue'
 import { sanitizeHtml } from '../utils/sanitizeHtml'
 import { siteContent, fetchAllContent, getOpportunityVisibilityState, logActivity, parseOpportunityDeadline, getPageViews } from '../store/content'
+import { Bar } from 'vue-chartjs'
+import { Chart as ChartJS, Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale } from 'chart.js'
+
+ChartJS.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale)
 
 const router = useRouter()
 const { user, logout } = useAuth()
@@ -404,6 +408,37 @@ const seoScore = computed(() => {
   return score
 })
 
+const metricasChartData = computed(() => {
+  if (!analytics.value || analytics.value.length === 0) {
+    return {
+      labels: ['Nenhum dado'],
+      datasets: [{ label: 'Visualizações', data: [0], backgroundColor: '#FF3C82' }]
+    }
+  }
+  
+  const sorted = [...analytics.value].sort((a, b) => b.count - a.count).slice(0, 10)
+  return {
+    labels: sorted.map(v => v.page_path.replace('/artigo/', 'Artigo: ').substring(0, 20)),
+    datasets: [{
+      label: 'Visualizações de Página',
+      data: sorted.map(v => v.count),
+      backgroundColor: '#FF3C82'
+    }]
+  }
+})
+
+const metricasChartOptions = {
+  responsive: true,
+  maintainAspectRatio: false,
+  scales: {
+    y: { beginAtZero: true, ticks: { font: { family: 'Archivo Black', size: 12 } } },
+    x: { ticks: { font: { family: 'Inter', size: 10 } } }
+  },
+  plugins: {
+    legend: { labels: { font: { family: 'Archivo Black' } } }
+  }
+}
+
 const copyCaption = () => {
   const text = `${novoArtigo.value.title} 🚀\n\nAcabamos de publicar uma nova análise estratégica no Radar Editorial da Narrativa Política.\n\nLeia o ensaio completo em nosso portal. #NarrativaPolitica #Advocacy #Impacto`
   navigator.clipboard.writeText(text)
@@ -423,6 +458,7 @@ const loadData = async () => {
     docs.value = siteContent.library || []
     inscritos.value = siteContent.subscribers || []
     newsletters.value = siteContent.newsletters || []
+    analytics.value = await getPageViews()
     
     // Atualiza outros dados de configuração
     if (siteContent.home) Object.assign(homeData.value, siteContent.home)
@@ -1409,8 +1445,14 @@ onUnmounted(() => {
         <button class="nav-btn" :class="{ active: activeTab === 'sobre' }" @click="activeTab = 'sobre'">
           <User :size="18" /> SOBRE MIM
         </button>
+        <button class="nav-btn" :class="{ active: activeTab === 'metricas' }" @click="activeTab = 'metricas'">
+          <Sparkles :size="18" /> MÉTTRICAS
+        </button>
 
         <span class="nav-section-label">PLATAFORMA</span>
+        <button class="nav-btn" :class="{ active: activeTab === 'agenda' }" @click="activeTab = 'agenda'">
+          <Calendar :size="18" /> AGENDA & EVENTOS
+        </button>
         <button class="nav-btn" :class="{ active: activeTab === 'vagas' }" @click="activeTab = 'vagas'">
           <Briefcase :size="18" /> OPORTUNIDADES
         </button>
@@ -1760,7 +1802,7 @@ onUnmounted(() => {
 
           <div class="editor-workspace-dual mb-10">
              <div class="main-editor-area">
-                   <BrutalEditor v-model="novoArtigo.content" placeholder="Escreva o conteúdo do seu artigo aqui..." />
+                   <QuillEditor theme="snow" contentType="html" v-model:content="novoArtigo.content" placeholder="Escreva o conteúdo do seu artigo aqui..." />
                 </div>
                 
                 <!-- SEO & SOCIAL SIDEBAR -->
@@ -1853,7 +1895,53 @@ onUnmounted(() => {
         </div>
       </section>
 
-      <!-- 3. VAGAS E OPORTUNIDADES -->
+      <section v-if="activeTab === 'agenda'" class="admin-section fade-in-up">
+        <div class="admin-header">
+          <div>
+            <h1 class="admin-title">Agenda & Eventos</h1>
+            <p class="admin-subtitle">Gerencie os próximos eventos, meetups e convocações.</p>
+          </div>
+        </div>
+
+        <div class="editor-card-premium shadow-md mb-10">
+          <h2 class="card-label-black mb-8">NOVO EVENTO</h2>
+          <div class="form-grid-2 mb-6">
+            <div class="input-group">
+              <label>TÍTULO DO EVENTO</label>
+              <input type="text" class="input-premium" placeholder="Ex: Masterclass de Advocacy..." />
+            </div>
+            <div class="input-group">
+              <label>DATA E HORA (ISO)</label>
+              <input type="datetime-local" class="input-premium" />
+            </div>
+          </div>
+          <div class="form-grid-2 mb-6">
+            <div class="input-group">
+              <label>LOCALIZAÇÃO (Ex: Zoom, SP...)</label>
+              <input type="text" class="input-premium" />
+            </div>
+            <div class="input-group">
+              <label>TIPO (Ex: Aula Aberta, Lançamento...)</label>
+              <input type="text" class="input-premium" />
+            </div>
+          </div>
+          <div class="input-group mb-6">
+            <label>LINK (Sympla, Zoom, etc)</label>
+            <input type="url" class="input-premium" />
+          </div>
+          <div class="input-group mb-6">
+            <label>DESCRIÇÃO CURTA</label>
+            <textarea rows="3" class="input-premium"></textarea>
+          </div>
+          <div class="flex gap-4">
+             <button class="btn-brutal btn-preto" @click="() => alert('Função de salvar agenda em construção. O mock já está aparecendo no site!')">
+               <Plus :size="16" /> SALVAR EVENTO
+             </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- 3. HUB DE TALENTOS (VAGAS) -->
       <section v-if="activeTab === 'vagas'" class="admin-section fade-in-up">
         
         <div class="editor-card-premium shadow-md mb-10">
@@ -2037,7 +2125,7 @@ onUnmounted(() => {
           </div>
           <div class="input-group mb-6">
              <label>DESCRIÇÃO COMPLETA DA VAGA (Aparece na página de detalhe)</label>
-             <BrutalEditor v-model="novaVaga.fullDescription" placeholder="Detalhes, requisitos, benefícios..." />
+             <QuillEditor theme="snow" contentType="html" v-model:content="novaVaga.fullDescription" placeholder="Detalhes, requisitos, benefícios..." />
            </div>
            <div class="input-group mb-6">
              <label>IMAGEM DA OPORTUNIDADE (URL)</label>
@@ -2598,7 +2686,7 @@ onUnmounted(() => {
 
               <div class="input-group mb-8">
                  <label>CONTEÚDO DA NEWSLETTER</label>
-                 <BrutalEditor v-model="novaNewsletter.conteudo" />
+                 <QuillEditor theme="snow" contentType="html" v-model:content="novaNewsletter.conteudo" placeholder="Escreva o conteúdo da newsletter..." />
               </div>
 
               <div class="flex gap-4">
@@ -2930,7 +3018,7 @@ onUnmounted(() => {
           </div>
           <div class="input-group mb-6">
              <label>DESCRIÃ‡ÃƒO DO PROJETO</label>
-             <textarea v-model="novoProjeto.description" rows="4" placeholder="Explique do que o projeto se trata, qual problema resolve e qual foi o resultado..."></textarea>
+             <QuillEditor theme="snow" contentType="html" v-model:content="novoProjeto.description" placeholder="Explique do que o projeto se trata, qual problema resolve e qual foi o resultado..." />
           </div>
           <div class="form-grid-2 mb-6">
              <div class="input-group">
@@ -3016,6 +3104,22 @@ onUnmounted(() => {
       </section>
 
       <!-- 8. CONFIGURAÇÕES GLOBAIS -->
+      <section v-if="activeTab === 'metricas'" class="admin-section fade-in-up">
+        <div class="admin-header">
+          <div>
+            <h1 class="admin-title">Métricas de Acesso</h1>
+            <p class="admin-subtitle">Desempenho e visualizações das páginas do Hub</p>
+          </div>
+        </div>
+
+        <div class="admin-card mb-8">
+          <h2 class="card-title mb-6">Páginas Mais Visitadas</h2>
+          <div style="height: 400px; width: 100%;">
+            <Bar :data="metricasChartData" :options="metricasChartOptions" />
+          </div>
+        </div>
+      </section>
+
       <section v-if="activeTab === 'configuracoes'" class="admin-section fade-in-up">
         <div class="editor-card-premium shadow-md mb-10">
           <h2 class="card-label-black mb-8">ESTÉTICA DA PLATAFORMA (CORES E LOGO)</h2>

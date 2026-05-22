@@ -4,6 +4,8 @@ import { createUnhead } from '@unhead/vue'
 import App from './App.vue'
 import router from './router'
 import './assets/styles/global.css'
+import { QuillEditor } from '@vueup/vue-quill'
+import '@vueup/vue-quill/dist/vue-quill.snow.css'
 
 // Inicialização ultra-simples para evitar bloqueios
 const app = createApp(App)
@@ -11,6 +13,7 @@ const head = createUnhead()
 
 app.use(router)
 app.use(head)
+app.component('QuillEditor', QuillEditor)
 
 // Custom directive for scroll animations (Micro-interações)
 app.directive('reveal', {

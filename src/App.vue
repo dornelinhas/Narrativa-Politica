@@ -36,14 +36,18 @@
     </main>
     
     <AppFooter v-if="!$route?.path?.startsWith('/admin') && !$route?.meta?.hideHeader" />
+    
+    <A11yWidget v-if="!$route?.path?.startsWith('/admin')" />
   </div>
 </template>
 
 <script setup>
 import { ref, onMounted, watch, computed } from 'vue'
 import { useRoute } from 'vue-router'
+import Lenis from 'lenis'
 import AppHeader from './components/AppHeader.vue'
 import AppFooter from './components/AppFooter.vue'
+import A11yWidget from './components/A11yWidget.vue'
 import { siteContent, fetchAllContent } from './store/content'
 import { applySettings } from './store/settings'
 
@@ -121,6 +125,18 @@ const initApp = async () => {
 onMounted(() => {
   window.addEventListener('scroll', handleScroll)
   initApp()
+  
+  // Inicialização do Lenis (Smooth Scroll)
+  const lenis = new Lenis({
+    autoRaf: true,
+  });
+
+  // Opcional: Se a versão do Lenis instalada exigir raf manual:
+  function raf(time) {
+    lenis.raf(time)
+    requestAnimationFrame(raf)
+  }
+  requestAnimationFrame(raf)
 })
 
 // Lógica de SEO e Meta Tags Dinâmicas

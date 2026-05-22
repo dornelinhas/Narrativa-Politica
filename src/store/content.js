@@ -461,7 +461,8 @@ const initialContent = {
       image: ''
     }
   ],
-  categories: ['Artigos', 'Notícias', 'Análises']
+  categories: ['Artigos', 'Notícias', 'Análises'],
+  events: []
 }
 
 let cachedContent = null
@@ -478,7 +479,7 @@ const siteSettingKeys = [
   'library', 'projects', 'newsletterArchiveConfig', 'articlesConfig', 'opportunitiesConfig',
   'opportunitiesCurationConfig',
   'servicesConfig', 'libraryConfig', 'lastActivity',
-  'newsletterEditions', 'opportunitySourceWebsites'
+  'newsletterEditions', 'opportunitySourceWebsites', 'events'
 ]
 
 const normalizePost = (post) => {
