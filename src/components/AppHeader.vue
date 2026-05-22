@@ -9,7 +9,29 @@
       <!-- MENU DE ABAS -->
       <nav class="nav-desktop">
         <router-link v-if="siteContent.settings?.menuHome !== false" to="/" class="nav-link" :class="{ active: $route.path === '/' }">MOVIMENTO</router-link>
-        <router-link v-if="siteContent.settings?.menuArticles !== false" to="/conteudo" class="nav-link" :class="{ active: $route.path.startsWith('/conteudo') }">ARTIGOS & NOTÍCIAS</router-link>
+        <div class="nav-dropdown" @mouseenter="isArticlesDropdownOpen = true" @mouseleave="isArticlesDropdownOpen = false" v-if="siteContent.settings?.menuArticles !== false">
+          <router-link to="/conteudo" class="nav-link dropdown-trigger" :class="{ active: $route.path.startsWith('/conteudo') || $route.path.startsWith('/arquivo-newsletter') }">
+            ARTIGOS
+          </router-link>
+          <transition name="dropdown-fade">
+            <div v-show="isArticlesDropdownOpen" class="dropdown-panel paper-shadow" style="min-width: 240px;">
+              <router-link to="/conteudo" class="drop-item">
+                <span class="drop-icon" style="background-color: var(--np-rosa);"></span>
+                <div>
+                  <span class="drop-label">Artigos</span>
+                  <span class="drop-desc">Análises e ensaios</span>
+                </div>
+              </router-link>
+              <router-link to="/arquivo-newsletter" class="drop-item">
+                <span class="drop-icon" style="background-color: var(--np-azul);"></span>
+                <div>
+                  <span class="drop-label">Notícias</span>
+                  <span class="drop-desc">Arquivo de newsletters</span>
+                </div>
+              </router-link>
+            </div>
+          </transition>
+        </div>
         
         <div class="nav-dropdown" @mouseenter="isDropdownOpen = true" @mouseleave="isDropdownOpen = false" v-if="siteContent.settings?.menuAtuacao !== false">
           <router-link to="/#atuacao" class="nav-link dropdown-trigger" :class="{ active: isAtuacaoActive }">
@@ -124,6 +146,7 @@ import { siteContent } from '../store/content'
 
 const isScrolled = ref(false)
 const isDropdownOpen = ref(false)
+const isArticlesDropdownOpen = ref(false)
 const mobileOpen = ref(false)
 const { isAuthenticated, user, logout } = useAuth()
 const route = useRoute()
