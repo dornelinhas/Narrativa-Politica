@@ -22,11 +22,18 @@
                   <span class="drop-desc">Análises e ensaios</span>
                 </div>
               </router-link>
+              <router-link to="/conteudo" class="drop-item">
+                <span class="drop-icon" style="background-color: var(--np-verde);"></span>
+                <div>
+                  <span class="drop-label">Notícias</span>
+                  <span class="drop-desc">Giro e atualidades</span>
+                </div>
+              </router-link>
               <router-link to="/arquivo-newsletter" class="drop-item">
                 <span class="drop-icon" style="background-color: var(--np-azul);"></span>
                 <div>
-                  <span class="drop-label">Notícias</span>
-                  <span class="drop-desc">Arquivo de newsletters</span>
+                  <span class="drop-label">Acervo Newsletter</span>
+                  <span class="drop-desc">Edições anteriores</span>
                 </div>
               </router-link>
             </div>
