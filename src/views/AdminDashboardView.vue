@@ -1547,6 +1547,9 @@ onUnmounted(() => {
              <label>TEXTO DO MARQUEE (LETREIRO ROLANTE)</label>
              <input v-model="homeData.marqueeText" type="text" placeholder="Ex: NOTÍCIAS DE LUTA •" />
           </div>
+          <div class="mt-6">
+             <ImageUploader v-model="homeData.heroImage" label="IMAGEM PRINCIPAL DA HOME" />
+          </div>
         </div>
 
         <div class="editor-card-premium shadow-md mt-10">
