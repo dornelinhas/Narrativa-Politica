@@ -3055,41 +3055,41 @@ onUnmounted(() => {
           <div class="form-grid-2 mb-6">
              <div class="input-group">
                 <label>TÍTULO BASE DO SITE (SEO)</label>
-                <input type="text" placeholder="Ex: Narrativa Política - Inteligência..." />
+                <input v-model="siteContent.settings.siteName" type="text" placeholder="Ex: Narrativa Política - Inteligência..." />
              </div>
              <div class="input-group">
                 <label>PALAVRAS-CHAVE (SEPARADAS POR VÍRGULA)</label>
-                <input type="text" placeholder="Ex: advocacy, mobilização, dados..." />
+                <input v-model="siteContent.settings.seoKeywords" type="text" placeholder="Ex: advocacy, mobilização, dados..." />
              </div>
           </div>
           <div class="input-group mb-6">
              <label>DESCRIÇÃO GLOBAL (META DESCRIPTION)</label>
-             <textarea rows="2" placeholder="O ecossistema que conecta lideranças políticas..."></textarea>
+             <textarea v-model="siteContent.settings.seoDescription" rows="2" placeholder="O ecossistema que conecta lideranças políticas..."></textarea>
           </div>
           <h3 class="font-display uppercase text-lg mb-4 mt-8">RODAPÉ / INFORMAÇÕES DE CONTATO</h3>
           <div class="input-group mb-6">
              <label>TEXTO DE COPYRIGHT (RODAPÉ)</label>
-             <input type="text" placeholder="© 2026 Narrativa Política. Todos os direitos reservados." />
+             <input v-model="siteContent.settings.copyright" type="text" placeholder="© 2026 Narrativa Política. Todos os direitos reservados." />
           </div>
           <div class="form-grid-2 mb-6">
              <div class="input-group">
                 <label>LINK DO INSTAGRAM</label>
-                <input type="url" placeholder="https://instagram.com/..." />
+                <input v-model="siteContent.settings.instagram" type="url" placeholder="https://instagram.com/..." />
              </div>
              <div class="input-group">
                 <label>LINK DO LINKEDIN</label>
-                <input type="url" placeholder="https://linkedin.com/in/..." />
+                <input v-model="siteContent.settings.linkedin" type="url" placeholder="https://linkedin.com/in/..." />
              </div>
              <div class="input-group">
                 <label>CHAVE PIX (DOAÇÕES)</label>
-                <input type="text" placeholder="CNPJ ou E-mail PIX" />
+                <input v-model="siteContent.settings.pixKey" type="text" placeholder="CNPJ ou E-mail PIX" />
              </div>
              <div class="input-group">
                 <label>LINK DO WHATSAPP DE CONTATO</label>
-                <input type="url" placeholder="https://wa.me/55..." />
+                <input v-model="siteContent.settings.whatsapp" type="url" placeholder="https://wa.me/55..." />
              </div>
           </div>
-          <button class="btn-save-brutal" @click="saveSobre" :disabled="isSaving">
+          <button class="btn-save-brutal" @click="saveSettings" :disabled="isSaving">
              <Save :size="18" /> {{ isSaving ? 'SALVANDO...' : 'SALVAR CONFIGURAÇÕES GERAIS' }}
           </button>
         </div>
