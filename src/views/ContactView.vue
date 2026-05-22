@@ -67,8 +67,8 @@
                 <textarea v-model="form.message" rows="5" required placeholder="Escreva aqui a sua mensagem..."></textarea>
               </div>
               
-              <button type="submit" class="btn-submit-brutal mt-6">
-                <span>ENVIAR MENSAGEM</span>
+              <button type="submit" class="btn-submit-brutal mt-6" :disabled="isSubmitting">
+                <span>{{ isSubmitting ? 'ENVIANDO...' : 'ENVIAR MENSAGEM' }}</span>
                 <Send :size="20" />
               </button>
             </form>
@@ -149,14 +149,45 @@
 <script setup>
 import { ref } from 'vue';
 import { Mail, ArrowRight, Heart, Users, Sparkles, Send, Check, Instagram, Linkedin, Twitter } from 'lucide-vue-next';
+import { supabase } from '../lib/supabase';
 
 const isSubmitted = ref(false);
+const isSubmitting = ref(false);
 const form = ref({ name: '', email: '', subject: '', message: '' });
 
-const submitForm = () => {
-  setTimeout(() => {
+const submitForm = async () => {
+  if (isSubmitting.value) return;
+  isSubmitting.value = true;
+  
+  try {
+    if (supabase) {
+      const { error } = await supabase
+        .from('messages')
+        .insert([
+          {
+            name: form.value.name,
+            email: form.value.email,
+            subject: form.value.subject,
+            message: form.value.message,
+            created_at: new Date().toISOString()
+          }
+        ]);
+        
+      if (error) {
+        console.error('Erro ao salvar mensagem:', error);
+        alert('Ocorreu um erro ao enviar sua mensagem. Por favor, tente novamente ou entre em contato pelo email.');
+        return;
+      }
+    } else {
+      await new Promise(r => setTimeout(r, 800));
+    }
     isSubmitted.value = true;
-  }, 800);
+  } catch (err) {
+    console.error('Erro geral ao enviar:', err);
+    alert('Erro de conexão ao enviar a mensagem.');
+  } finally {
+    isSubmitting.value = false;
+  }
 };
 
 const resetForm = () => {
