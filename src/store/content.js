@@ -277,7 +277,7 @@ const initialContent = {
     menuContact: true,
     menu: [
       { name: 'Movimento', link: '/' },
-      { name: 'Artigos', link: '/conteudo' },
+      { name: 'Artigos & Notícias', link: '/conteudo' },
       { 
         name: 'Radar', 
         link: '#', 
@@ -289,6 +289,7 @@ const initialContent = {
           { name: 'Projetos', link: '/projetos' }
         ]
       },
+      { name: 'Agenda', link: '/agenda' },
       { name: 'Sobre', link: '/sobre' },
       { name: 'Envolva-se', link: '/contatos', highlight: true }
     ]
