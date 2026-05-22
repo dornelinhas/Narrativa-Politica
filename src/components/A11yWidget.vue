@@ -187,7 +187,6 @@ onMounted(() => {
 :global(body.high-contrast-mode) {
   background-color: #000 !important;
   color: #00FF00 !important; /* Classic terminal green for high contrast */
-  filter: contrast(1.5) saturate(1.5);
 }
 
 :global(body.high-contrast-mode *) {
