@@ -2716,7 +2716,7 @@ onUnmounted(() => {
              <p class="text-xs opacity-50 mt-2">* Separe as áreas por vírgula.</p>
           </div>
           <div class="mb-6">
-             <ImageUploader label="IMAGEM DE PERFIL" />
+             <ImageUploader v-model="sobreData.image" label="IMAGEM DE PERFIL" />
           </div>
         </div>
 

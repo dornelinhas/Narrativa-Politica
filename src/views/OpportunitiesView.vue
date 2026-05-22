@@ -421,12 +421,12 @@ const blueCard = computed(() => filteredOps.value.find(o => o.isBlue) || filtere
 }
 .link-candidatar:hover { color: var(--np-vermelho); }
 
-.card-image { border: var(--border-thick); position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; height: 192px; }
-@media (min-width: 768px) { .card-image { height: auto; } }
-.card-img-element { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; filter: grayscale(100%) contrast(1.25); mix-blend-mode: multiply; }
+.card-image { border: var(--border-thick); position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; min-height: 240px; }
+.card-img-element { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; filter: grayscale(100%) contrast(1.25) brightness(0.6); mix-blend-mode: multiply; }
 .card-image-text {
   background: var(--np-black); color: #fff; font-family: var(--font-display); font-size: 30px;
-  font-weight: 800; text-transform: uppercase; text-align: center; line-height: 1; padding: 8px; mix-blend-mode: difference; z-index: 10;
+  font-weight: 800; text-transform: uppercase; text-align: center; line-height: 1; padding: 16px 24px; z-index: 10;
+  box-shadow: 6px 6px 0 var(--np-amarelo); border: var(--border-thick); transform: rotate(-2deg);
 }
 
 .card-blue { background: var(--np-azul); border: var(--border-thick); padding: 24px; display: flex; flex-direction: column; justify-content: space-between; overflow: hidden; }
