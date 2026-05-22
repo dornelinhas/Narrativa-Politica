@@ -47,7 +47,7 @@
           <transition name="dropdown-fade">
             <div v-show="isDropdownOpen" class="dropdown-panel paper-shadow">
               <router-link to="/agenda" class="drop-item">
-                <span class="drop-icon" style="background-color: var(--np-black);"></span>
+                <span class="drop-icon" style="background-color: var(--np-lilas);"></span>
                 <div>
                   <span class="drop-label">Agenda</span>
                   <span class="drop-desc">Eventos e Aulas</span>

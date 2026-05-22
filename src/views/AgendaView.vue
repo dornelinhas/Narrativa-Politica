@@ -9,7 +9,7 @@
         </div>
         <h1 class="text-5xl md:text-7xl font-black uppercase tracking-tighter leading-none mb-6">
           <span class="text-black">EVENTOS &</span><br />
-          <span class="text-transparent" style="-webkit-text-stroke: 2px #FF3C82;">MOBILIZAÇÕES</span>
+          <span class="text-transparent" style="-webkit-text-stroke: 2px #A55EEA;">MOBILIZAÇÕES</span>
         </h1>
         <p class="text-xl md:text-2xl font-medium max-w-3xl leading-snug">
           Encontros, aulas abertas e convocações para ação. Conecte-se com a nossa rede no território e no digital.
