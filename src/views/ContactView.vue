@@ -160,6 +160,24 @@ const submitForm = async () => {
   isSubmitting.value = true;
   
   try {
+    // 1. Enviar e-mail usando a API do Resend (Vercel Serverless Function)
+    const emailResponse = await fetch('/api/send-contact', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        name: form.value.name,
+        email: form.value.email,
+        subject: form.value.subject,
+        message: form.value.message,
+        type: 'Contato do Site'
+      })
+    });
+    
+    if (!emailResponse.ok) {
+      console.warn('Erro ao enviar e-mail via Resend, código:', emailResponse.status);
+    }
+
+    // 2. Salvar backup no Supabase (se configurado)
     if (supabase) {
       const { error } = await supabase
         .from('messages')
@@ -174,17 +192,14 @@ const submitForm = async () => {
         ]);
         
       if (error) {
-        console.error('Erro ao salvar mensagem:', error);
-        alert('Ocorreu um erro ao enviar sua mensagem. Por favor, tente novamente ou entre em contato pelo email.');
-        return;
+        console.error('Erro ao salvar mensagem no banco:', error);
       }
-    } else {
-      await new Promise(r => setTimeout(r, 800));
     }
+    
     isSubmitted.value = true;
   } catch (err) {
-    console.error('Erro geral ao enviar:', err);
-    alert('Erro de conexão ao enviar a mensagem.');
+    console.error('Erro geral ao processar o formulário:', err);
+    alert('Erro de conexão ao enviar a mensagem. Tente novamente mais tarde.');
   } finally {
     isSubmitting.value = false;
   }
