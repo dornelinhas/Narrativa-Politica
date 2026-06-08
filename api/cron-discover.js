@@ -71,6 +71,7 @@ module.exports = async function handler(req, res) {
     let processedCount = 0
     let pendingCount = 0
     let rejectedCount = 0
+    const logs = []
 
     // Função de delay auxiliar
     const delay = ms => new Promise(res => setTimeout(res, ms))
@@ -79,13 +80,17 @@ module.exports = async function handler(req, res) {
     for (const linkObj of newLinks) {
       try {
         const url = linkObj.url
-        console.log(`Processando: ${url}`)
+        logs.push(`Processando: ${url}`)
         
         const sourcePage = await fetchPageText(url)
-        if (!sourcePage.text || sourcePage.text.length < 200) continue
+        if (!sourcePage.text || sourcePage.text.length < 200) {
+            logs.push(`- Texto muito curto`)
+            continue
+        }
 
         const aiResponse = await analyzeOpportunityText(sourcePage.text, apiKey, 'batch')
         const rawItems = coerceOpportunityItems(aiResponse)
+        logs.push(`- Itens encontrados pela IA: ${rawItems.length}`)
         
         for (const item of rawItems) {
           const payload = normalizeOpportunityPayload(item, { 
@@ -99,7 +104,7 @@ module.exports = async function handler(req, res) {
           
           // Se for rejeitado por score muito baixo ou palavras proibidas, podemos pular
           if (curation.decision === 'rejected' && curation.score < 30) {
-            console.log(`Oportunidade rejeitada (score ${curation.score}): ${payload.title}`)
+            logs.push(`- Rejeitada (score ${curation.score}): ${payload.title}`)
             continue
           }
 
@@ -115,8 +120,9 @@ module.exports = async function handler(req, res) {
           // Inserir no banco
           const { error: insertError } = await supabase.from('opportunities').insert([finalItem])
           if (insertError) {
-            console.error('Erro ao inserir no banco:', insertError)
+            logs.push(`- Erro de BD: ${insertError.message}`)
           } else {
+            logs.push(`- Sucesso! Status: ${finalStatus}`)
             if (finalStatus === 'pending') pendingCount++
             else rejectedCount++
           }
@@ -127,7 +133,7 @@ module.exports = async function handler(req, res) {
         await delay(3000)
         
       } catch (e) {
-        console.error(`Erro ao processar link ${linkObj.url}:`, e.message)
+        logs.push(`- Erro: ${e.message}`)
       }
     }
 
@@ -136,7 +142,8 @@ module.exports = async function handler(req, res) {
       linksDiscovered: uniqueLinks.length,
       linksProcessed: processedCount,
       opportunitiesImported: pendingCount,
-      opportunitiesRejected: rejectedCount
+      opportunitiesRejected: rejectedCount,
+      logs
     })
   } catch (error) {
     console.error('Erro no cron:', error)
