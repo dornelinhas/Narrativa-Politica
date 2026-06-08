@@ -205,16 +205,18 @@ const scoreOpportunityCandidate = (text = '', href = '') => {
   // Bônus para caminhos que costumam conter o detalhe da vaga
   if (/\/(vaga|oportunidade|edital|bolsa|chamada|job|post|news|article|noticia|vagas|editais|bolsas)\//i.test(href)) score += 30
   
-  // Penalidade para URLs genéricas de listagem ou navegação
-  if (/\/(category|tag|archive|page|author|search|login|register|signup|perfil|profile|contato|contact|sobre|about|privacy|termos|terms|home|index)/i.test(href)) score -= 40
+  // Penalidade menor para URLs genéricas, pois às vezes a vaga está na home
+  if (/\/(category|tag|archive|author|search|login|register|signup|perfil|profile|contato|contact|sobre|about|privacy|termos|terms)/i.test(href)) score -= 20
   
   if (/\d{4}/.test(combined)) score += 5
-  if (GENERIC_LINK_PATTERNS.some(pattern => pattern.test(combined))) score -= 40
-  if (GENERIC_PATH_PATTERNS.some(pattern => pattern.test(href))) score -= 30
+  
+  if (GENERIC_LINK_PATTERNS.some(pattern => pattern.test(combined))) score -= 20
+  if (GENERIC_PATH_PATTERNS.some(pattern => pattern.test(href))) score -= 20
   
   if (combined.length < 10) score -= 20
   
-  return score
+  // Aumentamos o baseline para não reprovar tão fácil na fase de descoberta de links
+  return score + 20 
 }
 
 const analyzeWithAI = async (prompt, apiKey) => {
@@ -248,25 +250,30 @@ const parseJsonResponse = (text) => {
 
 const buildOpportunityPrompt = (text, mode = 'single') => {
   return `
-    Analise o texto abaixo e extraia TODAS as oportunidades individuais (vagas, editais, bolsas, chamadas) publicáveis em PORTUGUÊS.
-    IMPORTANTE: Se o texto contiver uma lista ou vários blocos de vagas diferentes, extraia CADA UMA como um objeto separado no array "items".
-    Não agrupe vagas diferentes em um único item. Se for "Analista de Clima" e "Coordenador de Projetos", devem ser dois itens.
+    Você é o curador de oportunidades do projeto "Narrativa Política".
+    Sua missão é extrair do texto abaixo vagas, editais, bolsas e chamadas que façam sentido para profissionais de política, comunicação, direitos humanos, terceiro setor, impacto social e sustentabilidade.
+    
+    CRITÉRIO DE ACEITAÇÃO (Narrativa Política):
+    - Aceite: Trabalhos no terceiro setor, ONGs, governo, comunicação política, jornalismo de impacto, campanhas, pesquisa social, editais de cultura/arte com impacto.
+    - Rejeite: Vagas puramente corporativas/comerciais (ex: Vendedor de Loja, Dev Backend para banco, Engenheiro Civil, Estágio em Contabilidade pura), a não ser que seja para uma ONG/Organização de impacto.
+    
+    IMPORTANTE: Se o texto contiver uma lista de vagas, extraia CADA UMA como um objeto separado no array "items".
     Traduza para o português se o original estiver em inglês.
 
     Para cada oportunidade encontrada, forneça:
     - title: Título da vaga.
-    - description: Resumo curto de 1 frase.
+    - description: Resumo curto (1-2 frases) destacando o propósito ou a organização.
     - fullDescription: HTML formatado com <h3> e <ul> para requisitos e benefícios.
     - category: "Vagas de Emprego", "Bolsas", "Editais", "Estudos" ou "Educação".
-    - type: "Remoto", "Híbrido" ou "Presencial".
-    - location: Local da vaga.
-    - deadline: Data (ex: "25 MAI") ou "ABERTO".
-    - publicationDecision: "publicar", "revisar" ou "não_publicar".
-    - reviewNotes: Breve justificativa.
+    - type: "Remoto", "Híbrido" ou "Presencial" (ou "Não informado").
+    - location: Cidade/Estado/País ou "Global".
+    - deadline: Data (ex: "25 MAI") ou "ABERTO" ou "Não informado".
+    - publicationDecision: "publicar" (se tiver super a ver com Narrativa Política), "revisar" (se na dúvida), ou "não_publicar" (se for corporativo/irrelevante).
+    - reviewNotes: Breve justificativa do porquê combinou ou não com a linha editorial do Narrativa Política.
 
     Texto: ${text.slice(0, 18000)}
 
-    Responda EXCLUSIVAMENTE em JSON:
+    Responda EXCLUSIVAMENTE em JSON no formato abaixo. Se nenhuma vaga relevante for encontrada, retorne um array vazio em "items".
     {
       "items": [
         {
