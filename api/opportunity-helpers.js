@@ -426,10 +426,11 @@ const extractLinksFromHtml = (html, baseUrl) => {
   while ((match = hrefRegex.exec(html)) !== null) {
     try {
       const href = match[1]
-      const absoluteUrl = new URL(href, baseUrl).href
-      // Evita links externos que não sejam da mesma origem se for um site de busca
-      // Ou permite tudo se quisermos expandir
-      links.push(absoluteUrl)
+      // Remove a âncora (hash) para evitar duplicatas da mesma página
+      const absoluteUrl = new URL(href, baseUrl)
+      absoluteUrl.hash = '' 
+      
+      links.push(absoluteUrl.href)
     } catch (e) {
       // Ignora URLs inválidas
     }
