@@ -1,6 +1,6 @@
 const { supabase } = require('./_lib/supabase')
 const { 
-  discoverOpportunityLinks, 
+  discoverFromRss, 
   fetchPageText, 
   analyzeOpportunityText, 
   normalizeOpportunityPayload, 
@@ -14,11 +14,10 @@ module.exports = async function handler(req, res) {
   const authHeader = req.headers['authorization']
   if (process.env.NODE_ENV === 'production' && authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
     // return res.status(401).json({ error: 'Não autorizado' })
-    // Por enquanto deixamos passar ou usamos uma chave simples se o usuário não configurou CRON_SECRET
   }
 
   try {
-    console.log('Iniciando cron de descoberta automática...')
+    console.log('Iniciando cron de descoberta automática via RSS...')
 
     // 1. Buscar configurações de curadoria e fontes
     const { data: settingsData } = await supabase
@@ -27,20 +26,24 @@ module.exports = async function handler(req, res) {
       .in('key', ['opportunitiesCurationConfig', 'opportunitySourceWebsites'])
 
     const curationConfig = settingsData?.find(s => s.key === 'opportunitiesCurationConfig')?.value || {}
+    
+    // Por padrão, usamos fontes RSS confiáveis e abertas
     const sourceWebsites = settingsData?.find(s => s.key === 'opportunitySourceWebsites')?.value || [
-      { id: 'opportunitiesforyouth', label: 'Opportunities for Youth', url: 'https://opportunitiesforyouth.org/' },
-      { id: 'terceirosetor', label: 'Vagas Terceiro Setor', url: 'https://vagas.terceirosetor.net/' }
+      { id: 'observatorio', label: 'Observatório 3º Setor', url: 'https://observatorio3setor.org.br/feed/' },
+      { id: 'gife', label: 'GIFE', url: 'https://gife.org.br/feed/' },
+      { id: 'nossacausa', label: 'Nossa Causa', url: 'https://nossacausa.com/feed/' },
+      { id: 'opportunitiesforyouth', label: 'Opportunities for Youth', url: 'https://opportunitiesforyouth.org/feed/' }
     ]
 
     const apiKey = process.env.GEMINI_API_KEY
     if (!apiKey) throw new Error('GEMINI_API_KEY não configurada')
 
-    // 2. Coletar todos os links em potencial
+    // 2. Coletar todos os links em potencial via RSS
     let allLinks = []
     for (const source of sourceWebsites) {
       try {
-        console.log(`Buscando links em: ${source.url}`)
-        const links = await discoverOpportunityLinks(source.url)
+        console.log(`Buscando links no RSS: ${source.url}`)
+        const links = await discoverFromRss(source.url)
         allLinks.push(...links.map(l => ({ ...l, sourceLabel: source.label })))
       } catch (e) {
         console.error(`Erro ao buscar na fonte ${source.url}:`, e.message)

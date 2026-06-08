@@ -460,6 +460,32 @@ const discoverOpportunityLinks = async (sourceUrl) => {
   return candidates.sort((a, b) => b.score - a.score)
 }
 
+const Parser = require('rss-parser');
+const rssParser = new Parser({
+  headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)' }
+});
+
+const discoverFromRss = async (rssUrl) => {
+  try {
+    const feed = await rssParser.parseURL(rssUrl);
+    const candidates = [];
+    for (const item of feed.items) {
+      if (item.link) {
+        // Usa o título e o link para pontuar preliminarmente se parece uma vaga/edital
+        const score = scoreOpportunityCandidate(item.title, item.link);
+        // Somos bem lenientes aqui porque a IA vai filtrar depois
+        if (score > 0) { 
+          candidates.push({ url: item.link, score, title: item.title });
+        }
+      }
+    }
+    return candidates.sort((a, b) => b.score - a.score);
+  } catch (error) {
+    console.error(`Erro ao ler RSS ${rssUrl}:`, error.message);
+    return [];
+  }
+}
+
 const analyzeOpportunityText = async (text, apiKey, mode = 'single') => {
   const prompt = buildOpportunityPrompt(text, mode)
   const raw = await analyzeWithAI(prompt, apiKey)
@@ -482,5 +508,6 @@ module.exports = {
   parseJsonResponse,
   scoreOpportunityCandidate,
   extractLinksFromHtml,
-  discoverOpportunityLinks
+  discoverOpportunityLinks,
+  discoverFromRss
 }
