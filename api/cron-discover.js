@@ -66,7 +66,8 @@ module.exports = async function handler(req, res) {
     console.log(`Novos links para processar: ${newLinks.length}`)
 
     let processedCount = 0
-    let importedCount = 0
+    let pendingCount = 0
+    let rejectedCount = 0
 
     // 4. Processar cada novo link
     for (const linkObj of newLinks) {
@@ -90,17 +91,18 @@ module.exports = async function handler(req, res) {
           
           const curation = evaluateOpportunityCuration(payload, curationConfig)
           
-          // Se for rejeitado por score muito baixo ou palavras proibidas, podemos pular ou salvar como rejeitado
-          if (curation.decision === 'rejected' && curation.score < 20) {
+          // Se for rejeitado por score muito baixo ou palavras proibidas, podemos pular
+          if (curation.decision === 'rejected' && curation.score < 30) {
             console.log(`Oportunidade rejeitada (score ${curation.score}): ${payload.title}`)
             continue
           }
 
+          const finalStatus = curation.decision === 'rejected' ? 'rejected' : 'pending'
+          
           const finalItem = {
             ...payload,
-            status: curation.decision === 'rejected' ? 'rejected' : 'pending',
+            status: finalStatus,
             fullDescription: `${payload.fullDescription}<p><strong>Fonte:</strong> <a href="${url}" target="_blank">Acessar original</a></p>`,
-            // Campos extras que o banco pode ter ou que o Vue espera
             reviewNotes: curation.notes
           }
 
@@ -109,7 +111,8 @@ module.exports = async function handler(req, res) {
           if (insertError) {
             console.error('Erro ao inserir no banco:', insertError)
           } else {
-            importedCount++
+            if (finalStatus === 'pending') pendingCount++
+            else rejectedCount++
           }
         }
         processedCount++
@@ -122,7 +125,8 @@ module.exports = async function handler(req, res) {
       message: 'Cron finalizado',
       linksDiscovered: uniqueLinks.length,
       linksProcessed: processedCount,
-      opportunitiesImported: importedCount
+      opportunitiesImported: pendingCount,
+      opportunitiesRejected: rejectedCount
     })
   } catch (error) {
     console.error('Erro no cron:', error)
