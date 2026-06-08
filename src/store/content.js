@@ -476,7 +476,7 @@ try {
 export const siteContent = reactive(cachedContent ? { ...initialContent, ...cachedContent } : { ...initialContent })
 
 const siteSettingKeys = [
-  'home', 'about', 'settings', 'donateConfig', 'services', 'opportunities', 'tracks',
+  'home', 'about', 'settings', 'donateConfig', 'services', 'tracks',
   'library', 'projects', 'newsletterArchiveConfig', 'articlesConfig', 'opportunitiesConfig',
   'opportunitiesCurationConfig',
   'servicesConfig', 'libraryConfig', 'lastActivity',

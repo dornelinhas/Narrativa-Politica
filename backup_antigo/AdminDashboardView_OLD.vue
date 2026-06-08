@@ -1,23 +1,18 @@
-<script setup>
+﻿<script setup>
 import { ref, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuth } from '../store/auth'
 import { supabase } from '../lib/supabase'
-import { Settings, LogOut, CheckCircle, Clock, Trash2, Home, Search, BookOpen, Briefcase, ChevronDown, Package, FileText, User, Mail, Folder, Download, Eye, Heart, Library, Save, Plus, Edit, Trash, Zap, Calendar, X, ExternalLink, ArrowUp, Sparkles, Menu, ChevronLeft } from 'lucide-vue-next'
+import { Settings, LogOut, CheckCircle, Clock, Trash2, Home, Search, BookOpen, Briefcase, ChevronDown, Package, FileText, User, Mail, Folder, Download, Eye, Heart, Library, Save, Plus, Edit, Trash, Zap, Calendar, X, ExternalLink, ArrowUp, Sparkles } from 'lucide-vue-next'
 import BrutalEditor from '../components/BrutalEditor.vue'
 import ImageUploader from '../components/ImageUploader.vue'
 import { sanitizeHtml } from '../utils/sanitizeHtml'
 import { siteContent, fetchAllContent, getOpportunityVisibilityState, logActivity, parseOpportunityDeadline, getPageViews } from '../store/content'
-import { Bar } from 'vue-chartjs'
-import { Chart as ChartJS, Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale } from 'chart.js'
-
-ChartJS.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale)
 
 const router = useRouter()
 const { user, logout } = useAuth()
 const activeTab = ref('home')
 const isSaving = ref(false)
-const isSidebarOpen = ref(true)
 const analytics = ref([])
 
 const defaultArticleForm = () => ({ title: '', subtitle: '', author: '', type: 'Artigo', category: '', featured: false, content: '', image: '', imageDescription: '', imageCaption: '', references: '', highlightQuote: '', status: 'publicado' })
@@ -26,19 +21,19 @@ const defaultCurationForm = () => ({
   minScore: 60,
   maxAgeDays: 30,
   rejectIfMissingDeadline: false,
-  includeKeywords: 'vaga, bolsa, edital, chamada, oportunidade, inscrição',
-  excludeKeywords: 'voluntariado não remunerado, spam, marketing multinível',
-  acceptedCategories: 'Vagas de Emprego, Bolsas, Editais, Estudos, Educação',
-  acceptedLocations: 'Brasil, Remoto, Híbrido, Presencial, Nordeste',
+  includeKeywords: 'vaga, bolsa, edital, chamada, oportunidade, inscri├º├úo',
+  excludeKeywords: 'voluntariado n├úo remunerado, spam, marketing multin├¡vel',
+  acceptedCategories: 'Vagas de Emprego, Bolsas, Editais, Estudos, Educa├º├úo',
+  acceptedLocations: 'Brasil, Remoto, H├¡brido, Presencial, Nordeste',
   requireSourceMatch: true
 })
 const defaultTrackForm = () => ({
-  name: '', description: '', hours: '', status: 'GRATUITO', hasCertificate: true, color: '#EFEFEF',
+  name: '', description: '', hours: '', status: 'GRATUITO', hasCertificate: true, color: '#FF6BCA',
   mod1: '', mod2: '', mod3: ''
 })
-const defaultServiceForm = () => ({ title: '', description: '', icon: 'Zap', bg: '#EFEFEF', textColor: '#FFFFFF' })
+const defaultServiceForm = () => ({ title: '', description: '', icon: 'Zap', bg: '#FF6BCA', textColor: '#FFFFFF' })
 const defaultProjectForm = () => ({ title: '', organization: '', description: '', impact: '', image: '', tags: '', status: 'publicado' })
-const defaultDocForm = () => ({ title: '', description: '', category: 'Relatório', fileUrl: '', externalLink: '', status: 'publicado' })
+const defaultDocForm = () => ({ title: '', description: '', category: 'Relat├│rio', fileUrl: '', externalLink: '', status: 'publicado' })
 
 const editingArtigoId = ref(null)
 const editingVagaId = ref(null)
@@ -79,7 +74,7 @@ const isValidHttpUrl = (value) => {
   }
 }
 
-const recordActivity = async (title, type = 'Edição') => {
+const recordActivity = async (title, type = 'Edi├º├úo') => {
   logActivity(title, type)
   await persistSiteSetting('lastActivity', siteContent.lastActivity)
 }
@@ -94,7 +89,7 @@ const persistSiteSetting = async (key, value) => {
 // NEWSLETTER
 const newsletters = ref(siteContent.newsletters || [])
 const inscritos = ref(siteContent.subscribers || [])
-const novaNewsletter = ref({ titulo: '', descricao: '', conteudo: '', capa_url: '', tag: 'Política' })
+const novaNewsletter = ref({ titulo: '', descricao: '', conteudo: '', capa_url: '', tag: 'Pol├¡tica' })
 const donateConfigData = ref({
   headlinePart1: siteContent.donateConfig?.headlinePart1 || '',
   headlinePart2: siteContent.donateConfig?.headlinePart2 || '',
@@ -151,7 +146,7 @@ const articlesConfigData = ref({
 // EDITORIAL
 const artigos = ref(siteContent.posts || [])
 const novoArtigo = ref(defaultArticleForm())
-const categoriasDisponiveis = ref(['Mobilização', 'Educação', 'Clima', 'Notícias', 'Análise'])
+const categoriasDisponiveis = ref(['Mobiliza├º├úo', 'Educa├º├úo', 'Clima', 'Not├¡cias', 'An├ílise'])
 const isGeneratingSummary = ref(false)
 const projetos = ref(siteContent.projects || [])
 const novoProjeto = ref(defaultProjectForm())
@@ -188,7 +183,7 @@ const gerarResumoIA = async () => {
     novoArtigo.value.subtitle = data.summary
   } catch (e) {
     console.error(e)
-    alert("Não foi possível gerar o resumo automático. Verifique se a GEMINI_API_KEY está configurada.")
+    alert("N├úo foi poss├¡vel gerar o resumo autom├ítico. Verifique se a GEMINI_API_KEY est├í configurada.")
   } finally {
     isGeneratingSummary.value = false
   }
@@ -221,11 +216,11 @@ const researchSites = [
 ]
 const opportunityStatusLabel = (vaga) => ({
   public: 'PUBLICADA',
-  pending: 'EM REVISÃO',
-  rejected: 'NÃO PUBLICADA',
+  pending: 'EM REVIS├âO',
+  rejected: 'N├âO PUBLICADA',
   expired: 'ENCERRADA',
   closed: 'ENCERRADA'
-}[getOpportunityVisibilityState(vaga)] || 'EM REVISÃO')
+}[getOpportunityVisibilityState(vaga)] || 'EM REVIS├âO')
 const opportunityStatusClass = (vaga) => ({
   public: 'badge-normal',
   pending: 'badge-featured',
@@ -258,7 +253,7 @@ const recentActivity = computed(() => (siteContent.lastActivity || []).slice(0, 
 // LMS / TRILHAS
 const trilhas = ref(siteContent.tracks || [])
 const novaTrilha = ref(defaultTrackForm())
-// SERVIÇOS / EIXOS DE AÇÃO
+// SERVI├çOS / EIXOS DE A├ç├âO
 const servicosConfigData = ref({
   pageTitle1: '', pageTitle2: '', cardButton: '', ctaTitle: '', ctaDesc: '', ctaButton: '',
   newsletterEyebrow: '', newsletterTitle: '', newsletterDesc: '', newsletterBtn: ''
@@ -291,10 +286,10 @@ const scrollToTop = () => {
 }
 import { onUnmounted } from 'vue'
 
-// --- FUNÇÕES DE NEWSLETTER ---
+// --- FUN├ç├òES DE NEWSLETTER ---
 const saveNewsletter = async () => {
   if (!novaNewsletter.value.titulo || !novaNewsletter.value.conteudo) {
-    alert("Título e Conteúdo são obrigatórios.")
+    alert("T├¡tulo e Conte├║do s├úo obrigat├│rios.")
     return
   }
 
@@ -318,14 +313,14 @@ const saveNewsletter = async () => {
       const emails = inscritos.value.map(s => s.email).filter(e => e)
       if (emails.length > 0) {
         const htmlBody = `
-          <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #EFEFEF; padding: 40px;">
-            <h1 style="font-size: 24px; text-transform: uppercase; border-bottom: 5px solid #202020; padding-bottom: 10px;">${novaNewsletter.value.titulo}</h1>
+          <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; border: 10px solid #1C1C1C; padding: 40px;">
+            <h1 style="font-size: 24px; text-transform: uppercase; border-bottom: 5px solid #1C1C1C; padding-bottom: 10px;">${novaNewsletter.value.titulo}</h1>
             <p style="font-size: 16px; line-height: 1.6; color: #333;">${novaNewsletter.value.descricao}</p>
             <div style="margin: 30px 0;">
               ${novaNewsletter.value.conteudo}
             </div>
             <hr style="border: 0; border-top: 2px solid #EEE;" />
-            <p style="font-size: 12px; color: #999;">Você recebeu este e-mail da Narrativa Política.</p>
+            <p style="font-size: 12px; color: #999;">Voc├¬ recebeu este e-mail da Narrativa Pol├¡tica.</p>
           </div>
         `
         const success = await sendNewsletterEmail(novaNewsletter.value.titulo, htmlBody, emails)
@@ -334,8 +329,8 @@ const saveNewsletter = async () => {
     }
     
     siteContent.newsletters.unshift({ ...payload, id: Date.now() })
-    novaNewsletter.value = { titulo: '', descricao: '', conteudo: '', capa_url: '', tag: 'Política' }
-    await recordActivity(`Newsletter: ${payload.titulo}`, confirmSend ? 'Envio' : 'Criação')
+    novaNewsletter.value = { titulo: '', descricao: '', conteudo: '', capa_url: '', tag: 'Pol├¡tica' }
+    await recordActivity(`Newsletter: ${payload.titulo}`, confirmSend ? 'Envio' : 'Cria├º├úo')
     isSaving.value = false 
     alert(confirmSend ? 'Newsletter salva e enviada com sucesso!' : 'Newsletter salva no arquivo!') 
   } catch(e) { 
@@ -365,8 +360,8 @@ const saveNewsletterArchiveConfig = async () => {
     if (supabase) {
       await supabase.from('site_settings').upsert({ key: 'newsletterArchiveConfig', value: newsletterArchiveConfigData.value })
     }
-    await recordActivity('Acervo de newsletter', 'Configuração')
-    setTimeout(() => { isSaving.value = false; alert('Configurações do Acervo Salvas!') }, 400)
+    await recordActivity('Acervo de newsletter', 'Configura├º├úo')
+    setTimeout(() => { isSaving.value = false; alert('Configura├º├Áes do Acervo Salvas!') }, 400)
   } catch(e) { console.error(e); isSaving.value = false; }
 }
 
@@ -393,12 +388,12 @@ const saveDonateConfig = async () => {
     if (supabase) {
       await supabase.from('site_settings').upsert({ key: 'donateConfig', value: config })
     }
-    await recordActivity('Página de doação', 'Configuração')
-    setTimeout(() => { isSaving.value = false; alert('Configurações de Doação Salvas!') }, 400)
+    await recordActivity('P├ígina de doa├º├úo', 'Configura├º├úo')
+    setTimeout(() => { isSaving.value = false; alert('Configura├º├Áes de Doa├º├úo Salvas!') }, 400)
   } catch(e) { console.error(e); isSaving.value = false; }
 }
 
-// --- FUNÇÕES DE INTELIGÊNCIA (SEO / SOCIAL) ---
+// --- FUN├ç├òES DE INTELIG├èNCIA (SEO / SOCIAL) ---
 const seoScore = computed(() => {
   let score = 0
   if (novoArtigo.value.title.length > 30) score += 25
@@ -408,44 +403,13 @@ const seoScore = computed(() => {
   return score
 })
 
-const metricasChartData = computed(() => {
-  if (!analytics.value || analytics.value.length === 0) {
-    return {
-      labels: ['Nenhum dado'],
-      datasets: [{ label: 'Visualizações', data: [0], backgroundColor: '#FF3C82' }]
-    }
-  }
-  
-  const sorted = [...analytics.value].sort((a, b) => b.count - a.count).slice(0, 10)
-  return {
-    labels: sorted.map(v => v.page_path.replace('/artigo/', 'Artigo: ').substring(0, 20)),
-    datasets: [{
-      label: 'Visualizações de Página',
-      data: sorted.map(v => v.count),
-      backgroundColor: '#FF3C82'
-    }]
-  }
-})
-
-const metricasChartOptions = {
-  responsive: true,
-  maintainAspectRatio: false,
-  scales: {
-    y: { beginAtZero: true, ticks: { font: { family: 'Archivo Black', size: 12 } } },
-    x: { ticks: { font: { family: 'Inter', size: 10 } } }
-  },
-  plugins: {
-    legend: { labels: { font: { family: 'Archivo Black' } } }
-  }
-}
-
 const copyCaption = () => {
-  const text = `${novoArtigo.value.title} 🚀\n\nAcabamos de publicar uma nova análise estratégica no Radar Editorial da Narrativa Política.\n\nLeia o ensaio completo em nosso portal. #NarrativaPolitica #Advocacy #Impacto`
+  const text = `${novoArtigo.value.title} ­ƒÜÇ\n\nAcabamos de publicar uma nova an├ílise estrat├®gica no Radar Editorial da Narrativa Pol├¡tica.\n\nLeia o ensaio completo em nosso portal. #NarrativaPolitica #Advocacy #Impacto`
   navigator.clipboard.writeText(text)
   alert('Legenda copiada para o seu clipboard!')
 }
 
-// --- FUNÇÕES DE BANCO DE DADOS (SUPABASE) ---
+// --- FUN├ç├òES DE BANCO DE DADOS (SUPABASE) ---
 const loadData = async () => {
   isSaving.value = true
   try {
@@ -458,9 +422,8 @@ const loadData = async () => {
     docs.value = siteContent.library || []
     inscritos.value = siteContent.subscribers || []
     newsletters.value = siteContent.newsletters || []
-    analytics.value = await getPageViews()
     
-    // Atualiza outros dados de configuração
+    // Atualiza outros dados de configura├º├úo
     if (siteContent.home) Object.assign(homeData.value, siteContent.home)
     if (siteContent.about) Object.assign(sobreData.value, siteContent.about)
     if (siteContent.articlesConfig) Object.assign(articlesConfigData.value, siteContent.articlesConfig)
@@ -487,7 +450,7 @@ const loadData = async () => {
 const saveHome = async () => {
   isSaving.value = true
   try {
-    // Atualiza a memória local
+    // Atualiza a mem├│ria local
     Object.assign(siteContent.home, homeData.value)
 
     if (supabase) {
@@ -497,7 +460,7 @@ const saveHome = async () => {
       })
       if (error) throw error
     }
-    await recordActivity('Home', 'Configuração')
+    await recordActivity('Home', 'Configura├º├úo')
     setTimeout(() => { isSaving.value = false; alert('Home salva com sucesso!') }, 400)
   } catch(e) { 
     console.error(e)
@@ -511,12 +474,12 @@ const saveArticlesConfig = async () => {
   try {
     Object.assign(siteContent.articlesConfig, articlesConfigData.value)
     await persistSiteSetting('articlesConfig', articlesConfigData.value)
-    await recordActivity('Editorial geral', 'Configuração')
-    setTimeout(() => { isSaving.value = false; alert('Configurações da Página salvas!') }, 400)
+    await recordActivity('Editorial geral', 'Configura├º├úo')
+    setTimeout(() => { isSaving.value = false; alert('Configura├º├Áes da P├ígina salvas!') }, 400)
   } catch (e) {
     console.error(e)
     isSaving.value = false
-    alert('Erro ao salvar configurações: ' + (e.message || e))
+    alert('Erro ao salvar configura├º├Áes: ' + (e.message || e))
   }
 }
 
@@ -552,11 +515,11 @@ const previewArtigo = (id) => {
 // Version: 2026-04-26-FINAL-FIX
 const saveArtigo = async (statusOverride = null) => {
   if (!novoArtigo.value.title) {
-    alert("O título do artigo é obrigatório.")
+    alert("O t├¡tulo do artigo ├® obrigat├│rio.")
     return
   }
   isSaving.value = true
-  // Captura o estado de edição antes de qualquer processamento
+  // Captura o estado de edi├º├úo antes de qualquer processamento
   const wasEditing = Boolean(editingArtigoId.value !== null)
   
   try {
@@ -602,10 +565,10 @@ const saveArtigo = async (statusOverride = null) => {
       if (!savedArticle.id) savedArticle.id = Date.now()
     }
 
-    // Atualiza a lista global com segurança
+    // Atualiza a lista global com seguran├ºa
     await fetchAllContent() 
     artigos.value = [...siteContent.posts]
-    await recordActivity(`Artigo: ${payload.title}`, wasEditing ? 'Edição' : 'Criação')
+    await recordActivity(`Artigo: ${payload.title}`, wasEditing ? 'Edi├º├úo' : 'Cria├º├úo')
     
     resetArtigoForm()
     isSaving.value = false
@@ -627,7 +590,7 @@ const deleteArtigo = async (art) => {
     }
     siteContent.posts = (siteContent.posts || []).filter(p => String(p.id) !== String(art.id))
     artigos.value = siteContent.posts
-    await recordActivity(`Artigo excluído: ${art.title}`, 'Exclusão')
+    await recordActivity(`Artigo exclu├¡do: ${art.title}`, 'Exclus├úo')
     if (String(editingArtigoId.value) === String(art.id)) resetArtigoForm()
     isSaving.value = false
   } catch (e) {
@@ -644,8 +607,8 @@ const saveSobre = async () => {
     if (supabase) {
       await supabase.from('site_settings').upsert({ key: 'about', value: sobreData.value })
     }
-    await recordActivity('Página Sobre', 'Configuração')
-    setTimeout(() => { isSaving.value = false; alert('Página Sobre atualizada!') }, 400)
+    await recordActivity('P├ígina Sobre', 'Configura├º├úo')
+    setTimeout(() => { isSaving.value = false; alert('P├ígina Sobre atualizada!') }, 400)
   } catch(e) { console.error(e); isSaving.value = false; }
 }
 
@@ -655,8 +618,8 @@ const saveSettings = async () => {
     if (supabase) {
       await supabase.from('site_settings').upsert({ key: 'settings', value: siteContent.settings })
     }
-    await recordActivity('Visibilidade do site', 'Configuração')
-    setTimeout(() => { isSaving.value = false; alert('Módulos atualizados!') }, 400)
+    await recordActivity('Visibilidade do site', 'Configura├º├úo')
+    setTimeout(() => { isSaving.value = false; alert('M├│dulos atualizados!') }, 400)
   } catch(e) { console.error(e); isSaving.value = false; }
 }
 
@@ -665,11 +628,11 @@ const saveOpportunitiesConfig = async () => {
   try {
     Object.assign(siteContent.opportunitiesConfig, oppsConfigData.value)
     await persistSiteSetting('opportunitiesConfig', oppsConfigData.value)
-    setTimeout(() => { isSaving.value = false; alert('Configurações do Hub salvas!') }, 400)
+    setTimeout(() => { isSaving.value = false; alert('Configura├º├Áes do Hub salvas!') }, 400)
   } catch (e) {
     console.error(e)
     isSaving.value = false
-    alert('Erro ao salvar configurações: ' + (e.message || e))
+    alert('Erro ao salvar configura├º├Áes: ' + (e.message || e))
   }
 }
 
@@ -706,7 +669,7 @@ const previewVaga = (id) => {
 
 const saveVaga = async (statusOverride = null) => {
   if (!novaVaga.value.title) {
-    alert("O título da vaga é obrigatório.")
+    alert("O t├¡tulo da vaga ├® obrigat├│rio.")
     return
   }
   isSaving.value = true
@@ -715,42 +678,29 @@ const saveVaga = async (statusOverride = null) => {
     const normalizedDeadline = normalizeOpportunityDeadline(novaVaga.value.deadline)
     const finalStatus = statusOverride || novaVaga.value.status || 'approved'
     
-    const isNew = !editingVagaId.value || String(editingVagaId.value).includes('trilha') || !String(editingVagaId.value).includes('-')
-    
     const payload = {
       ...novaVaga.value,
       status: finalStatus,
-      deadline: normalizedDeadline
+      deadline: normalizedDeadline,
+      id: editingVagaId.value || Date.now()
     }
     
-    if (!isNew) {
-      payload.id = editingVagaId.value
-    }
-    
-    let savedItem = null
-    if (supabase) {
-      const { data, error } = await supabase.from('opportunities').upsert(payload).select().maybeSingle()
-      if (error) throw error
-      savedItem = data
-    } else {
-      payload.id = editingVagaId.value || Date.now()
-      savedItem = payload
-    }
-    
+    const wasEditing = isEditingVaga.value
     if (wasEditing) {
       const index = opportunitiesList.findIndex(v => String(v.id) === String(editingVagaId.value))
       if (index !== -1) {
-        opportunitiesList[index] = savedItem
+        opportunitiesList[index] = payload
       }
     } else {
-      opportunitiesList.unshift(savedItem)
+      opportunitiesList.unshift(payload)
     }
     
     // Atualiza o store global E a ref local clonando o array para garantir reatividade
     siteContent.opportunities = [...opportunitiesList]
     vagas.value = [...opportunitiesList]
     
-    await recordActivity(`Oportunidade: ${payload.title}`, wasEditing ? 'Edição' : 'Criação')
+    await persistSiteSetting('opportunities', siteContent.opportunities)
+    await recordActivity(`Oportunidade: ${payload.title}`, wasEditing ? 'Edi├º├úo' : 'Cria├º├úo')
     
     resetVagaForm()
     isSaving.value = false
@@ -780,7 +730,7 @@ const saveCurationConfig = async () => {
       ...payload
     }
     await persistSiteSetting('opportunitiesCurationConfig', siteContent.opportunitiesCurationConfig)
-    await recordActivity('Regras de curadoria', 'Configuração')
+    await recordActivity('Regras de curadoria', 'Configura├º├úo')
     setTimeout(() => { isSaving.value = false; alert('Regras de curadoria salvas!') }, 400)
   } catch (e) {
     console.error(e)
@@ -794,25 +744,17 @@ const updateVagaStatus = async (vaga, status) => {
   try {
     if (!siteContent.opportunities) siteContent.opportunities = []
     const index = siteContent.opportunities.findIndex(v => String(v.id) === String(vaga.id))
-    if (index === -1) throw new Error('Oportunidade não encontrada.')
+    if (index === -1) throw new Error('Oportunidade n├úo encontrada.')
 
     const updated = { ...siteContent.opportunities[index], status }
-    
-    if (supabase) {
-      const { error } = await supabase.from('opportunities').update({ status }).eq('id', vaga.id)
-      if (error) throw error
-    }
-
     siteContent.opportunities.splice(index, 1, updated)
     vagas.value = siteContent.opportunities
+    await persistSiteSetting('opportunities', siteContent.opportunities)
     await recordActivity(`Oportunidade: ${updated.title}`, `Status ${status}`)
 
     if (String(editingVagaId.value) === String(vaga.id)) {
       novaVaga.value = { ...novaVaga.value, status }
     }
-  } catch (e) {
-    console.error(e)
-    alert('Erro ao atualizar status: ' + (e.message || e))
   } finally {
     isSaving.value = false
   }
@@ -824,37 +766,29 @@ const moveVagaToReview = async (vaga) => updateVagaStatus(vaga, 'pending')
 
 const toggleFeatured = async (vaga) => {
   try {
-    const newVal = !vaga.featured
-    if (supabase) {
-      const { error } = await supabase.from('opportunities').update({ featured: newVal }).eq('id', vaga.id)
-      if (error) throw error
-    }
-    vaga.featured = newVal
-    // Garantir reatividade total forçando atualização da lista
+    vaga.featured = !vaga.featured
+    // Garantir reatividade total for├ºando atualiza├º├úo da lista
     siteContent.opportunities = [...siteContent.opportunities]
     vagas.value = siteContent.opportunities
-    await recordActivity(`Oportunidade ${vaga.featured ? 'em destaque' : 'removida do destaque'}: ${vaga.title}`, 'Edição')
+    await persistSiteSetting('opportunities', siteContent.opportunities)
+    await recordActivity(`Oportunidade ${vaga.featured ? 'em destaque' : 'removida do destaque'}: ${vaga.title}`, 'Edi├º├úo')
   } catch (e) {
     console.error('Erro ao alternar destaque:', e)
-    alert('Erro ao salvar alteração de destaque.')
+    alert('Erro ao salvar altera├º├úo de destaque.')
   }
 }
 
 const toggleShowOnHome = async (vaga) => {
   try {
-    const newVal = !vaga.showOnHome
-    if (supabase) {
-      const { error } = await supabase.from('opportunities').update({ showOnHome: newVal }).eq('id', vaga.id)
-      if (error) throw error
-    }
-    vaga.showOnHome = newVal
+    vaga.showOnHome = !vaga.showOnHome
     // Garantir reatividade total
     siteContent.opportunities = [...siteContent.opportunities]
     vagas.value = siteContent.opportunities
-    await recordActivity(`Oportunidade ${vaga.showOnHome ? 'exibida na home' : 'removida da home'}: ${vaga.title}`, 'Edição')
+    await persistSiteSetting('opportunities', siteContent.opportunities)
+    await recordActivity(`Oportunidade ${vaga.showOnHome ? 'exibida na home' : 'removida da home'}: ${vaga.title}`, 'Edi├º├úo')
   } catch (e) {
-    console.error('Erro ao alternar exibição na home:', e)
-    alert('Erro ao salvar alteração de exibição.')
+    console.error('Erro ao alternar exibi├º├úo na home:', e)
+    alert('Erro ao salvar altera├º├úo de exibi├º├úo.')
   }
 }
 
@@ -862,13 +796,10 @@ const deleteVaga = async (vaga) => {
   if (!confirm(`Excluir a oportunidade "${vaga.title}"?`)) return
   isSaving.value = true
   try {
-    if (supabase) {
-      const { error } = await supabase.from('opportunities').delete().eq('id', vaga.id)
-      if (error) throw error
-    }
     siteContent.opportunities = (siteContent.opportunities || []).filter(v => String(v.id) !== String(vaga.id))
     vagas.value = siteContent.opportunities
-    await recordActivity(`Oportunidade excluída: ${vaga.title}`, 'Exclusão')
+    await persistSiteSetting('opportunities', siteContent.opportunities)
+    await recordActivity(`Oportunidade exclu├¡da: ${vaga.title}`, 'Exclus├úo')
     if (String(editingVagaId.value) === String(vaga.id)) resetVagaForm()
     isSaving.value = false
   } catch (e) {
@@ -880,7 +811,7 @@ const deleteVaga = async (vaga) => {
 
 const saveTrilha = async () => {
   if (!novaTrilha.value.name) {
-    alert("O nome da trilha é obrigatório.")
+    alert("O nome da trilha ├® obrigat├│rio.")
     return
   }
   isSaving.value = true
@@ -908,11 +839,11 @@ const saveServicesConfig = async () => {
   try {
     Object.assign(siteContent.servicesConfig, servicosConfigData.value)
     await persistSiteSetting('servicesConfig', servicosConfigData.value)
-    setTimeout(() => { isSaving.value = false; alert('Configurações da página salvas!') }, 400)
+    setTimeout(() => { isSaving.value = false; alert('Configura├º├Áes da p├ígina salvas!') }, 400)
   } catch (e) {
     console.error(e)
     isSaving.value = false
-    alert('Erro ao salvar configurações: ' + (e.message || e))
+    alert('Erro ao salvar configura├º├Áes: ' + (e.message || e))
   }
 }
 
@@ -927,7 +858,7 @@ const editServico = (srv) => {
     title: srv.title || '',
     description: srv.description || '',
     icon: srv.icon || 'Zap',
-    bg: srv.bg || '#EFEFEF',
+    bg: srv.bg || '#FF6BCA',
     textColor: srv.textColor || '#FFFFFF'
   }
   scrollToForm('service-editor-form')
@@ -935,7 +866,7 @@ const editServico = (srv) => {
 
 const saveServico = async () => {
   if (!novoServico.value.title) {
-    alert("O nome do eixo de ação é obrigatório.")
+    alert("O nome do eixo de a├º├úo ├® obrigat├│rio.")
     return
   }
   isSaving.value = true
@@ -973,12 +904,12 @@ const importOpportunityFromUrl = async () => {
       })
     })
     const data = await response.json()
-    if (!response.ok) throw new Error(data.error || 'Não foi possível importar.')
+    if (!response.ok) throw new Error(data.error || 'N├úo foi poss├¡vel importar.')
 
     const items = data.items || []
     if (items.length === 0) throw new Error('Nenhuma vaga encontrada nesta URL.')
     
-    // Para importação manual, pegamos a primeira vaga encontrada para preencher o formulário
+    // Para importa├º├úo manual, pegamos a primeira vaga encontrada para preencher o formul├írio
     const firstItem = items[0]
 
     novaVaga.value = {
@@ -1000,9 +931,9 @@ const importOpportunityFromUrl = async () => {
     }
     
     if (items.length > 1) {
-      alert(`Foram encontradas ${items.length} vagas. A primeira foi carregada no formulário. Considere usar a Descoberta Automática para importar todas em lote.`)
+      alert(`Foram encontradas ${items.length} vagas. A primeira foi carregada no formul├írio. Considere usar a Descoberta Autom├ítica para importar todas em lote.`)
     } else {
-      alert('Conteúdo importado. Revise antes de publicar.')
+      alert('Conte├║do importado. Revise antes de publicar.')
     }
   } catch (e) {
     console.error(e)
@@ -1020,21 +951,35 @@ const customDiscoveryUrl = ref('')
 
 const runDiscovery = async () => {
   isDiscovering.value = true
+  discoveredLinks.value = []
+  
+  // Combina as fontes padr├úo com a customizada se houver
+  const sources = [...researchSites]
+  if (customDiscoveryUrl.value.trim()) {
+    sources.push({ label: 'Link Customizado', url: customDiscoveryUrl.value.trim() })
+  }
+
   try {
-    const response = await fetch('/api/cron-discover', {
+    const response = await fetch('/api/discover-opportunities', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' }
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ sources })
     })
     const data = await response.json()
-    if (!response.ok) throw new Error(data.error || 'Erro na descoberta automática.')
+    if (!response.ok) throw new Error(data.error || 'Erro na descoberta.')
     
-    // Recarrega as oportunidades do banco para mostrar as novas na fila de revisão
-    await loadData()
+    // Filtra links que j├í existem no siteContent.opportunities
+    const existingLinks = new Set((siteContent.opportunities || []).map(o => o.sourceUrl || o.link))
+    discoveredLinks.value = (data.links || []).filter(l => !existingLinks.has(l.url) && l.score > 20)
     
-    alert(`Descoberta concluída! ${data.opportunitiesImported || 0} novas oportunidades foram adicionadas à fila de revisão.`)
+    if (discoveredLinks.value.length === 0) {
+      alert('Nenhum link novo relevante encontrado.')
+    } else {
+      customDiscoveryUrl.value = '' // Limpa se teve sucesso
+    }
   } catch (e) {
     console.error(e)
-    alert('Falha ao rodar descoberta automática: ' + e.message)
+    alert('Falha ao descobrir links: ' + e.message)
   } finally {
     isDiscovering.value = false
   }
@@ -1064,20 +1009,10 @@ const importSelectedLinks = async () => {
         for (const item of items) {
           const payload = {
             ...item,
+            id: Date.now() + Math.random(),
             status: item.status || 'pending'
           }
-          
-          let savedItem = null
-          if (supabase) {
-            const { data: dbData, error } = await supabase.from('opportunities').insert([payload]).select().maybeSingle()
-            if (error) throw error
-            savedItem = dbData
-          } else {
-            payload.id = Date.now() + Math.random()
-            savedItem = payload
-          }
-          
-          siteContent.opportunities.unshift(savedItem)
+          siteContent.opportunities.unshift(payload)
           successCount++
         }
       } else {
@@ -1090,10 +1025,11 @@ const importSelectedLinks = async () => {
   }
   
   vagas.value = siteContent.opportunities
-  await recordActivity(`${successCount} vagas importadas em lote`, 'Importação')
+  await persistSiteSetting('opportunities', siteContent.opportunities)
+  await recordActivity(`${successCount} vagas importadas em lote`, 'Importa├º├úo')
   
   isSaving.value = false
-  alert(`Importação concluída: ${successCount} sucessos individuais, ${failCount} falhas de URL. Verifique a Fila de Revisão.`)
+  alert(`Importa├º├úo conclu├¡da: ${successCount} sucessos individuais, ${failCount} falhas de URL. Verifique a Fila de Revis├úo.`)
   
   // Remove os importados da lista de descobertos
   discoveredLinks.value = discoveredLinks.value.filter(l => !toImport.includes(l.url))
@@ -1111,7 +1047,7 @@ const importBulkText = async () => {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ 
-        url: bulkImportText.value, // Passamos o texto no campo que a API já aceita
+        url: bulkImportText.value, // Passamos o texto no campo que a API j├í aceita
         rules: curationRules.value 
       })
     })
@@ -1121,7 +1057,7 @@ const importBulkText = async () => {
     
     const items = data.items || []
     if (items.length === 0) {
-      alert('A IA não conseguiu identificar vagas claras neste texto. Tente copiar um trecho menor ou mais específico.')
+      alert('A IA n├úo conseguiu identificar vagas claras neste texto. Tente copiar um trecho menor ou mais espec├¡fico.')
       return
     }
 
@@ -1129,31 +1065,22 @@ const importBulkText = async () => {
     for (const item of items) {
       const payload = {
         ...item,
+        id: Date.now() + Math.random(),
         status: item.status || 'pending'
       }
-      
-      let savedItem = null
-      if (supabase) {
-        const { data: dbData, error } = await supabase.from('opportunities').insert([payload]).select().maybeSingle()
-        if (error) throw error
-        savedItem = dbData
-      } else {
-        payload.id = Date.now() + Math.random()
-        savedItem = payload
-      }
-      
-      siteContent.opportunities.unshift(savedItem)
+      siteContent.opportunities.unshift(payload)
       successCount++
     }
     
     vagas.value = siteContent.opportunities
-    await recordActivity(`${successCount} vagas extraídas de texto colado`, 'Importação')
+    await persistSiteSetting('opportunities', siteContent.opportunities)
+    await recordActivity(`${successCount} vagas extra├¡das de texto colado`, 'Importa├º├úo')
     
     bulkImportText.value = ''
-    alert(`Sucesso! A IA encontrou e separou ${successCount} vagas. Confira na Fila de Revisão abaixo.`)
+    alert(`Sucesso! A IA encontrou e separou ${successCount} vagas. Confira na Fila de Revis├úo abaixo.`)
   } catch (e) {
     console.error(e)
-    alert('Falha na análise: ' + e.message)
+    alert('Falha na an├ílise: ' + e.message)
   } finally {
     isImportingBulk.value = false
   }
@@ -1191,7 +1118,7 @@ const editProject = (project) => {
 
 const saveProject = async (statusOverride = null) => {
   if (!novoProjeto.value.title) {
-    alert('O título do projeto é obrigatório.')
+    alert('O t├¡tulo do projeto ├® obrigat├│rio.')
     return
   }
   isSaving.value = true
@@ -1266,11 +1193,11 @@ const saveLibraryConfig = async () => {
   try {
     Object.assign(siteContent.libraryConfig, bibliotecaConfigData.value)
     await persistSiteSetting('libraryConfig', bibliotecaConfigData.value)
-    setTimeout(() => { isSaving.value = false; alert('Configurações da biblioteca salvas!') }, 400)
+    setTimeout(() => { isSaving.value = false; alert('Configura├º├Áes da biblioteca salvas!') }, 400)
   } catch (e) {
     console.error(e)
     isSaving.value = false
-    alert('Erro ao salvar configurações: ' + (e.message || e))
+    alert('Erro ao salvar configura├º├Áes: ' + (e.message || e))
   }
 }
 
@@ -1284,7 +1211,7 @@ const editDoc = (doc) => {
   novoDoc.value = {
     title: doc.title || '',
     description: doc.description || '',
-    category: doc.category || 'Relatório',
+    category: doc.category || 'Relat├│rio',
     fileUrl: doc.fileUrl || '',
     externalLink: doc.externalLink || '',
     status: doc.status || 'publicado'
@@ -1294,7 +1221,7 @@ const editDoc = (doc) => {
 
 const saveBiblioteca = async (statusOverride = null) => {
   if (!novoDoc.value.title) {
-    alert("O título do documento é obrigatório.")
+    alert("O t├¡tulo do documento ├® obrigat├│rio.")
     return
   }
   isSaving.value = true
@@ -1459,18 +1386,18 @@ onUnmounted(() => {
     <div class="film-grain-bg"></div>
 
     <!-- SIDEBAR LATERAL FIXA (PRETA) -->
-    <aside class="sidebar-black-fixed" :class="{ 'collapsed': !isSidebarOpen }">
+    <aside class="sidebar-black-fixed">
       <div class="sidebar-header">
-        <div class="sidebar-logo-block">
-          <h2 class="sidebar-logo-text">NARRATIVA<br/>POLÍTICA</h2>
+        <div class="logo-brutal-white">
+          <span class="logo-txt">NP</span>
         </div>
         <span class="badge-admin">SISTEMA ADMIN</span>
       </div>
 
       <nav class="sidebar-nav-stack">
-        <span class="nav-section-label">CONTEÚDO</span>
+        <span class="nav-section-label">CONTE├ÜDO</span>
         <button class="nav-btn" :class="{ active: activeTab === 'home' }" @click="activeTab = 'home'">
-          <Home :size="18" /> GESTÃO DA HOME
+          <Home :size="18" /> GEST├âO DA HOME
         </button>
         <button class="nav-btn" :class="{ active: activeTab === 'editorial' }" @click="activeTab = 'editorial'">
           <FileText :size="18" /> HUB EDITORIAL
@@ -1481,22 +1408,16 @@ onUnmounted(() => {
         <button class="nav-btn" :class="{ active: activeTab === 'sobre' }" @click="activeTab = 'sobre'">
           <User :size="18" /> SOBRE MIM
         </button>
-        <button class="nav-btn" :class="{ active: activeTab === 'metricas' }" @click="activeTab = 'metricas'">
-          <Sparkles :size="18" /> MÉTTRICAS
-        </button>
 
         <span class="nav-section-label">PLATAFORMA</span>
-        <button class="nav-btn" :class="{ active: activeTab === 'agenda' }" @click="activeTab = 'agenda'">
-          <Calendar :size="18" /> AGENDA & EVENTOS
-        </button>
         <button class="nav-btn" :class="{ active: activeTab === 'vagas' }" @click="activeTab = 'vagas'">
           <Briefcase :size="18" /> OPORTUNIDADES
         </button>
         <button class="nav-btn" :class="{ active: activeTab === 'trilhas' }" @click="activeTab = 'trilhas'">
-          <BookOpen :size="18" /> GESTÃO LMS
+          <BookOpen :size="18" /> GEST├âO LMS
         </button>
         <button class="nav-btn" :class="{ active: activeTab === 'servicos' }" @click="activeTab = 'servicos'">
-          <Package :size="18" /> SERVIÇOS
+          <Package :size="18" /> SERVI├çOS
         </button>
         <button class="nav-btn" :class="{ active: activeTab === 'biblioteca' }" @click="activeTab = 'biblioteca'">
           <Library :size="18" /> BIBLIOTECA
@@ -1505,100 +1426,91 @@ onUnmounted(() => {
           <Folder :size="18" /> PROJETOS
         </button>
         <button class="nav-btn" :class="{ active: activeTab === 'doacao' }" @click="activeTab = 'doacao'">
-          <Heart :size="18" /> DOAÇÕES
+          <Heart :size="18" /> DOA├ç├òES
         </button>
 
         <span class="nav-section-label">SISTEMA</span>
         <button class="nav-btn" :class="{ active: activeTab === 'visibilidade' }" @click="activeTab = 'visibilidade'">
-          <Eye :size="18" /> MÓDULOS
+          <Eye :size="18" /> M├ôDULOS
         </button>
         <button class="nav-btn" :class="{ active: activeTab === 'configuracoes' }" @click="activeTab = 'configuracoes'">
-          <Settings :size="18" /> CONFIGURAÇÕES
+          <Settings :size="18" /> CONFIGURA├ç├òES
         </button>
       </nav>
       
       <div class="sidebar-footer mt-auto">
-        <div class="sidebar-user-info">
-          <div class="sidebar-avatar">{{ (user?.nome_completo || 'A').charAt(0) }}</div>
-          <div>
-            <p class="sidebar-user-name">{{ user?.nome_completo || 'Anne Dornelas' }}</p>
-            <p class="sidebar-user-role">Administradora</p>
-          </div>
-        </div>
         <button class="btn-logout-white" @click="handleLogout">
-          <LogOut :size="18" /> SAIR
+          <LogOut :size="18" /> SAIR DO PAINEL
         </button>
       </div>
     </aside>
 
-    <!-- CONTEÚDO PRINCIPAL (COM RESPIRO pt-48 E px-12) -->
-    <main class="main-content-area" :class="{ 'expanded': !isSidebarOpen }">
+    <!-- CONTE├ÜDO PRINCIPAL (COM RESPIRO pt-48 E px-12) -->
+    <main class="main-content-area pt-48 pb-32 px-12">
       
-      <!-- HEADER DO CONTEÚDO -->
+      <!-- HEADER DO CONTE├ÜDO -->
       <header class="admin-top-header mb-12">
-        <div class="header-titles flex items-center gap-4">
-           <button class="btn-toggle-sidebar" @click="isSidebarOpen = !isSidebarOpen">
-             <Menu :size="24" v-if="!isSidebarOpen" />
-             <ChevronLeft :size="24" v-else />
-           </button>
-           <div>
-             <h1 class="admin-main-title">VISÃO GERAL</h1>
-             <p class="admin-subtitle">Bem-vinda de volta, {{ user?.nome_completo || 'Anne' }}. Aqui está o impacto da Narrativa Política hoje.</p>
-           </div>
+        <div class="header-titles">
+           <h1 class="admin-main-title">{{ activeTab.toUpperCase() }}</h1>
+           <p class="admin-subtitle">Gerencie os dados e publica├º├Áes da plataforma em tempo real.</p>
         </div>
         
         <div class="header-actions-row">
+           <div class="user-pill-brutal">
+              <span>{{ user?.nome_completo || 'Administradora' }}</span>
+              <div class="avatar-sm">A</div>
+           </div>
            <button class="btn-preview-solid" @click="router.push('/')">
               <Eye :size="18" /> VOLTAR PARA O SITE
            </button>
         </div>
       </header>
 
-      <!-- 1. GESTÃO DA HOME -->
+      <!-- 1. GEST├âO DA HOME -->
       <section v-if="activeTab === 'home'" class="admin-section fade-in-up">
         
         <!-- ANALYTICS CARDS -->
         <div class="metrics-grid-premium mb-10">
-           <div class="metric-card-glass shadow-md">
+           <div class="metric-card-glass shadow-solid">
               <div class="metric-label">VISITAS TOTAIS</div>
               <div class="metric-value">{{ analytics.reduce((acc, curr) => acc + curr.count, 0) }}</div>
-              <div class="metric-trend text-green-500">Visualizações de página</div>
+              <div class="metric-trend text-green-500">Visualiza├º├Áes de p├ígina</div>
            </div>
-           <div class="metric-card-glass shadow-md">
-              <div class="metric-label">PÁGINAS RASTREADAS</div>
+           <div class="metric-card-glass shadow-solid">
+              <div class="metric-label">P├üGINAS RASTREADAS</div>
               <div class="metric-value">{{ analytics.length }}</div>
               <div class="metric-trend text-blue-500">Rotas distintas</div>
            </div>
-           <div class="metric-card-glass shadow-md">
+           <div class="metric-card-glass shadow-solid">
               <div class="metric-label">LIKES TOTAIS</div>
               <div class="metric-value">{{ siteContent.posts.reduce((acc, curr) => acc + (curr.likes || 0), 0) }}</div>
               <div class="metric-trend text-pink-500">Engajamento editorial</div>
            </div>
         </div>
 
-        <div class="editor-card-premium shadow-md mb-10">
+        <div class="editor-card-brutal shadow-solid mb-10">
           <div class="pane-header mb-4">
             <div>
-              <h2 class="card-label-black mb-2">PÁGINAS MAIS VISITADAS</h2>
+              <h2 class="card-label-black mb-2">P├üGINAS MAIS VISITADAS</h2>
               <p class="text-sm opacity-70">Ranking de acesso por rota.</p>
             </div>
           </div>
           <div class="space-y-3">
-             <div v-for="page in analytics.slice(0, 5)" :key="page.path" class="flex items-center justify-between gap-4 border-b border-[#202020]/10 pb-3 last:border-b-0 last:pb-0">
+             <div v-for="page in analytics.slice(0, 5)" :key="page.path" class="flex items-center justify-between gap-4 border-b border-black/10 pb-3 last:border-b-0 last:pb-0">
                 <span class="font-bold text-sm">{{ page.path }}</span>
                 <span class="badge-normal">{{ page.count }} views</span>
              </div>
           </div>
         </div>
-        <div class="editor-card-premium shadow-md mb-10">
+        <div class="editor-card-brutal shadow-solid mb-10">
           <div class="pane-header mb-4">
             <div>
               <h2 class="card-label-black mb-2">ATIVIDADE RECENTE</h2>
-              <p class="text-sm opacity-70">Últimas alterações salvas no painel.</p>
+              <p class="text-sm opacity-70">├Ültimas altera├º├Áes salvas no painel.</p>
             </div>
           </div>
           <div v-if="recentActivity.length" class="space-y-3">
-            <div v-for="entry in recentActivity" :key="entry.id" class="flex items-center justify-between gap-4 border-b border-[#202020]/10 pb-3 last:border-b-0 last:pb-0">
+            <div v-for="entry in recentActivity" :key="entry.id" class="flex items-center justify-between gap-4 border-b border-black/10 pb-3 last:border-b-0 last:pb-0">
               <div>
                 <p class="font-bold">{{ entry.title }}</p>
                 <p class="text-xs opacity-60">{{ entry.type }}</p>
@@ -1609,56 +1521,53 @@ onUnmounted(() => {
           <p v-else class="text-sm opacity-70">Nenhuma atividade registrada ainda.</p>
         </div>
 
-        <div class="editor-card-premium shadow-md">
+        <div class="editor-card-brutal shadow-solid">
           <h2 class="card-label-black mb-8">HERO SECTION (TOPO)</h2>
           <div class="form-grid-2">
              <div class="input-group">
-                <label>TÍTULO PRINCIPAL (BRANCO)</label>
-                <input v-model="homeData.heroTitle" type="text" placeholder="Ex: NÚCLEO PELA LUTA SOCIAL" />
+                <label>T├ìTULO PRINCIPAL (BRANCO)</label>
+                <input v-model="homeData.heroTitle" type="text" placeholder="Ex: N├ÜCLEO PELA LUTA SOCIAL" />
              </div>
              <div class="input-group">
-                <label>TÍTULO PARTE 2 (AMARELO)</label>
+                <label>T├ìTULO PARTE 2 (AMARELO)</label>
                 <input v-model="homeData.heroTitleAccent" type="text" placeholder="Ex: A Bancada de Impacto..." />
              </div>
           </div>
           <div class="input-group mt-4">
              <label>TEXTO DO MARQUEE (LETREIRO ROLANTE)</label>
-             <input v-model="homeData.marqueeText" type="text" placeholder="Ex: NOTÍCIAS DE LUTA •" />
-          </div>
-          <div class="mt-6">
-             <ImageUploader v-model="homeData.heroImage" label="IMAGEM PRINCIPAL DA HOME" />
+             <input v-model="homeData.marqueeText" type="text" placeholder="Ex: NOT├ìCIAS DE LUTA ÔÇó" />
           </div>
         </div>
 
-        <div class="editor-card-premium shadow-md mt-10">
+        <div class="editor-card-brutal shadow-solid mt-10">
           <h2 class="card-label-black mb-8">RADAR EDITORIAL</h2>
           <div class="form-grid-2">
              <div class="input-group">
-                <label>TÍTULO DO RADAR (PRETO)</label>
-                <input v-model="homeData.radarEditorialTitle" type="text" placeholder="Ex: Conteúdos e" />
+                <label>T├ìTULO DO RADAR (PRETO)</label>
+                <input v-model="homeData.radarEditorialTitle" type="text" placeholder="Ex: Conte├║dos e" />
              </div>
              <div class="input-group">
-                <label>SUBTÍTULO DO RADAR (DEGRADÊ)</label>
+                <label>SUBT├ìTULO DO RADAR (DEGRAD├è)</label>
                 <input v-model="homeData.radarEditorialSubtitle" type="text" placeholder="Ex: Artigos" />
              </div>
           </div>
         </div>
 
-        <div class="editor-card-premium shadow-md mt-10">
-          <h2 class="card-label-black mb-8">NOSSOS EIXOS DE AÇÃO</h2>
+        <div class="editor-card-brutal shadow-solid mt-10">
+          <h2 class="card-label-black mb-8">NOSSOS EIXOS DE A├ç├âO</h2>
           <div class="form-grid-2">
              <div class="input-group">
-                <label>TÍTULO PRINCIPAL (BRANCO)</label>
+                <label>T├ìTULO PRINCIPAL (BRANCO)</label>
                 <input v-model="homeData.eixosTitle" type="text" placeholder="Ex: NOSSOS" />
              </div>
              <div class="input-group">
-                <label>TÍTULO EM DESTAQUE (AMARELO)</label>
-                <input v-model="homeData.eixosSubtitle" type="text" placeholder="Ex: EIXOS DE AÇÃO" />
+                <label>T├ìTULO EM DESTAQUE (AMARELO)</label>
+                <input v-model="homeData.eixosSubtitle" type="text" placeholder="Ex: EIXOS DE A├ç├âO" />
              </div>
           </div>
         </div>
 
-        <div class="editor-card-premium shadow-md mt-10">
+        <div class="editor-card-brutal shadow-solid mt-10">
           <h2 class="card-label-black mb-8">OPORTUNIDADES</h2>
           <div class="form-grid-2 mb-4">
              <div class="input-group">
@@ -1666,31 +1575,31 @@ onUnmounted(() => {
                 <input v-model="homeData.opportunitiesEyebrow" type="text" placeholder="Ex: O Radar Ativista" />
              </div>
              <div class="input-group">
-                <label>TÍTULO DA SEÇÃO</label>
+                <label>T├ìTULO DA SE├ç├âO</label>
                 <input v-model="homeData.opportunitiesTitle" type="text" placeholder="Ex: Oportunidades" />
              </div>
           </div>
           <div class="input-group">
-             <label>DESCRIÇÃO</label>
-             <textarea v-model="homeData.opportunitiesDesc" rows="3" placeholder="Vagas, subsídios e bolsas..."></textarea>
+             <label>DESCRI├ç├âO</label>
+             <textarea v-model="homeData.opportunitiesDesc" rows="3" placeholder="Vagas, subs├¡dios e bolsas..."></textarea>
           </div>
         </div>
 
-        <div class="editor-card-premium shadow-md mt-10 mb-10">
+        <div class="editor-card-brutal shadow-solid mt-10 mb-10">
           <h2 class="card-label-black mb-8">NEWSLETTER</h2>
           <div class="form-grid-2 mb-4">
              <div class="input-group">
                 <label>MARCADOR (TOPO)</label>
-                <input v-model="homeData.newsletterEyebrow" type="text" placeholder="Ex: Rede de Mobilização" />
+                <input v-model="homeData.newsletterEyebrow" type="text" placeholder="Ex: Rede de Mobiliza├º├úo" />
              </div>
              <div class="input-group">
-                <label>TÍTULO PRINCIPAL</label>
+                <label>T├ìTULO PRINCIPAL</label>
                 <input v-model="homeData.newsletterTitle" type="text" placeholder="Ex: Junte-se ao Movimento." />
              </div>
           </div>
           <div class="input-group mb-4">
-             <label>DESCRIÇÃO DA NEWSLETTER</label>
-             <textarea v-model="homeData.newsletterDescription" rows="2" placeholder="Receba despachos estratégicos..."></textarea>
+             <label>DESCRI├ç├âO DA NEWSLETTER</label>
+             <textarea v-model="homeData.newsletterDescription" rows="2" placeholder="Receba despachos estrat├®gicos..."></textarea>
           </div>
           <div class="form-grid-2">
              <div class="input-group">
@@ -1698,73 +1607,73 @@ onUnmounted(() => {
                 <input v-model="homeData.newsletterPlaceholder" type="text" placeholder="Ex: Digite seu email..." />
              </div>
              <div class="input-group">
-                <label>TEXTO DO BOTÃO</label>
+                <label>TEXTO DO BOT├âO</label>
                 <input v-model="homeData.newsletterButton" type="text" placeholder="Ex: QUERO FAZER PARTE" />
              </div>
           </div>
         </div>
         
         <button class="btn-save-brutal mb-12" @click="saveHome" :disabled="isSaving">
-             <Save :size="18" /> {{ isSaving ? 'SALVANDO...' : 'SALVAR TODAS AS MUDANÇAS DA HOME' }}
+             <Save :size="18" /> {{ isSaving ? 'SALVANDO...' : 'SALVAR TODAS AS MUDAN├çAS DA HOME' }}
         </button>
       </section>
 
       <!-- 2. HUB EDITORIAL -->
       <section v-if="activeTab === 'editorial'" class="admin-section fade-in-up">
         
-        <div class="editor-card-premium shadow-md mb-10" id="project-editor-form">
-          <h2 class="card-label-black mb-8">CONFIGURAÇÕES DA PÁGINA (TEXTOS FIXOS)</h2>
+        <div class="editor-card-brutal shadow-solid mb-10" id="project-editor-form">
+          <h2 class="card-label-black mb-8">CONFIGURA├ç├òES DA P├üGINA (TEXTOS FIXOS)</h2>
           <div class="form-grid-3 mb-4">
              <div class="input-group">
                 <label>TEXTO DA BUSCA</label>
                 <input v-model="articlesConfigData.searchPlaceholder" type="text" placeholder="Ex: Pesquisar..." />
              </div>
              <div class="input-group">
-                <label>TÍTULO COLUNA 1</label>
-                <input v-model="articlesConfigData.column1Title" type="text" placeholder="Ex: ARTIGOS E ANÁLISES" />
+                <label>T├ìTULO COLUNA 1</label>
+                <input v-model="articlesConfigData.column1Title" type="text" placeholder="Ex: ARTIGOS E AN├üLISES" />
              </div>
              <div class="input-group">
-                <label>TÍTULO COLUNA 2</label>
-                <input v-model="articlesConfigData.column2Title" type="text" placeholder="Ex: NOTÍCIAS" />
+                <label>T├ìTULO COLUNA 2</label>
+                <input v-model="articlesConfigData.column2Title" type="text" placeholder="Ex: NOT├ìCIAS" />
              </div>
           </div>
           <div class="form-grid-2 mb-4">
              <div class="input-group">
-                <label>BOTÃO VOLTAR (PÁG. DO ARTIGO)</label>
+                <label>BOT├âO VOLTAR (P├üG. DO ARTIGO)</label>
                 <input v-model="articlesConfigData.backButtonText" type="text" placeholder="Ex: VOLTAR AO RADAR" />
              </div>
              <div class="input-group">
-                <label>TÍTULO SEÇÃO INFERIOR</label>
+                <label>T├ìTULO SE├ç├âO INFERIOR</label>
                 <input v-model="articlesConfigData.relatedTitle" type="text" placeholder="Ex: CONTINUE EXPLORANDO" />
              </div>
           </div>
           <div class="form-grid-2 mb-6">
              <div class="input-group">
-                <label>TÍTULO NEWSLETTER</label>
+                <label>T├ìTULO NEWSLETTER</label>
                 <input v-model="articlesConfigData.newsletterTitle" type="text" placeholder="Ex: GOSTOU DESTE ENSAIO?" />
              </div>
              <div class="input-group">
-                <label>DESCRIÇÃO NEWSLETTER</label>
+                <label>DESCRI├ç├âO NEWSLETTER</label>
                 <input v-model="articlesConfigData.newsletterDesc" type="text" placeholder="Ex: Receba nossa curadoria..." />
              </div>
           </div>
           <button class="btn-save-brutal" @click="saveArticlesConfig" :disabled="isSaving">
-             <Save :size="18" /> SALVAR TEXTOS DA PÁGINA
+             <Save :size="18" /> SALVAR TEXTOS DA P├üGINA
           </button>
         </div>
 
-        <div id="article-editor-form" class="editor-card-premium shadow-md mb-10">
+        <div id="article-editor-form" class="editor-card-brutal shadow-solid mb-10">
           <div class="pane-header mb-8">
             <h2 class="card-label-black mb-0">{{ isEditingArtigo ? 'EDITAR ARTIGO PUBLICADO' : 'PUBLICAR NOVO ARTIGO' }}</h2>
             <button v-if="isEditingArtigo" class="btn-tool-sm" @click="resetArtigoForm">
-              <X :size="14" /> CANCELAR EDIÇÃO
+              <X :size="14" /> CANCELAR EDI├ç├âO
             </button>
           </div>
           <!-- CAMPOS DE METADADOS DO ARTIGO -->
           <div class="form-grid-2 mb-6">
              <div class="input-group">
-                <label>TÍTULO DO ARTIGO / ENSAIO</label>
-                <input v-model="novoArtigo.title" type="text" placeholder="Ex: A Geopolítica do Sul Global..." />
+                <label>T├ìTULO DO ARTIGO / ENSAIO</label>
+                <input v-model="novoArtigo.title" type="text" placeholder="Ex: A Geopol├¡tica do Sul Global..." />
              </div>
              <div class="input-group">
                 <label>AUTOR(A)</label>
@@ -1785,11 +1694,11 @@ onUnmounted(() => {
                 </div>
              </div>
              <div class="input-group">
-                <label>TIPO DE CONTEÚDO</label>
+                <label>TIPO DE CONTE├ÜDO</label>
                 <select v-model="novoArtigo.type" class="select-brutal">
                    <option value="Artigo">Artigo</option>
-                   <option value="Notícia">Notícia</option>
-                   <option value="Análise">Análise</option>
+                   <option value="Not├¡cia">Not├¡cia</option>
+                   <option value="An├ílise">An├ílise</option>
                    <option value="Ensaio">Ensaio</option>
                 </select>
              </div>
@@ -1797,34 +1706,34 @@ onUnmounted(() => {
 
           <div class="input-group mb-6">
              <div class="flex justify-between items-center mb-2">
-                <label class="mb-0">RESUMO ESTRATÉGICO (APARECE NOS CARDS)</label>
+                <label class="mb-0">RESUMO ESTRAT├ëGICO (APARECE NOS CARDS)</label>
                 <button @click.prevent="gerarResumoIA" class="btn-tool-sm bg-yellow border-dark" :disabled="isGeneratingSummary">
                    <Zap :size="12" /> {{ isGeneratingSummary ? 'GERANDO...' : 'GERAR COM IA' }}
                 </button>
              </div>
-             <textarea v-model="novoArtigo.subtitle" rows="2" placeholder="Uma breve provocação para atrair o leitor..."></textarea>
+             <textarea v-model="novoArtigo.subtitle" rows="2" placeholder="Uma breve provoca├º├úo para atrair o leitor..."></textarea>
           </div>
 
           <div class="form-grid-2 mb-6">
              <ImageUploader v-model="novoArtigo.image" label="IMAGEM DE CAPA (UPLOAD)" />
              <div class="input-group">
-                <label>DESCRIÇÃO DA IMAGEM (ALT TEXT / ACESSIBILIDADE)</label>
-                <input v-model="novoArtigo.imageDescription" type="text" placeholder="Ex: Foto preto e branco de uma manifestação..." />
+                <label>DESCRI├ç├âO DA IMAGEM (ALT TEXT / ACESSIBILIDADE)</label>
+                <input v-model="novoArtigo.imageDescription" type="text" placeholder="Ex: Foto preto e branco de uma manifesta├º├úo..." />
              </div>
           </div>
 
           <div class="input-group mb-6">
              <label>LEGENDA DA IMAGEM (APARECE EMBAIXO DA FOTO NO SITE)</label>
-             <input v-model="novoArtigo.imageCaption" type="text" placeholder="Ex: Manifestantes ocupam a praça central durante o ato..." />
+             <input v-model="novoArtigo.imageCaption" type="text" placeholder="Ex: Manifestantes ocupam a pra├ºa central durante o ato..." />
           </div>
 
           <div class="input-group mb-6">
-             <label>REFERÊNCIAS E LINKS DE APOIO</label>
-             <textarea v-model="novoArtigo.references" rows="3" placeholder="Liste as fontes, referências bibliográficas ou links úteis..."></textarea>
+             <label>REFER├èNCIAS E LINKS DE APOIO</label>
+             <textarea v-model="novoArtigo.references" rows="3" placeholder="Liste as fontes, refer├¬ncias bibliogr├íficas ou links ├║teis..."></textarea>
           </div>
 
           <div class="input-group mb-6">
-           <label>CITAÇÃO EM DESTAQUE (OPCIONAL)</label>
+           <label>CITA├ç├âO EM DESTAQUE (OPCIONAL)</label>
            <textarea v-model="novoArtigo.highlightQuote" rows="2" placeholder="Uma frase de impacto para destacar durante o texto..."></textarea>
         </div>
 
@@ -1832,45 +1741,45 @@ onUnmounted(() => {
              <label class="checkbox-container">
                 <input type="checkbox" v-model="novoArtigo.featured" />
                 <span class="checkmark"></span>
-                <span class="check-label font-bold text-dark">DESTACAR NA PÁGINA INICIAL</span>
+                <span class="check-label font-bold text-dark">DESTACAR NA P├üGINA INICIAL</span>
              </label>
           </div>
 
           <div class="editor-workspace-dual mb-10">
              <div class="main-editor-area">
-                   <QuillEditor theme="snow" contentType="html" v-model:content="novoArtigo.content" placeholder="Escreva o conteúdo do seu artigo aqui..." />
+                   <BrutalEditor v-model="novoArtigo.content" placeholder="Escreva o conte├║do do seu artigo aqui..." />
                 </div>
                 
                 <!-- SEO & SOCIAL SIDEBAR -->
-                <aside class="seo-sidebar shadow-md">
+                <aside class="seo-sidebar shadow-solid">
                    <div class="seo-card mb-6">
                       <h4 class="card-label-black text-xs mb-4">SEO SCORECARD</h4>
                       <div class="score-circle-container">
-                         <div class="score-circle" :style="{ borderColor: seoScore > 70 ? '#DF2028' : '#F5F0E8' }">
+                         <div class="score-circle" :style="{ borderColor: seoScore > 70 ? '#A4CD39' : '#FFE65A' }">
                             {{ seoScore }}
                          </div>
-                         <span class="score-label">OTIMIZAÇÃO</span>
+                         <span class="score-label">OTIMIZA├ç├âO</span>
                       </div>
                       <ul class="seo-checklist">
-                         <li :class="{ ok: novoArtigo.title.length > 30 }">Título impactante (>30 chars)</li>
-                         <li :class="{ ok: novoArtigo.subtitle.length > 50 }">Resumo estratégico (>50 chars)</li>
-                         <li :class="{ ok: novoArtigo.content.length > 500 }">Conteúdo denso (>500 chars)</li>
+                         <li :class="{ ok: novoArtigo.title.length > 30 }">T├¡tulo impactante (>30 chars)</li>
+                         <li :class="{ ok: novoArtigo.subtitle.length > 50 }">Resumo estrat├®gico (>50 chars)</li>
+                         <li :class="{ ok: novoArtigo.content.length > 500 }">Conte├║do denso (>500 chars)</li>
                          <li :class="{ ok: novoArtigo.image }">Imagem de capa definida</li>
                       </ul>
                    </div>
 
                    <div class="social-helper-card">
                       <h4 class="card-label-black text-xs mb-4">SOCIAL HELPER</h4>
-                      <p class="text-xs opacity-50 mb-4">Sugestão de legenda para LinkedIn/Instagram:</p>
+                      <p class="text-xs opacity-50 mb-4">Sugest├úo de legenda para LinkedIn/Instagram:</p>
                       <div class="caption-box">
-                         "{{ novoArtigo.title }} 🚀\n\nAcabamos de publicar uma nova análise estratégica no Radar Editorial da Narrativa Política. {{ novoArtigo.subtitle }}\n\nLeia o ensaio completo em nosso portal. #NarrativaPolitica #Advocacy #Impacto"
+                         "{{ novoArtigo.title }} ­ƒÜÇ\n\nAcabamos de publicar uma nova an├ílise estrat├®gica no Radar Editorial da Narrativa Pol├¡tica. {{ novoArtigo.subtitle }}\n\nLeia o ensaio completo em nosso portal. #NarrativaPolitica #Advocacy #Impacto"
                       </div>
                       <button class="btn-copy-sm mt-3" @click="copyCaption">COPIAR LEGENDA</button>
                    </div>
                 </aside>
              </div>
           <div class="flex gap-4">
-            <button class="btn-save-brutal btn-white flex-1" @click="saveArtigo('rascunho')" :disabled="isSaving">
+            <button class="btn-save-brutal flex-1" style="background: #FFF;" @click="saveArtigo('rascunho')" :disabled="isSaving">
                <Clock :size="18" /> SALVAR COMO RASCUNHO
             </button>
             <button class="btn-save-brutal flex-1" @click="saveArtigo('publicado')" :disabled="isSaving">
@@ -1882,18 +1791,18 @@ onUnmounted(() => {
         </div>
 
         <!-- LISTA DE ARTIGOS -->
-        <div class="editor-card-premium shadow-md">
+        <div class="editor-card-brutal shadow-solid">
            <h2 class="card-label-black mb-8">ARTIGOS PUBLICADOS</h2>
            <table class="table-brutal">
               <thead>
                  <tr>
-                    <th>TÍTULO</th>
+                    <th>T├ìTULO</th>
                     <th>AUTOR</th>
                     <th>TIPO / CATEGORIA</th>
                     <th>STATUS</th>
                     <th>CURTIDAS</th>
                     <th>DESTAQUE</th>
-                    <th>AÇÕES</th>
+                    <th>A├ç├òES</th>
                  </tr>
               </thead>
               <tbody>
@@ -1915,7 +1824,7 @@ onUnmounted(() => {
                     </td>
                     <td>
                        <span v-if="art.featured" class="badge-featured">SIM</span>
-                       <span v-else class="badge-normal">NÃO</span>
+                       <span v-else class="badge-normal">N├âO</span>
                     </td>
                     <td class="actions-td">
                        <button class="icon-action" title="Abrir no site" @click="previewArtigo(art.id)"><ExternalLink :size="16" /></button>
@@ -1931,64 +1840,18 @@ onUnmounted(() => {
         </div>
       </section>
 
-      <section v-if="activeTab === 'agenda'" class="admin-section fade-in-up">
-        <div class="admin-header">
-          <div>
-            <h1 class="admin-title">Agenda & Eventos</h1>
-            <p class="admin-subtitle">Gerencie os próximos eventos, meetups e convocações.</p>
-          </div>
-        </div>
-
-        <div class="editor-card-premium shadow-md mb-10">
-          <h2 class="card-label-black mb-8">NOVO EVENTO</h2>
-          <div class="form-grid-2 mb-6">
-            <div class="input-group">
-              <label>TÍTULO DO EVENTO</label>
-              <input type="text" class="input-premium" placeholder="Ex: Masterclass de Advocacy..." />
-            </div>
-            <div class="input-group">
-              <label>DATA E HORA (ISO)</label>
-              <input type="datetime-local" class="input-premium" />
-            </div>
-          </div>
-          <div class="form-grid-2 mb-6">
-            <div class="input-group">
-              <label>LOCALIZAÇÃO (Ex: Zoom, SP...)</label>
-              <input type="text" class="input-premium" />
-            </div>
-            <div class="input-group">
-              <label>TIPO (Ex: Aula Aberta, Lançamento...)</label>
-              <input type="text" class="input-premium" />
-            </div>
-          </div>
-          <div class="input-group mb-6">
-            <label>LINK (Sympla, Zoom, etc)</label>
-            <input type="url" class="input-premium" />
-          </div>
-          <div class="input-group mb-6">
-            <label>DESCRIÇÃO CURTA</label>
-            <textarea rows="3" class="input-premium"></textarea>
-          </div>
-          <div class="flex gap-4">
-             <button class="btn-brutal btn-preto" @click="() => alert('Função de salvar agenda em construção. O mock já está aparecendo no site!')">
-               <Plus :size="16" /> SALVAR EVENTO
-             </button>
-          </div>
-        </div>
-      </section>
-
-      <!-- 3. HUB DE TALENTOS (VAGAS) -->
+      <!-- 3. VAGAS E OPORTUNIDADES -->
       <section v-if="activeTab === 'vagas'" class="admin-section fade-in-up">
         
-        <div class="editor-card-premium shadow-md mb-10">
-          <h2 class="card-label-black mb-8">CONFIGURAÇÕES GERAIS (TEXTOS FIXOS)</h2>
+        <div class="editor-card-brutal shadow-solid mb-10">
+          <h2 class="card-label-black mb-8">CONFIGURA├ç├òES GERAIS (TEXTOS FIXOS)</h2>
           <div class="form-grid-2 mb-4">
              <div class="input-group">
-                <label>TÍTULO DA PÁGINA (PARTE 1)</label>
+                <label>T├ìTULO DA P├üGINA (PARTE 1)</label>
                 <input v-model="oppsConfigData.pageTitle1" type="text" placeholder="Ex: HUB DE" />
              </div>
              <div class="input-group">
-                <label>TÍTULO DA PÁGINA (PARTE 2 - DESTAQUE)</label>
+                <label>T├ìTULO DA P├üGINA (PARTE 2 - DESTAQUE)</label>
                 <input v-model="oppsConfigData.pageTitle2" type="text" placeholder="Ex: TALENTOS" />
              </div>
           </div>
@@ -2004,39 +1867,39 @@ onUnmounted(() => {
           </div>
           <div class="form-grid-3 mb-6">
              <div class="input-group">
-                <label>BOTÃO VOLTAR (INTERNO)</label>
+                <label>BOT├âO VOLTAR (INTERNO)</label>
                 <input v-model="oppsConfigData.detailBackBtn" type="text" placeholder="Ex: PORTAL DE TALENTOS" />
              </div>
              <div class="input-group">
-                <label>BOTÃO PRINCIPAL (INTERNO)</label>
+                <label>BOT├âO PRINCIPAL (INTERNO)</label>
                 <input v-model="oppsConfigData.detailApplyBtn" type="text" placeholder="Ex: CANDIDATAR-SE" />
              </div>
           </div>
           <div class="form-grid-2 mb-6">
              <div class="input-group">
-                <label>TÍTULO COMPARTILHAR</label>
+                <label>T├ìTULO COMPARTILHAR</label>
                 <input v-model="oppsConfigData.detailShareTitle" type="text" placeholder="Ex: COMPARTILHAR" />
              </div>
              <div class="input-group">
                 <label>BADGE DE STATUS (VERDE)</label>
-                <input v-model="oppsConfigData.detailStatusBadge" type="text" placeholder="Ex: INSCRIÇÕES ABERTAS" />
+                <input v-model="oppsConfigData.detailStatusBadge" type="text" placeholder="Ex: INSCRI├ç├òES ABERTAS" />
              </div>
           </div>
           <button class="btn-save-brutal" @click="saveOpportunitiesConfig" :disabled="isSaving">
-             <Save :size="18" /> SALVAR CONFIGURAÇÕES DO HUB
+             <Save :size="18" /> SALVAR CONFIGURA├ç├òES DO HUB
           </button>
         </div>
 
-        <div class="editor-card-premium shadow-md mb-10">
+        <div class="editor-card-brutal shadow-solid mb-10">
           <div class="pane-header mb-4">
             <div>
               <h2 class="card-label-black mb-2">SITES PARA PESQUISAR</h2>
-              <p class="text-sm opacity-70">Abra o site, encontre a vaga/edital e cole a URL no importador manual abaixo. Ou use a Descoberta Automática.</p>
+              <p class="text-sm opacity-70">Abra o site, encontre a vaga/edital e cole a URL no importador manual abaixo. Ou use a Descoberta Autom├ítica.</p>
             </div>
             <div class="flex gap-2 items-center">
-              <input v-model="customDiscoveryUrl" type="url" placeholder="URL específica para descobrir..." class="input-premium py-2 text-xs" style="width: 250px;" />
+              <input v-model="customDiscoveryUrl" type="url" placeholder="URL espec├¡fica para descobrir..." class="input-premium py-2 text-xs" style="width: 250px;" />
               <button class="btn-launch-premium" @click="runDiscovery" :disabled="isDiscovering" style="padding: 12px 24px; font-size: 0.9rem;">
-                <Zap :size="16" /> {{ isDiscovering ? 'DESCOBRINDO...' : 'DESCOBERTA AUTOMÁTICA' }}
+                <Zap :size="16" /> {{ isDiscovering ? 'DESCOBRINDO...' : 'DESCOBERTA AUTOM├üTICA' }}
               </button>
             </div>
           </div>
@@ -2050,18 +1913,18 @@ onUnmounted(() => {
                   <ExternalLink :size="14" /> Abrir site
                 </button>
                 <button class="btn-tool-sm" @click="useResearchSiteUrl(site)">
-                  <Sparkles :size="14" /> Usar na importação
+                  <Sparkles :size="14" /> Usar na importa├º├úo
                 </button>
               </div>
             </div>
           </div>
         </div>
 
-        <div class="editor-card-premium shadow-md mb-10">
+        <div class="editor-card-brutal shadow-solid mb-10">
           <div class="pane-header mb-4">
             <div>
               <h2 class="card-label-black mb-2">{{ siteContent.opportunitiesCurationConfig?.sectionTitle || 'REGRAS DE CURADORIA' }}</h2>
-              <p class="text-sm opacity-70">{{ siteContent.opportunitiesCurationConfig?.sectionDescription || 'Define o que entra, o que rejeita e o que merece revisão.' }}</p>
+              <p class="text-sm opacity-70">{{ siteContent.opportunitiesCurationConfig?.sectionDescription || 'Define o que entra, o que rejeita e o que merece revis├úo.' }}</p>
             </div>
           </div>
           <div class="metrics-row mb-6">
@@ -2073,11 +1936,11 @@ onUnmounted(() => {
           </div>
           <div class="form-grid-2 mb-4">
             <div class="input-group">
-              <label>NOTA MÍNIMA</label>
+              <label>NOTA M├ìNIMA</label>
               <input v-model.number="curationConfigData.minScore" type="number" min="0" max="100" />
             </div>
             <div class="input-group">
-              <label>Dias máximos sem publicação</label>
+              <label>Dias m├íximos sem publica├º├úo</label>
               <input v-model.number="curationConfigData.maxAgeDays" type="number" min="1" max="365" />
             </div>
           </div>
@@ -2088,7 +1951,7 @@ onUnmounted(() => {
             </div>
             <div class="input-group">
               <label>PALAVRAS-CHAVE PARA EXCLUIR</label>
-              <textarea v-model="curationConfigData.excludeKeywords" rows="3" placeholder="voluntariado não remunerado, spam..."></textarea>
+              <textarea v-model="curationConfigData.excludeKeywords" rows="3" placeholder="voluntariado n├úo remunerado, spam..."></textarea>
             </div>
           </div>
           <div class="form-grid-2 mb-4">
@@ -2118,17 +1981,17 @@ onUnmounted(() => {
           </button>
         </div>
 
-        <div id="opportunity-editor-form" class="editor-card-premium shadow-md mb-10">
+        <div id="opportunity-editor-form" class="editor-card-brutal shadow-solid mb-10">
           <div class="pane-header mb-8 flex justify-between items-center border-b-2 border-dark pb-6">
             <h2 class="card-label-black mb-0">{{ isEditingVaga ? 'EDITAR OPORTUNIDADE' : 'CADASTRAR OPORTUNIDADE' }}</h2>
             <div class="flex gap-3">
               <button v-if="isEditingVaga" class="btn-tool-sm" @click="resetVagaForm">
                 <X :size="14" /> CANCELAR
               </button>
-              <button class="btn-save-brutal" style="background: #DF2028; padding: 10px 20px; font-size: 13px; min-width: 180px;" @click="saveVaga('approved')" :disabled="isSaving">
+              <button class="btn-save-brutal" style="background: #A4CD39; padding: 10px 20px; font-size: 13px; min-width: 180px;" @click="saveVaga('approved')" :disabled="isSaving">
                 <Save v-if="isEditingVaga" :size="16" />
                 <Plus v-else :size="16" />
-                {{ isEditingVaga ? 'SALVAR ALTERAÇÕES' : 'PUBLICAR VAGA' }}
+                {{ isEditingVaga ? 'SALVAR ALTERA├ç├òES' : 'PUBLICAR VAGA' }}
               </button>
             </div>
           </div>
@@ -2138,30 +2001,30 @@ onUnmounted(() => {
               <input v-model="opportunityImportUrl" type="url" placeholder="Cole a URL da oportunidade, vaga ou edital..." />
             </div>
             <button class="btn-tool-sm import-btn" @click="importOpportunityFromUrl" :disabled="isImportingOpportunity">
-              <Sparkles :size="14" /> {{ isImportingOpportunity ? 'LENDO PÁGINA...' : 'IMPORTAR E PREENCHER' }}
+              <Sparkles :size="14" /> {{ isImportingOpportunity ? 'LENDO P├üGINA...' : 'IMPORTAR E PREENCHER' }}
             </button>
           </div>
           <div class="form-grid-2 mb-6">
              <div class="input-group">
-                <label>TÍTULO DA VAGA / OPORTUNIDADE</label>
+                <label>T├ìTULO DA VAGA / OPORTUNIDADE</label>
                 <input v-model="novaVaga.title" type="text" placeholder="Ex: Bolsas para Mulheres em Dados" />
              </div>
              <div class="input-group">
                 <label>CATEGORIA</label>
                 <div class="category-pill-group">
-                   <button v-for="cat in ['Vagas de Emprego', 'Bolsas', 'Editais', 'Estudos', 'Educação', 'Gênero', 'Clima', 'Internacional']" :key="cat" class="cat-pill" :class="{ active: novaVaga.category === cat }" @click.prevent="novaVaga.category = cat">
+                   <button v-for="cat in ['Vagas de Emprego', 'Bolsas', 'Editais', 'Estudos', 'Educa├º├úo', 'G├¬nero', 'Clima', 'Internacional']" :key="cat" class="cat-pill" :class="{ active: novaVaga.category === cat }" @click.prevent="novaVaga.category = cat">
                       {{ cat }}
                     </button>
                  </div>
               </div>
            </div>
           <div class="input-group mb-6">
-             <label>DESCRIÇÃO CURTA (Aparece no card de fora)</label>
-             <textarea v-model="novaVaga.description" rows="2" placeholder="Impacto focado em liderança..."></textarea>
+             <label>DESCRI├ç├âO CURTA (Aparece no card de fora)</label>
+             <textarea v-model="novaVaga.description" rows="2" placeholder="Impacto focado em lideran├ºa..."></textarea>
           </div>
           <div class="input-group mb-6">
-             <label>DESCRIÇÃO COMPLETA DA VAGA (Aparece na página de detalhe)</label>
-             <QuillEditor theme="snow" contentType="html" v-model:content="novaVaga.fullDescription" placeholder="Detalhes, requisitos, benefícios..." />
+             <label>DESCRI├ç├âO COMPLETA DA VAGA (Aparece na p├ígina de detalhe)</label>
+             <BrutalEditor v-model="novaVaga.fullDescription" placeholder="Detalhes, requisitos, benef├¡cios..." />
            </div>
            <div class="input-group mb-6">
              <label>IMAGEM DA OPORTUNIDADE (URL)</label>
@@ -2171,14 +2034,14 @@ onUnmounted(() => {
              <div class="input-group">
                 <label>MODELO</label>
                 <div class="category-pill-group">
-                   <button v-for="typ in ['Remoto', 'Híbrido', 'Presencial']" :key="typ" class="cat-pill" :class="{ active: novaVaga.type === typ }" @click.prevent="novaVaga.type = typ">
+                   <button v-for="typ in ['Remoto', 'H├¡brido', 'Presencial']" :key="typ" class="cat-pill" :class="{ active: novaVaga.type === typ }" @click.prevent="novaVaga.type = typ">
                      {{ typ }}
                    </button>
                 </div>
              </div>
              <div class="input-group">
-                <label>LOCALIZAÇÃO</label>
-                <input v-model="novaVaga.location" type="text" placeholder="Ex: Nacional, São Paulo..." />
+                <label>LOCALIZA├ç├âO</label>
+                <input v-model="novaVaga.location" type="text" placeholder="Ex: Nacional, S├úo Paulo..." />
              </div>
              <div class="input-group">
                 <label>PRAZO (DEADLINE)</label>
@@ -2187,7 +2050,7 @@ onUnmounted(() => {
           </div>
           <div class="form-grid-2 mb-6">
             <div class="input-group">
-               <label>LINK PARA INSCRIÇÃO</label>
+               <label>LINK PARA INSCRI├ç├âO</label>
                <input v-model="novaVaga.link" type="url" placeholder="https://..." />
             </div>
             <div class="input-group flex items-center justify-start mt-8 gap-6">
@@ -2215,28 +2078,28 @@ onUnmounted(() => {
           </div>
         </div>
 
-        <!-- ÁREA DE IMPORTAÇÃO INTELIGENTE (BULK PASTE) -->
-        <div class="editor-card-premium shadow-md mb-10">
+        <!-- ├üREA DE IMPORTA├ç├âO INTELIGENTE (BULK PASTE) -->
+        <div class="editor-card-brutal shadow-solid mb-10">
            <div class="pane-header mb-6">
               <div>
-                <h2 class="card-label-black mb-2">IMPORTAÇÃO TURBO (COLE O TEXTO DO SITE)</h2>
-                <p class="text-sm opacity-70">Abra o site da fonte, dê <strong>Ctrl+A (Selecionar Tudo)</strong>, <strong>Ctrl+C (Copiar)</strong> e cole no campo abaixo. A IA vai encontrar e separar cada vaga sozinha.</p>
+                <h2 class="card-label-black mb-2">IMPORTA├ç├âO TURBO (COLE O TEXTO DO SITE)</h2>
+                <p class="text-sm opacity-70">Abra o site da fonte, d├¬ <strong>Ctrl+A (Selecionar Tudo)</strong>, <strong>Ctrl+C (Copiar)</strong> e cole no campo abaixo. A IA vai encontrar e separar cada vaga sozinha.</p>
               </div>
            </div>
            
            <div class="input-group mb-6">
-              <label>CONTEÚDO BRUTO DO SITE / LISTA DE VAGAS</label>
+              <label>CONTE├ÜDO BRUTO DO SITE / LISTA DE VAGAS</label>
               <textarea 
                 v-model="bulkImportText" 
                 rows="8" 
-                placeholder="Cole aqui o texto copiado do site (mesmo que venha com menus, rodapés e poluição)..."
+                placeholder="Cole aqui o texto copiado do site (mesmo que venha com menus, rodap├®s e polui├º├úo)..."
                 class="input-premium"
               ></textarea>
            </div>
 
            <div class="flex justify-between items-center">
               <p class="text-xs font-bold text-lima-accent" v-if="bulkImportText.length > 0">
-                Conteúdo detectado: {{ bulkImportText.length }} caracteres.
+                Conte├║do detectado: {{ bulkImportText.length }} caracteres.
               </p>
               <button 
                 class="btn-launch-premium" 
@@ -2249,17 +2112,17 @@ onUnmounted(() => {
            </div>
         </div>
 
-        <div class="editor-card-premium shadow-md mb-10" v-if="reviewQueue.length">
-           <h2 class="card-label-black mb-4">FILA DE REVISÃO</h2>
-           <p class="text-sm opacity-70 mb-6">Itens importados da internet aguardando sua validação antes de aparecerem publicamente.</p>
+        <div class="editor-card-brutal shadow-solid mb-10" v-if="reviewQueue.length">
+           <h2 class="card-label-black mb-4">FILA DE REVIS├âO</h2>
+           <p class="text-sm opacity-70 mb-6">Itens importados da internet aguardando sua valida├º├úo antes de aparecerem publicamente.</p>
            <table class="table-brutal">
               <thead>
                  <tr>
-                    <th>TÍTULO</th>
+                    <th>T├ìTULO</th>
                     <th>FONTE</th>
                     <th>CATEGORIA</th>
                     <th>PRAZO</th>
-                    <th>AÇÕES</th>
+                    <th>A├ç├òES</th>
                  </tr>
               </thead>
               <tbody>
@@ -2267,12 +2130,12 @@ onUnmounted(() => {
                     <td class="font-bold">
                        <button class="table-title-btn" @click="editVaga(vaga)">{{ vaga.title }}</button>
                     </td>
-                    <td class="text-xs opacity-70 max-w-[220px] break-words">{{ vaga.sourceUrl || vaga.link || 'URL não informada' }}</td>
+                    <td class="text-xs opacity-70 max-w-[220px] break-words">{{ vaga.sourceUrl || vaga.link || 'URL n├úo informada' }}</td>
                     <td>{{ vaga.category }}</td>
                     <td>{{ vaga.deadline }}</td>
                     <td class="actions-td">
                        <button class="icon-action" title="Aprovar e publicar" @click="approveVaga(vaga)"><CheckCircle :size="16" /></button>
-                       <button class="icon-action" title="Recusar publicação" @click="rejectVaga(vaga)"><X :size="16" /></button>
+                       <button class="icon-action" title="Recusar publica├º├úo" @click="rejectVaga(vaga)"><X :size="16" /></button>
                        <button class="icon-action" title="Editar" @click="editVaga(vaga)"><Edit :size="16" /></button>
                        <button class="icon-action text-red-500" title="Excluir" @click="deleteVaga(vaga)"><Trash :size="16" /></button>
                     </td>
@@ -2281,19 +2144,19 @@ onUnmounted(() => {
            </table>
         </div>
 
-        <div class="editor-card-premium shadow-md">
+        <div class="editor-card-brutal shadow-solid">
            <h2 class="card-label-black mb-4">OPORTUNIDADES CADASTRADAS</h2>
            <p class="text-sm opacity-70 mb-6">Mostra o conjunto inteiro com o status atual de cada item.</p>
            <table class="table-brutal">
               <thead>
                  <tr>
-                    <th>TÍTULO</th>
+                    <th>T├ìTULO</th>
                     <th>STATUS</th>
                     <th>DESTAQUE</th>
                     <th>HOME</th>
                     <th>CATEGORIA</th>
                     <th>PRAZO</th>
-                    <th>AÇÕES</th>
+                    <th>A├ç├òES</th>
                  </tr>
               </thead>
               <tbody>
@@ -2305,7 +2168,7 @@ onUnmounted(() => {
                     <td>
                        <div class="flex items-center gap-2">
                          <span v-if="vaga.featured" class="badge-featured">SIM</span>
-                         <span v-else class="badge-normal">NÃO</span>
+                         <span v-else class="badge-normal">N├âO</span>
                          <button @click.stop="toggleFeatured(vaga)" class="btn-action-mini" :title="vaga.featured ? 'Remover Destaque' : 'Adicionar Destaque'">
                            <Star :size="14" :fill="vaga.featured ? 'currentColor' : 'none'" />
                          </button>
@@ -2314,7 +2177,7 @@ onUnmounted(() => {
                     <td>
                        <div class="flex items-center gap-2">
                          <span v-if="vaga.showOnHome" class="badge-published">SIM</span>
-                         <span v-else class="badge-normal">NÃO</span>
+                         <span v-else class="badge-normal">N├âO</span>
                          <button @click.stop="toggleShowOnHome(vaga)" class="btn-action-mini" :title="vaga.showOnHome ? 'Remover da Home' : 'Exibir na Home'">
                            <Home :size="14" :fill="vaga.showOnHome ? 'currentColor' : 'none'" />
                          </button>
@@ -2324,7 +2187,7 @@ onUnmounted(() => {
                     <td>{{ vaga.deadline }}</td>
                     <td class="actions-td">
                        <button v-if="getOpportunityVisibilityState(vaga) === 'pending'" class="icon-action" title="Aprovar e publicar" @click="approveVaga(vaga)"><CheckCircle :size="16" /></button>
-                       <button v-if="getOpportunityVisibilityState(vaga) === 'public'" class="icon-action" title="Enviar para revisão" @click="moveVagaToReview(vaga)"><Clock :size="16" /></button>
+                       <button v-if="getOpportunityVisibilityState(vaga) === 'public'" class="icon-action" title="Enviar para revis├úo" @click="moveVagaToReview(vaga)"><Clock :size="16" /></button>
                        <button class="icon-action" title="Abrir no site" @click="previewVaga(vaga.id)"><ExternalLink :size="16" /></button>
                        <button class="icon-action" title="Editar" @click="editVaga(vaga)"><Edit :size="16" /></button>
                        <button class="icon-action text-red-500" title="Excluir" @click="deleteVaga(vaga)"><Trash :size="16" /></button>
@@ -2335,32 +2198,32 @@ onUnmounted(() => {
         </div>
       </section>
 
-      <!-- 4. GESTÃO LMS (TRILHAS) -->
+      <!-- 4. GEST├âO LMS (TRILHAS) -->
       <section v-if="activeTab === 'trilhas'" class="admin-section fade-in-up">
-        <div class="editor-card-premium shadow-md mb-10">
+        <div class="editor-card-brutal shadow-solid mb-10">
           <h2 class="card-label-black mb-8">CRIAR NOVA TRILHA</h2>
           <div class="form-grid-2 mb-6">
              <div class="input-group">
                 <label>NOME DA TRILHA</label>
-                <input v-model="novaTrilha.name" type="text" placeholder="Ex: ADVOCACY EM POLÍTICAS PÚBLICAS" />
+                <input v-model="novaTrilha.name" type="text" placeholder="Ex: ADVOCACY EM POL├ìTICAS P├ÜBLICAS" />
              </div>
              <div class="input-group">
                 <label>COR DO TEMA</label>
                 <select v-model="novaTrilha.color" class="select-brutal">
-                   <option value="#EFEFEF">Magenta (Rosa)</option>
-                   <option value="#20B2AA">Verde Água</option>
+                   <option value="#FF6BCA">Magenta (Rosa)</option>
+                   <option value="#20B2AA">Verde ├ügua</option>
                    <option value="#3D78E0">Azul</option>
-                   <option value="#F5F0E8">Amarelo</option>
+                   <option value="#FFE65A">Amarelo</option>
                 </select>
              </div>
           </div>
           <div class="input-group mb-6">
-             <label>DESCRIÇÃO CURTA</label>
+             <label>DESCRI├ç├âO CURTA</label>
              <textarea v-model="novaTrilha.description" rows="2" placeholder="Resumo do que a pessoa vai aprender..."></textarea>
           </div>
           <div class="form-grid-3 mb-6">
              <div class="input-group">
-                <label>DURAÇÃO (HORAS)</label>
+                <label>DURA├ç├âO (HORAS)</label>
                 <input v-model="novaTrilha.hours" type="text" placeholder="Ex: 12h" />
              </div>
              <div class="input-group">
@@ -2378,7 +2241,7 @@ onUnmounted(() => {
                 </label>
              </div>
           </div>
-          <h3 class="font-display uppercase text-lg mb-4 mt-8">O QUE VOCÊ VAI APRENDER (3 PASSOS):</h3>
+          <h3 class="font-display uppercase text-lg mb-4 mt-8">O QUE VOC├è VAI APRENDER (3 PASSOS):</h3>
           <div class="form-grid-3 mb-8">
              <div class="input-group">
                 <label>PASSO 1</label>
@@ -2390,22 +2253,22 @@ onUnmounted(() => {
              </div>
              <div class="input-group">
                 <label>PASSO 3</label>
-                <input v-model="novaTrilha.mod3" type="text" placeholder="Ex: Influência" />
+                <input v-model="novaTrilha.mod3" type="text" placeholder="Ex: Influ├¬ncia" />
              </div>
           </div>
           <button class="btn-save-brutal" @click="saveTrilha" :disabled="isSaving"><Plus :size="18" /> SALVAR TRILHA</button>
         </div>
 
-        <div class="editor-card-premium shadow-md mb-10">
+        <div class="editor-card-brutal shadow-solid mb-10">
            <h2 class="card-label-black mb-8">TRILHAS CADASTRADAS</h2>
            <table class="table-brutal">
               <thead>
                  <tr>
                     <th>NOME</th>
-                    <th>DURAÇÃO</th>
+                    <th>DURA├ç├âO</th>
                     <th>ACESSO</th>
                     <th>CERTIFICADO</th>
-                    <th>AÇÕES</th>
+                    <th>A├ç├òES</th>
                  </tr>
               </thead>
               <tbody>
@@ -2415,7 +2278,7 @@ onUnmounted(() => {
                     <td>
                        <span :class="t.status === 'PREMIUM' ? 'badge-featured' : 'badge-normal'">{{ t.status }}</span>
                     </td>
-                    <td>{{ t.hasCertificate ? 'SIM' : 'NÃO' }}</td>
+                    <td>{{ t.hasCertificate ? 'SIM' : 'N├âO' }}</td>
                     <td class="actions-td">
                        <button class="icon-action text-red-500" title="Excluir" @click="deleteTrilha(t.id)"><Trash :size="16" /></button>
                     </td>
@@ -2427,9 +2290,9 @@ onUnmounted(() => {
            </table>
         </div>
 
-        <div class="editor-card-premium shadow-md">
-           <h2 class="card-label-black mb-6">GERENCIADOR DE MÓDULOS E AULAS</h2>
-           <p class="text-sm opacity-70 mb-8">Selecione uma trilha existente para adicionar módulos, links de vídeo (YouTube/Vimeo) e PDFs de apoio.</p>
+        <div class="editor-card-brutal shadow-solid">
+           <h2 class="card-label-black mb-6">GERENCIADOR DE M├ôDULOS E AULAS</h2>
+           <p class="text-sm opacity-70 mb-8">Selecione uma trilha existente para adicionar m├│dulos, links de v├¡deo (YouTube/Vimeo) e PDFs de apoio.</p>
            <!-- Exemplo visual do gerenciador -->
            <div class="mock-manager-box">
               <span class="opacity-50 font-bold">Nenhuma trilha selecionada.</span>
@@ -2437,22 +2300,22 @@ onUnmounted(() => {
         </div>
       </section>
 
-      <!-- 5. BIBLIOTECA TÉCNICA -->
+      <!-- 5. BIBLIOTECA T├ëCNICA -->
       <section v-if="activeTab === 'biblioteca'" class="admin-section fade-in-up">
-        <div class="editor-card-premium shadow-md mb-10">
-          <h2 class="card-label-black mb-8">CONFIGURAÇÕES GERAIS (PÁGINA DA BIBLIOTECA)</h2>
+        <div class="editor-card-brutal shadow-solid mb-10">
+          <h2 class="card-label-black mb-8">CONFIGURA├ç├òES GERAIS (P├üGINA DA BIBLIOTECA)</h2>
           <div class="form-grid-2 mb-4">
              <div class="input-group">
-                <label>TÍTULO DA PÁGINA (PARTE 1)</label>
+                <label>T├ìTULO DA P├üGINA (PARTE 1)</label>
                 <input v-model="bibliotecaConfigData.pageTitle1" type="text" placeholder="Ex: NOSSA" />
              </div>
              <div class="input-group">
-                <label>TÍTULO DA PÁGINA (PARTE 2)</label>
+                <label>T├ìTULO DA P├üGINA (PARTE 2)</label>
                 <input v-model="bibliotecaConfigData.pageTitle2" type="text" placeholder="Ex: BIBLIOTECA" />
              </div>
           </div>
           <div class="input-group mb-6">
-             <label>SUBTÍTULO</label>
+             <label>SUBT├ìTULO</label>
              <textarea v-model="bibliotecaConfigData.pageSubtitle" rows="2"></textarea>
           </div>
           <div class="form-grid-2 mb-6">
@@ -2461,47 +2324,47 @@ onUnmounted(() => {
                 <input v-model="bibliotecaConfigData.searchPlaceholder" type="text" placeholder="Ex: BUSCAR DOCUMENTO..." />
              </div>
              <div class="input-group">
-                <label>RÓTULO DE FILTROS</label>
+                <label>R├ôTULO DE FILTROS</label>
                 <input v-model="bibliotecaConfigData.filterLabel" type="text" placeholder="Ex: FILTRAR:" />
              </div>
           </div>
-          <h3 class="font-display uppercase text-lg mb-4 mt-8">BOTÕES DOS CARDS:</h3>
+          <h3 class="font-display uppercase text-lg mb-4 mt-8">BOT├òES DOS CARDS:</h3>
           <div class="form-grid-2 mb-8">
              <div class="input-group">
-                <label>BOTÃO PRINCIPAL (DOWNLOAD)</label>
+                <label>BOT├âO PRINCIPAL (DOWNLOAD)</label>
                 <input v-model="bibliotecaConfigData.btnDownload" type="text" placeholder="Ex: DOWNLOAD PDF" />
              </div>
              <div class="input-group">
-                <label>BOTÃO SECUNDÁRIO (LINK EXTERNO)</label>
+                <label>BOT├âO SECUND├üRIO (LINK EXTERNO)</label>
                 <input v-model="bibliotecaConfigData.btnSource" type="text" placeholder="Ex: FONTE" />
              </div>
           </div>
-          <button class="btn-save-brutal" @click="saveLibraryConfig" :disabled="isSaving"><Save :size="18" /> SALVAR CONFIGURAÇÕES DA PÁGINA</button>
+          <button class="btn-save-brutal" @click="saveLibraryConfig" :disabled="isSaving"><Save :size="18" /> SALVAR CONFIGURA├ç├òES DA P├üGINA</button>
         </div>
 
-        <div id="library-editor-form" class="editor-card-premium shadow-md mb-10">
+        <div id="library-editor-form" class="editor-card-brutal shadow-solid mb-10">
           <div class="pane-header mb-8">
             <h2 class="card-label-black mb-0">{{ isEditingDoc ? 'EDITAR DOCUMENTO' : 'ADICIONAR DOCUMENTO' }}</h2>
             <button v-if="isEditingDoc" class="btn-tool-sm" @click="resetDocForm">
-              <X :size="14" /> CANCELAR EDIÇÃO
+              <X :size="14" /> CANCELAR EDI├ç├âO
             </button>
           </div>
           <div class="form-grid-2 mb-6">
              <div class="input-group">
-                <label>TÍTULO DO DOCUMENTO</label>
-                <input v-model="novoDoc.title" type="text" placeholder="Ex: Impacto Econômico..." />
+                <label>T├ìTULO DO DOCUMENTO</label>
+                <input v-model="novoDoc.title" type="text" placeholder="Ex: Impacto Econ├┤mico..." />
              </div>
              <div class="input-group">
                 <label>CATEGORIA</label>
                 <div class="category-pill-group">
-                   <button v-for="cat in ['Relatório', 'Dataset', 'Nota Técnica', 'Guia']" :key="cat" class="cat-pill" :class="{ active: novoDoc.category === cat }" @click.prevent="novoDoc.category = cat">
+                   <button v-for="cat in ['Relat├│rio', 'Dataset', 'Nota T├®cnica', 'Guia']" :key="cat" class="cat-pill" :class="{ active: novoDoc.category === cat }" @click.prevent="novoDoc.category = cat">
                      {{ cat }}
                    </button>
                 </div>
              </div>
           </div>
           <div class="input-group mb-6">
-             <label>RESUMO / DESCRIÇÃO</label>
+             <label>RESUMO / DESCRI├ç├âO</label>
              <textarea v-model="novoDoc.description" rows="3"></textarea>
           </div>
           <div class="form-grid-2 mb-6">
@@ -2526,14 +2389,14 @@ onUnmounted(() => {
           </div>
         </div>
 
-        <div class="editor-card-premium shadow-md">
+        <div class="editor-card-brutal shadow-solid">
            <h2 class="card-label-black mb-8">ACERVO CADASTRADO</h2>
            <table class="table-brutal">
               <thead>
                  <tr>
-                    <th>TÍTULO</th>
+                    <th>T├ìTULO</th>
                     <th>CATEGORIA</th>
-                    <th>AÇÕES</th>
+                    <th>A├ç├òES</th>
                  </tr>
               </thead>
               <tbody>
@@ -2557,61 +2420,61 @@ onUnmounted(() => {
         
         <!-- HEADER METRICS (PREMIUM GLASS) -->
         <div class="metrics-grid-premium mb-12">
-           <div class="metric-card-glass shadow-md">
+           <div class="metric-card-glass shadow-solid">
               <div class="metric-label">INSCRITOS TOTAIS</div>
               <div class="metric-value">{{ siteContent.subscribers?.length || 0 }}</div>
               <div class="metric-trend text-green-500">+12% esta semana</div>
            </div>
-           <div class="metric-card-glass shadow-md">
+           <div class="metric-card-glass shadow-solid">
               <div class="metric-label">TAXA DE ABERTURA</div>
               <div class="metric-value">68.4%</div>
-              <div class="metric-trend text-blue-500">Acima da média</div>
+              <div class="metric-trend text-blue-500">Acima da m├®dia</div>
            </div>
-           <div class="metric-card-glass shadow-md">
-              <div class="metric-label">EDIÇÕES ENVIADAS</div>
+           <div class="metric-card-glass shadow-solid">
+              <div class="metric-label">EDI├ç├òES ENVIADAS</div>
               <div class="metric-value">{{ siteContent.newsletters?.length || 0 }}</div>
-              <div class="metric-trend opacity-50">Histórico completo</div>
+              <div class="metric-trend opacity-50">Hist├│rico completo</div>
            </div>
         </div>
 
-        <!-- CONFIGURAÇÕES DA PÁGINA DE ACERVO -->
-        <div class="editor-card-premium shadow-md mb-12">
+        <!-- CONFIGURA├ç├òES DA P├üGINA DE ACERVO -->
+        <div class="editor-card-brutal shadow-solid mb-12">
           <div class="flex justify-between items-center mb-8">
-             <h2 class="card-label-black mb-0">CONFIGURAÇÕES DA PÁGINA (ACERVO)</h2>
+             <h2 class="card-label-black mb-0">CONFIGURA├ç├òES DA P├üGINA (ACERVO)</h2>
           </div>
           <div class="form-grid-2 mb-4">
              <div class="input-group">
-                <label>TÍTULO DA PÁGINA (PRETO)</label>
+                <label>T├ìTULO DA P├üGINA (PRETO)</label>
                 <input v-model="newsletterArchiveConfigData.heroTitle1" type="text" placeholder="Ex: ACERVO DE" />
              </div>
              <div class="input-group">
-                <label>TÍTULO DA PÁGINA (VERMELHO)</label>
-                <input v-model="newsletterArchiveConfigData.heroTitle2" type="text" placeholder="Ex: EDIÇÕES" />
+                <label>T├ìTULO DA P├üGINA (VERMELHO)</label>
+                <input v-model="newsletterArchiveConfigData.heroTitle2" type="text" placeholder="Ex: EDI├ç├òES" />
              </div>
           </div>
           <div class="input-group mb-6">
-             <label>SUBTÍTULO</label>
+             <label>SUBT├ìTULO</label>
              <textarea v-model="newsletterArchiveConfigData.heroSubtitle" rows="2"></textarea>
           </div>
           
           <h3 class="font-display uppercase text-lg mb-4 mt-8">CARD DE ASSINATURA</h3>
           <div class="form-grid-2 mb-4">
              <div class="input-group">
-                <label>RÓTULO MENOR (EYEBROW)</label>
+                <label>R├ôTULO MENOR (EYEBROW)</label>
                 <input v-model="newsletterArchiveConfigData.cardEyebrow" type="text" />
              </div>
              <div class="input-group">
-                <label>TÍTULO DO CARD</label>
+                <label>T├ìTULO DO CARD</label>
                 <input v-model="newsletterArchiveConfigData.cardTitle" type="text" />
              </div>
           </div>
           <div class="input-group mb-4">
-             <label>DESCRIÇÃO DO CARD</label>
+             <label>DESCRI├ç├âO DO CARD</label>
              <textarea v-model="newsletterArchiveConfigData.cardDesc" rows="2"></textarea>
           </div>
           <div class="form-grid-2 mb-6">
              <div class="input-group">
-                <label>BOTÃO DO CARD</label>
+                <label>BOT├âO DO CARD</label>
                 <input v-model="newsletterArchiveConfigData.cardBtn" type="text" />
              </div>
              <div class="input-group">
@@ -2621,14 +2484,14 @@ onUnmounted(() => {
           </div>
           
           <button class="btn-save-brutal" @click="saveNewsletterArchiveConfig" :disabled="isSaving">
-             <Save :size="18" /> {{ isSaving ? 'SALVANDO...' : 'SALVAR CONFIGURAÇÕES DO ACERVO' }}
+             <Save :size="18" /> {{ isSaving ? 'SALVANDO...' : 'SALVAR CONFIGURA├ç├òES DO ACERVO' }}
           </button>
         </div>
 
-        <!-- CONFIGURAÇÕES DA PÁGINA DE DOAÇÃO -->
-        <div class="editor-card-premium shadow-md mb-12">
+        <!-- CONFIGURA├ç├òES DA P├üGINA DE DOA├ç├âO -->
+        <div class="editor-card-brutal shadow-solid mb-12">
           <div class="flex justify-between items-center mb-8">
-             <h2 class="card-label-black mb-0">CONFIGURAÇÕES DA PÁGINA (DOAÇÃO)</h2>
+             <h2 class="card-label-black mb-0">CONFIGURA├ç├òES DA P├üGINA (DOA├ç├âO)</h2>
           </div>
           <div class="form-grid-2 mb-4">
              <div class="input-group">
@@ -2637,21 +2500,21 @@ onUnmounted(() => {
              </div>
              <div class="input-group">
                 <label>HEADLINE PARTE 2 (DESTAQUE)</label>
-                <input v-model="donateConfigData.headlinePart2" type="text" placeholder="Ex: NARRATIVA EM AÇÃO" />
+                <input v-model="donateConfigData.headlinePart2" type="text" placeholder="Ex: NARRATIVA EM A├ç├âO" />
              </div>
           </div>
           <div class="input-group mb-6">
-             <label>SUBTÍTULO</label>
+             <label>SUBT├ìTULO</label>
              <textarea v-model="donateConfigData.sub" rows="2"></textarea>
           </div>
           
           <div class="form-grid-2 mb-8">
              <div class="input-group">
-                <label>RÓTULO ÚNICA</label>
+                <label>R├ôTULO ├ÜNICA</label>
                 <input v-model="donateConfigData.toggleLabelSingle" type="text" />
              </div>
              <div class="input-group">
-                <label>RÓTULO MENSAL</label>
+                <label>R├ôTULO MENSAL</label>
                 <input v-model="donateConfigData.toggleLabelMonthly" type="text" />
              </div>
           </div>
@@ -2663,23 +2526,23 @@ onUnmounted(() => {
                 <input v-model="donateConfigData.cardEyebrow" type="text" />
              </div>
              <div class="input-group">
-                <label>TÍTULO</label>
+                <label>T├ìTULO</label>
                 <input v-model="donateConfigData.cardTitle" type="text" />
              </div>
           </div>
           <div class="input-group mb-4">
-             <label>DESCRIÇÃO</label>
+             <label>DESCRI├ç├âO</label>
              <textarea v-model="donateConfigData.cardDesc" rows="2"></textarea>
           </div>
           <div class="input-group mb-6">
-             <label>TEXTO DO BOTÃO</label>
+             <label>TEXTO DO BOT├âO</label>
              <input v-model="donateConfigData.buttonText" type="text" />
           </div>
 
-          <h3 class="font-display uppercase text-lg mb-4 mt-8">ESTATÍSTICAS DE IMPACTO</h3>
+          <h3 class="font-display uppercase text-lg mb-4 mt-8">ESTAT├ìSTICAS DE IMPACTO</h3>
           <div class="form-grid-3 mb-8">
              <div class="input-group">
-                <label>LÍDERES</label>
+                <label>L├ìDERES</label>
                 <input v-model="donateConfigData.statsLeaders" type="text" />
              </div>
              <div class="input-group">
@@ -2687,13 +2550,13 @@ onUnmounted(() => {
                 <input v-model="donateConfigData.statsCampaigns" type="text" />
              </div>
              <div class="input-group">
-                <label>RELATÓRIOS</label>
+                <label>RELAT├ôRIOS</label>
                 <input v-model="donateConfigData.statsReports" type="text" />
              </div>
           </div>
           
           <button class="btn-save-brutal" @click="saveDonateConfig" :disabled="isSaving">
-             <Save :size="18" /> {{ isSaving ? 'SALVANDO...' : 'SALVAR CONFIGURAÇÕES DE DOAÇÃO' }}
+             <Save :size="18" /> {{ isSaving ? 'SALVANDO...' : 'SALVAR CONFIGURA├ç├òES DE DOA├ç├âO' }}
           </button>
         </div>
 
@@ -2701,9 +2564,9 @@ onUnmounted(() => {
         <div class="creator-workspace">
            
            <!-- ESQUERDA: EDITOR -->
-           <div class="editor-pane shadow-md">
+           <div class="editor-pane shadow-solid">
               <div class="pane-header mb-8">
-                 <h2 class="card-label-black mb-0">COMPOSIÇÃO DE ELITE</h2>
+                 <h2 class="card-label-black mb-0">COMPOSI├ç├âO DE ELITE</h2>
                  <div class="flex gap-2">
                     <button class="btn-tool-sm"><Eye :size="14" /> TESTE</button>
                     <button class="btn-tool-sm"><Save :size="14" /> RASCUNHO</button>
@@ -2711,18 +2574,18 @@ onUnmounted(() => {
               </div>
 
               <div class="input-group mb-6">
-                 <label>ASSUNTO DO E-MAIL (O QUE AS PESSOAS VERÃO NA CAIXA DE ENTRADA)</label>
-                 <input v-model="novaNewsletter.titulo" type="text" class="input-premium" placeholder="Ex: Por que a geopolítica está mudando..." />
+                 <label>ASSUNTO DO E-MAIL (O QUE AS PESSOAS VER├âO NA CAIXA DE ENTRADA)</label>
+                 <input v-model="novaNewsletter.titulo" type="text" class="input-premium" placeholder="Ex: Por que a geopol├¡tica est├í mudando..." />
               </div>
 
               <div class="input-group mb-6">
-                 <label>DESCRIÇÃO CURTA (SEO / ARQUIVO)</label>
-                 <textarea v-model="novaNewsletter.descricao" rows="2" class="input-premium" placeholder="Um resumo magnético para atrair o clique..."></textarea>
+                 <label>DESCRI├ç├âO CURTA (SEO / ARQUIVO)</label>
+                 <textarea v-model="novaNewsletter.descricao" rows="2" class="input-premium" placeholder="Um resumo magn├®tico para atrair o clique..."></textarea>
               </div>
 
               <div class="input-group mb-8">
-                 <label>CONTEÚDO DA NEWSLETTER</label>
-                 <QuillEditor theme="snow" contentType="html" v-model:content="novaNewsletter.conteudo" placeholder="Escreva o conteúdo da newsletter..." />
+                 <label>CONTE├ÜDO DA NEWSLETTER</label>
+                 <BrutalEditor v-model="novaNewsletter.conteudo" />
               </div>
 
               <div class="flex gap-4">
@@ -2738,20 +2601,20 @@ onUnmounted(() => {
            <!-- DIREITA: LIVE PREVIEW (MOCKUP) -->
            <div class="preview-pane">
               <div class="sticky-preview">
-                 <div class="device-mockup shadow-md">
+                 <div class="device-mockup shadow-solid">
                     <div class="device-screen">
                        <div class="email-preview-content">
                           <div class="email-header-mock">
                              <div class="logo-circle">NP</div>
-                             <span>Narrativa Política</span>
+                             <span>Narrativa Pol├¡tica</span>
                           </div>
                           <div class="email-body-mock">
                              <img v-if="novaNewsletter.capa_url" :src="novaNewsletter.capa_url" class="preview-img-mock" />
                              <div class="preview-title-mock">{{ novaNewsletter.titulo || 'Assunto da Newsletter...' }}</div>
-                             <div class="preview-text-mock" v-html="sanitizeHtml(novaNewsletter.conteudo || 'O conteúdo do seu e-mail aparecerá aqui em tempo real...')"></div>
+                             <div class="preview-text-mock" v-html="sanitizeHtml(novaNewsletter.conteudo || 'O conte├║do do seu e-mail aparecer├í aqui em tempo real...')"></div>
                              <div class="preview-footer-mock">
-                                © 2026 Narrativa Política. <br>
-                                Você recebeu este e-mail porque faz parte da nossa rede.
+                                ┬® 2026 Narrativa Pol├¡tica. <br>
+                                Voc├¬ recebeu este e-mail porque faz parte da nossa rede.
                              </div>
                           </div>
                        </div>
@@ -2765,9 +2628,9 @@ onUnmounted(() => {
         </div>
 
         <!-- LISTA DE INSCRITOS (ESTILO TABELA DE LUXO) -->
-        <div class="editor-card-premium shadow-md mt-12">
+        <div class="editor-card-brutal shadow-solid mt-12">
              <div class="flex justify-between items-center mb-8">
-                <h2 class="card-label-black mb-0">GESTÃO DA REDE (INSCRITOS)</h2>
+                <h2 class="card-label-black mb-0">GEST├âO DA REDE (INSCRITOS)</h2>
                 <button class="btn-preview-solid" @click="exportarInscritos">
                    <Save :size="16" /> EXPORTAR LISTA (CSV)
                 </button>
@@ -2775,8 +2638,8 @@ onUnmounted(() => {
              <table class="table-premium">
                 <thead>
                    <tr>
-                      <th>USUÁRIO</th>
-                      <th>DATA DE ADESÃO</th>
+                      <th>USU├üRIO</th>
+                      <th>DATA DE ADES├âO</th>
                       <th>INTERESSE</th>
                       <th>STATUS</th>
                    </tr>
@@ -2802,175 +2665,175 @@ onUnmounted(() => {
 
       <!-- 6. SOBRE MIM -->
       <section v-if="activeTab === 'sobre'" class="admin-section fade-in-up">
-        <div class="editor-card-premium shadow-md mb-10">
-          <h2 class="card-label-black mb-8">HERO (CABEÇALHO)</h2>
+        <div class="editor-card-brutal shadow-solid mb-10">
+          <h2 class="card-label-black mb-8">HERO (CABE├çALHO)</h2>
           <div class="form-grid-2 mb-4">
              <div class="input-group">
-                <label>TÍTULO PARTE 1 (PRETO)</label>
+                <label>T├ìTULO PARTE 1 (PRETO)</label>
                 <input v-model="sobreData.heroTitlePart1" type="text" placeholder="Ex: IDEIAS QUE" />
              </div>
              <div class="input-group">
-                <label>TÍTULO PARTE 2 (VERMELHO)</label>
+                <label>T├ìTULO PARTE 2 (VERMELHO)</label>
                 <input v-model="sobreData.heroTitlePart2" type="text" placeholder="Ex: MOVEM ESTRUTURAS" />
              </div>
           </div>
           <div class="input-group mb-6">
-             <label>SUBTÍTULO</label>
+             <label>SUBT├ìTULO</label>
              <textarea v-model="sobreData.subtitle" rows="2"></textarea>
           </div>
         </div>
 
-        <div class="editor-card-premium shadow-md mb-10">
-          <h2 class="card-label-black mb-8">DOSSIÊ DO PERFIL</h2>
+        <div class="editor-card-brutal shadow-solid mb-10">
+          <h2 class="card-label-black mb-8">DOSSI├è DO PERFIL</h2>
           <div class="form-grid-2 mb-6">
              <div class="input-group">
-                <label>NOME DE EXIBIÇÃO</label>
+                <label>NOME DE EXIBI├ç├âO</label>
                 <input v-model="sobreData.name" type="text" placeholder="Ex: ANNE DORNELAS" />
              </div>
              <div class="input-group">
-                <label>CARGO / RÓTULO</label>
-                <input v-model="sobreData.role" type="text" placeholder="Ex: Estrategista Política..." />
+                <label>CARGO / R├ôTULO</label>
+                <input v-model="sobreData.role" type="text" placeholder="Ex: Estrategista Pol├¡tica..." />
              </div>
           </div>
           <div class="input-group mb-6">
-             <label>TRAJETÓRIA E VISÃO (BIO)</label>
+             <label>TRAJET├ôRIA E VIS├âO (BIO)</label>
              <textarea v-model="sobreData.bioInstitucional" rows="5"></textarea>
-             <p class="text-xs opacity-50 mt-2">* Pule duas linhas (Enter Enter) para criar novos parágrafos.</p>
+             <p class="text-xs opacity-50 mt-2">* Pule duas linhas (Enter Enter) para criar novos par├ígrafos.</p>
           </div>
           <div class="input-group mb-6">
-             <label>ÁREAS DE ATUAÇÃO (HABILIDADES)</label>
-             <input v-model="sobreData.expertise" type="text" placeholder="Ex: Análise Econométrica, Advocacy de Gênero, Comunicação..." />
-             <p class="text-xs opacity-50 mt-2">* Separe as áreas por vírgula.</p>
+             <label>├üREAS DE ATUA├ç├âO (HABILIDADES)</label>
+             <input v-model="sobreData.expertise" type="text" placeholder="Ex: An├ílise Econom├®trica, Advocacy de G├¬nero, Comunica├º├úo..." />
+             <p class="text-xs opacity-50 mt-2">* Separe as ├íreas por v├¡rgula.</p>
           </div>
           <div class="mb-6">
-             <ImageUploader v-model="sobreData.image" label="IMAGEM DE PERFIL" />
+             <ImageUploader label="IMAGEM DE PERFIL" />
           </div>
         </div>
 
-        <div class="editor-card-premium shadow-md">
+        <div class="editor-card-brutal shadow-solid">
           <h2 class="card-label-black mb-8">CTA DE FECHAMENTO (CHAMADA)</h2>
           <div class="form-grid-2 mb-4">
              <div class="input-group">
                 <label>TEXTO PEQUENO (EYEBROW)</label>
-                <input v-model="sobreData.ctaEyebrow" type="text" placeholder="Ex: Conexão de Impacto" />
+                <input v-model="sobreData.ctaEyebrow" type="text" placeholder="Ex: Conex├úo de Impacto" />
              </div>
              <div class="input-group">
-                <label>TÍTULO PRINCIPAL</label>
+                <label>T├ìTULO PRINCIPAL</label>
                 <input v-model="sobreData.ctaTitle" type="text" />
              </div>
           </div>
           <div class="input-group mb-4">
-             <label>DESCRIÇÃO DA CHAMADA</label>
+             <label>DESCRI├ç├âO DA CHAMADA</label>
              <textarea v-model="sobreData.ctaDesc" rows="2"></textarea>
           </div>
           <div class="form-grid-2 mb-6">
              <div class="input-group">
                 <label>COR DE FUNDO DO HERO</label>
                 <select v-model="sobreData.heroBgColor" class="select-brutal">
-                   <option value="#202020">Preto (Padrão)</option>
-                   <option value="#EFEFEF">Magenta</option>
-                   <option value="#DF2028">Verde Lima</option>
+                   <option value="#1C1C1C">Preto (Padr├úo)</option>
+                   <option value="#FF6BCA">Magenta</option>
+                   <option value="#A4CD39">Verde Lima</option>
                    <option value="#3D78E0">Azul</option>
                 </select>
              </div>
              <div class="input-group">
-                <label>COR DO BOTÃO CTA</label>
+                <label>COR DO BOT├âO CTA</label>
                 <select v-model="sobreData.ctaBtnColor" class="select-brutal">
-                   <option value="#F5F0E8">Amarelo (Padrão)</option>
-                   <option value="#EFEFEF">Magenta</option>
-                   <option value="#DF2028">Verde Lima</option>
+                   <option value="#FFE65A">Amarelo (Padr├úo)</option>
+                   <option value="#FF6BCA">Magenta</option>
+                   <option value="#A4CD39">Verde Lima</option>
                 </select>
              </div>
           </div>
           <div class="form-grid-2 mb-6">
              <div class="input-group">
-                <label>TEXTO DO BOTÃO</label>
+                <label>TEXTO DO BOT├âO</label>
                 <input v-model="sobreData.ctaBtn" type="text" placeholder="Ex: FALAR AGORA" />
              </div>
           </div>
 
           <button class="btn-save-brutal" @click="saveSobre" :disabled="isSaving">
-             <Save :size="18" /> {{ isSaving ? 'ATUALIZANDO...' : 'SALVAR PÁGINA SOBRE' }}
+             <Save :size="18" /> {{ isSaving ? 'ATUALIZANDO...' : 'SALVAR P├üGINA SOBRE' }}
           </button>
         </div>
       </section>
-      <!-- 6. SERVIÇOS E EIXOS -->
+      <!-- 6. SERVI├çOS E EIXOS -->
       <section v-if="activeTab === 'servicos'" class="admin-section fade-in-up">
-        <div class="editor-card-premium shadow-md mb-10">
-          <h2 class="card-label-black mb-8">CONFIGURAÇÕES GERAIS (PÁGINA DE EIXOS)</h2>
+        <div class="editor-card-brutal shadow-solid mb-10">
+          <h2 class="card-label-black mb-8">CONFIGURA├ç├òES GERAIS (P├üGINA DE EIXOS)</h2>
           <div class="form-grid-2 mb-4">
              <div class="input-group">
-                <label>TÍTULO DA PÁGINA (PARTE 1)</label>
+                <label>T├ìTULO DA P├üGINA (PARTE 1)</label>
                 <input v-model="servicosConfigData.pageTitle1" type="text" placeholder="Ex: NOSSOS EIXOS" />
              </div>
              <div class="input-group">
-                <label>TÍTULO DA PÁGINA (PARTE 2 - DESTAQUE)</label>
-                <input v-model="servicosConfigData.pageTitle2" type="text" placeholder="Ex: DE AÇÃO" />
+                <label>T├ìTULO DA P├üGINA (PARTE 2 - DESTAQUE)</label>
+                <input v-model="servicosConfigData.pageTitle2" type="text" placeholder="Ex: DE A├ç├âO" />
              </div>
           </div>
           <div class="form-grid-2 mb-6">
              <div class="input-group">
-                <label>TEXTO DO BOTÃO NO CARD</label>
+                <label>TEXTO DO BOT├âO NO CARD</label>
                 <input v-model="servicosConfigData.cardButton" type="text" placeholder="Ex: SOLICITAR CONSULTORIA" />
              </div>
           </div>
           <h3 class="font-display uppercase text-lg mb-4 mt-8">BLOCO: DEMANDAS SOB MEDIDA</h3>
           <div class="form-grid-2 mb-4">
              <div class="input-group">
-                <label>TÍTULO DO BLOCO</label>
+                <label>T├ìTULO DO BLOCO</label>
                 <input v-model="servicosConfigData.ctaTitle" type="text" placeholder="Ex: DEMANDAS SOB MEDIDA?" />
              </div>
              <div class="input-group">
-                <label>BOTÃO DO BLOCO</label>
+                <label>BOT├âO DO BLOCO</label>
                 <input v-model="servicosConfigData.ctaButton" type="text" placeholder="Ex: FALAR COM ESPECIALISTA" />
              </div>
           </div>
           <div class="input-group mb-6">
-             <label>DESCRIÇÃO DO BLOCO</label>
+             <label>DESCRI├ç├âO DO BLOCO</label>
              <textarea v-model="servicosConfigData.ctaDesc" rows="2"></textarea>
           </div>
           <h3 class="font-display uppercase text-lg mb-4 mt-8">BLOCO: NEWSLETTER DE IMPACTO</h3>
           <div class="form-grid-2 mb-4">
              <div class="input-group">
                 <label>TEXTO PEQUENO (EYEBROW)</label>
-                <input v-model="servicosConfigData.newsletterEyebrow" type="text" placeholder="Ex: Rede de Mobilização" />
+                <input v-model="servicosConfigData.newsletterEyebrow" type="text" placeholder="Ex: Rede de Mobiliza├º├úo" />
              </div>
              <div class="input-group">
-                <label>TÍTULO PRINCIPAL</label>
+                <label>T├ìTULO PRINCIPAL</label>
                 <input v-model="servicosConfigData.newsletterTitle" type="text" />
              </div>
           </div>
           <div class="input-group mb-4">
-             <label>DESCRIÇÃO DA NEWSLETTER</label>
+             <label>DESCRI├ç├âO DA NEWSLETTER</label>
              <textarea v-model="servicosConfigData.newsletterDesc" rows="2"></textarea>
           </div>
           <div class="form-grid-2 mb-6">
              <div class="input-group">
-                <label>TEXTO DO BOTÃO</label>
+                <label>TEXTO DO BOT├âO</label>
                 <input v-model="servicosConfigData.newsletterBtn" type="text" placeholder="Ex: QUERO FAZER PARTE" />
              </div>
           </div>
-          <button class="btn-save-brutal" @click="saveServicesConfig" :disabled="isSaving"><Save :size="18" /> SALVAR CONFIGURAÇÕES DA PÁGINA</button>
+          <button class="btn-save-brutal" @click="saveServicesConfig" :disabled="isSaving"><Save :size="18" /> SALVAR CONFIGURA├ç├òES DA P├üGINA</button>
         </div>
 
-        <div id="service-editor-form" class="editor-card-premium shadow-md mb-10">
+        <div id="service-editor-form" class="editor-card-brutal shadow-solid mb-10">
           <div class="pane-header mb-8">
-            <h2 class="card-label-black mb-0">{{ isEditingServico ? 'EDITAR EIXO DE AÇÃO / SERVIÇO' : 'ADICIONAR EIXO DE AÇÃO / SERVIÇO' }}</h2>
+            <h2 class="card-label-black mb-0">{{ isEditingServico ? 'EDITAR EIXO DE A├ç├âO / SERVI├çO' : 'ADICIONAR EIXO DE A├ç├âO / SERVI├çO' }}</h2>
             <button v-if="isEditingServico" class="btn-tool-sm" @click="resetServicoForm">
-              <X :size="14" /> CANCELAR EDIÇÃO
+              <X :size="14" /> CANCELAR EDI├ç├âO
             </button>
           </div>
           <div class="form-grid-2 mb-6">
              <div class="input-group">
-                <label>TÍTULO DO EIXO</label>
-                <input v-model="novoServico.title" type="text" placeholder="Ex: Escola de Formação" />
+                <label>T├ìTULO DO EIXO</label>
+                <input v-model="novoServico.title" type="text" placeholder="Ex: Escola de Forma├º├úo" />
              </div>
              <div class="input-group">
-                <label>ÍCONE (LUCIDE)</label>
+                <label>├ìCONE (LUCIDE)</label>
                 <select v-model="novoServico.icon" class="select-brutal">
                    <option value="Zap">Zap (Raio)</option>
                    <option value="Database">Database (Dados)</option>
-                   <option value="Users">Users (Usuários)</option>
+                   <option value="Users">Users (Usu├írios)</option>
                    <option value="Briefcase">Briefcase (Maleta)</option>
                    <option value="Globe">Globe (Mundo)</option>
                    <option value="Target">Target (Alvo)</option>
@@ -2981,11 +2844,11 @@ onUnmounted(() => {
              <div class="input-group">
                 <label>COR DE FUNDO (CARD)</label>
                 <select v-model="novoServico.bg" class="select-brutal">
-                   <option value="#EFEFEF">Magenta (Rosa)</option>
-                   <option value="#DF2028">Verde Água (Lima)</option>
+                   <option value="#FF6BCA">Magenta (Rosa)</option>
+                   <option value="#A4CD39">Verde ├ügua (Lima)</option>
                    <option value="#3D78E0">Azul</option>
-                   <option value="#F5F0E8">Amarelo</option>
-                   <option value="#202020">Preto</option>
+                   <option value="#FFE65A">Amarelo</option>
+                   <option value="#1C1C1C">Preto</option>
                 </select>
              </div>
              <div class="input-group">
@@ -2997,25 +2860,25 @@ onUnmounted(() => {
              </div>
           </div>
           <div class="input-group mb-6">
-             <label>DESCRIÇÃO CURTA</label>
+             <label>DESCRI├ç├âO CURTA</label>
              <textarea v-model="novoServico.description" rows="3" placeholder="Resumo do que o eixo entrega..."></textarea>
           </div>
           <button class="btn-save-brutal" @click="saveServico" :disabled="isSaving">
             <Save v-if="isEditingServico" :size="18" />
             <Plus v-else :size="18" />
-            {{ isEditingServico ? 'SALVAR ALTERAÇÕES DO EIXO' : 'CADASTRAR EIXO' }}
+            {{ isEditingServico ? 'SALVAR ALTERA├ç├òES DO EIXO' : 'CADASTRAR EIXO' }}
           </button>
         </div>
 
-        <div class="editor-card-premium shadow-md">
-           <h2 class="card-label-black mb-8">EIXOS DE AÇÃO CADASTRADOS</h2>
+        <div class="editor-card-brutal shadow-solid">
+           <h2 class="card-label-black mb-8">EIXOS DE A├ç├âO CADASTRADOS</h2>
            <table class="table-brutal">
               <thead>
                  <tr>
-                    <th>TÍTULO</th>
+                    <th>T├ìTULO</th>
                     <th>COR</th>
                     <th>LINK</th>
-                    <th>AÇÕES</th>
+                    <th>A├ç├òES</th>
                  </tr>
               </thead>
               <tbody>
@@ -3031,7 +2894,7 @@ onUnmounted(() => {
                     </td>
                  </tr>
                  <tr v-if="!siteContent.services || siteContent.services.length === 0">
-                    <td colspan="4" class="text-center opacity-50 py-6">Nenhum eixo cadastrado. (Usando eixos padrão no site)</td>
+                    <td colspan="4" class="text-center opacity-50 py-6">Nenhum eixo cadastrado. (Usando eixos padr├úo no site)</td>
                  </tr>
               </tbody>
            </table>
@@ -3040,26 +2903,26 @@ onUnmounted(() => {
 
       <!-- 7. PROJETOS -->
       <section v-if="activeTab === 'projetos'" class="admin-section fade-in-up">
-        <div class="editor-card-premium shadow-md mb-10">
+        <div class="editor-card-brutal shadow-solid mb-10">
           <h2 class="card-label-black mb-8">ADICIONAR PROJETO / CASE DE SUCESSO</h2>
           <div class="form-grid-2 mb-6">
              <div class="input-group">
-                <label>TÍTULO DO PROJETO</label>
+                <label>T├ìTULO DO PROJETO</label>
                 <input v-model="novoProjeto.title" type="text" placeholder="Ex: Campanha Prefeituras 2024" />
              </div>
              <div class="input-group">
-                <label>CLIENTE / ORGANIZAÇÃO</label>
+                <label>CLIENTE / ORGANIZA├ç├âO</label>
                 <input v-model="novoProjeto.organization" type="text" placeholder="Ex: Instituto XPTO" />
              </div>
           </div>
           <div class="input-group mb-6">
-             <label>DESCRIÃ‡ÃƒO DO PROJETO</label>
-             <QuillEditor theme="snow" contentType="html" v-model:content="novoProjeto.description" placeholder="Explique do que o projeto se trata, qual problema resolve e qual foi o resultado..." />
+             <label>DESCRI├âÔÇí├âãÆO DO PROJETO</label>
+             <textarea v-model="novoProjeto.description" rows="4" placeholder="Explique do que o projeto se trata, qual problema resolve e qual foi o resultado..."></textarea>
           </div>
           <div class="form-grid-2 mb-6">
              <div class="input-group">
                 <label>IMPACTO</label>
-                <input v-model="novoProjeto.impact" type="text" placeholder="Ex: +500 lideranças formadas" />
+                <input v-model="novoProjeto.impact" type="text" placeholder="Ex: +500 lideran├ºas formadas" />
              </div>
              <div class="input-group">
                 <label>IMAGEM DE CAPA (URL)</label>
@@ -3067,8 +2930,8 @@ onUnmounted(() => {
              </div>
           </div>
           <div class="input-group mb-6">
-             <label>TAGS (SEPARADAS POR VÍRGULA)</label>
-             <input v-model="novoProjeto.tags" type="text" placeholder="Ex: Gênero, Liderança, Advocacy" />
+             <label>TAGS (SEPARADAS POR V├ìRGULA)</label>
+             <input v-model="novoProjeto.tags" type="text" placeholder="Ex: G├¬nero, Lideran├ºa, Advocacy" />
           </div>
           <div class="tag-editor-preview mb-6">
              <button
@@ -3089,8 +2952,8 @@ onUnmounted(() => {
                Nenhuma tag ainda
              </button>
              <div class="tag-suggestions">
-               <button type="button" class="tag-suggestion" @click="addProjectTag('Gênero')">+ Gênero</button>
-               <button type="button" class="tag-suggestion" @click="addProjectTag('Liderança')">+ Liderança</button>
+               <button type="button" class="tag-suggestion" @click="addProjectTag('G├¬nero')">+ G├¬nero</button>
+               <button type="button" class="tag-suggestion" @click="addProjectTag('Lideran├ºa')">+ Lideran├ºa</button>
                <button type="button" class="tag-suggestion" @click="addProjectTag('Advocacy')">+ Advocacy</button>
              </div>
           </div>
@@ -3108,15 +2971,15 @@ onUnmounted(() => {
             </button>
           </div>
         </div>
-        <div class="editor-card-premium shadow-md">
+        <div class="editor-card-brutal shadow-solid">
            <h2 class="card-label-black mb-8">PROJETOS CADASTRADOS</h2>
            <table class="table-brutal">
               <thead>
                  <tr>
-                    <th>TÍTULO</th>
+                    <th>T├ìTULO</th>
                     <th>CLIENTE</th>
-                    <th>DESCRIÇÃO</th>
-                    <th>AÇÕES</th>
+                    <th>DESCRI├ç├âO</th>
+                    <th>A├ç├òES</th>
                  </tr>
               </thead>
               <tbody>
@@ -3124,7 +2987,7 @@ onUnmounted(() => {
                     <td class="font-bold">
                        <button class="table-title-btn" @click="editProject(project)">{{ project.title }}</button>
                     </td>
-                    <td>{{ project.organization || '—' }}</td>
+                    <td>{{ project.organization || 'ÔÇö' }}</td>
                     <td>{{ (project.description || project.desc || '').substring(0, 45) }}{{ (project.description || project.desc || '').length > 45 ? '...' : '' }}</td>
                     <td class="actions-td">
                        <button class="icon-action" title="Editar" @click="editProject(project)"><Edit :size="16" /></button>
@@ -3139,37 +3002,21 @@ onUnmounted(() => {
         </div>
       </section>
 
-      <!-- 8. CONFIGURAÇÕES GLOBAIS -->
-      <section v-if="activeTab === 'metricas'" class="admin-section fade-in-up">
-        <div class="admin-header">
-          <div>
-            <h1 class="admin-title">Métricas de Acesso</h1>
-            <p class="admin-subtitle">Desempenho e visualizações das páginas do Hub</p>
-          </div>
-        </div>
-
-        <div class="admin-card mb-8">
-          <h2 class="card-title mb-6">Páginas Mais Visitadas</h2>
-          <div style="height: 400px; width: 100%;">
-            <Bar :data="metricasChartData" :options="metricasChartOptions" />
-          </div>
-        </div>
-      </section>
-
+      <!-- 8. CONFIGURA├ç├òES GLOBAIS -->
       <section v-if="activeTab === 'configuracoes'" class="admin-section fade-in-up">
-        <div class="editor-card-premium shadow-md mb-10">
-          <h2 class="card-label-black mb-8">ESTÉTICA DA PLATAFORMA (CORES E LOGO)</h2>
+        <div class="editor-card-brutal shadow-solid mb-10">
+          <h2 class="card-label-black mb-8">EST├ëTICA DA PLATAFORMA (CORES E LOGO)</h2>
           <div class="mb-6">
              <ImageUploader v-model="siteContent.settings.siteLogo" label="LOGO PRINCIPAL DO SITE (Fundo Escuro)" />
           </div>
           <div class="form-grid-2 mb-6">
              <div class="input-group">
-                <label>COR PRIMÁRIA (AÇÕES PRINCIPAIS)</label>
-                <input type="color" value="#F5F0E8" style="height: 50px; padding: 5px; cursor: pointer;" class="select-brutal" />
+                <label>COR PRIM├üRIA (A├ç├òES PRINCIPAIS)</label>
+                <input type="color" value="#FFE65A" style="height: 50px; padding: 5px; cursor: pointer;" class="select-brutal" />
              </div>
              <div class="input-group">
-                <label>COR SECUNDÁRIA (DESTAQUES)</label>
-                <input type="color" value="#EFEFEF" style="height: 50px; padding: 5px; cursor: pointer;" class="select-brutal" />
+                <label>COR SECUND├üRIA (DESTAQUES)</label>
+                <input type="color" value="#FF6BCA" style="height: 50px; padding: 5px; cursor: pointer;" class="select-brutal" />
              </div>
           </div>
           <div class="form-grid-2 mb-6">
@@ -3177,7 +3024,7 @@ onUnmounted(() => {
                 <label class="checkbox-container" style="margin-top: 20px;">
                    <input type="checkbox" checked />
                    <span class="checkmark"></span>
-                   <span class="check-label font-bold">ATIVAR MODO ESCURO (DARK MODE) POR PADRÃO</span>
+                   <span class="check-label font-bold">ATIVAR MODO ESCURO (DARK MODE) POR PADR├âO</span>
                 </label>
              </div>
              <div class="input-group flex items-center justify-start gap-4">
@@ -3190,119 +3037,119 @@ onUnmounted(() => {
           </div>
         </div>
 
-        <div class="editor-card-premium shadow-md">
+        <div class="editor-card-brutal shadow-solid">
           <h2 class="card-label-black mb-8">SEO E REDES SOCIAIS</h2>
           <div class="form-grid-2 mb-6">
              <div class="input-group">
-                <label>TÍTULO BASE DO SITE (SEO)</label>
-                <input v-model="siteContent.settings.siteName" type="text" placeholder="Ex: Narrativa Política - Inteligência..." />
+                <label>T├ìTULO BASE DO SITE (SEO)</label>
+                <input type="text" placeholder="Ex: Narrativa Pol├¡tica - Intelig├¬ncia..." />
              </div>
              <div class="input-group">
-                <label>PALAVRAS-CHAVE (SEPARADAS POR VÍRGULA)</label>
-                <input v-model="siteContent.settings.seoKeywords" type="text" placeholder="Ex: advocacy, mobilização, dados..." />
+                <label>PALAVRAS-CHAVE (SEPARADAS POR V├ìRGULA)</label>
+                <input type="text" placeholder="Ex: advocacy, mobiliza├º├úo, dados..." />
              </div>
           </div>
           <div class="input-group mb-6">
-             <label>DESCRIÇÃO GLOBAL (META DESCRIPTION)</label>
-             <textarea v-model="siteContent.settings.seoDescription" rows="2" placeholder="O ecossistema que conecta lideranças políticas..."></textarea>
+             <label>DESCRI├ç├âO GLOBAL (META DESCRIPTION)</label>
+             <textarea rows="2" placeholder="O ecossistema que conecta lideran├ºas pol├¡ticas..."></textarea>
           </div>
-          <h3 class="font-display uppercase text-lg mb-4 mt-8">RODAPÉ / INFORMAÇÕES DE CONTATO</h3>
+          <h3 class="font-display uppercase text-lg mb-4 mt-8">RODAP├ë / INFORMA├ç├òES DE CONTATO</h3>
           <div class="input-group mb-6">
-             <label>TEXTO DE COPYRIGHT (RODAPÉ)</label>
-             <input v-model="siteContent.settings.copyright" type="text" placeholder="© 2026 Narrativa Política. Todos os direitos reservados." />
+             <label>TEXTO DE COPYRIGHT (RODAP├ë)</label>
+             <input type="text" placeholder="┬® 2026 Narrativa Pol├¡tica. Todos os direitos reservados." />
           </div>
           <div class="form-grid-2 mb-6">
              <div class="input-group">
                 <label>LINK DO INSTAGRAM</label>
-                <input v-model="siteContent.settings.instagram" type="url" placeholder="https://instagram.com/..." />
+                <input type="url" placeholder="https://instagram.com/..." />
              </div>
              <div class="input-group">
                 <label>LINK DO LINKEDIN</label>
-                <input v-model="siteContent.settings.linkedin" type="url" placeholder="https://linkedin.com/in/..." />
+                <input type="url" placeholder="https://linkedin.com/in/..." />
              </div>
              <div class="input-group">
-                <label>CHAVE PIX (DOAÇÕES)</label>
-                <input v-model="siteContent.settings.pixKey" type="text" placeholder="CNPJ ou E-mail PIX" />
+                <label>CHAVE PIX (DOA├ç├òES)</label>
+                <input type="text" placeholder="CNPJ ou E-mail PIX" />
              </div>
              <div class="input-group">
                 <label>LINK DO WHATSAPP DE CONTATO</label>
-                <input v-model="siteContent.settings.whatsapp" type="url" placeholder="https://wa.me/55..." />
+                <input type="url" placeholder="https://wa.me/55..." />
              </div>
           </div>
-          <button class="btn-save-brutal" @click="saveSettings" :disabled="isSaving">
-             <Save :size="18" /> {{ isSaving ? 'SALVANDO...' : 'SALVAR CONFIGURAÇÕES GERAIS' }}
+          <button class="btn-save-brutal" @click="saveSobre" :disabled="isSaving">
+             <Save :size="18" /> {{ isSaving ? 'SALVANDO...' : 'SALVAR CONFIGURA├ç├òES GERAIS' }}
           </button>
         </div>
       </section>
 
-      <!-- TAB DOAÇÕES -->
+      <!-- TAB DOA├ç├òES -->
       <section v-if="activeTab === 'doacao'" class="admin-section fade-in-up">
-        <div class="editor-card-premium shadow-md mb-10">
-          <h2 class="card-label-black mb-8">HEADLINE DA PÁGINA</h2>
+        <div class="editor-card-brutal shadow-solid mb-10">
+          <h2 class="card-label-black mb-8">HEADLINE DA P├üGINA</h2>
           <div class="form-grid-2 mb-6">
              <div class="input-group">
-                <label>TÍTULO PARTE 1 (PRETO)</label>
+                <label>T├ìTULO PARTE 1 (PRETO)</label>
                 <input v-model="donateConfigData.headlinePart1" type="text" placeholder="Ex: TRANSFORME" />
              </div>
              <div class="input-group">
-                <label>TÍTULO PARTE 2 (COLORIDO)</label>
-                <input v-model="donateConfigData.headlinePart2" type="text" placeholder="Ex: NARRATIVA EM AÇÃO" />
+                <label>T├ìTULO PARTE 2 (COLORIDO)</label>
+                <input v-model="donateConfigData.headlinePart2" type="text" placeholder="Ex: NARRATIVA EM A├ç├âO" />
              </div>
           </div>
           <div class="input-group mb-6">
-             <label>SUBTÍTULO</label>
-             <textarea v-model="donateConfigData.sub" rows="2" placeholder="Descrição motivacional para doar"></textarea>
+             <label>SUBT├ìTULO</label>
+             <textarea v-model="donateConfigData.sub" rows="2" placeholder="Descri├º├úo motivacional para doar"></textarea>
           </div>
           <div class="form-grid-2 mb-6">
              <div class="input-group">
-                <label>RÓTULO TOGGLE (ÚNICA)</label>
-                <input v-model="donateConfigData.toggleLabelSingle" type="text" placeholder="ÚNICA" />
+                <label>R├ôTULO TOGGLE (├ÜNICA)</label>
+                <input v-model="donateConfigData.toggleLabelSingle" type="text" placeholder="├ÜNICA" />
              </div>
              <div class="input-group">
-                <label>RÓTULO TOGGLE (MENSAL)</label>
+                <label>R├ôTULO TOGGLE (MENSAL)</label>
                 <input v-model="donateConfigData.toggleLabelMonthly" type="text" placeholder="MENSAL" />
              </div>
           </div>
           <div class="input-group mb-6">
-             <label>TEXTO DO BOTÃO CONTRIBUIR</label>
+             <label>TEXTO DO BOT├âO CONTRIBUIR</label>
              <input v-model="donateConfigData.buttonText" type="text" placeholder="CONTRIBUIR AGORA" />
           </div>
         </div>
 
-        <div class="editor-card-premium shadow-md mb-10">
-          <h2 class="card-label-black mb-8">ESTATÍSTICAS DE IMPACTO</h2>
+        <div class="editor-card-brutal shadow-solid mb-10">
+          <h2 class="card-label-black mb-8">ESTAT├ìSTICAS DE IMPACTO</h2>
           <div class="form-grid-3">
              <div class="input-group">
-                <label>LÍDERES</label>
-                <input v-model="donateConfigData.statsLeaders" type="text" placeholder="2.500+ LÍDERES" />
+                <label>L├ìDERES</label>
+                <input v-model="donateConfigData.statsLeaders" type="text" placeholder="2.500+ L├ìDERES" />
              </div>
              <div class="input-group">
                 <label>CAMPANHAS</label>
                 <input v-model="donateConfigData.statsCampaigns" type="text" placeholder="10+ CAMPANHAS" />
              </div>
              <div class="input-group">
-                <label>RELATÓRIOS</label>
-                <input v-model="donateConfigData.statsReports" type="text" placeholder="80+ RELATÓRIOS" />
+                <label>RELAT├ôRIOS</label>
+                <input v-model="donateConfigData.statsReports" type="text" placeholder="80+ RELAT├ôRIOS" />
              </div>
           </div>
         </div>
 
         <button class="btn-save-brutal w-full" @click="saveDonateConfig" :disabled="isSaving">
-           <Save :size="18" /> {{ isSaving ? 'SALVANDO...' : 'SALVAR CONFIGURAÇÕES DE DOAÇÃO' }}
+           <Save :size="18" /> {{ isSaving ? 'SALVANDO...' : 'SALVAR CONFIGURA├ç├òES DE DOA├ç├âO' }}
         </button>
       </section>
 
-      <!-- TAB VISIBILIDADE / MÓDULOS -->
+      <!-- TAB VISIBILIDADE / M├ôDULOS -->
       <section v-if="activeTab === 'visibilidade'" class="admin-section fade-in-up">
-        <div class="editor-card-premium shadow-md mb-10">
-          <h2 class="card-label-black mb-8">VISIBILIDADE DAS PÁGINAS</h2>
-          <p class="mb-6 text-sm" style="font-family: 'Inter'; font-weight: 700;">Ative ou desative páginas e botões no menu principal da plataforma.</p>
+        <div class="editor-card-brutal shadow-solid mb-10">
+          <h2 class="card-label-black mb-8">VISIBILIDADE DAS P├üGINAS</h2>
+          <p class="mb-6 text-sm" style="font-family: 'Inter'; font-weight: 700;">Ative ou desative p├íginas e bot├Áes no menu principal da plataforma.</p>
           
           <div class="form-grid-2">
              <label class="toggle-brutal-container">
                 <input type="checkbox" v-model="siteContent.settings.menuHome" />
                 <span class="toggle-slider"></span>
-                <span class="toggle-label">Página Inicial (Movimento)</span>
+                <span class="toggle-label">P├ígina Inicial (Movimento)</span>
              </label>
              <label class="toggle-brutal-container">
                 <input type="checkbox" v-model="siteContent.settings.menuArticles" />
@@ -3322,7 +3169,7 @@ onUnmounted(() => {
              <label class="toggle-brutal-container">
                 <input type="checkbox" v-model="siteContent.settings.menuServices" />
                 <span class="toggle-slider"></span>
-                <span class="toggle-label">Serviços / Eixos</span>
+                <span class="toggle-label">Servi├ºos / Eixos</span>
              </label>
              <label class="toggle-brutal-container">
                 <input type="checkbox" v-model="siteContent.settings.menuProjects" />
@@ -3332,7 +3179,7 @@ onUnmounted(() => {
              <label class="toggle-brutal-container">
                 <input type="checkbox" v-model="siteContent.settings.menuLibrary" />
                 <span class="toggle-slider"></span>
-                <span class="toggle-label">Biblioteca Técnica</span>
+                <span class="toggle-label">Biblioteca T├®cnica</span>
              </label>
              <label class="toggle-brutal-container">
                 <input type="checkbox" v-model="siteContent.settings.menuAbout" />
@@ -3342,14 +3189,14 @@ onUnmounted(() => {
           </div>
         </div>
 
-        <div class="editor-card-premium shadow-md mt-10 mb-10">
-          <h2 class="card-label-black mb-8">ÁREA DO USUÁRIO</h2>
-          <p class="mb-6 text-sm" style="font-family: 'Inter'; font-weight: 700;">Controle se as pessoas podem acessar a área do aluno ou criar novas contas.</p>
+        <div class="editor-card-brutal shadow-solid mt-10 mb-10">
+          <h2 class="card-label-black mb-8">├üREA DO USU├üRIO</h2>
+          <p class="mb-6 text-sm" style="font-family: 'Inter'; font-weight: 700;">Controle se as pessoas podem acessar a ├írea do aluno ou criar novas contas.</p>
           <div class="form-grid-2">
              <label class="toggle-brutal-container">
                 <input type="checkbox" v-model="siteContent.settings.showLogin" />
                 <span class="toggle-slider"></span>
-                <span class="toggle-label">Exibir botão de LOGIN no topo</span>
+                <span class="toggle-label">Exibir bot├úo de LOGIN no topo</span>
              </label>
              <label class="toggle-brutal-container">
                 <input type="checkbox" v-model="siteContent.settings.allowRegistration" />
@@ -3366,12 +3213,12 @@ onUnmounted(() => {
 
       </main>
 
-      <!-- BOTÃO VOLTAR AO TOPO (FLUTUANTE) -->
+      <!-- BOT├âO VOLTAR AO TOPO (FLUTUANTE) -->
       <transition name="fade">
       <button 
         v-if="showScrollTop" 
         @click="scrollToTop" 
-        class="btn-back-to-top shadow-md"
+        class="btn-back-to-top shadow-solid"
         title="Voltar ao topo"
       >
         <ArrowUp :size="24" />
@@ -3381,436 +3228,428 @@ onUnmounted(() => {
       </template>
 
       <style scoped>
-/* ==========================================
-   ADMIN DASHBOARD — EDITORIAL BRUTALIST
-   Paleta: #1C1C1C (preto), #F5F0E8 (creme), #DF2028 (vermelho), #E5C600 (amarelo), #FF3C82 (rosa)
-   ========================================== */
+      .admin-dashboard-premium { display: flex; min-height: 100vh; background: #F1F5F9; position: relative; font-family: "Inter", sans-serif; }
 
-.admin-dashboard-premium {
-  display: flex; min-height: 100vh;
-  background: #F5F0E8;
-  font-family: "DM Sans", "Inter", sans-serif;
-  color: #1C1C1C;
-}
+      /* BOT├âO VOLTAR AO TOPO */
+      .btn-back-to-top {
+      position: fixed;
+      bottom: 40px;
+      right: 40px;
+      width: 60px;
+      height: 60px;
+      background: #A4CD39;
+      border: 4px solid #1C1C1C;
+      border-radius: 15px;
+      color: #1C1C1C;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 1000;
+      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      box-shadow: 6px 6px 0px #1C1C1C;
+      }
+      .btn-back-to-top:hover {
+      transform: translateY(-5px) scale(1.1);
+      background: #FFE65A;
+      }
+      .fade-enter-active, .fade-leave-active { transition: opacity 0.3s, transform 0.3s; }
+      .fade-enter-from, .fade-leave-to { opacity: 0; transform: translateY(20px); }
+/* FUNDO TEXTURA */
+.film-grain-bg { position: fixed; inset: 0; z-index: 1; pointer-events: none; background-image: radial-gradient(#1C1C1C 1px, transparent 1px); background-size: 20px 20px; opacity: 0.05; }
 
-/* SIDEBAR */
-.sidebar-black-fixed {
-  width: 260px; background: #1C1C1C; color: #FFF;
+/* SIDEBAR FIXA (ESCURA BRUTAL) */
+.sidebar-black-fixed { 
+  width: 260px; background: #1C1C1C; color: #FFF; 
   position: fixed; top: 0; left: 0; bottom: 0; z-index: 100;
-  display: flex; flex-direction: column; padding: 0;
+  display: flex; flex-direction: column; padding: 25px 20px;
+  border-right: 4px solid #1C1C1C;
   overflow-y: auto;
-  transition: transform 0.3s ease;
-}
-.sidebar-black-fixed.collapsed {
-  transform: translateX(-100%);
 }
 .sidebar-black-fixed::-webkit-scrollbar { width: 4px; }
+.sidebar-black-fixed::-webkit-scrollbar-track { background: transparent; }
 .sidebar-black-fixed::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 10px; }
 
-.sidebar-header {
-  padding: 30px 20px 20px;
-  border-bottom: 1px solid rgba(255,255,255,0.1);
-}
-.sidebar-logo-block { margin-bottom: 0; }
-.sidebar-logo-text {
-  font-family: "Archivo Black", "Barlow Condensed", sans-serif;
-  font-size: 1.4rem; font-weight: 900; line-height: 1.1;
-  color: #FFF; text-transform: uppercase; letter-spacing: -0.5px;
-  margin: 0;
-}
-.badge-admin {
-  display: inline-block; margin-top: 10px;
-  background: #DF2028; color: #FFF; padding: 4px 10px;
-  font-weight: 800; font-size: 9px; border-radius: 4px;
-  letter-spacing: 1.5px; text-transform: uppercase;
-}
+.sidebar-header { display: flex; align-items: center; gap: 15px; margin-bottom: 40px; padding-left: 10px; flex-shrink: 0; }
+.logo-brutal-white { width: 50px; height: 50px; border: 3px solid #FFF; display: flex; align-items: center; justify-content: center; border-radius: 12px; background: #FF6BCA; box-shadow: 4px 4px 0px #FFF; }
+.logo-txt { font-family: "Archivo Black", sans-serif; font-size: 1.5rem; color: #1C1C1C; }
+.badge-admin { background: #A4CD39; color: #1C1C1C; padding: 6px 12px; font-weight: 900; font-family: "Archivo Black"; font-size: 10px; border-radius: 6px; letter-spacing: 1px; border: 2px solid #1C1C1C; }
 
-.sidebar-nav-stack {
-  display: flex; flex-direction: column; padding: 15px 12px; flex: 1;
-}
 .nav-section-label {
-  font-family: "DM Sans", sans-serif; font-weight: 700;
-  font-size: 0.65rem; color: rgba(255,255,255,0.35);
-  margin: 20px 0 8px 8px; display: block;
-  letter-spacing: 1.5px; text-transform: uppercase;
+  font-family: "Archivo Black", sans-serif;
+  font-size: 9px;
+  letter-spacing: 2px;
+  color: rgba(255,255,255,0.35);
+  text-transform: uppercase;
+  padding: 20px 20px 8px;
+  display: block;
 }
-.nav-btn {
-  background: transparent; color: rgba(255,255,255,0.7);
-  padding: 10px 12px; border-radius: 8px;
-  font-family: "DM Sans", sans-serif; font-weight: 600; font-size: 0.8rem;
-  display: flex; align-items: center; gap: 10px;
-  transition: all 0.15s; cursor: pointer; border: none;
-  text-align: left; width: 100%; margin-bottom: 2px;
-}
-.nav-btn:hover { background: rgba(255,255,255,0.08); color: #FFF; }
-.nav-btn.active { background: #DF2028; color: #FFF; font-weight: 700; }
+.nav-section-label:first-child { padding-top: 0; }
 
-/* Sidebar Footer */
-.sidebar-footer {
-  padding: 16px; border-top: 1px solid rgba(255,255,255,0.1);
+.sidebar-nav-stack { display: flex; flex-direction: column; gap: 12px; }
+.nav-btn { 
+  background: transparent; color: rgba(255,255,255,0.7); border: 3px solid transparent; 
+  padding: 16px 20px; border-radius: 12px; font-weight: 800; font-size: 0.9rem; font-family: "Archivo Black";
+  display: flex; align-items: center; gap: 15px; cursor: pointer; transition: all 0.2s ease; text-transform: uppercase;
 }
-.sidebar-user-info {
-  display: flex; align-items: center; gap: 10px; margin-bottom: 12px;
-}
-.sidebar-avatar {
-  width: 36px; height: 36px; border-radius: 50%;
-  background: #DF2028; color: #FFF;
-  display: flex; align-items: center; justify-content: center;
-  font-weight: 800; font-size: 0.9rem;
-}
-.sidebar-user-name { font-weight: 700; font-size: 0.85rem; color: #FFF; margin: 0; }
-.sidebar-user-role { font-size: 0.7rem; color: rgba(255,255,255,0.5); margin: 0; }
-.btn-logout-white {
-  background: transparent; color: rgba(255,255,255,0.5);
-  padding: 10px; border-radius: 6px; font-weight: 700; font-size: 0.75rem;
-  display: flex; align-items: center; justify-content: center;
-  gap: 8px; cursor: pointer; transition: 0.2s;
-  width: 100%; border: 1px solid rgba(255,255,255,0.1);
-}
-.btn-logout-white:hover { background: rgba(255,255,255,0.08); color: #FFF; }
+.nav-btn:hover { color: #FFF; border-color: rgba(255,255,255,0.2); }
+.nav-btn.active { background: #FF6BCA; color: #1C1C1C; border-color: #1C1C1C; box-shadow: 6px 6px 0px #A4CD39; transform: translate(-2px, -2px); }
 
-/* MAIN CONTENT AREA */
-.main-content-area {
-  flex-grow: 1; margin-left: 260px;
-  padding: 40px 80px 80px;
-  overflow-x: hidden;
+.sidebar-footer { padding: 0 10px; }
+.btn-logout-white { background: #FFF; border: 3px solid #1C1C1C; color: #1C1C1C; padding: 16px; border-radius: 12px; font-weight: 900; font-family: "Archivo Black"; font-size: 0.85rem; display: flex; justify-content: center; align-items: center; gap: 10px; cursor: pointer; transition: 0.2s; width: 100%; box-shadow: 4px 4px 0px #FF6BCA; }
+.btn-logout-white:hover { border-color: #DF2028; color: #FFF; background: #DF2028; box-shadow: 6px 6px 0px #1C1C1C; transform: translate(-2px, -2px); }
+
+.main-content-area { 
+  margin-left: 260px; flex-grow: 1; position: relative; z-index: 10;
+  padding: 60px 40px 100px;
   max-width: calc(100% - 260px);
-  transition: all 0.3s ease;
 }
-.main-content-area.expanded {
-  margin-left: 0;
-  max-width: 100%;
-}
-.btn-toggle-sidebar {
-  background: transparent; border: none; color: #1C1C1C;
-  cursor: pointer; padding: 8px; border-radius: 8px;
-  display: flex; align-items: center; justify-content: center;
-  transition: 0.2s;
-}
-.btn-toggle-sidebar:hover { background: rgba(0,0,0,0.05); }
-.film-grain-bg { display: none; }
 
-/* HEADER */
-.admin-top-header {
-  display: flex; justify-content: space-between; align-items: flex-start;
-  margin-bottom: 40px; padding-bottom: 0;
+/* HEADER DO CONTE├ÜDO BRUTAL */
+.admin-top-header { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 4px solid #1C1C1C; padding-bottom: 25px; margin-bottom: 35px; }
+.admin-main-title { font-family: "Archivo Black", sans-serif; font-size: 2.8rem; letter-spacing: -0.02em; color: #1C1C1C; text-shadow: 4px 4px 0px #A4CD39; line-height: 1.1; }
+.admin-subtitle { font-weight: 700; font-family: "Inter"; font-size: 1rem; color: #1C1C1C; opacity: 0.7; margin-top: 10px; }
+
+.header-actions-row { display: flex; align-items: center; gap: 20px; }
+.user-pill-brutal { 
+  display: flex; align-items: center; gap: 15px; background: #FFF; border: 3px solid #1C1C1C; 
+  padding: 8px 15px 8px 20px; border-radius: 9999px; font-weight: 900; font-size: 0.8rem; color: #1C1C1C;
+  box-shadow: 4px 4px 0px #1C1C1C; text-transform: uppercase;
 }
-.admin-main-title {
-  font-family: "Archivo Black", "Barlow Condensed", sans-serif;
-  font-weight: 900; font-size: 2.5rem; color: #1C1C1C;
-  margin: 0 0 6px; letter-spacing: -1px; text-transform: uppercase;
+.avatar-sm { width: 32px; height: 32px; background: #FF6BCA; border: 2px solid #1C1C1C; border-radius: 50%; color: #1C1C1C; display: flex; align-items: center; justify-content: center; font-weight: 900; }
+
+.btn-preview-solid { 
+  background: #3D78E0; color: #FFF; padding: 14px 28px; border-radius: 9999px; border: 3px solid #1C1C1C; 
+  font-weight: 900; font-family: "Archivo Black"; font-size: 0.8rem; display: flex; align-items: center; gap: 10px; cursor: pointer; 
+  transition: all 0.2s; box-shadow: 4px 4px 0px #1C1C1C; 
 }
-.admin-subtitle {
-  font-size: 0.95rem; color: rgba(28,28,28,0.6); font-weight: 500; margin: 0;
+.btn-preview-solid:hover { background: #FFE65A; color: #1C1C1C; transform: translate(-2px, -2px); box-shadow: 6px 6px 0px #1C1C1C; }
+
+/* SE├ç├òES E CARDS DE EDI├ç├âO BRUTALISTAS */
+.editor-card-brutal { background: #FFFFFF; border: 4px solid #1C1C1C; border-radius: 20px; padding: 30px; box-shadow: 12px 12px 0px #1C1C1C; transition: all 0.3s ease; }
+.editor-card-brutal:hover { box-shadow: 16px 16px 0px #FF6BCA; transform: translate(-2px, -2px); }
+
+.card-label-black { 
+  font-family: "Archivo Black", sans-serif; font-size: 1.1rem; color: #1C1C1C; 
+  letter-spacing: 1px; border-left: 8px solid #FFE65A; padding-left: 15px; text-transform: uppercase; margin-bottom: 25px; 
 }
-.header-actions-row { display: flex; align-items: center; gap: 12px; }
-.btn-preview-solid {
-  background: #1C1C1C; color: #FFF; padding: 12px 24px;
-  border: 3px solid #1C1C1C; font-weight: 800; font-size: 0.8rem;
-  display: flex; align-items: center; gap: 8px;
-  cursor: pointer; transition: 0.2s; text-transform: uppercase;
+
+/* REDUZIR ZOOM NAS TABELAS E INPUTS */
+.table-brutal th, .table-brutal td { padding: 12px 15px; font-size: 13px; }
+.input-group label { font-size: 11px; margin-bottom: 6px; }
+.input-group input, .input-group textarea, .select-brutal { padding: 10px 15px; font-size: 14px; }
+.btn-save-brutal { padding: 12px 24px; font-size: 14px; }
+
+.form-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
+.form-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 30px; }
+
+.input-group { display: flex; flex-direction: column; gap: 10px; }
+.input-group label { font-family: "Archivo Black"; font-size: 12px; color: #1C1C1C; letter-spacing: 1px; text-transform: uppercase; }
+.input-group input, .input-group textarea, .select-brutal { 
+  width: 100%; padding: 18px 20px; border: 3px solid #1C1C1C; border-radius: 12px; 
+  font-family: "Inter", sans-serif; font-weight: 700; font-size: 1rem; color: #1C1C1C; outline: none; transition: all 0.2s; background: #FFF; box-shadow: 4px 4px 0px rgba(0,0,0,0.05);
+}
+.input-group input:focus, .input-group textarea:focus, .select-brutal:focus { 
+  border-color: #3D78E0; box-shadow: 6px 6px 0px #1C1C1C; transform: translate(-2px, -2px);
+}
+.input-group input::placeholder, .input-group textarea::placeholder { color: #1C1C1C; opacity: 0.4; font-weight: 500; }
+
+/* PILLS PARA CATEGORIA BRUTAL */
+.category-pill-group { display: flex; flex-wrap: wrap; gap: 10px; }
+.cat-pill { 
+  background: #FFF; border: 3px solid #1C1C1C; color: #1C1C1C; 
+  padding: 12px 20px; border-radius: 12px; font-weight: 800; font-size: 0.85rem; 
+  cursor: pointer; transition: all 0.2s; white-space: nowrap; font-family: "Archivo Black", sans-serif; box-shadow: 4px 4px 0px rgba(0,0,0,0.1); text-transform: uppercase;
+}
+.cat-pill:hover { transform: translate(-2px, -2px); box-shadow: 6px 6px 0px #1C1C1C; background: #F1F5F9; }
+.cat-pill.active { background: #A4CD39; color: #1C1C1C; border-color: #1C1C1C; box-shadow: 6px 6px 0px #1C1C1C; transform: translate(-2px, -2px); }
+
+/* CHECKBOX CUSTOM */
+.checkbox-container { display: flex; align-items: center; gap: 12px; cursor: pointer; position: relative; margin-top: 5px; }
+.checkbox-container input { position: absolute; opacity: 0; width: 0; }
+.checkmark { height: 26px; width: 26px; background-color: #FFF; border: 3px solid #1C1C1C; border-radius: 8px; position: relative; transition: 0.2s; box-shadow: 2px 2px 0px #1C1C1C; }
+.checkbox-container input:checked ~ .checkmark { background-color: #FF6BCA; }
+.checkmark:after { content: ""; position: absolute; display: none; left: 8px; top: 3px; width: 6px; height: 12px; border: solid #1C1C1C; border-width: 0 3px 3px 0; transform: rotate(45deg); }
+.checkbox-container input:checked ~ .checkmark:after { display: block; }
+.check-label { font-weight: 900; font-size: 13px; color: #1C1C1C; font-family: "Inter"; text-transform: uppercase; }
+
+/* TOGGLE BRUTAL (ON/OFF) */
+.toggle-brutal-container { display: flex; align-items: center; gap: 15px; cursor: pointer; background: #F1F5F9; padding: 15px 20px; border-radius: 12px; border: 3px solid #1C1C1C; box-shadow: 4px 4px 0px rgba(0,0,0,0.05); transition: all 0.2s; margin-bottom: 5px; }
+.toggle-brutal-container:hover { box-shadow: 6px 6px 0px #1C1C1C; transform: translate(-2px, -2px); }
+.toggle-brutal-container input { position: absolute; opacity: 0; width: 0; }
+.toggle-slider { width: 54px; height: 30px; background-color: #FFF; border: 3px solid #1C1C1C; border-radius: 30px; position: relative; transition: 0.3s; flex-shrink: 0; }
+.toggle-slider::before { content: ""; position: absolute; height: 18px; width: 18px; left: 4px; bottom: 3px; background-color: #1C1C1C; border-radius: 50%; transition: 0.3s; }
+.toggle-brutal-container input:checked + .toggle-slider { background-color: #A4CD39; border-color: #1C1C1C; }
+.toggle-brutal-container input:checked + .toggle-slider::before { transform: translateX(24px); }
+.toggle-label { font-weight: 900; font-family: "Inter", sans-serif; font-size: 0.95rem; color: #1C1C1C; }
+
+/* BOT├òES DE A├ç├âO BRUTALISTAS */
+.btn-save-brutal { 
+  background: #FFE65A; color: #1C1C1C; padding: 22px 45px; 
+  border-radius: 16px; border: 4px solid #1C1C1C; font-family: "Archivo Black"; font-size: 1rem; text-transform: uppercase; 
+  cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 12px; 
+  box-shadow: 8px 8px 0px #1C1C1C; transition: all 0.2s ease;
+}
+.btn-save-brutal:hover:not(:disabled) { background: #A4CD39; transform: translate(-4px, -4px); box-shadow: 12px 12px 0px #1C1C1C; }
+.btn-save-brutal:disabled { opacity: 0.6; cursor: not-allowed; background: #CBD5E1; }
+.tag-editor-preview { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.tag-chip, .tag-suggestion {
+  border: 2px solid #1C1C1C;
+  background: #FFE65A;
+  color: #1C1C1C;
+  font-family: "Archivo Black", sans-serif;
+  font-size: 11px;
+  text-transform: uppercase;
+  padding: 8px 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.tag-chip { display: inline-flex; align-items: center; gap: 6px; }
+.tag-chip:hover, .tag-suggestion:hover { background: #FF6BCA; color: #fff; transform: translate(-2px, -2px); box-shadow: 4px 4px 0 #1C1C1C; }
+.tag-chip-empty { background: #F1F5F9; color: #64748B; cursor: default; }
+.tag-chip-empty:hover { transform: none; box-shadow: none; }
+.tag-suggestions { display: flex; flex-wrap: wrap; gap: 8px; }
+.import-bar { display: flex; gap: 16px; align-items: end; flex-wrap: wrap; }
+.import-btn { white-space: nowrap; }
+
+/* TABELA DE REGISTROS BRUTAL */
+.table-brutal { width: 100%; border-collapse: separate; border-spacing: 0; border: 4px solid #1C1C1C; border-radius: 16px; overflow: hidden; background: #FFF; box-shadow: 8px 8px 0px #1C1C1C; }
+.table-brutal th { background: #1C1C1C; color: #FFF; font-family: "Archivo Black"; font-size: 11px; padding: 20px 24px; text-align: left; letter-spacing: 1px; border-bottom: 4px solid #1C1C1C; text-transform: uppercase; }
+.table-brutal td { padding: 20px 24px; border-bottom: 3px solid #F1F5F9; font-size: 1rem; font-weight: 700; color: #1C1C1C; vertical-align: middle; font-family: "Inter"; }
+.table-brutal tr:last-child td { border-bottom: none; }
+
+.badge-draft { background: #E2E8F0; color: #64748B; padding: 6px 12px; border-radius: 8px; font-weight: 900; font-family: "Archivo Black"; font-size: 10px; border: 2px solid #1C1C1C; }
+.badge-published { background: #A4CD39; color: #1C1C1C; padding: 6px 12px; border-radius: 8px; font-weight: 900; font-family: "Archivo Black"; font-size: 10px; border: 2px solid #1C1C1C; }
+.badge-featured { background: #FF6BCA; color: #1C1C1C; padding: 6px 12px; border-radius: 8px; font-weight: 900; font-family: "Archivo Black"; font-size: 10px; border: 2px solid #1C1C1C; }
+.badge-normal { background: #FFF; color: #1C1C1C; padding: 6px 12px; border-radius: 8px; font-weight: 900; font-family: "Archivo Black"; font-size: 10px; border: 2px solid #1C1C1C; }
+.badge-danger { background: #DF2028; color: #FFF; padding: 6px 12px; border-radius: 8px; font-weight: 900; font-family: "Archivo Black"; font-size: 10px; border: 2px solid #1C1C1C; }
+.badge-pill { padding: 8px 16px; border-radius: 12px; font-weight: 900; font-family: "Archivo Black"; font-size: 11px; display: inline-block; border: 2px solid #1C1C1C; }
+
+.sites-grid-square {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 16px;
+}
+
+.site-research-card {
+  background: #fff;
+  border: 3px solid #1C1C1C;
+  border-radius: 18px;
+  padding: 20px;
+  box-shadow: 8px 8px 0 rgba(0,0,0,0.08);
+  min-height: 180px;
+}
+
+.source-pill {
+  display: inline-flex;
+  padding: 6px 12px;
+  background: #A4CD39;
+  color: #1C1C1C;
+  border: 2px solid #1C1C1C;
+  border-radius: 9999px;
+  font-size: 10px;
+  font-weight: 900;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+
+.source-url {
+  font-size: 12px;
+  line-height: 1.6;
+  color: #1C1C1C;
+  word-break: break-word;
+  opacity: 0.78;
+}
+
+.site-research-note {
+  margin: 0 0 8px;
+  font-size: 12px;
+  font-weight: 800;
+  color: #DF2028;
+  text-transform: uppercase;
   letter-spacing: 0.5px;
 }
-.btn-preview-solid:hover { background: #FFF; color: #1C1C1C; }
 
-/* METRIC CARDS */
-.metrics-grid-premium {
-  display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;
-}
-.metric-card-glass {
-  background: #FFF; border: 3px solid #1C1C1C; padding: 28px;
-  box-shadow: 6px 6px 0px #1C1C1C;
-  position: relative;
-}
-.metric-label {
-  font-size: 0.7rem; font-weight: 800; color: rgba(28,28,28,0.5);
-  text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 8px;
-}
-.metric-value {
-  font-family: "Archivo Black", "Barlow Condensed", sans-serif;
-  font-size: 3rem; font-weight: 900; color: #1C1C1C;
-  line-height: 1; margin-bottom: 6px;
-}
-.metric-trend { font-size: 0.75rem; font-weight: 700; }
-
-/* EDITOR CARDS */
-.editor-card-premium {
-  background: #FFF; border: 3px solid #1C1C1C; padding: 35px;
-  box-shadow: 6px 6px 0px #1C1C1C; margin-bottom: 30px;
-}
-.editor-card-brutal {
-  background: #FFF; border: 3px solid #1C1C1C; padding: 35px;
-  box-shadow: 6px 6px 0px #1C1C1C; margin-bottom: 30px;
-}
-.card-label-black {
-  font-family: "Archivo Black", "Barlow Condensed", sans-serif;
-  font-weight: 900; font-size: 1.1rem; color: #1C1C1C;
-  text-transform: uppercase; letter-spacing: -0.3px;
-  border-bottom: 3px solid #1C1C1C; padding-bottom: 8px;
-  display: inline-block;
-}
-.pane-header { display: flex; justify-content: space-between; align-items: flex-start; }
-
-/* FORMS */
-.form-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
-.form-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 24px; }
-.input-group { display: flex; flex-direction: column; margin-bottom: 16px; }
-.input-group label {
-  display: block; font-weight: 800; font-size: 0.7rem;
-  color: rgba(28,28,28,0.5); margin-bottom: 8px;
-  text-transform: uppercase; letter-spacing: 1px;
-}
-.input-group input, .input-group textarea, .input-group select {
-  width: 100%; background: #FFF;
-  border: 3px solid #1C1C1C; padding: 14px 16px;
-  font-family: "DM Sans", sans-serif; font-weight: 600;
-  color: #1C1C1C; font-size: 0.95rem; transition: 0.2s;
-}
-.input-group input:focus, .input-group textarea:focus, .input-group select:focus {
-  outline: none; box-shadow: 4px 4px 0px #1C1C1C;
-  transform: translate(-2px, -2px);
+.metrics-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
 }
 
-/* BUTTONS */
-.btn-save-brutal {
-  display: inline-flex; align-items: center; justify-content: center; gap: 12px;
-  background: #1C1C1C; color: #FFF; padding: 18px 36px;
-  border: 4px solid #1C1C1C;
-  font-family: "Archivo Black", sans-serif; font-size: 13px; font-weight: 900;
-  text-transform: uppercase; letter-spacing: 1px;
-  cursor: pointer; transition: all 0.2s cubic-bezier(0.23, 1, 0.32, 1);
-  box-shadow: 8px 8px 0px #DF2028;
-  position: relative;
-}
-.btn-save-brutal:hover {
-  background: #DF2028; color: #FFF;
-  transform: translate(-3px, -3px); box-shadow: 11px 11px 0px #1C1C1C;
-}
-.btn-save-brutal:active {
-  transform: translate(2px, 2px); box-shadow: 4px 4px 0px #1C1C1C;
-}
-.btn-save-brutal:disabled { 
-  opacity: 0.5; cursor: not-allowed; transform: none !important; box-shadow: 4px 4px 0px #1C1C1C !important;
-}
-
-.btn-launch-premium {
-  display: inline-flex; align-items: center; justify-content: center; gap: 12px;
-  background: #E5C600; color: #1C1C1C; padding: 18px 36px;
-  border: 4px solid #1C1C1C;
-  font-family: "Archivo Black", sans-serif; font-size: 14px; font-weight: 900;
-  text-transform: uppercase; letter-spacing: 1px;
-  cursor: pointer; transition: all 0.2s cubic-bezier(0.23, 1, 0.32, 1);
-  box-shadow: 8px 8px 0px #1C1C1C;
-}
-.btn-launch-premium:hover {
-  background: #FF3C82; color: #FFF;
-  transform: translate(-4px, -4px); box-shadow: 12px 12px 0px #1C1C1C;
-}
-.btn-launch-premium:active {
-  transform: translate(2px, 2px); box-shadow: 4px 4px 0px #1C1C1C;
-}
-.btn-launch-premium:disabled {
-  opacity: 0.5; cursor: not-allowed; transform: none !important; box-shadow: 4px 4px 0px #1C1C1C !important;
-}
-
-.btn-save-fixed {
-  position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
-  background: #DF2028; color: #FFF; padding: 16px 40px;
-  border: 4px solid #1C1C1C; font-weight: 900; font-size: 1rem;
-  display: flex; align-items: center; gap: 12px;
-  box-shadow: 8px 8px 0px #1C1C1C;
-  cursor: pointer; transition: 0.2s; z-index: 1000;
-  text-transform: uppercase; font-family: "Archivo Black", sans-serif;
-}
-.btn-save-fixed:hover { transform: translateX(-50%) translateY(-5px); box-shadow: 12px 12px 0px #1C1C1C; background: #FF3C82; }
-
-.btn-black-pill {
-  background: #1C1C1C; color: #FFF; padding: 10px 20px;
-  border: 2px solid #1C1C1C; font-weight: 800; font-size: 0.8rem;
-  cursor: pointer; transition: 0.2s; text-transform: uppercase;
-}
-.btn-black-pill:hover { background: #FFF; color: #1C1C1C; }
-.btn-red-pill {
-  background: #DF2028; color: #FFF; padding: 10px 20px;
-  border: 2px solid #1C1C1C; font-weight: 800; font-size: 0.8rem;
-  cursor: pointer; transition: 0.2s; text-transform: uppercase;
-}
-.btn-red-pill:hover { background: #FFF; color: #DF2028; }
-.btn-outline-pill {
-  background: #FFF; color: #1C1C1C; padding: 10px 20px;
-  border: 2px solid #1C1C1C; font-weight: 800; font-size: 0.8rem;
-  cursor: pointer; transition: 0.2s; text-transform: uppercase;
-}
-.btn-outline-pill:hover { background: #1C1C1C; color: #FFF; }
-
-/* TABLES */
-.table-brutal {
-  width: 100%; border-collapse: collapse; background: #FFF;
-  border: 3px solid #1C1C1C;
-}
-.table-brutal th {
-  background: #F5F0E8; padding: 14px 16px; text-align: left;
-  font-weight: 800; font-size: 0.7rem; color: rgba(28,28,28,0.5);
-  text-transform: uppercase; letter-spacing: 1px;
-  border-bottom: 3px solid #1C1C1C;
-}
-.table-brutal td {
-  padding: 14px 16px; border-bottom: 1px solid rgba(28,28,28,0.1);
-  font-weight: 600; font-size: 0.9rem; color: #1C1C1C;
-}
-.table-title-btn {
-  background: none; border: none; color: #1C1C1C; font-weight: 700;
-  font-size: 0.9rem; cursor: pointer; text-align: left; padding: 0;
-}
-.table-title-btn:hover { color: #DF2028; }
-
-/* BADGES */
-.badge-featured {
-  background: #FF3C82; color: #FFF; padding: 4px 10px;
-  border: 2px solid #1C1C1C; font-size: 10px; font-weight: 800;
-  text-transform: uppercase; display: inline-block;
-}
-.badge-normal {
-  background: #FFF; color: #1C1C1C; padding: 4px 10px;
-  border: 2px solid #1C1C1C; font-size: 10px; font-weight: 800;
-  text-transform: uppercase; display: inline-block;
-  box-shadow: 2px 2px 0px #1C1C1C;
-}
-.badge-danger {
-  background: #DF2028; color: #FFF; padding: 4px 10px;
-  border: 2px solid #1C1C1C; font-size: 10px; font-weight: 800;
-  text-transform: uppercase; display: inline-block;
-}
-
-/* TOGGLES */
-.toggle-brutal-container {
-  display: flex; align-items: center; cursor: pointer; padding: 12px 0;
-}
-.toggle-brutal-container input { display: none; }
-.toggle-slider {
-  position: relative; width: 50px; height: 28px;
-  background: #FFF; border: 3px solid #1C1C1C;
-  transition: 0.3s; margin-right: 12px; flex-shrink: 0;
-}
-.toggle-slider::before {
-  content: ""; position: absolute; top: 3px; left: 3px;
-  width: 16px; height: 16px; background: #1C1C1C; transition: 0.3s;
-}
-.toggle-brutal-container input:checked + .toggle-slider { background: #DF2028; }
-.toggle-brutal-container input:checked + .toggle-slider::before { transform: translateX(22px); background: #FFF; }
-.toggle-label {
-  font-weight: 700; font-size: 0.85rem; color: #1C1C1C;
-}
-
-/* SEO SIDEBAR */
-.seo-sidebar {
-  background: #E5C600; border: 3px solid #1C1C1C; padding: 24px;
-  box-shadow: 6px 6px 0px #1C1C1C;
-}
-
-/* SCROLL TOP */
-.btn-back-to-top {
-  position: fixed; bottom: 40px; right: 40px;
-  width: 56px; height: 56px; background: #E5C600;
-  border: 3px solid #1C1C1C; color: #1C1C1C;
-  display: flex; align-items: center; justify-content: center;
-  cursor: pointer; z-index: 1000; transition: 0.2s;
-  box-shadow: 4px 4px 0px #1C1C1C;
-}
-.btn-back-to-top:hover { transform: translate(-2px, -2px); box-shadow: 6px 6px 0px #1C1C1C; }
-
-/* ANIMATIONS */
-.fade-in-up { animation: fadeInUp 0.4s ease-out; }
-@keyframes fadeInUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
-.fade-enter-active, .fade-leave-active { transition: opacity 0.3s, transform 0.3s; }
-.fade-enter-from, .fade-leave-to { opacity: 0; transform: translateY(20px); }
-
-/* UTILITIES */
-.flex { display: flex; } .items-center { align-items: center; } .gap-4 { gap: 1rem; }
-.mb-2 { margin-bottom: 0.5rem; } .mb-4 { margin-bottom: 1rem; }
-.mb-6 { margin-bottom: 1.5rem; } .mb-8 { margin-bottom: 2rem; }
-.mb-10 { margin-bottom: 2.5rem; } .mb-12 { margin-bottom: 3rem; }
-.mt-6 { margin-top: 1.5rem; } .mt-8 { margin-top: 2rem; }
-.mt-10 { margin-top: 2.5rem; } .mt-12 { margin-top: 3rem; }
-.mt-auto { margin-top: auto; } .w-full { width: 100%; }
-.shadow-md { /* overridden by brutalist shadows above */ }
-.pt-48 { padding-top: 0; } .pb-32 { padding-bottom: 0; } .px-12 { padding-left: 0; padding-right: 0; }
-
-/* WORKSPACE DUAL */
-.editor-workspace-dual { display: grid; grid-template-columns: 2fr 1fr; gap: 24px; }
-
-/* CATEGORY PILLS */
-.category-pill-group { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
-.cat-pill {
-  background: #F5F0E8; border: 2px solid #1C1C1C; color: #1C1C1C;
-  padding: 8px 16px; font-weight: 800; font-size: 0.75rem;
-  border-radius: 20px; cursor: pointer; transition: 0.2s;
+.metric-chip {
+  padding: 8px 12px;
+  border-radius: 9999px;
+  background: #F7F7F5;
+  border: 2px solid #1C1C1C;
+  font-size: 11px;
+  font-weight: 900;
   text-transform: uppercase;
 }
-.cat-pill:hover { background: #E5C600; }
-.cat-pill.active { background: #1C1C1C; color: #FFF; }
-.btn-add-cat { border-style: dashed; background: transparent; display: flex; align-items: center; gap: 4px; }
-.btn-add-cat:hover { background: #F5F0E8; }
 
-/* SMALL BUTTONS & TAGS */
-.btn-tool-sm {
-  background: #F5F0E8; color: #1C1C1C; border: 2px solid #1C1C1C; padding: 6px 12px;
-  font-weight: 800; font-size: 0.7rem; cursor: pointer; transition: 0.2s;
-  text-transform: uppercase; border-radius: 4px; display: inline-flex; align-items: center; gap: 4px;
+.table-title-btn {
+  appearance: none;
+  background: transparent;
+  border: 0;
+  padding: 0;
+  font: inherit;
+  font-weight: 900;
+  color: #1C1C1C;
+  text-align: left;
+  cursor: pointer;
 }
-.btn-tool-sm:hover { background: #E5C600; }
-.btn-tool-sm.bg-yellow { background: #E5C600; }
-.btn-tool-sm.bg-yellow:hover { background: #1C1C1C; color: #FFF; }
+.table-title-btn:hover { color: #3D78E0; text-decoration: underline; text-underline-offset: 4px; }
 
-.btn-copy-sm {
-  background: #1C1C1C; color: #FFF; border: 2px solid #1C1C1C; padding: 10px 20px;
-  font-weight: 800; font-size: 0.75rem; cursor: pointer; transition: 0.2s;
-  text-transform: uppercase; border-radius: 4px; display: inline-flex;
-}
-.btn-copy-sm:hover { background: #FF3C82; color: #FFF; }
+.actions-td { display: flex; gap: 15px; }
+.icon-action { background: #FFF; border: 3px solid #1C1C1C; width: 40px; height: 40px; border-radius: 12px; cursor: pointer; color: #1C1C1C; display: flex; align-items: center; justify-content: center; transition: all 0.2s; box-shadow: 4px 4px 0px rgba(0,0,0,0.1); }
+.icon-action:hover { background: #FFE65A; transform: translate(-2px, -2px); box-shadow: 6px 6px 0px #1C1C1C; }
+.icon-action.text-red-500:hover { color: #FFF; background: #DF2028; }
 
-.tag-editor-preview { display: flex; flex-wrap: wrap; gap: 8px; }
-.tag-chip {
-  background: #E5C600; color: #1C1C1C; border: 2px solid #1C1C1C;
-  padding: 6px 12px; font-weight: 800; font-size: 0.75rem;
-  border-radius: 4px; display: inline-flex; align-items: center; gap: 6px;
-  cursor: pointer; text-transform: uppercase; transition: 0.2s;
+.btn-action-mini {
+  background: #FFF;
+  border: 2px solid #1C1C1C;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  color: #1C1C1C;
 }
-.tag-chip:hover { background: #DF2028; color: #FFF; }
-.tag-chip-empty { background: #F5F0E8; color: rgba(28,28,28,0.5); border-style: dashed; cursor: default; }
-.tag-chip-empty:hover { background: #F5F0E8; color: rgba(28,28,28,0.5); }
+.btn-action-mini:hover {
+  background: #FFE65A;
+  transform: scale(1.1);
+  box-shadow: 2px 2px 0px #1C1C1C;
+}
+.btn-action-mini .lucide-star[fill="currentColor"] { color: #FFE65A; stroke: #1C1C1C; }
+.btn-action-mini .lucide-home[fill="currentColor"] { color: #A4CD39; stroke: #1C1C1C; }
 
-.tag-suggestions { display: flex; gap: 8px; margin-top: 12px; }
-.tag-suggestion {
-  background: transparent; color: #1C1C1C; border: 1px solid rgba(28,28,28,0.2);
-  padding: 6px 10px; font-weight: 700; font-size: 0.7rem; cursor: pointer;
-  border-radius: 4px; transition: 0.2s;
-}
-.tag-suggestion:hover { background: #1C1C1C; color: #FFF; border-color: #1C1C1C; }
+.mock-manager-box { width: 100%; height: 200px; background: #F8FAFC; border: 4px dashed #1C1C1C; border-radius: 20px; display: flex; align-items: center; justify-content: center; color: #1C1C1C; font-weight: 900; font-family: "Archivo Black"; font-size: 1.2rem; }
 
-/* FIX SALVAR RASCUNHO BUTTON */
-.btn-save-brutal.btn-white {
-  background: #FFF; color: #1C1C1C;
-}
-.btn-save-brutal.btn-white:hover {
-  background: #F5F0E8;
+/* ANIMA├ç├âO */
+.fade-in-up { opacity: 0; transform: translateY(20px); animation: fadeInUp 0.5s forwards; }
+@keyframes fadeInUp { to { opacity: 1; transform: translateY(0); } }
+
+@media (max-width: 1100px) {
+  .sidebar-black-fixed { width: 90px; padding: 30px 15px; }
+  .logo-txt { display: none; }
+  .badge-admin, .sidebar-nav-stack span, .sidebar-footer span { display: none; }
+  .nav-btn { padding: 15px; justify-content: center; }
+  .main-content-area { margin-left: 90px; padding: 100px 20px 80px; }
+  .admin-main-title { font-size: 2.5rem; }
+  .form-grid-2, .form-grid-3 { grid-template-columns: 1fr; }
+  .header-actions-row .btn-preview-solid span { display: none; }
 }
 
-/* RESPONSIVE */
-@media (max-width: 1024px) {
-  .sidebar-black-fixed { width: 220px; }
-  .main-content-area { margin-left: 220px; padding: 30px 30px 60px; }
-  .main-content-area.expanded { margin-left: 0; }
-  .metrics-grid-premium { grid-template-columns: 1fr 1fr; }
-  .form-grid-2 { grid-template-columns: 1fr; }
-  .form-grid-3 { grid-template-columns: 1fr; }
-  .editor-workspace-dual { grid-template-columns: 1fr; }
+/* --- NEWSLETTER CREATOR SUITE (PREMIUM) --- */
+.metrics-grid-premium { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; }
+.metric-card-glass { 
+  background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(10px); 
+  border: 3px solid #1C1C1C; padding: 30px; border-radius: 24px; 
 }
-@media (max-width: 768px) {
-  .sidebar-black-fixed { display: none; }
-  .main-content-area { margin-left: 0; padding: 20px; }
-  .metrics-grid-premium { grid-template-columns: 1fr; }
-  .admin-main-title { font-size: 1.8rem; }
+.metric-label { font-family: "Archivo Black"; font-size: 11px; opacity: 0.6; letter-spacing: 1px; margin-bottom: 10px; }
+.metric-value { font-family: "Archivo Black"; font-size: 3rem; color: #1C1C1C; line-height: 1; margin-bottom: 5px; }
+.metric-trend { font-size: 12px; font-weight: 800; }
+
+.creator-workspace { display: grid; grid-template-columns: 1.4fr 0.6fr; gap: 40px; align-items: start; }
+
+.editor-pane { background: #FFF; border: 4px solid #1C1C1C; border-radius: 30px; padding: 50px; }
+.input-premium { 
+  background: #F8FAFC; border: 3px solid #1C1C1C !important; border-radius: 16px !important; 
+  font-size: 1.1rem !important; padding: 20px !important; 
 }
+
+.btn-tool-sm { background: #F1F5F9; border: 2px solid #1C1C1C; padding: 8px 15px; border-radius: 8px; font-weight: 800; font-size: 10px; cursor: pointer; display: flex; align-items: center; gap: 6px; }
+.btn-tool-sm:hover { background: #FFE65A; }
+
+.btn-launch-premium { 
+  background: #FF6BCA; color: #1C1C1C; padding: 22px 40px; border-radius: 16px; border: 4px solid #1C1C1C;
+  font-family: "Archivo Black"; font-size: 1.1rem; cursor: pointer; display: flex; align-items: center; gap: 15px;
+  box-shadow: 8px 8px 0px #1C1C1C; flex-grow: 1; justify-content: center;
+}
+.btn-launch-premium:hover { transform: translate(-4px, -4px); box-shadow: 12px 12px 0px #3D78E0; background: #FFE65A; }
+
+.btn-schedule-premium { 
+  background: #FFF; color: #1C1C1C; padding: 22px 30px; border-radius: 16px; border: 4px solid #1C1C1C;
+  font-family: "Archivo Black"; cursor: pointer; box-shadow: 8px 8px 0px #1C1C1C;
+}
+
+/* MOCKUP DE DISPOSITIVO */
+.device-mockup { 
+  width: 100%; max-width: 320px; height: 640px; background: #1C1C1C; border: 12px solid #1C1C1C; 
+  border-radius: 50px; position: relative; overflow: hidden; margin: 0 auto;
+}
+.device-screen { width: 100%; height: 100%; background: #FFF; overflow-y: auto; padding: 20px; }
+.device-screen::-webkit-scrollbar { width: 0px; }
+.device-home-bar { position: absolute; bottom: 8px; left: 50%; transform: translateX(-50%); width: 100px; height: 4px; background: #000; border-radius: 10px; opacity: 0.2; }
+
+.email-header-mock { display: flex; items-center: center; gap: 10px; padding-bottom: 20px; border-bottom: 1px solid #EEE; margin-bottom: 20px; }
+.logo-circle { width: 30px; height: 30px; background: #FF6BCA; color: #1C1C1C; font-weight: 900; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; border: 1.5px solid #1C1C1C; }
+.email-header-mock span { font-weight: 900; font-size: 12px; }
+
+.preview-img-mock { width: 100%; border-radius: 12px; margin-bottom: 20px; border: 2px solid #1C1C1C; }
+.preview-title-mock { font-family: "Archivo Black"; font-size: 1.4rem; line-height: 1.2; margin-bottom: 15px; }
+.preview-text-mock { font-size: 0.9rem; line-height: 1.5; color: #444; }
+.preview-footer-mock { margin-top: 30px; padding-top: 20px; border-top: 1px solid #EEE; font-size: 10px; opacity: 0.5; text-align: center; }
+
+/* TABELA PREMIUM */
+.table-premium { width: 100%; border-collapse: separate; border-spacing: 0 10px; }
+.table-premium th { font-family: "Archivo Black"; font-size: 11px; opacity: 0.5; text-align: left; padding: 0 20px; }
+.table-premium td { background: #FFF; padding: 20px; border-top: 2px solid #1C1C1C; border-bottom: 2px solid #1C1C1C; font-weight: 800; font-size: 14px; }
+.table-premium td:first-child { border-left: 2px solid #1C1C1C; border-radius: 15px 0 0 15px; }
+.table-premium td:last-child { border-right: 2px solid #1C1C1C; border-radius: 0 15px 15px 0; }
+
+.avatar-table { width: 35px; height: 35px; background: #FFE65A; border: 2px solid #1C1C1C; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 14px; }
+.badge-tag { background: #F1F5F9; padding: 5px 12px; border-radius: 6px; font-size: 10px; border: 1.5px solid #1C1C1C; }
+.badge-status-active { background: #A4CD39; padding: 5px 12px; border-radius: 6px; font-size: 10px; border: 1.5px solid #1C1C1C; }
+
+.sticky-preview { position: sticky; top: 120px; }
+
+/* REAJUSTES DE CORES E FORMAS */
+.card-label-black { border-left: 12px solid #FF6BCA; font-size: 1.4rem; }
+.pane-header { display: flex; justify-content: space-between; align-items: center; }
+
+@media (max-width: 1400px) {
+   .creator-workspace { grid-template-columns: 1fr; }
+   .preview-pane { display: none; }
+}
+
+/* --- SEO & SOCIAL SIDEBAR --- */
+.editor-workspace-dual { display: grid; grid-template-columns: 1fr 300px; gap: 30px; align-items: start; }
+.seo-sidebar { background: #F8FAFC; border: 3px solid #1C1C1C; border-radius: 20px; padding: 25px; position: sticky; top: 120px; }
+
+.seo-card, .social-helper-card { border-bottom: 2px solid #E2E8F0; padding-bottom: 20px; }
+.score-circle-container { display: flex; flex-direction: column; align-items: center; margin: 20px 0; }
+.score-circle { width: 80px; height: 80px; border: 6px solid #FFE65A; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: "Archivo Black"; font-size: 1.5rem; color: #1C1C1C; background: #FFF; box-shadow: 4px 4px 0px rgba(0,0,0,0.05); }
+.score-label { font-family: "Archivo Black"; font-size: 10px; margin-top: 10px; opacity: 0.5; }
+
+.seo-checklist { list-style: none; padding: 0; margin-top: 20px; }
+.seo-checklist li { font-size: 11px; font-weight: 700; color: #64748B; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
+.seo-checklist li::before { content: "Ôùï"; color: #CBD5E1; font-weight: 900; }
+.seo-checklist li.ok { color: #1C1C1C; }
+.seo-checklist li.ok::before { content: "ÔùÅ"; color: #A4CD39; }
+
+.caption-box { background: #FFF; border: 2px solid #1C1C1C; border-radius: 10px; padding: 15px; font-size: 11px; font-weight: 600; line-height: 1.4; color: #475569; max-height: 150px; overflow-y: auto; white-space: pre-wrap; }
+.btn-copy-sm { background: #1C1C1C; color: #FFF; border: none; padding: 8px 15px; border-radius: 6px; font-family: "Archivo Black"; font-size: 9px; cursor: pointer; transition: 0.2s; width: 100%; }
+.btn-copy-sm:hover { background: #3D78E0; transform: translateY(-2px); }
+
+/* CLASSES UTILIT├üRIAS FALTANTES */
+.mb-6 { margin-bottom: 1.5rem; }
+.mb-0 { margin-bottom: 0; }
+.mb-8 { margin-bottom: 2.5rem; }
+.mb-10 { margin-bottom: 3.5rem; }
+.mb-12 { margin-bottom: 4rem; }
+.mt-4 { margin-top: 1rem; }
+.mt-8 { margin-top: 2rem; }
+.mt-10 { margin-top: 3rem; }
+.flex { display: flex; }
+.items-center { align-items: center; }
+.justify-start { justify-content: flex-start; }
+.gap-4 { gap: 1rem; }
+.font-bold { font-weight: 700; }
+.text-center { text-align: center; }
+.opacity-50 { opacity: 0.5; }
+.opacity-70 { opacity: 0.7; }
+.py-6 { padding-top: 1.5rem; padding-bottom: 1.5rem; }
 </style>
-

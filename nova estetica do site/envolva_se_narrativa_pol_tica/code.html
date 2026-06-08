@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Envolva-se | Narrativa Política</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,400;0,700;0,800;1,400;1,700&amp;family=DM+Sans:ital,wght@0,400;0,500;0,700;1,400;1,500;1,700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "primary-fixed-dim": "#c8c6c5",
+                    "surface-container": "#f1edec",
+                    "tertiary-container": "#1c1b1a",
+                    "tertiary": "#000000",
+                    "on-tertiary-container": "#868381",
+                    "surface-bright": "#fdf8f8",
+                    "on-surface-variant": "#444748",
+                    "outline-variant": "#c4c7c7",
+                    "outline": "#747878",
+                    "surface-variant": "#e5e2e1",
+                    "rosa": "#FF3C82",
+                    "on-primary-container": "#858383",
+                    "vermelho": "#D22828",
+                    "on-tertiary-fixed-variant": "#484645",
+                    "secondary-container": "#e7e2da",
+                    "azul": "#3C64E6",
+                    "amarelo": "#FFDC00",
+                    "surface-container-highest": "#e5e2e1",
+                    "on-background": "#1c1b1b",
+                    "secondary-fixed": "#e7e2da",
+                    "tertiary-fixed-dim": "#cac6c3",
+                    "on-tertiary": "#ffffff",
+                    "on-error-container": "#93000a",
+                    "on-tertiary-fixed": "#1c1b1a",
+                    "surface-container-high": "#ebe7e6",
+                    "surface": "#fdf8f8",
+                    "verde": "#A0D246",
+                    "secondary": "#615e58",
+                    "inverse-primary": "#c8c6c5",
+                    "on-secondary-fixed-variant": "#494741",
+                    "surface-tint": "#5f5e5e",
+                    "on-secondary-fixed": "#1d1c17",
+                    "surface-container-low": "#f7f3f2",
+                    "on-secondary": "#ffffff",
+                    "primary": "#000000",
+                    "lilas": "#9660E0",
+                    "on-error": "#ffffff",
+                    "tertiary-fixed": "#e6e1df",
+                    "on-primary-fixed": "#1c1b1b",
+                    "on-surface": "#1c1b1b",
+                    "on-primary": "#ffffff",
+                    "secondary-fixed-dim": "#cac6be",
+                    "error-container": "#ffdad6",
+                    "surface-container-lowest": "#ffffff",
+                    "inverse-on-surface": "#f4f0ef",
+                    "background": "#fdf8f8",
+                    "inverse-surface": "#313030",
+                    "primary-container": "#1c1b1b",
+                    "error": "#ba1a1a",
+                    "on-secondary-container": "#67645e",
+                    "primary-fixed": "#e5e2e1",
+                    "on-primary-fixed-variant": "#474646",
+                    "surface-dim": "#ddd9d8"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "spacing": {
+                    "stack-lg": "48px",
+                    "stack-sm": "12px",
+                    "container-max": "1200px",
+                    "unit": "4px",
+                    "section-padding": "80px",
+                    "stack-md": "24px",
+                    "gutter": "24px"
+            },
+            "fontFamily": {
+                    "label-bold": [
+                            "DM Sans"
+                    ],
+                    "caption": [
+                            "DM Sans"
+                    ],
+                    "headline-md": [
+                            "Barlow Condensed"
+                    ],
+                    "body-md": [
+                            "DM Sans"
+                    ],
+                    "body-lg": [
+                            "DM Sans"
+                    ],
+                    "display-xl": [
+                            "Barlow Condensed"
+                    ],
+                    "headline-lg": [
+                            "Barlow Condensed"
+                    ],
+                    "headline-lg-mobile": [
+                            "Barlow Condensed"
+                    ]
+            },
+            "fontSize": {
+                    "label-bold": [
+                            "13px",
+                            {
+                                    "lineHeight": "1.2",
+                                    "letterSpacing": "0.05em",
+                                    "fontWeight": "700"
+                            }
+                    ],
+                    "caption": [
+                            "11px",
+                            {
+                                    "lineHeight": "1.2",
+                                    "letterSpacing": "0.1em",
+                                    "fontWeight": "500"
+                            }
+                    ],
+                    "headline-md": [
+                            "32px",
+                            {
+                                    "lineHeight": "1.2",
+                                    "fontWeight": "700"
+                            }
+                    ],
+                    "body-md": [
+                            "16px",
+                            {
+                                    "lineHeight": "1.5",
+                                    "fontWeight": "400"
+                            }
+                    ],
+                    "body-lg": [
+                            "18px",
+                            {
+                                    "lineHeight": "1.6",
+                                    "fontWeight": "400"
+                            }
+                    ],
+                    "display-xl": [
+                            "80px",
+                            {
+                                    "lineHeight": "1.0",
+                                    "letterSpacing": "-0.02em",
+                                    "fontWeight": "800"
+                            }
+                    ],
+                    "headline-lg": [
+                            "52px",
+                            {
+                                    "lineHeight": "1.1",
+                                    "fontWeight": "700"
+                            }
+                    ],
+                    "headline-lg-mobile": [
+                            "38px",
+                            {
+                                    "lineHeight": "1.1",
+                                    "fontWeight": "700"
+                            }
+                    ]
+            }
+    },
+        },
+      }
+    </script>
+<style>
+        /* Global Noise Texture */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+            opacity: 0.04;
+            pointer-events: none;
+            z-index: 9999;
+        }
+        
+        .paper-shadow {
+            box-shadow: 4px 4px 0px 0px rgba(0,0,0,1);
+        }
+        
+        .halftone-overlay {
+            mix-blend-mode: multiply;
+            filter: grayscale(100%) contrast(150%);
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background antialiased selection:bg-amarelo selection:text-primary">
+<!-- TopNavBar -->
+<nav class="sticky top-0 z-50 bg-background dark:bg-background border-b-2 border-primary dark:border-primary-fixed-dim">
+<div class="flex justify-between items-center w-full px-gutter py-4 max-w-container-max mx-auto">
+<a class="font-headline-lg text-headline-lg font-bold text-primary dark:text-primary-fixed-dim tracking-tight" href="#">
+                NARRATIVA POLÍTICA
+            </a>
+<div class="hidden md:flex items-center gap-stack-md">
+<a class="font-headline-md text-headline-md uppercase tracking-tight text-on-surface-variant dark:text-on-surface hover:text-primary transition-colors hover:bg-surface-variant dark:hover:bg-tertiary-container transition-all px-2 py-1" href="#">MOVIMENTO</a>
+<a class="font-headline-md text-headline-md uppercase tracking-tight text-on-surface-variant dark:text-on-surface hover:text-primary transition-colors hover:bg-surface-variant dark:hover:bg-tertiary-container transition-all px-2 py-1" href="#">ARTIGOS</a>
+<a class="font-headline-md text-headline-md uppercase tracking-tight text-on-surface-variant dark:text-on-surface hover:text-primary transition-colors hover:bg-surface-variant dark:hover:bg-tertiary-container transition-all px-2 py-1" href="#">ATUAÇÃO</a>
+<a class="font-headline-md text-headline-md uppercase tracking-tight text-on-surface-variant dark:text-on-surface hover:text-primary transition-colors hover:bg-surface-variant dark:hover:bg-tertiary-container transition-all px-2 py-1" href="#">SOBRE MIM</a>
+<a class="font-headline-md text-headline-md uppercase tracking-tight text-primary font-bold border-b-4 border-vermelho pb-1 px-2 py-1" href="#">ENVOLVA-SE</a>
+</div>
+<a class="hidden md:inline-flex items-center justify-center px-6 py-3 bg-primary text-on-primary font-label-bold text-label-bold uppercase border border-primary hover:bg-vermelho transition-colors" href="#">
+                APOIE AGORA
+            </a>
+<button class="md:hidden flex items-center p-2 text-primary">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">menu</span>
+</button>
+</div>
+</nav>
+<!-- Hero Section -->
+<header class="relative pt-section-padding pb-section-padding px-gutter overflow-hidden bg-surface-container">
+<!-- Decorative Elements -->
+<div class="absolute top-10 right-10 w-32 h-32 bg-rosa rotate-12 -z-10 mix-blend-multiply opacity-80"></div>
+<div class="absolute bottom-20 left-5 w-40 h-40 rounded-full bg-amarelo -z-10 mix-blend-multiply opacity-80"></div>
+<div class="absolute top-40 right-1/4 w-16 h-16 bg-azul -rotate-12 -z-10 mix-blend-multiply opacity-80"></div>
+<div class="max-w-container-max mx-auto grid grid-cols-1 md:grid-cols-12 gap-stack-lg items-center">
+<div class="col-span-1 md:col-span-7 relative z-10">
+<div class="inline-block bg-primary text-on-primary px-4 py-2 mb-stack-sm transform -rotate-2">
+<span class="font-label-bold text-label-bold uppercase tracking-wider">Faça parte da mudança</span>
+</div>
+<h1 class="font-display-xl text-display-xl md:text-[100px] text-primary uppercase leading-none mb-stack-md">
+                    A POLÍTICA <br/>
+<span class="text-vermelho">PRECISA</span> DE VOCÊ.
+                </h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-xl mb-stack-lg bg-white/80 p-4 border border-primary paper-shadow">
+                    Não basta reclamar do sistema. É preciso construir a alternativa. Junte-se à nossa rede de impacto social, receba análises profundas e financie o jornalismo independente que expõe o que tentam esconder.
+                </p>
+<div class="flex flex-wrap gap-4">
+<a class="inline-flex items-center justify-center px-8 py-4 bg-vermelho text-on-primary font-label-bold text-label-bold uppercase border-2 border-primary paper-shadow hover:bg-primary transition-colors transform hover:-translate-y-1" href="#newsletter">
+                        Assinar Newsletter
+                    </a>
+<a class="inline-flex items-center justify-center px-8 py-4 bg-transparent text-primary font-label-bold text-label-bold uppercase border-2 border-primary paper-shadow hover:bg-surface-variant transition-colors transform hover:-translate-y-1" href="#apoio">
+                        Apoiar o Projeto
+                    </a>
+</div>
+</div>
+<div class="col-span-1 md:col-span-5 relative z-10 hidden md:block">
+<div class="relative w-full aspect-[4/5] bg-white border-2 border-primary p-4 paper-shadow transform rotate-3">
+<img alt="Pessoas protestando e segurando cartazes em uma manifestação política, com filtro halftone estilo jornal." class="w-full h-full object-cover halftone-overlay border border-primary" data-alt="A dynamic, high-contrast black and white halftone photograph of a political protest. A diverse crowd is shown raising hands and holding blank cardboard signs. The image has a gritty, editorial newspaper texture, fitting a modern brutalist social impact aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC3CzJhBj0zQYV-6N05BhZqiNzBsIZWvPfs7h3csQnwknpigTRKxrFjPoqQdE32DMtGG4O_upC6WfbjVsPpVbk7zCRfT7yeV_prJSTQzTvksFvTNNzEqyY2_0O9QgBjdDwWFu7ZjQM7AJ1DrakX9FhodZvBUyxgOZytPyaUCN-62u4s6pJ6QnZAeYDjMLy0Aa9vIKtDfqdNx8bJGz8KZTvfwXmc3qC8E3a3LJOLJBvSAikHOjfZAdjWjHyXbUrYTbhstCDBvzYbjg"/>
+<!-- Sticker -->
+<div class="absolute -bottom-8 -left-8 bg-verde text-primary font-headline-md text-headline-md uppercase px-6 py-2 border-2 border-primary paper-shadow transform -rotate-12">
+                        AGORA!
+                    </div>
+</div>
+</div>
+</div>
+</header>
+<main>
+<!-- Newsletter / Substack Section -->
+<section class="py-section-padding px-gutter bg-white relative border-b-2 border-primary" id="newsletter">
+<div class="max-w-container-max mx-auto grid grid-cols-1 md:grid-cols-2 gap-stack-lg items-center">
+<div class="relative order-2 md:order-1">
+<div class="absolute -inset-4 bg-azul transform -rotate-2 border-2 border-primary paper-shadow"></div>
+<div class="relative bg-white border-2 border-primary p-8 md:p-12 paper-shadow">
+<h2 class="font-headline-lg text-headline-lg-mobile md:text-headline-lg uppercase text-primary mb-stack-md leading-tight">
+                            ASSINE NOSSA <br/>
+<span class="bg-amarelo px-2 inline-block transform -skew-x-12">NEWSLETTER</span>
+</h2>
+<p class="font-body-md text-body-md text-on-surface-variant mb-stack-md">
+                            Receba análises semanais direto na sua caixa de entrada. Sem jargão, direto ao ponto. Entenda as decisões políticas que afetam o seu bolso e os seus direitos.
+                        </p>
+<form class="flex flex-col gap-4">
+<div>
+<label class="sr-only" for="email">Seu melhor e-mail</label>
+<input class="w-full border-2 border-primary bg-surface p-4 font-body-md text-body-md focus:outline-none focus:border-b-4 focus:border-b-vermelho transition-all rounded-none placeholder-outline" id="email" placeholder="Seu melhor e-mail" type="email"/>
+</div>
+<button class="w-full bg-primary text-on-primary font-label-bold text-label-bold uppercase py-4 border-2 border-primary hover:bg-azul transition-colors paper-shadow" type="submit">
+                                INSCREVER-SE VIA SUBSTACK
+                            </button>
+</form>
+<p class="font-caption text-caption text-outline mt-4 uppercase">
+                            Prometemos não enviar spam. Cancele quando quiser.
+                        </p>
+</div>
+</div>
+<div class="order-1 md:order-2 pl-0 md:pl-12 relative">
+<span class="material-symbols-outlined text-[120px] text-surface-container-highest absolute -top-10 -right-10 -z-10" style="font-variation-settings: 'FILL' 1;">mark_email_read</span>
+<h3 class="font-headline-md text-headline-md text-primary uppercase mb-stack-sm">Por que assinar?</h3>
+<ul class="space-y-4 font-body-md text-body-md text-on-surface-variant">
+<li class="flex items-start gap-3">
+<span class="material-symbols-outlined text-vermelho mt-1">check_box</span>
+<span><strong>Curadoria Especializada:</strong> Filtramos o ruído e entregamos apenas o que realmente importa no cenário político nacional.</span>
+</li>
+<li class="flex items-start gap-3">
+<span class="material-symbols-outlined text-azul mt-1">check_box</span>
+<span><strong>Linguagem Acessível:</strong> Traduzimos o 'economês' e o 'juridiquês' para você entender o impacto real na sua vida.</span>
+</li>
+<li class="flex items-start gap-3">
+<span class="material-symbols-outlined text-verde mt-1">check_box</span>
+<span><strong>Comunidade Exclusiva:</strong> Acesso a debates fechados e enquetes para direcionar nossas próximas investigações.</span>
+</li>
+</ul>
+</div>
+</div>
+</section>
+<!-- Apoio Direto Section -->
+<section class="py-section-padding px-gutter bg-surface-container relative" id="apoio">
+<div class="max-w-container-max mx-auto">
+<div class="text-center mb-stack-lg max-w-3xl mx-auto">
+<h2 class="font-headline-lg text-headline-lg-mobile md:text-headline-lg uppercase text-primary mb-stack-sm">
+                        FINANCIE A <span class="text-vermelho">TRANSPARÊNCIA</span>
+</h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant">
+                        Nosso trabalho é independente e sustentado por quem acredita que a informação muda o jogo. Escolha uma forma de apoiar e fortaleça nosso movimento.
+                    </p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-stack-md">
+<!-- Card 1 -->
+<div class="bg-white border-2 border-primary paper-shadow relative group hover:-translate-y-2 transition-transform duration-300">
+<div class="h-2 w-full bg-verde border-b-2 border-primary"></div>
+<div class="p-6">
+<h3 class="font-headline-md text-headline-md uppercase text-primary mb-2">Apoio Pontual</h3>
+<div class="text-3xl font-bold text-primary mb-4 font-display-xl">R$ 20<span class="text-lg font-body-md text-outline">/único</span></div>
+<p class="font-body-md text-body-md text-on-surface-variant mb-stack-md min-h-[80px]">
+                                Contribua com um valor único para ajudar a custear nossas investigações e estrutura digital.
+                            </p>
+<button class="w-full bg-transparent text-primary border-2 border-primary font-label-bold text-label-bold uppercase py-3 group-hover:bg-verde transition-colors">
+                                APOIAR AGORA
+                            </button>
+</div>
+</div>
+<!-- Card 2 (Destaque) -->
+<div class="bg-primary text-on-primary border-2 border-primary paper-shadow relative transform md:-translate-y-4 z-10 group">
+<div class="absolute -top-4 -right-4 bg-rosa text-primary font-label-bold text-label-bold uppercase px-3 py-1 border-2 border-primary transform rotate-6 z-20">
+                            MAIS ESCOLHIDO
+                        </div>
+<div class="h-2 w-full bg-rosa border-b-2 border-primary"></div>
+<div class="p-6">
+<h3 class="font-headline-md text-headline-md uppercase text-on-primary mb-2">Membro Ativo</h3>
+<div class="text-3xl font-bold text-on-primary mb-4 font-display-xl">R$ 50<span class="text-lg font-body-md text-outline-variant">/mês</span></div>
+<p class="font-body-md text-body-md text-surface-variant mb-stack-md min-h-[80px]">
+                                Torne-se um apoiador recorrente. Ganhe acesso ao nosso grupo exclusivo no WhatsApp e encontros mensais.
+                            </p>
+<button class="w-full bg-rosa text-primary border-2 border-primary font-label-bold text-label-bold uppercase py-3 hover:bg-white transition-colors">
+                                ASSINAR PLANO
+                            </button>
+</div>
+</div>
+<!-- Card 3 -->
+<div class="bg-white border-2 border-primary paper-shadow relative group hover:-translate-y-2 transition-transform duration-300">
+<div class="h-2 w-full bg-azul border-b-2 border-primary"></div>
+<div class="p-6">
+<h3 class="font-headline-md text-headline-md uppercase text-primary mb-2">Patrono</h3>
+<div class="text-3xl font-bold text-primary mb-4 font-display-xl">R$ 150<span class="text-lg font-body-md text-outline">/mês</span></div>
+<p class="font-body-md text-body-md text-on-surface-variant mb-stack-md min-h-[80px]">
+                                Apoio estrutural para o projeto. Receba relatórios antecipados e menção honorária em nossos artigos.
+                            </p>
+<button class="w-full bg-transparent text-primary border-2 border-primary font-label-bold text-label-bold uppercase py-3 group-hover:bg-azul group-hover:text-on-primary transition-colors">
+                                ASSINAR PLANO
+                            </button>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Contato / Parcerias Section -->
+<section class="py-section-padding px-gutter bg-white relative">
+<!-- Decorative Collage Element -->
+<div class="absolute right-0 top-0 w-64 h-full bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMiIgY3k9IjIiIHI9IjIiIGZpbGw9IiNjOGM2YzUiIGZpbGwtb3BhY2l0eT0iMC40Ii8+PC9zdmc+')] opacity-50 hidden lg:block"></div>
+<div class="max-w-container-max mx-auto grid grid-cols-1 md:grid-cols-2 gap-stack-lg">
+<div>
+<h2 class="font-headline-lg text-headline-lg-mobile md:text-headline-lg uppercase text-primary mb-stack-sm">
+                        VAMOS <span class="bg-black text-white px-2">CONVERSAR?</span>
+</h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant mb-stack-md">
+                        Dúvidas, pautas, denúncias ou propostas de parcerias institucionais. Nossa equipe está pronta para ouvir.
+                    </p>
+<div class="space-y-6 mt-stack-md">
+<div class="flex items-center gap-4 bg-surface p-4 border border-outline-variant">
+<div class="bg-primary text-white p-3 rounded-full flex items-center justify-center">
+<span class="material-symbols-outlined">mail</span>
+</div>
+<div>
+<h4 class="font-label-bold text-label-bold uppercase text-primary">E-mail</h4>
+<a class="font-body-md text-body-md text-azul hover:underline" href="mailto:contato@narrativapolitica.com.br">contato@narrativapolitica.com.br</a>
+</div>
+</div>
+<div class="flex items-center gap-4 bg-surface p-4 border border-outline-variant">
+<div class="bg-primary text-white p-3 rounded-full flex items-center justify-center">
+<span class="material-symbols-outlined">campaign</span>
+</div>
+<div>
+<h4 class="font-label-bold text-label-bold uppercase text-primary">Assessoria de Imprensa</h4>
+<a class="font-body-md text-body-md text-azul hover:underline" href="mailto:imprensa@narrativapolitica.com.br">imprensa@narrativapolitica.com.br</a>
+</div>
+</div>
+</div>
+</div>
+<div class="bg-surface-container border-2 border-primary p-6 md:p-8 paper-shadow relative z-10">
+<form class="space-y-4">
+<div>
+<label class="font-label-bold text-label-bold uppercase text-primary block mb-1" for="name">Nome Completo</label>
+<input class="w-full border-2 border-primary bg-white p-3 font-body-md focus:outline-none focus:border-b-4 focus:border-b-vermelho transition-all rounded-none" id="name" type="text"/>
+</div>
+<div>
+<label class="font-label-bold text-label-bold uppercase text-primary block mb-1" for="contact-email">E-mail</label>
+<input class="w-full border-2 border-primary bg-white p-3 font-body-md focus:outline-none focus:border-b-4 focus:border-b-vermelho transition-all rounded-none" id="contact-email" type="email"/>
+</div>
+<div>
+<label class="font-label-bold text-label-bold uppercase text-primary block mb-1" for="assunto">Assunto</label>
+<select class="w-full border-2 border-primary bg-white p-3 font-body-md focus:outline-none focus:border-b-4 focus:border-b-vermelho transition-all rounded-none appearance-none" id="assunto">
+<option value="denuncia">Sugestão de Pauta / Denúncia</option>
+<option value="parceria">Parceria Institucional</option>
+<option value="duvida">Dúvida sobre Apoio</option>
+<option value="outro">Outro Assunto</option>
+</select>
+</div>
+<div>
+<label class="font-label-bold text-label-bold uppercase text-primary block mb-1" for="mensagem">Mensagem</label>
+<textarea class="w-full border-2 border-primary bg-white p-3 font-body-md focus:outline-none focus:border-b-4 focus:border-b-vermelho transition-all rounded-none" id="mensagem" rows="4"></textarea>
+</div>
+<button class="w-full bg-primary text-on-primary font-label-bold text-label-bold uppercase py-4 border-2 border-primary hover:bg-vermelho transition-colors flex items-center justify-center gap-2" type="submit">
+                            ENVIAR MENSAGEM
+                            <span class="material-symbols-outlined text-sm">send</span>
+</button>
+</form>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="bg-tertiary dark:bg-tertiary-container border-t-4 border-amarelo">
+<div class="grid grid-cols-1 md:grid-cols-3 gap-stack-md w-full px-gutter py-section-padding max-w-container-max mx-auto items-start">
+<div class="col-span-1">
+<div class="font-headline-md text-headline-md text-on-tertiary mb-stack-sm tracking-tight font-bold">
+                    NARRATIVA POLÍTICA
+                </div>
+<p class="font-body-md text-body-md text-on-tertiary-container mb-stack-md max-w-xs">
+                    Jornalismo de impacto, análises políticas e construção de um debate público mais qualificado e transparente.
+                </p>
+<div class="flex gap-4">
+<!-- Social Icons placeholders -->
+<a class="w-10 h-10 bg-white text-primary flex items-center justify-center rounded-full hover:bg-rosa transition-colors" href="#">
+<span class="font-label-bold">IG</span>
+</a>
+<a class="w-10 h-10 bg-white text-primary flex items-center justify-center rounded-full hover:bg-azul transition-colors" href="#">
+<span class="font-label-bold">TW</span>
+</a>
+<a class="w-10 h-10 bg-white text-primary flex items-center justify-center rounded-full hover:bg-amarelo transition-colors" href="#">
+<span class="font-label-bold">LI</span>
+</a>
+</div>
+</div>
+<div class="col-span-1 md:col-span-2 flex flex-wrap gap-x-12 gap-y-8 justify-start md:justify-end">
+<div>
+<h4 class="font-label-bold text-label-bold uppercase text-on-tertiary mb-4">Links Úteis</h4>
+<ul class="flex flex-col gap-2 font-body-md text-body-md">
+<li><a class="text-on-tertiary-container hover:text-on-tertiary hover:underline decoration-rosa decoration-2 transition-all duration-300 ease-in-out" href="#">INSTITUCIONAL</a></li>
+<li><a class="text-on-tertiary-container hover:text-on-tertiary hover:underline decoration-rosa decoration-2 transition-all duration-300 ease-in-out" href="#">TRANSPARÊNCIA</a></li>
+<li><a class="text-on-tertiary-container hover:text-on-tertiary hover:underline decoration-rosa decoration-2 transition-all duration-300 ease-in-out" href="#">CONTATO</a></li>
+</ul>
+</div>
+<div>
+<h4 class="font-label-bold text-label-bold uppercase text-on-tertiary mb-4">Legal</h4>
+<ul class="flex flex-col gap-2 font-body-md text-body-md">
+<li><a class="text-on-tertiary-container hover:text-on-tertiary hover:underline decoration-rosa decoration-2 transition-all duration-300 ease-in-out" href="#">PRIVACIDADE</a></li>
+<li><a class="text-on-tertiary-container hover:text-on-tertiary hover:underline decoration-rosa decoration-2 transition-all duration-300 ease-in-out" href="#">TERMOS DE USO</a></li>
+</ul>
+</div>
+</div>
+<div class="col-span-1 md:col-span-3 mt-stack-md pt-stack-md border-t border-on-tertiary-container/30 text-center md:text-left">
+<span class="font-body-md text-body-md text-on-tertiary-container">
+                    © 2024 Narrativa Política. Impacto Social, Política e Gênero.
+                </span>
+</div>
+</div>
+</footer>
+</body></html>

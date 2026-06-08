@@ -1,0 +1,658 @@
+<script setup>
+import { ref, onMounted, onUnmounted, computed, watch } from 'vue'
+import { useRouter } from 'vue-router'
+import { useAuth } from '../store/auth'
+import { supabase } from '../lib/supabase'
+import { 
+  Settings, LogOut, Home, FileText, User, Mail, Folder, Download, 
+  Plus, Edit, Trash, LayoutDashboard, Megaphone, Rocket, Globe, UserPlus, 
+  Edit2, Send, Save, ArrowLeft, ExternalLink, Zap, ChevronRight, AlertCircle, 
+  RefreshCw, Layers, BookOpen, Heart, Menu, X, Play, CreditCard, Layout
+} from 'lucide-vue-next'
+import BrutalEditor from '../components/BrutalEditor.vue'
+import ImageUploader from '../components/ImageUploader.vue'
+import { sanitizeHtml } from '../utils/sanitizeHtml'
+import { 
+  siteContent, fetchAllContent, getOpportunityVisibilityState, 
+  logActivity, parseOpportunityDeadline, filterPublicPosts, saveContent 
+} from '../store/content'
+
+const router = useRouter()
+const { user, logout } = useAuth()
+const activeTab = ref('dashboard')
+const isSaving = ref(false)
+const isLoadingData = ref(false)
+const hasLoadError = ref(false)
+const isMobileMenuOpen = ref(false)
+
+// --- FORMS DEFAULT ---
+const defaultArticleForm = () => ({ title: '', subtitle: '', author: 'Anne Dornelas', type: 'Artigo', category: 'Política', featured: false, content: '', image: '', imageDescription: '', imageCaption: '', references: '', highlightQuote: '', status: 'publicado' })
+const defaultOpportunityForm = () => ({ title: '', category: 'Vagas de Emprego', type: 'Remoto', location: '', deadline: '', link: '', description: '', fullDescription: '', image: '', status: 'approved', sourceUrl: '', reviewNotes: '', featured: false, showOnHome: false })
+const defaultProjectForm = () => ({ title: '', organization: '', description: '', impact: '', image: '', tags: '', status: 'publicado' })
+const defaultServiceForm = () => ({ title: '', description: '', icon: 'Zap', bg: '#FF6BCA', textColor: '#FFFFFF' })
+const defaultLibraryForm = () => ({ title: '', description: '', category: 'Relatório', fileUrl: '', externalLink: '', status: 'publicado' })
+
+// --- EDITING STATES ---
+const editingArtigoId = ref(null)
+const editingVagaId = ref(null)
+const editingProjectId = ref(null)
+const editingServicoId = ref(null)
+const editingLibraryId = ref(null)
+
+const isEditingArtigo = computed(() => editingArtigoId.value !== null)
+const isEditingVaga = computed(() => editingVagaId.value !== null)
+const isEditingProject = computed(() => editingProjectId.value !== null)
+const isEditingServico = computed(() => editingServicoId.value !== null)
+const isEditingLibrary = computed(() => editingLibraryId.value !== null)
+
+// --- REFS PARA DADOS ---
+const novoArtigo = ref(defaultArticleForm())
+const novaVaga = ref(defaultOpportunityForm())
+const novoProjeto = ref(defaultProjectForm())
+const novoServico = ref(defaultServiceForm())
+const novoLibrary = ref(defaultLibraryForm())
+const novaNewsletter = ref({ titulo: '', descricao: '', conteudo: '', capa_url: '', tag: 'Newsletter' })
+
+// ... (métodos de salvamento anteriores mantidos)
+
+const saveServico = async () => {
+  if (!novoServico.value.title) return alert("Título obrigatório.")
+  isSaving.value = true
+  try {
+    const list = [...(siteContent.services || [])]
+    const payload = { ...novoServico.value, id: editingServicoId.value || Date.now() }
+    const idx = list.findIndex(s => s.id === payload.id)
+    if (idx !== -1) list[idx] = payload; else list.unshift(payload)
+    siteContent.services = list
+    await persistSiteSetting('services', list)
+    await recordActivity(`Serviço/Eixo: ${payload.title}`, editingServicoId.value ? 'Edição' : 'Cadastro')
+    resetServicoForm()
+    alert('Serviço salvo!')
+  } catch(e) { alert('Erro: ' + e.message) } finally { isSaving.value = false }
+}
+const resetServicoForm = () => { novoServico.value = defaultServiceForm(); editingServicoId.value = null }
+const editServico = (s) => { editingServicoId.value = s.id; novoServico.value = { ...s }; scrollToForm('form-anchor') }
+const deleteServico = async (s) => {
+  if (!confirm('Excluir este eixo de ação?')) return
+  siteContent.services = (siteContent.services || []).filter(item => item.id !== s.id)
+  await persistSiteSetting('services', siteContent.services)
+}
+
+const saveLibrary = async () => {
+  if (!novoLibrary.value.title) return alert("Título obrigatório.")
+  isSaving.value = true
+  try {
+    const list = [...(siteContent.library || [])]
+    const payload = { ...novoLibrary.value, id: editingLibraryId.value || Date.now() }
+    const idx = list.findIndex(l => l.id === payload.id)
+    if (idx !== -1) list[idx] = payload; else list.unshift(payload)
+    siteContent.library = list
+    await persistSiteSetting('library', list)
+    await recordActivity(`Documento: ${payload.title}`, editingLibraryId.value ? 'Edição' : 'Cadastro')
+    resetLibraryForm()
+    alert('Documento salvo na biblioteca!')
+  } catch(e) { alert('Erro: ' + e.message) } finally { isSaving.value = false }
+}
+const resetLibraryForm = () => { novoLibrary.value = defaultLibraryForm(); editingLibraryId.value = null }
+const editLibrary = (l) => { editingLibraryId.value = l.id; novoLibrary.value = { ...l }; scrollToForm('form-anchor') }
+const deleteLibrary = async (l) => {
+  if (!confirm('Excluir documento?')) return
+  siteContent.library = (siteContent.library || []).filter(item => item.id !== l.id)
+  await persistSiteSetting('library', siteContent.library)
+}
+
+
+const homeData = ref({})
+const sobreData = ref({})
+const settingsData = ref({})
+const articlesConfigData = ref({})
+const oppsConfigData = ref({})
+const servicosConfigData = ref({})
+const bibliotecaConfigData = ref({})
+const donateConfigData = ref({})
+
+const categoriasDisponiveis = ref(['Mobilização', 'Educação', 'Clima', 'Notícias', 'Análise', 'Gênero', 'Política'])
+
+// --- MÉTODOS ---
+const scrollToForm = (id) => {
+  setTimeout(() => {
+    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  }, 100)
+}
+
+const handleLogout = () => {
+  logout()
+  router.push('/login')
+}
+
+const recordActivity = async (title, type = 'Edição') => {
+  logActivity(title, type)
+  if (supabase) {
+    await supabase.from('site_settings').upsert({ key: 'lastActivity', value: siteContent.lastActivity })
+  }
+}
+
+const persistSiteSetting = async (key, value) => {
+  if (!supabase) return
+  const { error } = await supabase.from('site_settings').upsert({ key, value })
+  if (error) throw error
+}
+
+const loadData = async () => {
+  isLoadingData.value = true
+  hasLoadError.value = false
+  try {
+    const result = await fetchAllContent({ isAdmin: true })
+    if (!result.success) {
+      console.warn('Falha parcial no carregamento:', result.error)
+    }
+    syncLocalRefs()
+  } catch (error) {
+    console.error('Erro ao carregar dados:', error)
+    hasLoadError.value = true
+  } finally {
+    isLoadingData.value = false
+  }
+}
+
+const syncLocalRefs = () => {
+  if (siteContent.home) homeData.value = { ...siteContent.home }
+  if (siteContent.about) sobreData.value = { ...siteContent.about }
+  if (siteContent.settings) settingsData.value = { ...siteContent.settings }
+  if (siteContent.articlesConfig) articlesConfigData.value = { ...siteContent.articlesConfig }
+  if (siteContent.opportunitiesConfig) oppsConfigData.value = { ...siteContent.opportunitiesConfig }
+  if (siteContent.servicesConfig) servicosConfigData.value = { ...siteContent.servicesConfig }
+  if (siteContent.libraryConfig) bibliotecaConfigData.value = { ...siteContent.libraryConfig }
+  if (siteContent.donateConfig) donateConfigData.value = { ...siteContent.donateConfig }
+}
+
+// --- SALVAMENTO GERAL ---
+const saveHome = async () => {
+  isSaving.value = true
+  try {
+    Object.assign(siteContent.home, homeData.value)
+    await persistSiteSetting('home', homeData.value)
+    await recordActivity('Página Inicial', 'Configuração Home')
+    alert('Home salva com sucesso!')
+  } catch(e) { alert('Erro: ' + e.message) } finally { isSaving.value = false }
+}
+
+const saveArtigo = async (statusOverride = null) => {
+  if (!novoArtigo.value.title) return alert("Título obrigatório.")
+  isSaving.value = true
+  try {
+    const payload = {
+      ...novoArtigo.value,
+      status: statusOverride || novoArtigo.value.status || 'publicado',
+      date: editingArtigoId.value ? (siteContent.posts.find(p => p.id === editingArtigoId.value)?.date) : new Date().toISOString()
+    }
+    if (editingArtigoId.value) payload.id = editingArtigoId.value
+    if (supabase) {
+      const { data, error } = await supabase.from('articles').upsert(payload)
+      if (error) throw error
+    }
+    await fetchAllContent({ isAdmin: true })
+    await recordActivity(`Artigo: ${payload.title}`, editingArtigoId.value ? 'Edição' : 'Publicação')
+    resetArtigoForm()
+    alert('Artigo salvo!')
+  } catch(e) { alert('Erro: ' + e.message) } finally { isSaving.value = false }
+}
+const resetArtigoForm = () => { novoArtigo.value = defaultArticleForm(); editingArtigoId.value = null }
+const editArtigo = (art) => { editingArtigoId.value = art.id; novoArtigo.value = { ...art }; selectTab('editorial'); scrollToForm('form-anchor') }
+const deleteArtigo = async (art) => {
+  if (!confirm(`Excluir "${art.title}"?`)) return
+  if (supabase) await supabase.from('articles').delete().eq('id', art.id)
+  await fetchAllContent({ isAdmin: true })
+  await recordActivity(`Exclusão: ${art.title}`, 'Exclusão Artigo')
+}
+
+const saveVaga = async () => {
+  if (!novaVaga.value.title) return alert("Título obrigatório.")
+  isSaving.value = true
+  try {
+    const payload = { ...novaVaga.value }
+    if (editingVagaId.value) payload.id = editingVagaId.value
+    if (supabase) {
+       const { error } = await supabase.from('opportunities').upsert(payload)
+       if (error) throw error
+    }
+    await fetchAllContent({ isAdmin: true })
+    await recordActivity(`Oportunidade: ${payload.title}`, editingVagaId.value ? 'Edição' : 'Cadastro')
+    resetVagaForm()
+    alert('Oportunidade salva!')
+  } catch(e) { alert('Erro: ' + e.message) } finally { isSaving.value = false }
+}
+const resetVagaForm = () => { novaVaga.value = defaultOpportunityForm(); editingVagaId.value = null }
+const editVaga = (v) => { editingVagaId.value = v.id; novaVaga.value = { ...v }; scrollToForm('form-anchor') }
+const deleteVaga = async (v) => {
+  if (!confirm('Excluir?')) return
+  if (supabase) await supabase.from('opportunities').delete().eq('id', v.id)
+  await fetchAllContent({ isAdmin: true })
+  await recordActivity(`Exclusão Oportunidade: ${v.title}`, 'Exclusão')
+}
+
+const saveProjeto = async () => {
+  if (!novoProjeto.value.title) return alert("Título obrigatório.")
+  isSaving.value = true
+  try {
+    const list = [...(siteContent.projects || [])]
+    const payload = { ...novoProjeto.value, id: editingProjectId.value || Date.now() }
+    const idx = list.findIndex(p => p.id === payload.id)
+    if (idx !== -1) list[idx] = payload; else list.unshift(payload)
+    siteContent.projects = list
+    await persistSiteSetting('projects', list)
+    await recordActivity(`Projeto: ${payload.title}`, editingProjectId.value ? 'Edição' : 'Cadastro')
+    resetProjetoForm()
+    alert('Projeto salvo!')
+  } catch(e) { alert('Erro: ' + e.message) } finally { isSaving.value = false }
+}
+const resetProjetoForm = () => { novoProjeto.value = defaultProjectForm(); editingProjectId.value = null }
+const editProjeto = (p) => { editingProjectId.value = p.id; novoProjeto.value = { ...p }; scrollToForm('form-anchor') }
+const deleteProjeto = async (p) => {
+  if (!confirm('Excluir projeto?')) return
+  siteContent.projects = (siteContent.projects || []).filter(item => item.id !== p.id)
+  await persistSiteSetting('projects', siteContent.projects)
+  await recordActivity(`Exclusão Projeto: ${p.title}`, 'Exclusão')
+}
+
+const saveNewsletter = async () => {
+  if (!novaNewsletter.value.titulo || !novaNewsletter.value.conteudo) return alert("Preencha título e conteúdo.")
+  isSaving.value = true
+  try {
+    const payload = { ...novaNewsletter.value, enviado_em: new Date().toISOString() }
+    if (supabase) {
+      const { error } = await supabase.from('newsletters').insert([payload])
+      if (error) throw error
+    }
+    await fetchAllContent({ isAdmin: true })
+    await recordActivity(`Newsletter: ${payload.titulo}`, 'Envio/Arquivo')
+    alert('Newsletter enviada e salva!')
+  } catch(e) { alert('Erro: ' + e.message) } finally { isSaving.value = false }
+}
+
+const saveSobre = async () => {
+  isSaving.value = true
+  try {
+    Object.assign(siteContent.about, sobreData.value)
+    await persistSiteSetting('about', sobreData.value)
+    await recordActivity('Perfil Institucional', 'Configuração')
+    alert('Perfil salvo!')
+  } catch(e) { alert('Erro: ' + e.message) } finally { isSaving.value = false }
+}
+
+const saveSettings = async () => {
+  isSaving.value = true
+  try {
+    Object.assign(siteContent.settings, settingsData.value)
+    await persistSiteSetting('settings', settingsData.value)
+    await recordActivity('Configurações Globais', 'Configuração')
+    alert('Ajustes sincronizados!')
+  } catch(e) { alert('Erro: ' + e.message) } finally { isSaving.value = false }
+}
+
+const selectTab = (id) => {
+  activeTab.value = id
+  isMobileMenuOpen.value = false
+  window.scrollTo(0, 0)
+}
+
+const isMobile = ref(false)
+const updateIsMobile = () => { isMobile.value = window.innerWidth < 768 }
+
+onMounted(() => {
+  loadData()
+  if (!user.value) router.push('/login')
+  updateIsMobile()
+  window.addEventListener('resize', updateIsMobile)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('resize', updateIsMobile)
+})
+
+const recentPosts = computed(() => (siteContent.posts || []).slice(0, 3))
+const subscribersCount = computed(() => siteContent.subscribers?.length || 0)
+const opportunityStatusLabel = (vaga) => {
+  const s = getOpportunityVisibilityState(vaga)
+  return { public: 'PUBLICADA', pending: 'REVISÃO', rejected: 'REJEITADA' }[s] || 'OFFLINE'
+}
+
+const exportReport = () => {
+  const data = JSON.stringify(siteContent, null, 2)
+  const blob = new Blob([data], { type: 'application/json' })
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement('a')
+  a.href = url
+  a.download = `narrativa_report_${new Date().toISOString().slice(0,10)}.json`
+  a.click()
+}
+</script>
+
+<template>
+  <div class="production-admin-wrapper flex min-h-screen bg-[#F1F3F5] text-[#1A1A1A] font-sans">
+    
+    <!-- GRID TEXTURE OVERLAY -->
+    <div class="dot-grid fixed inset-0 opacity-[0.03] pointer-events-none"></div>
+
+    <!-- SIDEBAR (Reference Logic) -->
+    <aside class="sidebar-v2 w-[280px] bg-[#0F0F0F] text-white flex flex-col fixed h-full z-50 transition-all duration-300" :class="{ 'translate-x-[-280px]': !isMobileMenuOpen && isMobile }">
+      
+      <!-- LOGO AREA -->
+      <div class="h-[100px] flex items-center px-10 border-b border-white/5">
+        <div class="logo-v2 font-black text-2xl tracking-tighter leading-none">
+          NP<span class="text-[#FF3C82]">ADMIN</span>
+        </div>
+      </div>
+
+      <!-- NAVIGATION GROUPS (Functional Structure) -->
+      <nav class="flex-1 py-8 px-6 space-y-10 overflow-y-auto custom-scrollbar">
+        
+        <!-- GROUP: CONTEÚDO -->
+        <div class="nav-group">
+          <label class="group-label">Conteúdo</label>
+          <div class="space-y-1 mt-4">
+            <button @click="selectTab('dashboard')" class="nav-btn" :class="{ active: activeTab === 'dashboard' }">
+               <LayoutDashboard :size="18" /> Visão Geral
+            </button>
+            <button @click="selectTab('home')" class="nav-btn" :class="{ active: activeTab === 'home' }">
+               <Home :size="18" /> Gestão da Home
+            </button>
+            <button @click="selectTab('editorial')" class="nav-btn" :class="{ active: activeTab === 'editorial' }">
+               <FileText :size="18" /> Hub Editorial
+            </button>
+            <button @click="selectTab('newsletter')" class="nav-btn" :class="{ active: activeTab === 'newsletter' }">
+               <Mail :size="18" /> Newsletter
+            </button>
+            <button @click="selectTab('sobre')" class="nav-btn" :class="{ active: activeTab === 'sobre' }">
+               <User :size="18" /> Sobre Mim
+            </button>
+          </div>
+        </div>
+
+        <!-- GROUP: PLATAFORMA -->
+        <div class="nav-group">
+          <label class="group-label">Plataforma</label>
+          <div class="space-y-1 mt-4">
+            <button @click="selectTab('vagas')" class="nav-btn" :class="{ active: activeTab === 'vagas' }">
+               <Megaphone :size="18" /> Oportunidades
+            </button>
+            <button @click="selectTab('lms')" class="nav-btn" :class="{ active: activeTab === 'lms' }">
+               <Layers :size="18" /> Gestão LMS
+            </button>
+            <button @click="selectTab('servicos')" class="nav-btn" :class="{ active: activeTab === 'servicos' }">
+               <Zap :size="18" /> Serviços
+            </button>
+            <button @click="selectTab('biblioteca')" class="nav-btn" :class="{ active: activeTab === 'biblioteca' }">
+               <BookOpen :size="18" /> Biblioteca
+            </button>
+            <button @click="selectTab('projetos')" class="nav-btn" :class="{ active: activeTab === 'projetos' }">
+               <Folder :size="18" /> Projetos
+            </button>
+            <button @click="selectTab('doacoes')" class="nav-btn" :class="{ active: activeTab === 'doacoes' }">
+               <Heart :size="18" /> Doações
+            </button>
+          </div>
+        </div>
+
+        <!-- GROUP: SISTEMA -->
+        <div class="nav-group">
+          <label class="group-label">Sistema</label>
+          <div class="space-y-1 mt-4">
+            <button @click="selectTab('configuracoes')" class="nav-btn" :class="{ active: activeTab === 'configuracoes' }">
+              <Settings :size="18" /> Configurações
+            </button>
+            <router-link to="/" class="nav-btn">
+              <ExternalLink :size="18" /> Voltar ao Site
+            </router-link>
+            <button @click="handleLogout" class="nav-btn text-vermelho/80 hover:text-vermelho">
+              <LogOut :size="18" /> Sair do painel
+            </button>
+          </div>
+        </div>
+
+      </nav>
+
+      <!-- SIDEBAR FOOTER -->
+      <div class="p-6 border-t border-white/5 bg-white/5">
+        <div class="flex items-center gap-4">
+          <div class="w-10 h-10 rounded-full bg-rosa flex items-center justify-center font-black border border-white/10 uppercase">{{ (user?.nome_completo || 'A').charAt(0) }}</div>
+          <div class="flex-1 min-w-0">
+             <div class="font-bold text-sm truncate">Anne Dornelas</div>
+             <div class="text-[10px] opacity-40 uppercase tracking-widest font-black">Administradora</div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- MOBILE OVERLAY -->
+    <div v-if="isMobileMenuOpen" class="fixed inset-0 bg-black/60 z-40 md:hidden" @click="isMobileMenuOpen = false"></div>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-v2 flex-1 md:ml-[280px] min-h-screen relative">
+      
+      <!-- HEADER V2 (Functional parity with reference) -->
+      <header class="h-[100px] flex items-center justify-between px-8 md:px-12 sticky top-0 bg-[#F1F3F5]/90 backdrop-blur-md z-30 border-b border-black/[0.05]">
+        
+        <!-- Left: Mobile Toggle & Title -->
+        <div class="flex items-center gap-6">
+          <button @click="isMobileMenuOpen = !isMobileMenuOpen" class="md:hidden p-3 bg-[#0F0F0F] text-white rounded-xl shadow-lg">
+             <Menu v-if="!isMobileMenuOpen" :size="24" />
+             <X v-else :size="24" />
+          </button>
+          
+          <!-- MOBILE LOGO -->
+          <div class="md:hidden logo-v2 font-black text-xl tracking-tighter leading-none text-[#0F0F0F] uppercase">
+            NARRATIVA <span class="text-[#FF3C82]">POLÍTICA</span>
+          </div>
+
+          <div class="hidden md:block">
+            <h1 class="text-3xl font-black uppercase tracking-tight text-[#0F0F0F] leading-none">
+              {{ {
+                dashboard: 'Visão Geral',
+                home: 'Gestão da Home',
+                editorial: 'Hub Editorial',
+                newsletter: 'Newsletter',
+                sobre: 'Sobre Mim',
+                vagas: 'Radar de Oportunidades',
+                lms: 'Gestão LMS',
+                servicos: 'Serviços',
+                biblioteca: 'Biblioteca',
+                projetos: 'Projetos',
+                doacoes: 'Doações',
+                configuracoes: 'Ajustes Globais'
+              }[activeTab] }}
+            </h1>
+            <p class="text-[11px] font-black uppercase tracking-[3px] text-black/40 mt-2">
+              Status: Operacional ● {{ new Date().toLocaleDateString('pt-BR') }}
+            </p>
+          </div>
+        </div>
+
+        <!-- Right: Global Actions -->
+        <div class="flex items-center gap-4">
+           <button @click="exportReport" class="header-action-btn hidden sm:flex">
+             <Download :size="18" /> <span class="hidden lg:inline">RELATÓRIO</span>
+           </button>
+           <button @click="selectTab('editorial'); resetArtigoForm()" class="primary-cta-btn">
+             <Plus :size="20" /> <span class="hidden sm:inline">NOVO ARTIGO</span>
+           </button>
+        </div>
+      </header>
+
+      <!-- CONTENT CONTAINER -->
+      <div class="px-8 md:px-12 pb-24 max-w-[1400px]">
+        
+        <!-- LOADING / ERROR STATES -->
+        <div v-if="isLoadingData && !siteContent.posts?.length" class="py-32 flex flex-col items-center justify-center animate-pulse">
+           <div class="w-20 h-20 bg-black/5 rounded-full flex items-center justify-center mb-6">
+             <RefreshCw class="animate-spin text-black/20" :size="40" />
+           </div>
+           <p class="text-[11px] font-black uppercase tracking-widest text-black/40">Sincronizando dados estratégicos...</p>
+        </div>
+
+        <div v-else-if="hasLoadError" class="py-32 flex flex-col items-center text-center">
+           <div class="w-20 h-20 bg-vermelho/10 text-vermelho rounded-full flex items-center justify-center mb-6 border-2 border-vermelho">
+             <AlertCircle :size="40" />
+           </div>
+           <h3 class="text-2xl font-black mb-2">FALHA DE CONEXÃO</h3>
+           <p class="text-black/50 max-w-sm mb-8 font-bold">Verifique sua conexão com o Supabase ou tente recarregar.</p>
+           <button @click="loadData" class="primary-cta-btn bg-vermelho">TENTAR NOVAMENTE</button>
+        </div>
+
+        <!-- 1. VISÃO GERAL (DASHBOARD) -->
+        <div v-else-if="activeTab === 'dashboard'" class="space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-700">
+           
+           <!-- METRICS GRID -->
+           <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              <div class="metric-card-v2 bg-white">
+                 <div class="card-inner">
+                   <div class="card-accent bg-[#FFDC00]"></div>
+                   <div class="flex justify-between items-start mb-10">
+                     <span class="card-label">Alcance Total</span>
+                     <Globe :size="20" class="text-black/20" />
+                   </div>
+                   <div class="card-value">124<span class="text-[#FFDC00]">K</span></div>
+                   <div class="card-trend text-[#A0D246]">+14.2% esta semana</div>
+                 </div>
+              </div>
+
+              <div class="metric-card-v2 bg-white">
+                 <div class="card-inner">
+                   <div class="card-accent bg-[#FF3C82]"></div>
+                   <div class="flex justify-between items-start mb-10">
+                     <span class="card-label">Assinantes Ativos</span>
+                     <UserPlus :size="20" class="text-black/20" />
+                   </div>
+                   <div class="card-value">{{ subscribersCount }}</div>
+                   <div class="card-trend text-[#FF3C82]">Base em expansão</div>
+                 </div>
+              </div>
+
+              <div class="metric-card-v2 bg-white">
+                 <div class="card-inner">
+                   <div class="card-accent bg-[#3C64E6]"></div>
+                   <div class="flex justify-between items-start mb-10">
+                     <span class="card-label">Artigos Ativos</span>
+                     <FileText :size="20" class="text-black/20" />
+                   </div>
+                   <div class="card-value">{{ siteContent.posts?.length || 0 }}</div>
+                   <div class="card-trend text-[#3C64E6]">{{ filterPublicPosts(siteContent.posts).length }} Publicados</div>
+                 </div>
+              </div>
+           </section>
+
+           <!-- SECONDARY GRID -->
+           <section class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+              
+              <!-- ATIVIDADE RECENTE (Real Activity Log) -->
+              <div class="lg:col-span-8 panel-v2 bg-white">
+                 <div class="panel-header px-8 py-6 border-b border-black/[0.05] flex justify-between items-center">
+                    <h3 class="panel-title">Log de Atividades</h3>
+                    <button @click="selectTab('configuracoes')" class="panel-link">Ver Tudo <ChevronRight :size="14"/></button>
+                 </div>
+                 <div class="panel-body p-0 divide-y divide-black/[0.05]">
+                    <div v-for="act in siteContent.lastActivity" :key="act.id" class="activity-item group">
+                       <div class="w-12 h-12 rounded-xl bg-black/5 flex items-center justify-center text-black/40 group-hover:bg-rosa group-hover:text-white transition-all">
+                          <component :is="act.type.includes('Artigo') ? FileText : act.type.includes('Home') ? Home : act.type.includes('Oportunidade') ? Megaphone : Edit2" :size="20" />
+                       </div>
+                       <div class="flex-1 min-w-0">
+                         <div class="text-[10px] font-black text-black/30 uppercase tracking-widest mb-1">{{ act.type }}</div>
+                         <h4 class="text-sm font-black uppercase truncate">{{ act.title }}</h4>
+                         <span class="text-[9px] font-bold opacity-40 mt-1 block">{{ act.date }}</span>
+                       </div>
+                       <ChevronRight :size="14" class="opacity-10" />
+                    </div>
+                    <div v-if="!siteContent.lastActivity?.length" class="p-20 text-center text-black/20 font-black text-xs uppercase tracking-widest">Nenhum registro de atividade.</div>
+                 </div>
+              </div>
+
+              <!-- SIDEBAR PANELS -->
+              <div class="lg:col-span-4 space-y-8">
+                 <!-- NEWSLETTER INFO -->
+                 <div class="panel-v2 bg-[#0F0F0F] text-white overflow-hidden relative group">
+                    <div class="absolute top-0 left-0 w-2 h-full bg-[#FFDC00]"></div>
+                    <div class="p-10">
+                       <h3 class="text-[#FFDC00] font-black text-lg flex items-center gap-3 mb-8 uppercase tracking-tighter">
+                         <Mail :size="24" /> NEWSLETTER
+                       </h3>
+                       <div class="bg-white/5 border border-white/10 p-6 mb-10">
+                          <span class="block text-[10px] font-black opacity-40 uppercase tracking-[3px] mb-2">Engajamento Médio</span>
+                          <div class="text-5xl font-black text-[#FFDC00]">42.8%</div>
+                       </div>
+                       <button @click="selectTab('newsletter')" class="primary-cta-btn bg-[#FFDC00] text-black w-full py-5 shadow-none hover:bg-white">
+                         NOVA EDIÇÃO
+                       </button>
+                    </div>
+                 </div>
+
+                 <!-- ATALHOS RÁPIDOS -->
+                 <div class="panel-v2 bg-white p-8">
+                    <h4 class="text-[11px] font-black text-black/30 uppercase tracking-[4px] text-center mb-8">Atalhos do Sistema</h4>
+                    <div class="grid grid-cols-2 gap-4">
+                       <router-link to="/" class="quick-action-btn">VER SITE</router-link>
+                       <button @click="selectTab('configuracoes')" class="quick-action-btn">AJUSTES</button>
+                       <button @click="selectTab('editorial')" class="quick-action-btn">POSTAR</button>
+                       <button @click="selectTab('vagas')" class="quick-action-btn">VAGAS</button>
+                    </div>
+                 </div>
+              </div>
+           </section>
+        </div>
+
+        <!-- 2. GESTÃO DA HOME (Parity with reference) -->
+        <div v-else-if="activeTab === 'home'" class="space-y-12">
+           <div class="panel-v2 bg-white p-12 shadow-production overflow-hidden">
+              <div class="card-accent bg-[#FFDC00]"></div>
+              <h3 class="text-3xl font-black mb-12 uppercase tracking-tighter">CONFIGURAÇÃO DA PÁGINA INICIAL</h3>
+              
+              <div class="space-y-12">
+                 <!-- HERO SECTION -->
+                 <div class="p-10 bg-[#F1F3F5] rounded-3xl border border-black/5">
+                    <h4 class="text-xl font-black mb-8 flex items-center gap-3"><Layout :size="24" /> SEÇÃO HERO</h4>
+                    <div class="grid md:grid-cols-2 gap-8">
+                       <div class="input-v2"><label>Título (Parte 1)</label><input v-model="homeData.heroTitle" type="text" /></div>
+                       <div class="input-v2"><label>Título em Destaque (Parte 2)</label><input v-model="homeData.heroTitleAccent" type="text" /></div>
+                    </div>
+                    <div class="input-v2 mt-8"><label>Subtítulo / Manifesto</label><textarea v-model="homeData.heroDescription" rows="4"></textarea></div>
+                    <div class="grid md:grid-cols-2 gap-8 mt-8">
+                       <div class="input-v2"><label>Texto do Botão Hero</label><input v-model="homeData.heroButtonText" type="text" /></div>
+                       <div class="input-v2"><label>Tamanho da Fonte (Rem)</label><input v-model="homeData.heroFontSize" type="text" /></div>
+                    </div>
+                 </div>
+
+                 <!-- MARQUEE & RADAR -->
+                 <div class="grid lg:grid-cols-2 gap-12">
+                    <div class="p-10 bg-white border-thick rounded-3xl">
+                       <h4 class="text-lg font-black mb-6 uppercase">Faixa Marquee</h4>
+                       <div class="input-v2"><label>Texto em Movimento</label><input v-model="homeData.marqueeText" type="text" /></div>
+                       <div class="input-v2 mt-6"><label>Espaçamento (Rem)</label><input v-model="homeData.marqueePadding" type="text" /></div>
+                    </div>
+                    <div class="p-10 bg-white border-thick rounded-3xl">
+                       <h4 class="text-lg font-black mb-6 uppercase">Radar Editorial</h4>
+                       <div class="input-v2"><label>Título do Bloco</label><input v-model="homeData.radarEditorialTitle" type="text" /></div>
+                       <div class="input-v2 mt-6"><label>Subtítulo</label><input v-model="homeData.radarEditorialSubtitle" type="text" /></div>
+                    </div>
+                 </div>
+
+                 <!-- NEWSLETTER CONFIG (PRODUCTION STYLE) -->
+                 <div class="p-10 bg-preto text-white rounded-3xl border-thick">
+                    <h4 class="text-xl font-black mb-8 text-[#FFDC00] uppercase">BLOCO DE CONVERSÃO (NEWSLETTER)</h4>
+                    <div class="grid md:grid-cols-2 gap-8">
+                       <div class="input-v2"><label class="!text-white/40">Chamada (Eyebrow)</label><input v-model="homeData.newsletterEyebrow" type="text" class="!bg-white/5 !text-white !border-white/10" /></div>
+                       <div class="input-v2"><label class="!text-white/40">Título Principal</label><input v-model="homeData.newsletterTitle" type="text" class="!bg-white/5 !text-white !border-white/10" /></div>
+                    </div>
+                    <div class="input-v2 mt-8"><label class="!text-white/40">Descrição de Apoio</label><textarea v-model="homeData.newsletterDescription" rows="3" class="!bg-white/5 !text-white !border-white/10"></textarea></div>
+                    <div class="grid md:grid-cols-2 gap-8 mt-8">
+                       <div class="input-v2"><label class="!text-white/40">Placeholder do E-mail</label><input v-model="homeData.newsletterPlaceholder" type="text" class="!bg-white/5 !text-white !border-white/10" /></div>
+                       <div class="input-v2"><label class="!text-white/40">Texto do Botão</label><input v-model="homeData.newsletterButton" type="text" class="!bg-white/5 !text-white !border-white/10" /></div>
+                    </div>
+                 </div>
+
+                 <button @click="saveHome" :disabled="isSaving" class="primary-cta-btn bg-[#FFDC00] text-black w-full py-6 text-xl">
+                    {{ isSaving ? 'SINCRONIZANDO...' : 'SALVAR TODAS AS MUDANÇAS DA HOME' }}
+                 </button>
+              </div>
+           </div>
+        </div>
+
+        

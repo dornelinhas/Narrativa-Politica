@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Narrativa Política - Hub de Impacto</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,400;0,700;0,800;1,400&amp;family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,700;1,9..40,400&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "primary-fixed-dim": "#c8c6c5",
+                        "surface-container": "#f1edec",
+                        "tertiary-container": "#1c1b1a",
+                        "tertiary": "#000000",
+                        "on-tertiary-container": "#868381",
+                        "surface-bright": "#fdf8f8",
+                        "on-surface-variant": "#444748",
+                        "outline-variant": "#c4c7c7",
+                        "outline": "#747878",
+                        "surface-variant": "#e5e2e1",
+                        "rosa": "#FF3C82",
+                        "on-primary-container": "#858383",
+                        "vermelho": "#D22828",
+                        "on-tertiary-fixed-variant": "#484645",
+                        "secondary-container": "#e7e2da",
+                        "azul": "#3C64E6",
+                        "amarelo": "#FFDC00",
+                        "surface-container-highest": "#e5e2e1",
+                        "on-background": "#1c1b1b",
+                        "secondary-fixed": "#e7e2da",
+                        "tertiary-fixed-dim": "#cac6c3",
+                        "on-tertiary": "#ffffff",
+                        "on-error-container": "#93000a",
+                        "on-tertiary-fixed": "#1c1b1a",
+                        "surface-container-high": "#ebe7e6",
+                        "surface": "#fdf8f8",
+                        "verde": "#A0D246",
+                        "secondary": "#615e58",
+                        "inverse-primary": "#c8c6c5",
+                        "on-secondary-fixed-variant": "#494741",
+                        "surface-tint": "#5f5e5e",
+                        "on-secondary-fixed": "#1d1c17",
+                        "surface-container-low": "#f7f3f2",
+                        "on-secondary": "#ffffff",
+                        "primary": "#000000",
+                        "lilas": "#9660E0",
+                        "on-error": "#ffffff",
+                        "tertiary-fixed": "#e6e1df",
+                        "on-primary-fixed": "#1c1b1b",
+                        "on-surface": "#1c1b1b",
+                        "on-primary": "#ffffff",
+                        "secondary-fixed-dim": "#cac6be",
+                        "error-container": "#ffdad6",
+                        "surface-container-lowest": "#ffffff",
+                        "inverse-on-surface": "#f4f0ef",
+                        "background": "#fdf8f8",
+                        "inverse-surface": "#313030",
+                        "primary-container": "#1c1b1b",
+                        "error": "#ba1a1a",
+                        "on-secondary-container": "#67645e",
+                        "primary-fixed": "#e5e2e1",
+                        "on-primary-fixed-variant": "#474646",
+                        "surface-dim": "#ddd9d8"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "stack-lg": "48px",
+                        "stack-sm": "12px",
+                        "container-max": "1200px",
+                        "unit": "4px",
+                        "section-padding": "80px",
+                        "stack-md": "24px",
+                        "gutter": "24px"
+                    },
+                    "fontFamily": {
+                        "label-bold": ["DM Sans"],
+                        "caption": ["DM Sans"],
+                        "headline-md": ["Barlow Condensed"],
+                        "body-md": ["DM Sans"],
+                        "body-lg": ["DM Sans"],
+                        "display-xl": ["Barlow Condensed"],
+                        "headline-lg": ["Barlow Condensed"],
+                        "headline-lg-mobile": ["Barlow Condensed"]
+                    },
+                    "fontSize": {
+                        "label-bold": ["13px", { "lineHeight": "1.2", "letterSpacing": "0.05em", "fontWeight": "700" }],
+                        "caption": ["11px", { "lineHeight": "1.2", "letterSpacing": "0.1em", "fontWeight": "500" }],
+                        "headline-md": ["32px", { "lineHeight": "1.2", "fontWeight": "700" }],
+                        "body-md": ["16px", { "lineHeight": "1.5", "fontWeight": "400" }],
+                        "body-lg": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "display-xl": ["80px", { "lineHeight": "1.0", "letterSpacing": "-0.02em", "fontWeight": "800" }],
+                        "headline-lg": ["52px", { "lineHeight": "1.1", "fontWeight": "700" }],
+                        "headline-lg-mobile": ["38px", { "lineHeight": "1.1", "fontWeight": "700" }]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .texture-noise {
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E");
+            pointer-events: none;
+        }
+        .paper-shadow {
+            box-shadow: 4px 4px 0px rgba(0,0,0,0.9);
+        }
+        .paper-cut {
+            clip-path: polygon(2% 0, 100% 2%, 98% 100%, 0 98%);
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md antialiased relative">
+<div class="fixed inset-0 texture-noise z-50"></div>
+<!-- TopNavBar -->
+<header class="bg-background border-b-2 border-primary docked full-width top-0 z-40 sticky">
+<div class="flex justify-between items-center w-full px-gutter py-4 max-w-container-max mx-auto">
+<a class="font-headline-lg text-headline-lg font-bold text-primary" href="#">NARRATIVA POLÍTICA</a>
+<nav class="hidden md:flex gap-stack-md">
+<a class="text-primary font-bold border-b-4 border-vermelho pb-1 font-headline-md text-headline-md uppercase tracking-tight" href="#">MOVIMENTO</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors hover:bg-surface-variant transition-all font-headline-md text-headline-md uppercase tracking-tight" href="#">ARTIGOS</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors hover:bg-surface-variant transition-all font-headline-md text-headline-md uppercase tracking-tight" href="#">ATUAÇÃO</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors hover:bg-surface-variant transition-all font-headline-md text-headline-md uppercase tracking-tight" href="#">SOBRE MIM</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors hover:bg-surface-variant transition-all font-headline-md text-headline-md uppercase tracking-tight" href="#">ENVOLVA-SE</a>
+</nav>
+<button class="hidden md:flex items-center gap-2 bg-primary text-on-primary font-label-bold text-label-bold px-6 py-3 border border-primary hover:bg-vermelho transition-colors">
+                APOIE AGORA
+                <span class="material-symbols-outlined text-sm">arrow_forward</span>
+</button>
+<button class="md:hidden text-primary">
+<span class="material-symbols-outlined text-3xl">menu</span>
+</button>
+</div>
+</header>
+<!-- Hero Section -->
+<section class="relative pt-20 pb-32 px-gutter overflow-hidden border-b-2 border-primary bg-surface-container">
+<div class="max-w-container-max mx-auto grid md:grid-cols-12 gap-stack-lg items-center relative z-10">
+<div class="md:col-span-7 space-y-stack-md relative">
+<div class="absolute -top-12 -left-12 w-32 h-32 bg-amarelo rounded-full mix-blend-multiply opacity-80 blur-sm"></div>
+<div class="inline-block bg-rosa text-on-primary font-label-bold text-label-bold px-3 py-1 border border-primary transform -rotate-2">
+                    IMPACTO &amp; TRANSFORMAÇÃO
+                </div>
+<h1 class="font-display-xl text-display-xl md:text-[100px] leading-[0.9] text-primary uppercase relative z-10">
+                    O HUB DE IMPACTO PARA QUEM ATUA NA TRANSFORMAÇÃO SOCIAL.
+                </h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-lg border-l-4 border-azul pl-4">
+                    Uma curadoria Narrativa para ampliar repertório crítico sobre o mundo contemporâneo, política, sociedade e gênero.
+                </p>
+<div class="flex gap-4 pt-4">
+<button class="bg-primary text-on-primary font-label-bold text-label-bold px-8 py-4 border border-primary hover:bg-azul transition-colors paper-shadow">
+                        EXPLORAR HUB
+                    </button>
+<button class="bg-surface text-primary font-label-bold text-label-bold px-8 py-4 border-2 border-primary hover:bg-amarelo transition-colors paper-shadow">
+                        ASSINAR NEWSLETTER
+                    </button>
+</div>
+</div>
+<div class="md:col-span-5 relative mt-12 md:mt-0">
+<div class="relative w-full aspect-[4/5] paper-cut border-2 border-primary paper-shadow bg-surface-container-high overflow-hidden">
+<img alt="Halftone portrait" class="w-full h-full object-cover grayscale contrast-125 mix-blend-luminosity" data-alt="A striking black and white halftone portrait of a young black woman engaged in reading or working, set against a stark, high-contrast background. The image has a raw, editorial collage feel with visible grain and a slightly distressed texture, reminiscent of a xeroxed zine. The lighting is harsh and direct, emphasizing the texture of the halftone pattern and contributing to the modern brutalist aesthetic of the composition." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCAAt0EIV81as6BKnhBJLNp54LFLnPWVOw5L-tw0vwTtSzqJeuDisRjM6ZMnNRd5paV8B0hcVCsMwu91i4LmB_dTS-AJIAgPuJBSqm8UWdHNIRVGyOYQpjZQTPZPZ1rQOebUaSNMI1xMXI4o5Ms6AFjl-yqeDMY_J9pO4XOrJEYt7eEIMm_9t1up_L6SzcwLozKKB5W0phv8jCSOl4GByZS5YYl_oyxp20Vya349z_cgNCQOhsKnwIaIfK853KQ3fsQrs8lFc-90A"/>
+<div class="absolute -bottom-6 -right-6 w-48 h-48 bg-verde rounded-full mix-blend-multiply opacity-90 blur-sm"></div>
+<div class="absolute top-8 -left-8 bg-vermelho text-white p-4 transform -rotate-12 border border-primary paper-shadow">
+<span class="material-symbols-outlined text-4xl">campaign</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- 1. Movimento -->
+<section class="py-section-padding px-gutter bg-surface">
+<div class="max-w-container-max mx-auto">
+<div class="flex flex-col md:flex-row justify-between items-end mb-stack-lg border-b-4 border-primary pb-4">
+<div>
+<h2 class="font-headline-lg text-headline-lg md:text-[64px] text-primary uppercase">Movimento</h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant">Destaque para impacto social e ações em andamento.</p>
+</div>
+<a class="font-label-bold text-label-bold text-primary hover:text-vermelho flex items-center gap-1 uppercase underline decoration-2 underline-offset-4 hidden md:flex" href="#">
+                    Ver todas as ações <span class="material-symbols-outlined text-sm">arrow_forward</span>
+</a>
+</div>
+<div class="grid md:grid-cols-3 gap-stack-md">
+<!-- Card 1 -->
+<div class="bg-surface-container border border-primary paper-shadow p-6 relative overflow-hidden group">
+<div class="absolute top-0 left-0 w-full h-2 bg-azul"></div>
+<div class="mb-4">
+<span class="inline-block bg-primary text-on-primary font-caption text-caption px-2 py-1 rounded-full uppercase">Educação</span>
+</div>
+<h3 class="font-headline-md text-headline-md text-primary mb-2 group-hover:text-azul transition-colors">Leituras para Entender Política</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mb-6">Uma curadoria especial de e-books e materiais para ampliar seu repertório crítico.</p>
+<div class="flex justify-between items-center mt-auto">
+<span class="font-label-bold text-label-bold text-primary">5k+ Impactados</span>
+<span class="material-symbols-outlined text-azul">auto_stories</span>
+</div>
+</div>
+<!-- Card 2 -->
+<div class="bg-surface-container border border-primary paper-shadow p-6 relative overflow-hidden group bg-primary text-on-primary transform md:-translate-y-4">
+<div class="absolute top-0 left-0 w-full h-2 bg-amarelo"></div>
+<div class="mb-4">
+<span class="inline-block bg-amarelo text-primary font-caption text-caption px-2 py-1 rounded-full uppercase">Sociedade</span>
+</div>
+<h3 class="font-headline-md text-headline-md text-on-primary mb-2">Construção de Novas Narrativas</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mb-6 text-inverse-on-surface">Projetos focados em dar voz a comunidades marginalizadas e reescrever a história local.</p>
+<div class="flex justify-between items-center mt-auto">
+<span class="font-label-bold text-label-bold text-on-primary">Projeto Ativo</span>
+<span class="material-symbols-outlined text-amarelo">diversity_3</span>
+</div>
+</div>
+<!-- Card 3 -->
+<div class="bg-surface-container border border-primary paper-shadow p-6 relative overflow-hidden group">
+<div class="absolute top-0 left-0 w-full h-2 bg-rosa"></div>
+<div class="mb-4">
+<span class="inline-block bg-primary text-on-primary font-caption text-caption px-2 py-1 rounded-full uppercase">Gênero</span>
+</div>
+<h3 class="font-headline-md text-headline-md text-primary mb-2 group-hover:text-rosa transition-colors">Liderança Feminina na Política</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mb-6">Capacitação e mentoria para mulheres que desejam ingressar na vida pública.</p>
+<div class="flex justify-between items-center mt-auto">
+<span class="font-label-bold text-label-bold text-primary">Inscrições Abertas</span>
+<span class="material-symbols-outlined text-rosa">female</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Footer -->
+<footer class="bg-tertiary text-on-tertiary border-t-4 border-amarelo w-full relative z-10">
+<div class="grid grid-cols-1 md:grid-cols-3 gap-stack-md w-full px-gutter py-section-padding max-w-container-max mx-auto">
+<div>
+<a class="font-headline-md text-headline-md text-on-tertiary block mb-4 uppercase" href="#">NARRATIVA POLÍTICA</a>
+<p class="font-body-md text-body-md text-on-tertiary-container mb-6 max-w-xs">Impacto Social, Política e Gênero. Um hub para transformação.</p>
+<p class="font-body-md text-body-md text-on-tertiary-container text-sm">© 2024 Narrativa Política.</p>
+</div>
+<div class="flex flex-col gap-4">
+<a class="font-label-bold text-label-bold text-on-tertiary-container hover:text-on-tertiary hover:underline decoration-rosa decoration-2 transition-all duration-300 ease-in-out" href="#">INSTITUCIONAL</a>
+<a class="font-label-bold text-label-bold text-on-tertiary-container hover:text-on-tertiary hover:underline decoration-rosa decoration-2 transition-all duration-300 ease-in-out" href="#">TRANSPARÊNCIA</a>
+<a class="font-label-bold text-label-bold text-on-tertiary-container hover:text-on-tertiary hover:underline decoration-rosa decoration-2 transition-all duration-300 ease-in-out" href="#">CONTATO</a>
+</div>
+<div class="flex flex-col gap-4">
+<a class="font-label-bold text-label-bold text-on-tertiary-container hover:text-on-tertiary hover:underline decoration-rosa decoration-2 transition-all duration-300 ease-in-out" href="#">NEWSLETTER</a>
+<a class="font-label-bold text-label-bold text-on-tertiary-container hover:text-on-tertiary hover:underline decoration-rosa decoration-2 transition-all duration-300 ease-in-out" href="#">PRIVACIDADE</a>
+<div class="mt-4 flex gap-4">
+<a class="w-10 h-10 border border-on-tertiary flex items-center justify-center hover:bg-on-tertiary hover:text-tertiary transition-colors" href="#">
+<span class="material-symbols-outlined">share</span>
+</a>
+</div>
+</div>
+</div>
+</footer>
+</body></html>

@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Radar de Oportunidades - Narrativa Política</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&amp;family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "verde-analise": "#A0D246",
+                        "error-container": "#ffdad6",
+                        "on-primary-container": "#858383",
+                        "on-primary-fixed": "#1c1b1b",
+                        "surface-container-highest": "#e5e2e1",
+                        "on-secondary": "#ffffff",
+                        "surface-container-high": "#ebe7e6",
+                        "surface-container": "#f1edec",
+                        "primary-fixed": "#e5e2e1",
+                        "secondary-fixed": "#e7e2da",
+                        "on-tertiary-container": "#868381",
+                        "on-tertiary-fixed": "#1c1b1a",
+                        "on-secondary-container": "#67645e",
+                        "on-secondary-fixed-variant": "#494741",
+                        "on-background": "#1c1b1b",
+                        "inverse-surface": "#313030",
+                        "on-secondary-fixed": "#1d1c17",
+                        "tertiary-fixed": "#e6e1df",
+                        "primary": "#000000",
+                        "inverse-on-surface": "#f4f0ef",
+                        "vermelho-editorial": "#D22828",
+                        "on-tertiary": "#ffffff",
+                        "azul-lideranca": "#3C64E6",
+                        "on-primary-fixed-variant": "#474646",
+                        "background": "#fdf8f8",
+                        "on-surface": "#1c1b1b",
+                        "on-error-container": "#93000a",
+                        "on-surface-variant": "#444748",
+                        "surface-container-lowest": "#ffffff",
+                        "on-error": "#ffffff",
+                        "secondary-fixed-dim": "#cac6be",
+                        "amarelo-movimento": "#FFDC00",
+                        "rosa-mentoria": "#FF3C82",
+                        "tertiary-container": "#1c1b1a",
+                        "surface-variant": "#e5e2e1",
+                        "outline": "#747878",
+                        "surface": "#fdf8f8",
+                        "on-primary": "#ffffff",
+                        "inverse-primary": "#c8c6c5",
+                        "error": "#ba1a1a",
+                        "secondary-container": "#e7e2da",
+                        "surface-container-low": "#f7f3f2",
+                        "primary-fixed-dim": "#c8c6c5",
+                        "surface-dim": "#ddd9d8",
+                        "tertiary-fixed-dim": "#cac6c3",
+                        "surface-tint": "#5f5e5e",
+                        "tertiary": "#000000",
+                        "primary-container": "#1c1b1b",
+                        "secondary": "#615e58",
+                        "on-tertiary-fixed-variant": "#484645",
+                        "surface-bright": "#fdf8f8",
+                        "lilas-formacao": "#9660E0",
+                        "outline-variant": "#c4c7c7"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "section-gap": "80px",
+                        "gutter": "32px",
+                        "base": "4px",
+                        "margin-mobile": "20px",
+                        "container-max": "1200px"
+                    },
+                    "fontFamily": {
+                        "label-bold": ["DM Sans"],
+                        "headline-md": ["Barlow Condensed"],
+                        "headline-lg-mobile": ["Barlow Condensed"],
+                        "headline-lg": ["Barlow Condensed"],
+                        "body-lg": ["DM Sans"],
+                        "caption": ["DM Sans"],
+                        "body-md": ["DM Sans"],
+                        "headline-xl": ["Barlow Condensed"]
+                    },
+                    "fontSize": {
+                        "label-bold": ["11px", { "lineHeight": "1.2", "letterSpacing": "4px", "fontWeight": "700" }],
+                        "headline-md": ["32px", { "lineHeight": "1.1", "letterSpacing": "-1px", "fontWeight": "700" }],
+                        "headline-lg-mobile": ["36px", { "lineHeight": "1.1", "letterSpacing": "-1px", "fontWeight": "800" }],
+                        "headline-lg": ["52px", { "lineHeight": "1.0", "letterSpacing": "-2px", "fontWeight": "800" }],
+                        "body-lg": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "caption": ["10px", { "lineHeight": "1.2", "letterSpacing": "2px", "fontWeight": "400" }],
+                        "body-md": ["16px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "headline-xl": ["80px", { "lineHeight": "1.0", "letterSpacing": "-3px", "fontWeight": "800" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        /* Custom utilities for Brutalist-Light aesthetic */
+        .texture-bg {
+            background-image: url('data:image/svg+xml;utf8,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><filter id="noise"><feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="4" stitchTiles="stitch"/></filter><rect width="100" height="100" filter="url(%23noise)" opacity="0.05"/></svg>');
+        }
+        .torn-edge-bottom {
+            clip-path: polygon(0 0, 100% 0, 100% 95%, 95% 100%, 90% 96%, 85% 100%, 80% 95%, 75% 100%, 70% 94%, 65% 100%, 60% 95%, 55% 100%, 50% 96%, 45% 100%, 40% 95%, 35% 100%, 30% 94%, 25% 100%, 20% 95%, 15% 100%, 10% 96%, 5% 100%, 0 95%);
+        }
+        .torn-edge-top {
+            clip-path: polygon(0 5%, 5% 0, 10% 4%, 15% 0, 20% 5%, 25% 0, 30% 6%, 35% 0, 40% 5%, 45% 0, 50% 4%, 55% 0, 60% 5%, 65% 0, 70% 6%, 75% 0, 80% 5%, 85% 0, 90% 4%, 95% 0, 100% 5%, 100% 100%, 0 100%);
+        }
+        .halftone-pattern {
+            background-image: radial-gradient(circle, #1c1b1b 1px, transparent 1.5px);
+            background-size: 8px 8px;
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface font-body-md min-h-screen flex flex-col texture-bg">
+<!-- TopNavBar -->
+<header class="bg-surface border-b-2 border-primary sticky top-0 z-50">
+<nav class="flex justify-between items-center w-full px-margin-mobile md:px-gutter max-w-container-max mx-auto h-20">
+<a class="text-headline-md font-headline-md font-extrabold text-primary uppercase tracking-tighter flex items-center gap-2" href="#">
+<div class="w-8 h-8 bg-azul-lideranca grid place-items-center rounded-sm transform -rotate-6">
+<span class="text-on-primary font-bold text-lg">N</span>
+</div>
+<div class="w-8 h-8 bg-rosa-mentoria grid place-items-center rounded-sm rounded-full -ml-4 mix-blend-multiply">
+<span class="text-on-primary font-bold text-lg">P</span>
+</div>
+<span class="ml-2 hidden md:inline-block">Narrativa Política</span>
+</a>
+<!-- Desktop Nav -->
+<ul class="hidden md:flex gap-8 items-center">
+<li><a class="text-on-surface-variant hover:text-primary text-label-bold font-label-bold uppercase" href="#">Artigos</a></li>
+<li><a class="text-on-surface-variant hover:text-primary text-label-bold font-label-bold uppercase" href="#">Notícias</a></li>
+<li><a class="text-primary border-b-4 border-amarelo-movimento pb-1 text-label-bold font-label-bold uppercase" href="#">Oportunidades</a></li>
+<li><a class="text-on-surface-variant hover:text-primary text-label-bold font-label-bold uppercase" href="#">Sobre</a></li>
+<li><a class="text-on-surface-variant hover:text-primary text-label-bold font-label-bold uppercase" href="#">Mentoria</a></li>
+</ul>
+<div class="flex items-center gap-4">
+<button class="md:hidden text-primary">
+<span class="material-symbols-outlined text-3xl">menu</span>
+</button>
+<button class="hidden md:block bg-vermelho-editorial text-on-primary px-6 py-2 rounded-lg font-label-bold text-label-bold uppercase hover:bg-primary transition-colors border-2 border-primary shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+                    Entrar
+                </button>
+</div>
+</nav>
+</header>
+<!-- Main Content -->
+<main class="flex-grow flex flex-col w-full">
+<!-- Hero Section -->
+<section class="w-full px-margin-mobile md:px-gutter py-12 md:py-20 max-w-container-max mx-auto relative overflow-hidden">
+<!-- Decorative Elements -->
+<div class="absolute top-10 right-10 w-32 h-32 bg-amarelo-movimento rounded-full mix-blend-multiply opacity-80 blur-xl"></div>
+<div class="absolute bottom-0 left-0 w-48 h-48 bg-azul-lideranca rounded-full mix-blend-multiply opacity-60 blur-2xl transform translate-y-1/2 -translate-x-1/4"></div>
+<div class="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+<div class="lg:col-span-8 space-y-6">
+<div class="inline-flex items-center gap-2 bg-primary text-on-primary px-4 py-1 rounded-sm transform -rotate-2">
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">radar</span>
+<span class="text-label-bold font-label-bold uppercase">Sua Próxima Ação</span>
+</div>
+<h1 class="text-headline-lg-mobile md:text-headline-xl font-headline-xl text-primary leading-none uppercase">
+                        Radar de <br/>
+<span class="relative inline-block">
+<span class="relative z-10">Oportunidades</span>
+<span class="absolute bottom-2 left-0 w-full h-4 bg-azul-lideranca/30 -z-10 transform -skew-x-12"></span>
+</span>
+</h1>
+<p class="text-body-lg font-body-lg text-on-surface-variant max-w-2xl border-l-4 border-rosa-mentoria pl-4 py-2 bg-surface-container/50">
+                        Uma curadoria ativa de vagas, editais e conexões para quem atua na transformação social e política do Brasil.
+                    </p>
+</div>
+<div class="lg:col-span-4 hidden lg:block relative">
+<div class="w-full aspect-square bg-surface-container-high rounded-xl relative border-2 border-primary overflow-hidden torn-edge-bottom shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
+<img alt="Pessoas trabalhando juntas" class="w-full h-full object-cover grayscale mix-blend-multiply opacity-80" data-alt="A high-contrast black and white photo of young diverse political activists gathered around a table looking at documents, gritty texture, brutalist light aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBDN6CFNAm1N438tjGR9_FVfyJQirpx92FQphFce1JUnBavZ8Y2QJwEDtgabiLNAU6ltnDZ-2XYr9cVkqQFJKMmsvH_aI0C9goYn6zX5QVi1Egp18YdKw9DCB_uphgzyCkNFQeUm1HnI8Aq2QD010s5b2QFwBxAYLJw5ggRafqCykp1p1NNao4NmLnz53I8Y_4evI8wkp1yvwwgrItgnB4556h6JZSjTYwlzB3VLL-pmFkYvx989ap-inISlVkIUkqEgzfP_QxPIw"/>
+<div class="absolute inset-0 bg-vermelho-editorial/20 mix-blend-color"></div>
+</div>
+<div class="absolute -bottom-6 -left-6 w-24 h-24 bg-amarelo-movimento rounded-full border-2 border-primary grid place-items-center rotate-12 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+<span class="material-symbols-outlined text-4xl text-primary" style="font-variation-settings: 'FILL' 1;">campaign</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Filters Section -->
+<section class="w-full bg-surface-container-low border-y-2 border-primary py-6 relative z-20">
+<div class="max-w-container-max mx-auto px-margin-mobile md:px-gutter flex flex-col md:flex-row justify-between items-center gap-4">
+<div class="flex flex-wrap gap-3 items-center w-full md:w-auto">
+<span class="text-label-bold font-label-bold text-on-surface-variant uppercase mr-2">Filtrar por:</span>
+<button class="px-4 py-2 bg-primary text-on-primary rounded-full text-label-bold font-label-bold uppercase border-2 border-primary hover:bg-surface hover:text-primary transition-colors">
+                        Todos
+                    </button>
+<button class="px-4 py-2 bg-surface text-primary rounded-full text-label-bold font-label-bold uppercase border-2 border-primary hover:bg-surface-container-high transition-colors flex items-center gap-1">
+<span class="w-2 h-2 rounded-full bg-azul-lideranca"></span>
+                        Vagas
+                    </button>
+<button class="px-4 py-2 bg-surface text-primary rounded-full text-label-bold font-label-bold uppercase border-2 border-primary hover:bg-surface-container-high transition-colors flex items-center gap-1">
+<span class="w-2 h-2 rounded-full bg-vermelho-editorial"></span>
+                        Editais
+                    </button>
+<button class="px-4 py-2 bg-surface text-primary rounded-full text-label-bold font-label-bold uppercase border-2 border-primary hover:bg-surface-container-high transition-colors flex items-center gap-1">
+<span class="w-2 h-2 rounded-full bg-verde-analise"></span>
+                        Voluntariado
+                    </button>
+</div>
+<div class="w-full md:w-auto flex items-center gap-2">
+<div class="relative w-full md:w-64">
+<input class="w-full bg-surface border-2 border-primary rounded-lg py-2 pl-4 pr-10 text-body-md focus:ring-0 focus:border-azul-lideranca shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]" placeholder="Buscar oportunidade..." type="text"/>
+<span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Opportunities Grid -->
+<section class="w-full px-margin-mobile md:px-gutter py-12 max-w-container-max mx-auto">
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+<!-- Card 1: Vaga Liderança -->
+<article class="bg-[#FFFDF9] border-2 border-primary rounded-xl overflow-hidden shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1 hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all duration-200 flex flex-col group">
+<div class="h-4 bg-azul-lideranca border-b-2 border-primary w-full halftone-pattern opacity-80"></div>
+<div class="p-6 flex-grow flex flex-col">
+<div class="flex justify-between items-start mb-4">
+<span class="inline-block bg-azul-lideranca/10 text-azul-lideranca border border-azul-lideranca px-3 py-1 rounded-sm text-caption font-label-bold uppercase tracking-widest">
+                                Vaga
+                            </span>
+<div class="flex items-center gap-1 text-on-surface-variant text-caption font-label-bold">
+<span class="material-symbols-outlined text-sm">location_on</span>
+<span>São Paulo / Híbrido</span>
+</div>
+</div>
+<h3 class="text-headline-md font-headline-md text-primary uppercase leading-tight mb-2 group-hover:text-azul-lideranca transition-colors">
+                            Coordenador(a) de Advocacy e Relações Institucionais
+                        </h3>
+<p class="text-on-surface-variant text-body-md font-body-md line-clamp-3 mb-6 flex-grow">
+                            Buscamos liderança para estruturar campanhas de impacto no legislativo federal, focando em direitos socioambientais. Necessário experiência prévia em Brasília.
+                        </p>
+<div class="mt-auto pt-4 border-t border-outline-variant flex justify-between items-center">
+<div class="flex items-center gap-2">
+<div class="w-8 h-8 rounded-full bg-surface-container border border-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-sm">business</span>
+</div>
+<span class="text-label-bold font-label-bold text-on-surface uppercase">Inst. Update</span>
+</div>
+<div class="bg-amarelo-movimento px-2 py-1 border border-primary text-primary text-caption font-label-bold font-bold uppercase rounded-sm flex items-center gap-1">
+<span class="material-symbols-outlined text-[10px]">schedule</span>
+                                Até 15/Out
+                            </div>
+</div>
+</div>
+</article>
+<!-- Card 2: Edital (Destaque) -->
+<article class="bg-surface-container-lowest border-2 border-primary rounded-xl overflow-hidden shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1 transition-all duration-200 flex flex-col relative">
+<!-- Torn paper accent -->
+<div class="absolute top-0 right-0 w-16 h-16 bg-vermelho-editorial border-b-2 border-l-2 border-primary torn-edge-bottom z-10 flex items-center justify-center">
+<span class="material-symbols-outlined text-on-primary -rotate-12" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+<div class="h-2 bg-vermelho-editorial w-full"></div>
+<div class="p-6 flex-grow flex flex-col">
+<div class="flex justify-between items-start mb-4">
+<span class="inline-block bg-vermelho-editorial/10 text-vermelho-editorial border border-vermelho-editorial px-3 py-1 rounded-sm text-caption font-label-bold uppercase tracking-widest">
+                                Edital
+                            </span>
+<div class="flex items-center gap-1 text-on-surface-variant text-caption font-label-bold">
+<span class="material-symbols-outlined text-sm">public</span>
+<span>Nacional</span>
+</div>
+</div>
+<h3 class="text-headline-md font-headline-md text-primary uppercase leading-tight mb-2">
+                            Fundo Fica: Apoio a Coletivos Periféricos
+                        </h3>
+<p class="text-on-surface-variant text-body-md font-body-md line-clamp-3 mb-6 flex-grow">
+                            Edital destina até R$ 50.000 para organizações de base comunitária atuando com comunicação independente e mobilização territorial.
+                        </p>
+<div class="mt-auto pt-4 border-t border-outline-variant flex justify-between items-center">
+<div class="flex items-center gap-2">
+<div class="w-8 h-8 rounded-full bg-surface-container border border-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-sm">account_balance</span>
+</div>
+<span class="text-label-bold font-label-bold text-on-surface uppercase">Fundação Fica</span>
+</div>
+<div class="bg-amarelo-movimento px-2 py-1 border border-primary text-primary text-caption font-label-bold font-bold uppercase rounded-sm flex items-center gap-1 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+<span class="material-symbols-outlined text-[10px]">schedule</span>
+                                Até 30/Nov
+                            </div>
+</div>
+</div>
+</article>
+<!-- Card 3: Voluntariado -->
+<article class="bg-[#FFFDF9] border-2 border-primary rounded-xl overflow-hidden shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1 hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all duration-200 flex flex-col group">
+<div class="h-4 w-full flex">
+<div class="h-full w-1/3 bg-verde-analise border-b-2 border-r-2 border-primary"></div>
+<div class="h-full w-2/3 bg-surface-container-highest border-b-2 border-primary"></div>
+</div>
+<div class="p-6 flex-grow flex flex-col">
+<div class="flex justify-between items-start mb-4">
+<span class="inline-block bg-verde-analise/20 text-on-surface border border-verde-analise px-3 py-1 rounded-sm text-caption font-label-bold uppercase tracking-widest">
+                                Voluntariado
+                            </span>
+<div class="flex items-center gap-1 text-on-surface-variant text-caption font-label-bold">
+<span class="material-symbols-outlined text-sm">wifi</span>
+<span>Remoto</span>
+</div>
+</div>
+<h3 class="text-headline-md font-headline-md text-primary uppercase leading-tight mb-2 group-hover:text-verde-analise transition-colors">
+                            Pesquisador(a) de Dados Abertos
+                        </h3>
+<p class="text-on-surface-variant text-body-md font-body-md line-clamp-3 mb-6 flex-grow">
+                            Auxilie na raspagem e análise de dados do Portal da Transparência para um relatório sobre emendas parlamentares na área da saúde.
+                        </p>
+<div class="mt-auto pt-4 border-t border-outline-variant flex justify-between items-center">
+<div class="flex items-center gap-2">
+<div class="w-8 h-8 rounded-full bg-surface-container border border-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-sm">groups</span>
+</div>
+<span class="text-label-bold font-label-bold text-on-surface uppercase">Observatório BR</span>
+</div>
+<div class="text-on-surface-variant text-caption font-label-bold uppercase flex items-center gap-1">
+<span class="material-symbols-outlined text-[10px]">event_available</span>
+                                Fluxo Contínuo
+                            </div>
+</div>
+</div>
+</article>
+</div>
+<div class="mt-12 flex justify-center">
+<button class="bg-surface text-primary border-2 border-primary px-8 py-3 rounded-full font-label-bold text-label-bold uppercase tracking-widest hover:bg-surface-container-high transition-colors shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] active:translate-y-1 active:shadow-[0px_0px_0px_0px_rgba(0,0,0,1)]">
+                    Carregar Mais Oportunidades
+                </button>
+</div>
+</section>
+<!-- Newsletter Bento Box -->
+<section class="w-full px-margin-mobile md:px-gutter py-12 max-w-container-max mx-auto">
+<div class="bg-surface border-2 border-primary rounded-2xl overflow-hidden shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] flex flex-col md:flex-row relative">
+<div class="absolute top-0 right-0 w-32 h-32 bg-amarelo-movimento rounded-bl-full border-b-2 border-l-2 border-primary z-0 opacity-50 halftone-pattern"></div>
+<div class="md:w-1/2 p-8 md:p-12 bg-primary text-on-primary flex flex-col justify-center relative z-10">
+<h2 class="text-headline-lg font-headline-lg uppercase leading-tight mb-4 text-amarelo-movimento">
+                        Não perca o prazo.
+                    </h2>
+<p class="text-body-lg font-body-lg text-surface-variant mb-6">
+                        Receba no seu e-mail um resumo semanal com as melhores vagas, editais e oportunidades formativas do terceiro setor e política institucional.
+                    </p>
+<form class="flex flex-col gap-3">
+<input class="bg-surface-container text-primary border-2 border-transparent focus:border-amarelo-movimento rounded-md px-4 py-3 font-body-md" placeholder="Seu melhor e-mail" type="email"/>
+<button class="bg-amarelo-movimento text-primary border-2 border-primary rounded-md px-6 py-3 font-label-bold text-label-bold uppercase hover:bg-white transition-colors shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]" type="submit">
+                            Assinar Radar
+                        </button>
+</form>
+</div>
+<div class="md:w-1/2 bg-surface-container-high p-8 flex items-center justify-center relative z-10 overflow-hidden torn-edge-top md:torn-edge-top-none">
+<div class="grid grid-cols-2 gap-4 max-w-xs transform rotate-3">
+<div class="bg-azul-lideranca text-on-primary p-4 rounded-sm border-2 border-primary shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] flex flex-col items-center justify-center aspect-square">
+<span class="text-headline-md font-headline-md">150+</span>
+<span class="text-caption font-label-bold uppercase text-center mt-1">Vagas<br/>Publicadas</span>
+</div>
+<div class="bg-rosa-mentoria text-on-primary p-4 rounded-sm border-2 border-primary shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] flex flex-col items-center justify-center aspect-square transform translate-y-4">
+<span class="text-headline-md font-headline-md">R$ 2M</span>
+<span class="text-caption font-label-bold uppercase text-center mt-1">Em Editais<br/>Mapeados</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="bg-surface-container dark:bg-surface-container-highest border-t-2 border-primary dark:border-outline">
+<div class="grid grid-cols-1 md:grid-cols-3 gap-gutter py-section-gap px-gutter max-w-container-max mx-auto">
+<div class="flex flex-col gap-4">
+<span class="text-headline-lg font-headline-lg font-extrabold text-primary dark:text-on-primary-fixed uppercase tracking-tighter">Narrativa Política</span>
+<p class="text-body-md font-body-md text-on-surface-variant max-w-sm">
+                    Um hub de impacto para quem atua na transformação social.
+                </p>
+<div class="flex gap-4 mt-2">
+<div class="w-8 h-8 rounded-full bg-primary text-on-primary flex items-center justify-center hover:bg-rosa-mentoria transition-colors cursor-pointer">
+<span class="material-symbols-outlined text-sm">share</span>
+</div>
+</div>
+</div>
+<div class="flex flex-col gap-4 md:col-span-2 md:items-end">
+<ul class="flex flex-wrap gap-6 md:justify-end">
+<li><a class="text-on-surface-variant dark:text-on-surface-variant hover:text-rosa-mentoria transition-colors duration-200 text-label-bold font-label-bold uppercase" href="#">Institucional</a></li>
+<li><a class="text-on-surface-variant dark:text-on-surface-variant hover:text-rosa-mentoria transition-colors duration-200 text-label-bold font-label-bold uppercase" href="#">Transparência</a></li>
+<li><a class="text-on-surface-variant dark:text-on-surface-variant hover:text-rosa-mentoria transition-colors duration-200 text-label-bold font-label-bold uppercase" href="#">Impacto</a></li>
+<li><a class="text-on-surface-variant dark:text-on-surface-variant hover:text-rosa-mentoria transition-colors duration-200 text-label-bold font-label-bold uppercase" href="#">Privacidade</a></li>
+<li><a class="text-on-surface-variant dark:text-on-surface-variant hover:text-rosa-mentoria transition-colors duration-200 text-label-bold font-label-bold uppercase" href="#">Contato</a></li>
+</ul>
+<div class="mt-auto pt-8 text-on-surface-variant text-caption font-body-md">
+                    © 2024 Narrativa Política. Todos os direitos reservados.
+                </div>
+</div>
+</div>
+</footer>
+</body></html>

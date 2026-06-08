@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Narrativa Política - Oportunidades</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,700;1,400&amp;family=Barlow+Condensed:wght@700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "primary-fixed-dim": "#c8c6c5",
+                        "surface-container": "#f1edec",
+                        "tertiary-container": "#1c1b1a",
+                        "tertiary": "#000000",
+                        "on-tertiary-container": "#868381",
+                        "surface-bright": "#fdf8f8",
+                        "on-surface-variant": "#444748",
+                        "outline-variant": "#c4c7c7",
+                        "outline": "#747878",
+                        "surface-variant": "#e5e2e1",
+                        "rosa": "#FF3C82",
+                        "on-primary-container": "#858383",
+                        "vermelho": "#D22828",
+                        "on-tertiary-fixed-variant": "#484645",
+                        "secondary-container": "#e7e2da",
+                        "azul": "#3C64E6",
+                        "amarelo": "#FFDC00",
+                        "surface-container-highest": "#e5e2e1",
+                        "on-background": "#1c1b1b",
+                        "secondary-fixed": "#e7e2da",
+                        "tertiary-fixed-dim": "#cac6c3",
+                        "on-tertiary": "#ffffff",
+                        "on-error-container": "#93000a",
+                        "on-tertiary-fixed": "#1c1b1a",
+                        "surface-container-high": "#ebe7e6",
+                        "surface": "#fdf8f8",
+                        "verde": "#A0D246",
+                        "secondary": "#615e58",
+                        "inverse-primary": "#c8c6c5",
+                        "on-secondary-fixed-variant": "#494741",
+                        "surface-tint": "#5f5e5e",
+                        "on-secondary-fixed": "#1d1c17",
+                        "surface-container-low": "#f7f3f2",
+                        "on-secondary": "#ffffff",
+                        "primary": "#000000",
+                        "lilas": "#9660E0",
+                        "on-error": "#ffffff",
+                        "tertiary-fixed": "#e6e1df",
+                        "on-primary-fixed": "#1c1b1b",
+                        "on-surface": "#1c1b1b",
+                        "on-primary": "#ffffff",
+                        "secondary-fixed-dim": "#cac6be",
+                        "error-container": "#ffdad6",
+                        "surface-container-lowest": "#ffffff",
+                        "inverse-on-surface": "#f4f0ef",
+                        "background": "#fdf8f8",
+                        "inverse-surface": "#313030",
+                        "primary-container": "#1c1b1b",
+                        "error": "#ba1a1a",
+                        "on-secondary-container": "#67645e",
+                        "primary-fixed": "#e5e2e1",
+                        "on-primary-fixed-variant": "#474646",
+                        "surface-dim": "#ddd9d8"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "stack-lg": "48px",
+                        "stack-sm": "12px",
+                        "container-max": "1200px",
+                        "unit": "4px",
+                        "section-padding": "80px",
+                        "stack-md": "24px",
+                        "gutter": "24px"
+                    },
+                    "fontFamily": {
+                        "label-bold": ["DM Sans"],
+                        "caption": ["DM Sans"],
+                        "headline-md": ["Barlow Condensed"],
+                        "body-md": ["DM Sans"],
+                        "body-lg": ["DM Sans"],
+                        "display-xl": ["Barlow Condensed"],
+                        "headline-lg": ["Barlow Condensed"],
+                        "headline-lg-mobile": ["Barlow Condensed"]
+                    },
+                    "fontSize": {
+                        "label-bold": ["13px", { "lineHeight": "1.2", "letterSpacing": "0.05em", "fontWeight": "700" }],
+                        "caption": ["11px", { "lineHeight": "1.2", "letterSpacing": "0.1em", "fontWeight": "500" }],
+                        "headline-md": ["32px", { "lineHeight": "1.2", "fontWeight": "700" }],
+                        "body-md": ["16px", { "lineHeight": "1.5", "fontWeight": "400" }],
+                        "body-lg": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "display-xl": ["80px", { "lineHeight": "1.0", "letterSpacing": "-0.02em", "fontWeight": "800" }],
+                        "headline-lg": ["52px", { "lineHeight": "1.1", "fontWeight": "700" }],
+                        "headline-lg-mobile": ["38px", { "lineHeight": "1.1", "fontWeight": "700" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body {
+            background-image: url('data:image/svg+xml,%3Csvg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="noiseFilter"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23noiseFilter)" opacity="0.05"/%3E%3C/svg%3E');
+        }
+        .collage-shadow {
+            box-shadow: 4px 4px 0px 0px rgba(18, 18, 18, 1);
+        }
+        .collage-hover:hover {
+            transform: translate(-2px, -2px);
+            box-shadow: 6px 6px 0px 0px rgba(18, 18, 18, 1);
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md overflow-x-hidden min-h-screen flex flex-col relative z-0">
+<!-- TopNavBar -->
+<header class="bg-background dark:bg-background border-b-2 border-primary dark:border-primary-fixed-dim sticky top-0 z-50 w-full">
+<div class="flex justify-between items-center w-full px-gutter py-4 max-w-container-max mx-auto">
+<div class="font-headline-lg text-headline-lg font-bold text-primary dark:text-primary-fixed-dim tracking-tight">
+                NARRATIVA POLÍTICA
+            </div>
+<nav class="hidden md:flex space-x-6 items-center">
+<a class="text-on-surface-variant dark:text-on-surface hover:text-primary transition-colors hover:bg-surface-variant dark:hover:bg-tertiary-container px-2 py-1 font-headline-md text-headline-md uppercase tracking-tight" href="#">MOVIMENTO</a>
+<a class="text-on-surface-variant dark:text-on-surface hover:text-primary transition-colors hover:bg-surface-variant dark:hover:bg-tertiary-container px-2 py-1 font-headline-md text-headline-md uppercase tracking-tight" href="#">ARTIGOS</a>
+<a class="text-primary font-bold border-b-4 border-vermelho pb-1 px-2 py-1 font-headline-md text-headline-md uppercase tracking-tight" href="#">ATUAÇÃO</a>
+<a class="text-on-surface-variant dark:text-on-surface hover:text-primary transition-colors hover:bg-surface-variant dark:hover:bg-tertiary-container px-2 py-1 font-headline-md text-headline-md uppercase tracking-tight" href="#">SOBRE MIM</a>
+<a class="text-on-surface-variant dark:text-on-surface hover:text-primary transition-colors hover:bg-surface-variant dark:hover:bg-tertiary-container px-2 py-1 font-headline-md text-headline-md uppercase tracking-tight" href="#">ENVOLVA-SE</a>
+</nav>
+<div class="flex items-center gap-4">
+<button class="hidden md:block bg-primary text-on-primary font-label-bold text-label-bold px-6 py-3 border border-primary collage-shadow collage-hover transition-all uppercase">
+                    APOIE AGORA
+                </button>
+<button class="md:hidden text-primary">
+<span class="material-symbols-outlined" style="font-size: 32px;">menu</span>
+</button>
+</div>
+</div>
+</header>
+<!-- Main Content -->
+<main class="flex-grow w-full max-w-container-max mx-auto px-gutter py-section-padding relative">
+<!-- Hero Header -->
+<div class="mb-stack-lg relative">
+<div class="absolute -top-10 -left-6 w-32 h-32 bg-amarelo rounded-full mix-blend-multiply opacity-80 z-[-1]"></div>
+<div class="absolute top-10 right-10 w-24 h-24 bg-azul rotate-12 z-[-1]"></div>
+<h1 class="font-display-xl text-headline-lg-mobile md:text-display-xl text-primary uppercase leading-none mb-4 relative inline-block">
+                RADAR <br/>
+<span class="text-vermelho bg-background px-2 relative z-10">ATIVISTA</span>
+<div class="absolute bottom-2 left-0 w-full h-8 bg-rosa z-0 -rotate-2"></div>
+</h1>
+<p class="font-body-lg text-body-lg max-w-2xl mt-6 border-l-4 border-primary pl-4">
+                Mapeamos as principais vagas, editais e oportunidades de voluntariado no ecossistema de impacto social e político. Candidate-se e faça parte da mudança.
+            </p>
+</div>
+<!-- Filters Section -->
+<div class="flex flex-wrap gap-4 mb-stack-lg items-center bg-surface-container p-4 border border-primary collage-shadow">
+<span class="font-label-bold text-label-bold uppercase mr-2">Filtrar por:</span>
+<button class="bg-primary text-on-primary rounded-full px-6 py-2 font-label-bold text-label-bold border border-primary hover:bg-azul transition-colors">Todos</button>
+<button class="bg-surface text-primary rounded-full px-6 py-2 font-label-bold text-label-bold border border-primary hover:bg-amarelo transition-colors">Vagas</button>
+<button class="bg-surface text-primary rounded-full px-6 py-2 font-label-bold text-label-bold border border-primary hover:bg-rosa hover:text-white transition-colors">Editais</button>
+<button class="bg-surface text-primary rounded-full px-6 py-2 font-label-bold text-label-bold border border-primary hover:bg-verde transition-colors">Voluntariado</button>
+<div class="ml-auto relative w-full md:w-auto mt-4 md:mt-0">
+<input class="w-full bg-surface border-2 border-primary py-2 pl-4 pr-10 font-body-md text-primary focus:outline-none focus:border-vermelho" placeholder="Buscar oportunidades..." type="text"/>
+<span class="material-symbols-outlined absolute right-3 top-2.5 text-primary">search</span>
+</div>
+</div>
+<!-- Bento Grid Opportunities -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-6 auto-rows-[minmax(180px,auto)]">
+<!-- Featured Edital (Large) -->
+<div class="md:col-span-8 bg-surface border-2 border-primary collage-shadow p-6 flex flex-col justify-between relative group hover:bg-surface-container transition-colors">
+<div class="absolute -top-4 -right-4 bg-vermelho text-white font-headline-md text-headline-md px-4 py-1 rotate-3 border-2 border-primary z-10">
+                    URGENTE
+                </div>
+<div class="absolute top-0 left-0 w-full h-2 bg-rosa"></div>
+<div>
+<div class="flex gap-2 mb-4">
+<span class="bg-primary text-on-primary rounded-full px-3 py-1 font-caption text-caption uppercase">Edital</span>
+<span class="bg-surface-variant text-primary rounded-full px-3 py-1 font-caption text-caption uppercase">Nacional</span>
+</div>
+<h2 class="font-headline-lg text-headline-lg-mobile md:text-headline-lg uppercase leading-tight mb-2">Fundo de Apoio a Lideranças Negras</h2>
+<p class="font-body-md mb-4 text-on-surface-variant">Financiamento de até R$ 50.000 para projetos de base comunitária com foco em letramento político.</p>
+</div>
+<div class="flex justify-between items-end mt-6">
+<div>
+<p class="font-label-bold text-label-bold text-vermelho mb-1 flex items-center gap-1">
+<span class="material-symbols-outlined text-sm">schedule</span> Encerra em 2 dias
+                        </p>
+<p class="font-caption text-caption text-on-surface-variant">Org: Instituto Marielle Franco</p>
+</div>
+<a class="bg-primary text-on-primary font-label-bold text-label-bold px-6 py-2 border border-primary hover:bg-rosa transition-colors inline-flex items-center gap-2" href="#">
+                        ACESSAR EDITAL <span class="material-symbols-outlined">arrow_forward</span>
+</a>
+</div>
+</div>
+<!-- Vaga (Medium) -->
+<div class="md:col-span-4 bg-amarelo border-2 border-primary collage-shadow p-6 flex flex-col justify-between relative group">
+<div class="absolute top-4 right-4 bg-white text-primary rounded-full p-2 border border-primary">
+<span class="material-symbols-outlined">campaign</span>
+</div>
+<div>
+<span class="bg-primary text-on-primary rounded-full px-3 py-1 font-caption text-caption uppercase mb-4 inline-block">Vaga</span>
+<h3 class="font-headline-md text-headline-md uppercase leading-tight mb-2">Coordenador(a) de Mobilização Digital</h3>
+<p class="font-body-md text-sm text-primary mb-4">Regime CLT - Trabalho Remoto</p>
+</div>
+<div>
+<p class="font-label-bold text-label-bold text-verde bg-white px-2 py-1 inline-block border border-primary mb-4">INSCRIÇÕES ABERTAS</p>
+<a class="w-full text-center bg-primary text-on-primary font-label-bold text-label-bold px-4 py-2 border border-primary hover:bg-surface hover:text-primary transition-colors block" href="#">
+                        VER DETALHES
+                    </a>
+</div>
+</div>
+<!-- Voluntariado (Small) -->
+<div class="md:col-span-4 bg-surface border-2 border-primary p-6 relative flex flex-col">
+<div class="absolute left-0 top-0 h-full w-2 bg-verde"></div>
+<span class="bg-verde text-primary rounded-full px-3 py-1 font-caption text-caption uppercase mb-3 self-start border border-primary">Voluntariado</span>
+<h4 class="font-headline-md text-xl font-bold uppercase mb-2">Pesquisador(a) de Dados Abertos</h4>
+<p class="font-body-md text-sm text-on-surface-variant mb-4 flex-grow">Auxílio na raspagem de dados sobre emendas parlamentares.</p>
+<a class="font-label-bold text-label-bold text-primary hover:text-verde underline decoration-2 underline-offset-4 flex items-center gap-1" href="#">
+                    Candidatar-se <span class="material-symbols-outlined text-sm">open_in_new</span>
+</a>
+</div>
+<!-- Image/Texture Block -->
+<div class="md:col-span-4 bg-tertiary-container border-2 border-primary relative overflow-hidden flex items-center justify-center p-6 min-h-[200px]">
+<img alt="Detail of a messy urban bulletin board covered in layered, torn posters and flyers in a halftone black and white style, evoking grassroots political activism and street communication." class="absolute inset-0 w-full h-full object-cover opacity-40 mix-blend-luminosity" data-alt="A close-up, high-contrast black and white halftone image of an urban bulletin board. The surface is heavily layered with torn posters, wheat-paste flyers, and political stickers, creating a chaotic but energetic collage texture. The lighting is natural but stark, emphasizing the rough edges of the torn paper. The mood is gritty, active, and distinctly grassroots, fitting a modern brutalist editorial style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBZ_QKriyIDg34RWXlP03Teo4koZgawAlX5d21LxBt3aheTOOrqtsthGNLXl9A3giB-0UNXqxw_SuQ_4jpjqfVVfJbaVS5dscxhwS3eAJHiD2MJtX2WH9m26RnPqAFi5dbhU4TPuCO6BnTC1cbk6i95-Q-NL-rHRMo8vdnalPGzwfmMHWY9oB4kFcM2lbhUhQl6UPIFTP_x4CbH1OlVXLWVGOxWXSWWNm2yDPsv9erpK0-ictpKtMD-2EG3nsspKchNg7Jt7I1VLQ"/>
+<div class="relative z-10 text-center">
+<h3 class="font-headline-md text-headline-md text-amarelo uppercase bg-primary px-2 inline-block -rotate-2">REDE DE</h3><br/>
+<h3 class="font-headline-md text-headline-md text-white uppercase bg-primary px-2 inline-block rotate-2 mt-1">CONTATOS</h3>
+</div>
+</div>
+<!-- Vaga (Small) -->
+<div class="md:col-span-4 bg-azul text-white border-2 border-primary p-6 relative flex flex-col collage-shadow">
+<span class="bg-white text-primary rounded-full px-3 py-1 font-caption text-caption uppercase mb-3 self-start border border-primary">Vaga</span>
+<h4 class="font-headline-md text-xl font-bold uppercase mb-2">Analista de Políticas Públicas Jr.</h4>
+<p class="font-body-md text-sm text-surface-container mb-4 flex-grow">São Paulo, SP (Híbrido)</p>
+<div class="flex justify-between items-center mt-auto">
+<span class="font-caption text-caption bg-primary text-white px-2 py-1">Até 15/11</span>
+<a class="bg-white text-primary font-label-bold px-4 py-2 border border-primary hover:bg-amarelo transition-colors text-xs" href="#">
+                        APLICAR
+                    </a>
+</div>
+</div>
+<!-- Newsletter Callout (Full width) -->
+<div class="md:col-span-12 mt-stack-md bg-surface border-2 border-primary p-8 relative flex flex-col md:flex-row items-center gap-8">
+<div class="absolute -bottom-6 -right-6 text-lilas opacity-20 pointer-events-none">
+<span class="material-symbols-outlined" style="font-size: 180px; font-variation-settings: 'FILL' 1;">mail</span>
+</div>
+<div class="md:w-1/2 relative z-10">
+<h2 class="font-headline-lg text-headline-lg-mobile md:text-headline-lg uppercase leading-tight mb-2">NÃO PERCA NENHUMA OPORTUNIDADE</h2>
+<p class="font-body-md text-on-surface-variant">Assine nossa newsletter semanal e receba vagas, editais e convocações diretamente no seu email. Zero spam, apenas impacto.</p>
+</div>
+<div class="md:w-1/2 w-full relative z-10">
+<form class="flex flex-col sm:flex-row gap-0">
+<input class="w-full bg-background border-2 border-primary p-3 font-body-md text-primary focus:outline-none focus:border-rosa flex-grow" placeholder="seu@email.com" type="email"/>
+<button class="bg-primary text-on-primary font-label-bold text-label-bold px-6 py-3 border-2 border-primary sm:border-l-0 hover:bg-rosa transition-colors uppercase whitespace-nowrap" type="submit">
+                            INSCREVER-SE
+                        </button>
+</form>
+</div>
+</div>
+</div>
+</main>
+<!-- Footer -->
+<footer class="bg-tertiary dark:bg-tertiary-container border-t-4 border-amarelo w-full mt-auto">
+<div class="grid grid-cols-1 md:grid-cols-3 gap-stack-md w-full px-gutter py-section-padding max-w-container-max mx-auto text-on-tertiary dark:text-on-tertiary-container font-body-md text-body-md">
+<div class="flex flex-col gap-4">
+<div class="font-headline-md text-headline-md text-on-tertiary uppercase">NARRATIVA POLÍTICA</div>
+<p class="opacity-80">© 2024 Narrativa Política. Impacto Social, Política e Gênero.</p>
+</div>
+<div class="flex flex-col gap-2">
+<a class="text-on-tertiary-container hover:text-on-tertiary hover:underline decoration-rosa decoration-2 transition-all duration-300 ease-in-out font-label-bold uppercase" href="#">INSTITUCIONAL</a>
+<a class="text-on-tertiary-container hover:text-on-tertiary hover:underline decoration-rosa decoration-2 transition-all duration-300 ease-in-out font-label-bold uppercase" href="#">TRANSPARÊNCIA</a>
+<a class="text-on-tertiary-container hover:text-on-tertiary hover:underline decoration-rosa decoration-2 transition-all duration-300 ease-in-out font-label-bold uppercase" href="#">CONTATO</a>
+</div>
+<div class="flex flex-col gap-2">
+<a class="text-on-tertiary-container hover:text-on-tertiary hover:underline decoration-rosa decoration-2 transition-all duration-300 ease-in-out font-label-bold uppercase" href="#">NEWSLETTER</a>
+<a class="text-on-tertiary-container hover:text-on-tertiary hover:underline decoration-rosa decoration-2 transition-all duration-300 ease-in-out font-label-bold uppercase" href="#">PRIVACIDADE</a>
+</div>
+</div>
+</footer>
+</body></html>

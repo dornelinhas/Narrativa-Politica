@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Artigos - Narrativa Política</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,400;0,700;0,800;1,400;1,700&amp;family=DM+Sans:ital,wght@0,400;0,500;0,700;1,400;1,500;1,700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "primary-fixed-dim": "#c8c6c5",
+                        "surface-container": "#f1edec",
+                        "tertiary-container": "#1c1b1a",
+                        "tertiary": "#000000",
+                        "on-tertiary-container": "#868381",
+                        "surface-bright": "#fdf8f8",
+                        "on-surface-variant": "#444748",
+                        "outline-variant": "#c4c7c7",
+                        "outline": "#747878",
+                        "surface-variant": "#e5e2e1",
+                        "rosa": "#FF3C82",
+                        "on-primary-container": "#858383",
+                        "vermelho": "#D22828",
+                        "on-tertiary-fixed-variant": "#484645",
+                        "secondary-container": "#e7e2da",
+                        "azul": "#3C64E6",
+                        "amarelo": "#FFDC00",
+                        "surface-container-highest": "#e5e2e1",
+                        "on-background": "#1c1b1b",
+                        "secondary-fixed": "#e7e2da",
+                        "tertiary-fixed-dim": "#cac6c3",
+                        "on-tertiary": "#ffffff",
+                        "on-error-container": "#93000a",
+                        "on-tertiary-fixed": "#1c1b1a",
+                        "surface-container-high": "#ebe7e6",
+                        "surface": "#fdf8f8",
+                        "verde": "#A0D246",
+                        "secondary": "#615e58",
+                        "inverse-primary": "#c8c6c5",
+                        "on-secondary-fixed-variant": "#494741",
+                        "surface-tint": "#5f5e5e",
+                        "on-secondary-fixed": "#1d1c17",
+                        "surface-container-low": "#f7f3f2",
+                        "on-secondary": "#ffffff",
+                        "primary": "#000000",
+                        "lilas": "#9660E0",
+                        "on-error": "#ffffff",
+                        "tertiary-fixed": "#e6e1df",
+                        "on-primary-fixed": "#1c1b1b",
+                        "on-surface": "#1c1b1b",
+                        "on-primary": "#ffffff",
+                        "secondary-fixed-dim": "#cac6be",
+                        "error-container": "#ffdad6",
+                        "surface-container-lowest": "#ffffff",
+                        "inverse-on-surface": "#f4f0ef",
+                        "background": "#fdf8f8",
+                        "inverse-surface": "#313030",
+                        "primary-container": "#1c1b1b",
+                        "error": "#ba1a1a",
+                        "on-secondary-container": "#67645e",
+                        "primary-fixed": "#e5e2e1",
+                        "on-primary-fixed-variant": "#474646",
+                        "surface-dim": "#ddd9d8"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "stack-lg": "48px",
+                        "stack-sm": "12px",
+                        "container-max": "1200px",
+                        "unit": "4px",
+                        "section-padding": "80px",
+                        "stack-md": "24px",
+                        "gutter": "24px"
+                    },
+                    "fontFamily": {
+                        "label-bold": ["DM Sans"],
+                        "caption": ["DM Sans"],
+                        "headline-md": ["Barlow Condensed"],
+                        "body-md": ["DM Sans"],
+                        "body-lg": ["DM Sans"],
+                        "display-xl": ["Barlow Condensed"],
+                        "headline-lg": ["Barlow Condensed"],
+                        "headline-lg-mobile": ["Barlow Condensed"]
+                    },
+                    "fontSize": {
+                        "label-bold": ["13px", { "lineHeight": "1.2", "letterSpacing": "0.05em", "fontWeight": "700" }],
+                        "caption": ["11px", { "lineHeight": "1.2", "letterSpacing": "0.1em", "fontWeight": "500" }],
+                        "headline-md": ["32px", { "lineHeight": "1.2", "fontWeight": "700" }],
+                        "body-md": ["16px", { "lineHeight": "1.5", "fontWeight": "400" }],
+                        "body-lg": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "display-xl": ["80px", { "lineHeight": "1.0", "letterSpacing": "-0.02em", "fontWeight": "800" }],
+                        "headline-lg": ["52px", { "lineHeight": "1.1", "fontWeight": "700" }],
+                        "headline-lg-mobile": ["38px", { "lineHeight": "1.1", "fontWeight": "700" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body {
+            background-image: url('data:image/svg+xml;utf8,<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><filter id="noiseFilter"><feTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" stitchTiles="stitch"/></filter><rect width="100%" height="100%" filter="url(%23noiseFilter)" opacity="0.05"/></svg>');
+        }
+        .paper-shadow {
+            box-shadow: 4px 4px 0px 0px rgba(0,0,0,1);
+        }
+        .cutout-edge {
+            clip-path: polygon(0% 2%, 100% 0%, 98% 100%, 2% 98%);
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md min-h-screen flex flex-col antialiased">
+<!-- TopNavBar -->
+<nav class="bg-background dark:bg-background text-primary dark:text-on-primary font-headline-md text-headline-md uppercase tracking-tight docked full-width top-0 border-b-2 border-primary dark:border-primary-fixed-dim flat no shadows flex justify-between items-center w-full px-gutter py-4 max-w-container-max mx-auto z-50 relative sticky">
+<a class="font-headline-lg text-headline-lg font-bold text-primary dark:text-primary-fixed-dim hover:scale-95 transition-transform duration-150" href="#">NARRATIVA POLÍTICA</a>
+<div class="hidden md:flex gap-6 items-center">
+<a class="text-on-surface-variant dark:text-on-surface hover:text-primary hover:bg-surface-variant dark:hover:bg-tertiary-container transition-all px-2 py-1" href="#">MOVIMENTO</a>
+<a class="text-primary font-bold border-b-4 border-vermelho pb-1 px-2 py-1 transform scale-95 duration-150" href="#">ARTIGOS</a>
+<a class="text-on-surface-variant dark:text-on-surface hover:text-primary hover:bg-surface-variant dark:hover:bg-tertiary-container transition-all px-2 py-1" href="#">ATUAÇÃO</a>
+<a class="text-on-surface-variant dark:text-on-surface hover:text-primary hover:bg-surface-variant dark:hover:bg-tertiary-container transition-all px-2 py-1" href="#">SOBRE MIM</a>
+<a class="text-on-surface-variant dark:text-on-surface hover:text-primary hover:bg-surface-variant dark:hover:bg-tertiary-container transition-all px-2 py-1" href="#">ENVOLVA-SE</a>
+</div>
+<div class="flex items-center gap-4">
+<button class="md:hidden flex items-center justify-center p-2">
+<span class="material-symbols-outlined">menu</span>
+</button>
+<div class="hidden md:flex items-center border border-primary px-3 py-1 bg-white">
+<input class="bg-transparent border-none focus:ring-0 text-body-md font-body-md p-0 w-32 placeholder:text-outline" placeholder="Buscar..." type="text"/>
+<span class="material-symbols-outlined ml-2 text-primary">search</span>
+</div>
+<a class="hidden md:inline-block bg-primary text-on-primary font-label-bold text-label-bold px-6 py-3 border border-primary hover:bg-azul transition-colors paper-shadow" href="#">APOIE AGORA</a>
+</div>
+</nav>
+<!-- Main Content -->
+<main class="flex-grow w-full max-w-container-max mx-auto px-gutter py-section-padding">
+<!-- Page Header & Advanced Search -->
+<div class="mb-stack-lg border-b-2 border-primary pb-stack-md flex flex-col md:flex-row justify-between items-end gap-stack-md relative z-10">
+<div>
+<h1 class="font-display-xl text-display-xl font-extrabold uppercase tracking-tighter text-primary relative inline-block">
+                    ARTIGOS
+                    <span class="absolute -bottom-2 left-0 w-full h-4 bg-amarelo -z-10 transform -skew-x-12"></span>
+</h1>
+<p class="font-body-lg text-body-lg mt-unit text-on-surface-variant max-w-2xl">Análises profundas, dados concretos e perspectivas sobre o cenário político e social brasileiro.</p>
+</div>
+<div class="w-full md:w-auto flex flex-col gap-unit">
+<div class="flex flex-wrap gap-2 mb-2">
+<span class="bg-primary text-amarelo font-label-bold text-label-bold px-3 py-1 rounded-full uppercase border border-primary">2024</span>
+<span class="bg-white text-primary font-label-bold text-label-bold px-3 py-1 rounded-full uppercase border border-primary">2023</span>
+<span class="bg-white text-primary font-label-bold text-label-bold px-3 py-1 rounded-full uppercase border border-primary">FILTROS <span class="material-symbols-outlined align-middle text-[14px]">tune</span></span>
+</div>
+<div class="flex border border-primary bg-white paper-shadow w-full md:w-80">
+<input class="flex-grow bg-transparent border-none focus:ring-0 text-body-md font-body-md px-4 py-2 placeholder:text-outline" placeholder="Pesquisar artigos..." type="text"/>
+<button class="bg-vermelho text-white px-4 flex items-center justify-center border-l border-primary hover:bg-primary transition-colors">
+<span class="material-symbols-outlined">search</span>
+</button>
+</div>
+</div>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-stack-md lg:gap-gutter">
+<!-- Left Content: Articles Grid -->
+<div class="lg:col-span-8 flex flex-col gap-stack-lg">
+<!-- Featured Article (Bento/Hero Style) -->
+<article class="relative group cursor-pointer">
+<div class="absolute inset-0 bg-vermelho transform translate-x-2 translate-y-2 border border-primary"></div>
+<div class="relative bg-surface-bright border border-primary flex flex-col md:flex-row overflow-hidden hover:-translate-y-1 transition-transform duration-200 z-10">
+<div class="md:w-1/2 relative bg-surface-container h-64 md:h-auto overflow-hidden border-b md:border-b-0 md:border-r border-primary cutout-edge">
+<div class="absolute inset-0 bg-primary opacity-20 mix-blend-multiply z-10"></div>
+<img class="w-full h-full object-cover filter grayscale contrast-125" data-alt="A striking digital collage featuring a halftone black-and-white photograph of a protest crowd. The image is overlaid with torn paper textures in a light creme color. A bold, geometric slash of vibrant magenta (#FF3C82) cuts across the composition. The aesthetic is modern brutalism mixed with editorial zine style, evoking a sense of urgent social action." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBbOUXdn8pZdB7LlgxIHf6sB1qH7aOjCJmlC0xcrbc2qhwKIGRKxCjmNcP_1DPkQ83EcwGC30u_lBqDyFXf_k_UntdNaL1hFo9Tl6DLFB2wSJ33E8q3qDXjah2jW7vXSWolUGCHnwgFIC2GpAtyqJY377J-bPiHMkTiD6E1Fr7NHjcgqwgdCxDSRP2w5gCFB1DfP68euPbz1yupFgWcxrDXu0JANc80h8SOjtNel6ab5DS8uxq5pz3hAVsu0atCZQ9EMTwmq7tu0A"/>
+<div class="absolute top-4 left-4 z-20 flex gap-2">
+<span class="bg-azul text-white font-label-bold text-label-bold px-3 py-1 rounded-full border border-primary uppercase shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">Democracia</span>
+</div>
+</div>
+<div class="md:w-1/2 p-stack-md flex flex-col justify-center relative bg-white cutout-edge">
+<div class="absolute -top-4 -right-4 w-12 h-12 bg-amarelo border border-primary rounded-full z-0"></div>
+<time class="font-caption text-caption text-secondary mb-2 relative z-10 uppercase tracking-widest">12 OUTUBRO 2024</time>
+<h2 class="font-headline-lg text-headline-lg-mobile md:text-headline-lg font-bold text-primary leading-tight mb-4 relative z-10 uppercase">O Custo Oculto da Desinformação nas Eleições</h2>
+<p class="font-body-md text-body-md text-on-surface-variant mb-6 line-clamp-3 relative z-10">Como as campanhas de desinformação afetam não apenas o resultado nas urnas, mas também o tecido social e a confiança nas instituições democráticas a longo prazo.</p>
+<div class="mt-auto relative z-10">
+<span class="font-label-bold text-label-bold text-primary uppercase border-b-2 border-vermelho pb-1 group-hover:text-vermelho transition-colors">Ler Artigo Completo <span class="material-symbols-outlined align-middle ml-1 text-[16px]">arrow_forward</span></span>
+</div>
+</div>
+</div>
+</article>
+<!-- Grid of Secondary Articles -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-stack-md">
+<!-- Article Card 1 -->
+<article class="relative group cursor-pointer">
+<div class="bg-white border border-primary p-stack-sm flex flex-col h-full hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-shadow duration-200">
+<div class="relative h-48 mb-4 border border-primary bg-surface-container overflow-hidden">
+<img class="w-full h-full object-cover filter grayscale contrast-125 mix-blend-multiply" data-alt="A close-up halftone image of financial documents and a calculator. The high-contrast black-and-white texture is overlaid with a bright lime green (#A0D246) geometric shape that looks like a paper cutout. The style is raw, editorial, and suggests economic analysis." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCZDvbzqWmmCDLFNC6QFjfdp47ZtZZpt6vjYZT6vh-NYvVYGshJScSdkYIFpAlaVezSEaIwg1AomTlXuAn9ecfUWTsW8syST0-tr7GdJ03htS0OIVgLzLbaWpLH0mIhF4jRp8mC9Qu-GLmS0sA4jN9n56qcHJGlLKL-73-UXT11Qt-WA4bzQ0eWoApDKHKOYr_tw1gKML6OwCTPryqDnoraCqIuggaZKPTiEKkOT0jqP-0eetPtHAzVIZcGpYX1f4MS7buJpjD2nQ"/>
+<div class="absolute top-2 left-2 z-10">
+<span class="bg-verde text-primary font-label-bold text-label-bold px-3 py-1 rounded-full border border-primary uppercase">Economia</span>
+</div>
+</div>
+<time class="font-caption text-caption text-secondary mb-1 uppercase tracking-widest">05 SETEMBRO 2024</time>
+<h3 class="font-headline-md text-headline-md font-bold text-primary leading-tight mb-2 uppercase">A Regressividade do Sistema Tributário</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mb-4 line-clamp-2 flex-grow">Por que quem ganha menos acaba pagando proporcionalmente mais impostos no Brasil.</p>
+</div>
+</article>
+<!-- Article Card 2 -->
+<article class="relative group cursor-pointer">
+<div class="bg-surface-bright border border-primary p-stack-sm flex flex-col h-full hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-shadow duration-200">
+<div class="relative h-48 mb-4 border border-primary bg-surface-container overflow-hidden">
+<img class="w-full h-full object-cover filter grayscale contrast-125 mix-blend-multiply" data-alt="A stylized portrait of a woman looking forward, rendered in a high-contrast halftone pattern. A vibrant pink (#FF3C82) circle overlaps the bottom corner of the image, resembling a collage sticker. The aesthetic is modern brutalism with a focus on human impact." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAT5l-BksN2_-UnX1jIfOLC-XmoHmzEa7-niRltu-Ech3MGR0lEuFDxLwgPQ3lz-Ats8N7pDCmKsIHknehfYxcRG7W5WeXHeY6pjBgTHpRccBOvK9donjH872jZDOslrX-MCQfIyARHwCZ3qzmlFJ5QGwNSfmZdopWila3beDvZnqyqd1yQ5Ubg0m8siJ8sEjUEZMAGhaxlfRDiUFxPCrvAfOn_k0MLmUNFMoiu4K7udj0pwi7kxQg4vVoqX3EHgmZMVdJ-zDbhVg"/>
+<div class="absolute top-2 left-2 z-10">
+<span class="bg-rosa text-white font-label-bold text-label-bold px-3 py-1 rounded-full border border-primary uppercase">Gênero</span>
+</div>
+</div>
+<time class="font-caption text-caption text-secondary mb-1 uppercase tracking-widest">22 AGOSTO 2024</time>
+<h3 class="font-headline-md text-headline-md font-bold text-primary leading-tight mb-2 uppercase">Mulheres e o Orçamento Público</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mb-4 line-clamp-2 flex-grow">Analisando para onde vai o dinheiro quando falamos em políticas públicas para mulheres.</p>
+</div>
+</article>
+<!-- Article Card 3 (Text heavy, different background) -->
+<article class="relative group cursor-pointer col-span-1 md:col-span-2">
+<div class="bg-tertiary-container text-white border border-primary p-stack-md flex flex-col sm:flex-row gap-stack-md hover:-translate-x-1 hover:-translate-y-1 transition-transform duration-200 paper-shadow">
+<div class="sm:w-1/3 flex flex-col justify-center border-l-4 border-amarelo pl-4">
+<span class="text-amarelo font-label-bold text-label-bold uppercase mb-2 tracking-widest">Orçamento Secreto</span>
+<h3 class="font-headline-md text-headline-md font-bold leading-tight uppercase">Onde está a Transparência?</h3>
+</div>
+<div class="sm:w-2/3 border-t sm:border-t-0 sm:border-l border-outline-variant/30 pt-4 sm:pt-0 sm:pl-4 flex flex-col justify-between">
+<p class="font-body-md text-body-md text-on-tertiary-container mb-4">Um raio-X nas emendas RP9 e como a falta de clareza sobre o destino dos recursos afeta o desenvolvimento de políticas estruturantes no país.</p>
+<div class="flex items-center justify-between mt-auto">
+<time class="font-caption text-caption text-on-tertiary-container uppercase tracking-widest">10 JULHO 2024</time>
+<span class="bg-white text-primary font-label-bold text-label-bold px-4 py-2 border border-white hover:bg-amarelo hover:border-amarelo transition-colors uppercase">Ler Análise</span>
+</div>
+</div>
+</div>
+</article>
+</div>
+</div>
+<!-- Right Sidebar -->
+<aside class="lg:col-span-4 flex flex-col gap-stack-md mt-stack-lg lg:mt-0">
+<!-- Sticky Container for Sidebar -->
+<div class="sticky top-24 flex flex-col gap-stack-md">
+<!-- Temas Populares (Tags) -->
+<div class="bg-surface-bright border border-primary p-stack-md paper-shadow relative">
+<div class="absolute -top-3 -right-3 w-8 h-8 bg-rosa border border-primary transform rotate-12"></div>
+<h3 class="font-headline-md text-headline-md font-bold text-primary uppercase border-b-2 border-primary pb-2 mb-4">Temas Populares</h3>
+<div class="flex flex-wrap gap-2">
+<a class="bg-verde text-primary font-label-bold text-label-bold px-4 py-2 rounded-full border border-primary uppercase hover:bg-primary hover:text-verde transition-colors" href="#">Economia</a>
+<a class="bg-rosa text-white font-label-bold text-label-bold px-4 py-2 rounded-full border border-primary uppercase hover:bg-primary hover:text-rosa transition-colors" href="#">Gênero</a>
+<a class="bg-azul text-white font-label-bold text-label-bold px-4 py-2 rounded-full border border-primary uppercase hover:bg-primary hover:text-azul transition-colors" href="#">Democracia</a>
+<a class="bg-amarelo text-primary font-label-bold text-label-bold px-4 py-2 rounded-full border border-primary uppercase hover:bg-primary hover:text-amarelo transition-colors" href="#">Transparência</a>
+<a class="bg-white text-primary font-label-bold text-label-bold px-4 py-2 rounded-full border border-primary uppercase hover:bg-primary hover:text-white transition-colors" href="#">Meio Ambiente</a>
+<a class="bg-surface-variant text-primary font-label-bold text-label-bold px-4 py-2 rounded-full border border-primary uppercase hover:bg-primary hover:text-white transition-colors" href="#">Política Urbana</a>
+</div>
+</div>
+<!-- Newsletter Sign-up (Collage Style) -->
+<div class="bg-white border border-primary p-stack-md relative overflow-hidden mt-stack-sm">
+<!-- Decorative shapes -->
+<div class="absolute -top-10 -left-10 w-32 h-32 bg-amarelo rounded-full opacity-50"></div>
+<div class="absolute bottom-0 right-0 w-16 h-16 bg-vermelho transform translate-x-1/2 translate-y-1/2 rotate-45"></div>
+<div class="relative z-10 flex flex-col items-center text-center">
+<span class="material-symbols-outlined text-display-xl text-primary mb-2" style="font-variation-settings: 'FILL' 1;">mail</span>
+<h3 class="font-headline-md text-headline-md font-bold text-primary uppercase mb-2">Acompanhe a Narrativa</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mb-6">Receba análises exclusivas e novidades sobre nosso movimento diretamente na sua caixa de entrada.</p>
+<form class="w-full flex flex-col gap-3">
+<input class="w-full border border-primary bg-surface-container font-body-md text-body-md px-4 py-3 focus:ring-0 focus:border-b-4 focus:border-b-vermelho focus:bg-white transition-all" placeholder="Seu melhor e-mail" type="email"/>
+<button class="w-full bg-primary text-white font-label-bold text-label-bold uppercase px-4 py-3 border border-primary hover:bg-vermelho transition-colors paper-shadow" type="submit">Inscrever-se</button>
+</form>
+<p class="font-caption text-caption text-outline mt-4">Zero spam. Cancele quando quiser.</p>
+</div>
+</div>
+<!-- Quote Snippet -->
+<div class="relative mt-stack-sm p-stack-md">
+<span class="absolute top-0 left-0 font-display-xl text-[120px] leading-none text-primary opacity-10">"</span>
+<blockquote class="relative z-10 font-body-lg text-body-lg italic text-on-surface-variant pl-4 border-l-4 border-vermelho">
+                            "A transparência não é um favor do Estado, é um direito de quem o financia."
+                        </blockquote>
+</div>
+</div>
+</aside>
+</div>
+</main>
+<!-- Footer -->
+<footer class="bg-tertiary dark:bg-tertiary-container text-on-tertiary dark:text-on-tertiary-container font-body-md text-body-md full-width bottom-0 border-t-4 border-amarelo flat grid grid-cols-1 md:grid-cols-3 gap-stack-md w-full px-gutter py-section-padding max-w-container-max mx-auto mt-auto relative overflow-hidden">
+<!-- Decorative subtle background noise for footer -->
+<div 0="" 200="" 200\"="" class="absolute inset-0 opacity-10 pointer-events-none" style="background-image: url('data:image/svg+xml;utf8,&lt;svg viewBox=\" xmlns='\"http://www.w3.org/2000/svg\"'><filter id='\"noiseFilter\"'><feturbulence basefrequency='\"0.8\"' numoctaves='\"3\"' stitchtiles='\"stitch\"/' type='\"fractalNoise\"'></feturbulence></filter><rect filter='\"url(%23noiseFilter)\"/' height='\"100%\"' width='\"100%\"'>');"&gt;</rect></div>
+<div class="flex flex-col items-start z-10">
+<span class="font-headline-md text-headline-md text-on-tertiary font-bold uppercase mb-4">NARRATIVA POLÍTICA</span>
+<p class="font-caption text-caption text-on-tertiary-container max-w-xs">© 2024 Narrativa Política. Impacto Social, Política e Gênero.</p>
+</div>
+<div class="flex flex-col z-10">
+<h4 class="font-label-bold text-label-bold uppercase text-amarelo font-bold mb-4">Links Úteis</h4>
+<ul class="flex flex-col gap-2">
+<li><a class="text-on-tertiary-container hover:text-on-tertiary hover:underline decoration-rosa decoration-2 transition-all duration-300 ease-in-out" href="#">INSTITUCIONAL</a></li>
+<li><a class="text-on-tertiary-container hover:text-on-tertiary hover:underline decoration-rosa decoration-2 transition-all duration-300 ease-in-out" href="#">TRANSPARÊNCIA</a></li>
+<li><a class="text-on-tertiary-container hover:text-on-tertiary hover:underline decoration-rosa decoration-2 transition-all duration-300 ease-in-out" href="#">CONTATO</a></li>
+<li><a class="text-on-tertiary-container hover:text-on-tertiary hover:underline decoration-rosa decoration-2 transition-all duration-300 ease-in-out" href="#">NEWSLETTER</a></li>
+<li><a class="text-on-tertiary-container hover:text-on-tertiary hover:underline decoration-rosa decoration-2 transition-all duration-300 ease-in-out" href="#">PRIVACIDADE</a></li>
+</ul>
+</div>
+<div class="flex flex-col z-10">
+<h4 class="font-label-bold text-label-bold uppercase text-amarelo font-bold mb-4">Redes</h4>
+<div class="flex gap-4">
+<a class="text-on-tertiary-container hover:text-rosa transition-colors bg-surface-tint p-2 rounded-full flex items-center justify-center" href="#">
+<span class="material-symbols-outlined">share</span>
+</a>
+<a class="text-on-tertiary-container hover:text-azul transition-colors bg-surface-tint p-2 rounded-full flex items-center justify-center" href="#">
+<span class="material-symbols-outlined">language</span>
+</a>
+<a class="text-on-tertiary-container hover:text-vermelho transition-colors bg-surface-tint p-2 rounded-full flex items-center justify-center" href="#">
+<span class="material-symbols-outlined">play_arrow</span>
+</a>
+</div>
+</div>
+</footer>
+</body></html>

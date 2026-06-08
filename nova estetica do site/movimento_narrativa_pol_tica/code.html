@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Movimento - Narrativa Política</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&amp;family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "primary-fixed-dim": "#c8c6c5",
+                        "surface-container": "#f1edec",
+                        "tertiary-container": "#1c1b1a",
+                        "tertiary": "#000000",
+                        "on-tertiary-container": "#868381",
+                        "surface-bright": "#fdf8f8",
+                        "on-surface-variant": "#444748",
+                        "outline-variant": "#c4c7c7",
+                        "outline": "#747878",
+                        "surface-variant": "#e5e2e1",
+                        "rosa": "#FF3C82",
+                        "on-primary-container": "#858383",
+                        "vermelho": "#D22828",
+                        "on-tertiary-fixed-variant": "#484645",
+                        "secondary-container": "#e7e2da",
+                        "azul": "#3C64E6",
+                        "amarelo": "#FFDC00",
+                        "surface-container-highest": "#e5e2e1",
+                        "on-background": "#1c1b1b",
+                        "secondary-fixed": "#e7e2da",
+                        "tertiary-fixed-dim": "#cac6c3",
+                        "on-tertiary": "#ffffff",
+                        "on-error-container": "#93000a",
+                        "on-tertiary-fixed": "#1c1b1a",
+                        "surface-container-high": "#ebe7e6",
+                        "surface": "#fdf8f8",
+                        "verde": "#A0D246",
+                        "secondary": "#615e58",
+                        "inverse-primary": "#c8c6c5",
+                        "on-secondary-fixed-variant": "#494741",
+                        "surface-tint": "#5f5e5e",
+                        "on-secondary-fixed": "#1d1c17",
+                        "surface-container-low": "#f7f3f2",
+                        "on-secondary": "#ffffff",
+                        "primary": "#000000",
+                        "lilas": "#9660E0",
+                        "on-error": "#ffffff",
+                        "tertiary-fixed": "#e6e1df",
+                        "on-primary-fixed": "#1c1b1b",
+                        "on-surface": "#1c1b1b",
+                        "on-primary": "#ffffff",
+                        "secondary-fixed-dim": "#cac6be",
+                        "error-container": "#ffdad6",
+                        "surface-container-lowest": "#ffffff",
+                        "inverse-on-surface": "#f4f0ef",
+                        "background": "#fdf8f8",
+                        "inverse-surface": "#313030",
+                        "primary-container": "#1c1b1b",
+                        "error": "#ba1a1a",
+                        "on-secondary-container": "#67645e",
+                        "primary-fixed": "#e5e2e1",
+                        "on-primary-fixed-variant": "#474646",
+                        "surface-dim": "#ddd9d8"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "stack-lg": "48px",
+                        "stack-sm": "12px",
+                        "container-max": "1200px",
+                        "unit": "4px",
+                        "section-padding": "80px",
+                        "stack-md": "24px",
+                        "gutter": "24px"
+                    },
+                    "fontFamily": {
+                        "label-bold": ["DM Sans"],
+                        "caption": ["DM Sans"],
+                        "headline-md": ["Barlow Condensed"],
+                        "body-md": ["DM Sans"],
+                        "body-lg": ["DM Sans"],
+                        "display-xl": ["Barlow Condensed"],
+                        "headline-lg": ["Barlow Condensed"],
+                        "headline-lg-mobile": ["Barlow Condensed"]
+                    },
+                    "fontSize": {
+                        "label-bold": ["13px", { "lineHeight": "1.2", "letterSpacing": "0.05em", "fontWeight": "700" }],
+                        "caption": ["11px", { "lineHeight": "1.2", "letterSpacing": "0.1em", "fontWeight": "500" }],
+                        "headline-md": ["32px", { "lineHeight": "1.2", "fontWeight": "700" }],
+                        "body-md": ["16px", { "lineHeight": "1.5", "fontWeight": "400" }],
+                        "body-lg": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "display-xl": ["80px", { "lineHeight": "1.0", "letterSpacing": "-0.02em", "fontWeight": "800" }],
+                        "headline-lg": ["52px", { "lineHeight": "1.1", "fontWeight": "700" }],
+                        "headline-lg-mobile": ["38px", { "lineHeight": "1.1", "fontWeight": "700" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body {
+            background-color: #fdf8f8;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E");
+        }
+        .paper-edge {
+            clip-path: polygon(0% 0%, 100% 2%, 98% 100%, 2% 98%);
+        }
+        .texture-overlay {
+            mix-blend-mode: multiply;
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body class="font-body-md text-on-background antialiased selection:bg-vermelho selection:text-white">
+<!-- TopNavBar -->
+<nav class="sticky top-0 z-50 bg-background dark:bg-background border-b-2 border-primary dark:border-primary-fixed-dim w-full">
+<div class="flex justify-between items-center w-full px-gutter py-4 max-w-container-max mx-auto">
+<div class="flex items-center gap-4">
+<a class="font-headline-lg text-headline-lg font-bold text-primary dark:text-primary-fixed-dim tracking-tight" href="#">NARRATIVA POLÍTICA</a>
+</div>
+<div class="hidden md:flex items-center gap-8">
+<a class="font-headline-md text-headline-md uppercase tracking-tight text-primary font-bold border-b-4 border-vermelho pb-1" href="#">MOVIMENTO</a>
+<a class="font-headline-md text-headline-md uppercase tracking-tight text-on-surface-variant dark:text-on-surface hover:text-primary transition-colors" href="#">ARTIGOS</a>
+<a class="font-headline-md text-headline-md uppercase tracking-tight text-on-surface-variant dark:text-on-surface hover:text-primary transition-colors" href="#">ATUAÇÃO</a>
+<a class="font-headline-md text-headline-md uppercase tracking-tight text-on-surface-variant dark:text-on-surface hover:text-primary transition-colors" href="#">SOBRE MIM</a>
+<a class="font-headline-md text-headline-md uppercase tracking-tight text-on-surface-variant dark:text-on-surface hover:text-primary transition-colors" href="#">ENVOLVA-SE</a>
+</div>
+<div class="flex items-center gap-4">
+<button class="hidden md:flex items-center justify-center w-10 h-10 border border-primary rounded hover:bg-surface-variant transition-colors">
+<span class="material-symbols-outlined">search</span>
+</button>
+<button class="font-label-bold text-label-bold uppercase bg-primary text-on-primary px-6 py-3 border border-primary hover:bg-rosa transition-colors">
+                    APOIE AGORA
+                </button>
+<button class="md:hidden flex items-center justify-center w-10 h-10">
+<span class="material-symbols-outlined">menu</span>
+</button>
+</div>
+</div>
+</nav>
+<main class="w-full max-w-container-max mx-auto px-gutter py-section-padding space-y-section-padding">
+<!-- Hero Manifesto -->
+<section class="relative grid grid-cols-1 lg:grid-cols-12 gap-gutter items-center min-h-[614px]">
+<div class="lg:col-span-7 space-y-stack-md z-10">
+<span class="inline-block bg-amarelo text-primary font-label-bold text-label-bold px-4 py-2 uppercase border border-primary shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">O Manifesto</span>
+<h1 class="font-display-xl text-display-xl md:text-[120px] uppercase text-primary leading-none">
+                    A POLÍTICA <br/>
+<span class="text-vermelho">NÃO É</span> UM <br/>
+                    ESPAÇO VAZIO.
+                </h1>
+<p class="font-body-lg text-body-lg max-w-2xl bg-white p-6 border border-primary shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] paper-edge">
+                    É a construção diária da nossa realidade. O Movimento Narrativa Política existe para decodificar, questionar e agir sobre as estruturas que moldam a sociedade. Não aceitamos a narrativa pronta; nós a reescrevemos com dados, impacto e voz.
+                </p>
+<div class="pt-4">
+<button class="font-label-bold text-label-bold uppercase bg-primary text-on-primary px-8 py-4 border border-primary hover:bg-azul transition-colors shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] flex items-center gap-2">
+                        Junte-se ao Movimento
+                        <span class="material-symbols-outlined">arrow_forward</span>
+</button>
+</div>
+</div>
+<div class="lg:col-span-5 relative h-full min-h-[400px]">
+<div class="absolute inset-0 bg-rosa translate-x-4 translate-y-4 border border-primary"></div>
+<img alt="Halftone style photo of people marching" class="absolute inset-0 w-full h-full object-cover grayscale contrast-150 mix-blend-luminosity border border-primary" data-alt="A high-contrast, black-and-white halftone style photograph of a diverse crowd of people participating in a peaceful protest or march. The image has a gritty, editorial newspaper texture. They are holding indistinct signs. The lighting is harsh daylight, emphasizing the textures and the urgency of the moment. The overall style is modern brutalist collage, fitting a political activism theme." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDd4TTNMGJAdF2vJwdNI00dW9wNMj4PebZTF0EXx-zoNUdpaBmHu7eUZrQfisluv5Rjou5vVBQ1TWDr5S7_UXSiK9bg56TeImXUKd8Q_lz5jAWBwRueModBpJMEWRb6aleKGqS_yGnAMgfBvQj_7-btAaQ4U76YYT9MqM_3fCUczM7zvI97KRf_3z3U8YFCYe7MSONtICaVHEX3SqlqTdxS1PmzTFmRsZLU-dsMTRWd5lmJbHdiFxO0-SXmTlz_zLVeS4gc29qrhA"/>
+<!-- Collage Elements -->
+<div class="absolute -top-10 -left-10 w-32 h-32 bg-amarelo rounded-full mix-blend-multiply border border-primary flex items-center justify-center shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+<span class="material-symbols-outlined text-[64px] text-primary" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+<div class="absolute bottom-10 -right-10 bg-white p-4 border border-primary shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] rotate-6">
+<p class="font-headline-md text-headline-md uppercase text-primary">#IMPACTO</p>
+</div>
+</div>
+</section>
+<!-- Causas Bento Grid -->
+<section class="space-y-stack-lg">
+<div class="flex flex-col md:flex-row justify-between items-end border-b-4 border-primary pb-4">
+<h2 class="font-headline-lg text-headline-lg uppercase text-primary">Nossas Frentes <br/>de Atuação</h2>
+<p class="font-body-md text-body-md max-w-md text-right hidden md:block">Dados estruturados e narrativas claras para desmontar a desinformação e promover cidadania ativa.</p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-12 gap-6 auto-rows-[300px]">
+<!-- Card Gênero -->
+<div class="md:col-span-8 bg-surface-container border border-primary p-6 flex flex-col justify-between relative overflow-hidden shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] group hover:-translate-y-1 transition-transform">
+<div class="absolute right-0 top-0 w-1/2 h-full bg-rosa/20 clip-path-polygon-[20%_0,100%_0,100%_100%,0_100%]"></div>
+<div class="z-10 flex justify-between items-start">
+<span class="bg-rosa text-white font-label-bold text-label-bold px-3 py-1 uppercase border border-primary">Gênero &amp; Sociedade</span>
+<span class="material-symbols-outlined text-rosa text-4xl" style="font-variation-settings: 'FILL' 1;">diversity_3</span>
+</div>
+<div class="z-10 max-w-lg">
+<h3 class="font-headline-md text-headline-md uppercase text-primary mb-2">A Luta por Espaço é Constante</h3>
+<p class="font-body-md text-body-md bg-white/80 p-2 border border-primary inline-block">Analisamos as disparidades estruturais e promovemos políticas de equidade palpáveis.</p>
+</div>
+</div>
+<!-- Card Cidadania -->
+<div class="md:col-span-4 bg-verde border border-primary p-6 flex flex-col justify-between relative overflow-hidden shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] group hover:-translate-y-1 transition-transform">
+<div class="z-10 flex justify-between items-start">
+<span class="bg-white text-primary font-label-bold text-label-bold px-3 py-1 uppercase border border-primary">Cidadania</span>
+<span class="material-symbols-outlined text-white text-4xl" style="font-variation-settings: 'FILL' 1;">how_to_vote</span>
+</div>
+<div class="z-10">
+<h3 class="font-headline-md text-headline-md uppercase text-white mb-2">O Poder do Voto Informado</h3>
+</div>
+<img alt="Halftone ballot box" class="absolute bottom-0 right-0 w-3/4 h-3/4 object-cover grayscale contrast-200 mix-blend-multiply opacity-50" data-alt="A close-up, high-contrast black and white photo of a person dropping a ballot into a voting box. The image has a strong halftone dot pattern, giving it a retro, newspaper-clipping feel. The lighting highlights the hand and the ballot against a darker background. It fits a political and civic engagement theme in a brutalist style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB4upfoT4izFUbZH4W7udBlBoyVs9egsOprLmOyCo4Y-jtdbwz0CwW3v1C9vuL2H0TZG9qpvzI7dGL33h024hO6qh2GEbTIyH6INzEGZ58ss1GUTRy9PYDgLyQyLOULViKSQAC_m_KcK8e9HHFHUS6ZlTqNYsWZLFvumOb5wpXmntiwB1Pt3aBtBP1Zqdw6uBTbxygTuqgEmNYQ0Z2pKsqc2F-TnJyE_s-eSLtsNCqKw5soTDMBAznChvBddk3ImmLW54cYEG5eTQ"/>
+</div>
+<!-- Card Economia -->
+<div class="md:col-span-5 bg-azul border border-primary p-6 flex flex-col justify-between relative overflow-hidden shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] group hover:-translate-y-1 transition-transform">
+<div class="z-10 flex justify-between items-start">
+<span class="bg-amarelo text-primary font-label-bold text-label-bold px-3 py-1 uppercase border border-primary">Economia</span>
+<span class="material-symbols-outlined text-amarelo text-4xl" style="font-variation-settings: 'FILL' 1;">trending_up</span>
+</div>
+<div class="z-10 mt-auto">
+<h3 class="font-headline-md text-headline-md uppercase text-white mb-2">Números que Contam Histórias</h3>
+<p class="font-body-md text-body-md text-white bg-primary/50 p-2 inline-block border border-primary">Desmistificando o orçamento público.</p>
+</div>
+</div>
+<!-- Card Impacto Dados -->
+<div class="md:col-span-7 bg-white border border-primary p-6 flex items-center justify-center relative overflow-hidden shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] bg-[radial-gradient(#c8c6c5_1px,transparent_1px)] [background-size:16px_16px]">
+<div class="absolute inset-0 border-[8px] border-amarelo/30 m-4 border-dashed"></div>
+<div class="text-center z-10 bg-white p-8 border-2 border-primary shadow-[8px_8px_0px_0px_rgba(210,40,40,1)] transform -rotate-2">
+<span class="font-display-xl text-[100px] leading-none text-primary block">+50k</span>
+<span class="font-headline-md text-headline-md uppercase text-surface-tint">Pessoas Impactadas em 2023</span>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="bg-tertiary dark:bg-tertiary-container w-full border-t-4 border-amarelo mt-section-padding">
+<div class="grid grid-cols-1 md:grid-cols-3 gap-stack-md w-full px-gutter py-section-padding max-w-container-max mx-auto">
+<div class="space-y-4">
+<p class="font-headline-md text-headline-md text-on-tertiary">NARRATIVA POLÍTICA</p>
+<p class="font-body-md text-body-md text-on-tertiary-container max-w-xs">
+                    Impacto Social, Política e Gênero. Construindo um repertório crítico para o mundo contemporâneo.
+                </p>
+</div>
+<div class="flex flex-col space-y-2">
+<a class="font-body-md text-body-md text-on-tertiary-container hover:text-on-tertiary hover:underline decoration-rosa decoration-2 transition-all duration-300 ease-in-out" href="#">INSTITUCIONAL</a>
+<a class="font-body-md text-body-md text-on-tertiary-container hover:text-on-tertiary hover:underline decoration-rosa decoration-2 transition-all duration-300 ease-in-out" href="#">TRANSPARÊNCIA</a>
+<a class="font-body-md text-body-md text-on-tertiary-container hover:text-on-tertiary hover:underline decoration-rosa decoration-2 transition-all duration-300 ease-in-out" href="#">CONTATO</a>
+</div>
+<div class="flex flex-col space-y-2">
+<a class="font-body-md text-body-md text-on-tertiary-container hover:text-on-tertiary hover:underline decoration-rosa decoration-2 transition-all duration-300 ease-in-out" href="#">NEWSLETTER</a>
+<a class="font-body-md text-body-md text-on-tertiary-container hover:text-on-tertiary hover:underline decoration-rosa decoration-2 transition-all duration-300 ease-in-out" href="#">PRIVACIDADE</a>
+</div>
+<div class="md:col-span-3 pt-8 mt-8 border-t border-surface-tint flex flex-col md:flex-row justify-between items-center gap-4">
+<p class="font-body-md text-body-md text-on-tertiary-container">© 2024 Narrativa Política. Impacto Social, Política e Gênero.</p>
+<div class="flex gap-4">
+<!-- Placeholder social icons -->
+<div class="w-10 h-10 bg-on-tertiary-container/20 rounded-full flex items-center justify-center text-on-tertiary hover:bg-rosa transition-colors cursor-pointer">
+<span class="material-symbols-outlined">share</span>
+</div>
+</div>
+</div>
+</div>
+</footer>
+</body></html>

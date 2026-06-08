@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+
+<html class="light" lang="pt-BR"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Painel Admin - Narrativa Política</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800&amp;family=DM+Sans:ital,wght@0,400;0,500;0,700;1,400&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "primary-fixed-dim": "#c8c6c5",
+                        "surface-container": "#f1edec",
+                        "tertiary-container": "#1c1b1a",
+                        "tertiary": "#000000",
+                        "on-tertiary-container": "#868381",
+                        "surface-bright": "#fdf8f8",
+                        "on-surface-variant": "#444748",
+                        "outline-variant": "#c4c7c7",
+                        "outline": "#747878",
+                        "surface-variant": "#e5e2e1",
+                        "rosa": "#FF3C82",
+                        "on-primary-container": "#858383",
+                        "vermelho": "#D22828",
+                        "on-tertiary-fixed-variant": "#484645",
+                        "secondary-container": "#e7e2da",
+                        "azul": "#3C64E6",
+                        "amarelo": "#FFDC00",
+                        "surface-container-highest": "#e5e2e1",
+                        "on-background": "#1c1b1b",
+                        "secondary-fixed": "#e7e2da",
+                        "tertiary-fixed-dim": "#cac6c3",
+                        "on-tertiary": "#ffffff",
+                        "on-error-container": "#93000a",
+                        "on-tertiary-fixed": "#1c1b1a",
+                        "surface-container-high": "#ebe7e6",
+                        "surface": "#fdf8f8",
+                        "verde": "#A0D246",
+                        "secondary": "#615e58",
+                        "inverse-primary": "#c8c6c5",
+                        "on-secondary-fixed-variant": "#494741",
+                        "surface-tint": "#5f5e5e",
+                        "on-secondary-fixed": "#1d1c17",
+                        "surface-container-low": "#f7f3f2",
+                        "on-secondary": "#ffffff",
+                        "primary": "#000000",
+                        "lilas": "#9660E0",
+                        "on-error": "#ffffff",
+                        "tertiary-fixed": "#e6e1df",
+                        "on-primary-fixed": "#1c1b1b",
+                        "on-surface": "#1c1b1b",
+                        "on-primary": "#ffffff",
+                        "secondary-fixed-dim": "#cac6be",
+                        "error-container": "#ffdad6",
+                        "surface-container-lowest": "#ffffff",
+                        "inverse-on-surface": "#f4f0ef",
+                        "background": "#fdf8f8",
+                        "inverse-surface": "#313030",
+                        "primary-container": "#1c1b1b",
+                        "error": "#ba1a1a",
+                        "on-secondary-container": "#67645e",
+                        "primary-fixed": "#e5e2e1",
+                        "on-primary-fixed-variant": "#474646",
+                        "surface-dim": "#ddd9d8"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "stack-lg": "48px",
+                        "stack-sm": "12px",
+                        "container-max": "1200px",
+                        "unit": "4px",
+                        "section-padding": "80px",
+                        "stack-md": "24px",
+                        "gutter": "24px"
+                    },
+                    "fontFamily": {
+                        "label-bold": ["DM Sans"],
+                        "caption": ["DM Sans"],
+                        "headline-md": ["Barlow Condensed"],
+                        "body-md": ["DM Sans"],
+                        "body-lg": ["DM Sans"],
+                        "display-xl": ["Barlow Condensed"],
+                        "headline-lg": ["Barlow Condensed"],
+                        "headline-lg-mobile": ["Barlow Condensed"]
+                    },
+                    "fontSize": {
+                        "label-bold": ["13px", {"lineHeight": "1.2", "letterSpacing": "0.05em", "fontWeight": "700"}],
+                        "caption": ["11px", {"lineHeight": "1.2", "letterSpacing": "0.1em", "fontWeight": "500"}],
+                        "headline-md": ["32px", {"lineHeight": "1.2", "fontWeight": "700"}],
+                        "body-md": ["16px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                        "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "display-xl": ["80px", {"lineHeight": "1.0", "letterSpacing": "-0.02em", "fontWeight": "800"}],
+                        "headline-lg": ["52px", {"lineHeight": "1.1", "fontWeight": "700"}],
+                        "headline-lg-mobile": ["38px", {"lineHeight": "1.1", "fontWeight": "700"}]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        /* Base Noise Texture to fulfill Brand Depth Rules */
+        .noise-bg {
+            position: relative;
+        }
+        .noise-bg::before {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.04'/%3E%3C/svg%3E");
+            pointer-events: none;
+            z-index: 10;
+        }
+        /* Brutalist Shadows */
+        .shadow-brutal {
+            box-shadow: 4px 4px 0px 0px #000000;
+        }
+        .shadow-brutal-hover:hover {
+            box-shadow: 6px 6px 0px 0px #000000;
+            transform: translate(-2px, -2px);
+            transition: all 0.2s ease-in-out;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md min-h-screen flex noise-bg selection:bg-rosa selection:text-white">
+<!-- Sidebar Navigation -->
+<aside class="w-64 bg-surface-container-lowest border-r-2 border-primary flex-shrink-0 flex flex-col justify-between hidden md:flex sticky top-0 h-screen z-20">
+<div>
+<!-- Brand Logo Area -->
+<div class="h-20 flex items-center px-gutter border-b-2 border-primary bg-primary text-on-primary">
+<span class="font-headline-md text-headline-md uppercase tracking-tight">
+                    NARRATIVA<br/><span class="text-amarelo">POLÍTICA</span>
+</span>
+</div>
+<!-- Navigation Links -->
+<nav class="p-gutter flex flex-col gap-unit">
+<!-- Active Item -->
+<a class="flex items-center gap-3 px-4 py-3 bg-surface-container-high border-l-4 border-rosa text-primary font-label-bold text-label-bold shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] border-y border-r border-primary" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">dashboard</span>
+                    DASHBOARD
+                </a>
+<!-- Inactive Items -->
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-primary hover:bg-surface-variant transition-colors border-l-4 border-transparent font-label-bold text-label-bold" href="#">
+<span class="material-symbols-outlined">article</span>
+                    ARTIGOS
+                </a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-primary hover:bg-surface-variant transition-colors border-l-4 border-transparent font-label-bold text-label-bold" href="#">
+<span class="material-symbols-outlined">campaign</span>
+                    OPORTUNIDADES
+                </a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-primary hover:bg-surface-variant transition-colors border-l-4 border-transparent font-label-bold text-label-bold" href="#">
+<span class="material-symbols-outlined">folder</span>
+                    PROJETOS
+                </a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-primary hover:bg-surface-variant transition-colors border-l-4 border-transparent font-label-bold text-label-bold" href="#">
+<span class="material-symbols-outlined">mail</span>
+                    NEWSLETTER
+                </a>
+</nav>
+</div>
+<!-- Bottom Sidebar Area -->
+<div class="p-gutter border-t-2 border-primary">
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-primary hover:bg-surface-variant transition-colors border-l-4 border-transparent font-label-bold text-label-bold mb-4" href="#">
+<span class="material-symbols-outlined">settings</span>
+                CONFIGURAÇÕES
+            </a>
+<!-- User Profile Snippet -->
+<div class="flex items-center gap-3 p-3 bg-surface border border-primary shadow-brutal">
+<img alt="Avatar da Anne Dornelas" class="w-10 h-10 object-cover border border-primary grayscale contrast-125" data-alt="A striking high-contrast black and white halftone portrait of a professional woman. The image should look like a newspaper clipping printed on textured paper. High impact, dramatic lighting, modern editorial collage style. White background with subtle grain." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA2yBaZ1odvOOOC1MblHlu8YpT1IsKU-EFXr8ortULqx3keQg0UhoDHNkIBohNa2HfpOCOyLAssXChCbAPUOysgXiB9MV8Vhe6zJMkSj2x8QwbPBFhduh1GY_YwohsOF-zDR_odPmcu-XNwNWg4DbO5tkaEsqxM3xxAWGFhaIZzHVXw7GL2A3n3R6tX5SddTQjYzm37fMgtyTBQAL_grryyUxjhLt2aTODy6m1WoiZ3g5N87LwitiH8n7U-mOAiWbcpdv70BblF4A"/>
+<div class="flex flex-col">
+<span class="font-label-bold text-label-bold text-primary">Anne Dornelas</span>
+<span class="font-caption text-caption text-secondary">Administradora</span>
+</div>
+</div>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="flex-1 flex flex-col h-screen overflow-y-auto bg-surface-container relative">
+<!-- Mobile Header (Visible only on small screens) -->
+<header class="md:hidden flex justify-between items-center bg-primary text-on-primary px-gutter py-4 border-b-2 border-primary sticky top-0 z-20">
+<span class="font-headline-md text-headline-md uppercase tracking-tight text-amarelo">NP ADMIN</span>
+<button class="text-on-primary">
+<span class="material-symbols-outlined">menu</span>
+</button>
+</header>
+<!-- Dashboard Canvas Padding -->
+<div class="p-gutter md:p-stack-lg max-w-container-max mx-auto w-full flex flex-col gap-stack-md">
+<!-- Welcome Header Section -->
+<section class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-4">
+<div>
+<h1 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary uppercase">Visão Geral</h1>
+<p class="font-body-md text-body-md text-secondary mt-1">Bem-vinda de volta, Anne. Aqui está o impacto da Narrativa Política hoje.</p>
+</div>
+<div class="flex gap-3">
+<button class="px-6 py-3 bg-surface-container-lowest border-2 border-primary font-label-bold text-label-bold text-primary shadow-brutal shadow-brutal-hover uppercase tracking-widest flex items-center gap-2">
+<span class="material-symbols-outlined text-azul">download</span> Relatório
+                    </button>
+<button class="px-6 py-3 bg-primary border-2 border-primary text-on-primary font-label-bold text-label-bold hover:bg-vermelho transition-colors shadow-brutal shadow-brutal-hover uppercase tracking-widest flex items-center gap-2">
+<span class="material-symbols-outlined">add</span> Novo Artigo
+                    </button>
+</div>
+</section>
+<!-- Impact Metrics (Bento Grid) -->
+<section class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<!-- Metric 1: Alcance -->
+<div class="bg-surface-container-lowest border-2 border-primary p-6 relative overflow-hidden shadow-brutal group">
+<div class="absolute top-0 right-0 w-16 h-16 bg-amarelo border-b-2 border-l-2 border-primary flex items-center justify-center transform translate-x-2 -translate-y-2 group-hover:translate-x-0 group-hover:translate-y-0 transition-transform">
+<span class="material-symbols-outlined text-primary text-3xl">public</span>
+</div>
+<h3 class="font-label-bold text-label-bold text-secondary uppercase tracking-widest mb-2">Alcance da Semana</h3>
+<div class="font-display-xl text-display-xl text-primary mt-2">124<span class="text-amarelo">K</span></div>
+<div class="flex items-center gap-1 mt-4 text-verde font-label-bold text-label-bold bg-surface-container-high w-fit px-2 py-1 border border-primary rounded-full">
+<span class="material-symbols-outlined text-sm">trending_up</span> +14.2% vs. semana pass.
+                    </div>
+</div>
+<!-- Metric 2: Novos Assinantes -->
+<div class="bg-surface-container-lowest border-2 border-primary p-6 relative overflow-hidden shadow-brutal group">
+<div class="absolute top-0 right-0 w-16 h-16 bg-rosa border-b-2 border-l-2 border-primary flex items-center justify-center transform translate-x-2 -translate-y-2 group-hover:translate-x-0 group-hover:translate-y-0 transition-transform">
+<span class="material-symbols-outlined text-primary text-3xl" style="font-variation-settings: 'FILL' 1;">group_add</span>
+</div>
+<h3 class="font-label-bold text-label-bold text-secondary uppercase tracking-widest mb-2">Novos Assinantes</h3>
+<div class="font-display-xl text-display-xl text-primary mt-2">842</div>
+<div class="flex items-center gap-1 mt-4 text-verde font-label-bold text-label-bold bg-surface-container-high w-fit px-2 py-1 border border-primary rounded-full">
+<span class="material-symbols-outlined text-sm">trending_up</span> +5.8% na newsletter
+                    </div>
+</div>
+<!-- Metric 3: Engajamento Projetos -->
+<div class="bg-surface-container-lowest border-2 border-primary p-6 relative overflow-hidden shadow-brutal group">
+<div class="absolute top-0 right-0 w-16 h-16 bg-azul border-b-2 border-l-2 border-primary flex items-center justify-center transform translate-x-2 -translate-y-2 group-hover:translate-x-0 group-hover:translate-y-0 transition-transform">
+<span class="material-symbols-outlined text-on-primary text-3xl" style="font-variation-settings: 'FILL' 1;">rocket_launch</span>
+</div>
+<h3 class="font-label-bold text-label-bold text-secondary uppercase tracking-widest mb-2">Projetos Ativos</h3>
+<div class="font-display-xl text-display-xl text-primary mt-2">07</div>
+<div class="flex items-center gap-1 mt-4 text-secondary font-label-bold text-label-bold bg-surface-container-high w-fit px-2 py-1 border border-primary rounded-full">
+<span class="material-symbols-outlined text-sm">schedule</span> 3 próximos do prazo
+                    </div>
+</div>
+</section>
+<!-- Bottom Layout: Recent Activity & Quick Actions -->
+<section class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+<!-- Recent Articles List (Takes up 2 columns) -->
+<div class="lg:col-span-2 bg-surface-container-lowest border-2 border-primary shadow-brutal flex flex-col">
+<div class="p-6 border-b-2 border-primary flex justify-between items-center bg-background">
+<h2 class="font-headline-md text-headline-md uppercase">Últimos Artigos Publicados</h2>
+<a class="font-label-bold text-label-bold text-vermelho hover:underline flex items-center gap-1 uppercase tracking-wider" href="#">
+                            Ver todos <span class="material-symbols-outlined text-sm">arrow_forward</span>
+</a>
+</div>
+<div class="flex-1 p-6 flex flex-col gap-4">
+<!-- List Item 1 -->
+<div class="flex flex-col sm:flex-row gap-4 items-start sm:items-center p-4 border border-outline-variant hover:bg-surface-container-low transition-colors">
+<div class="w-24 h-16 bg-primary flex-shrink-0 relative overflow-hidden border border-primary">
+<img alt="Imagem do artigo sobre movimentos sociais" class="w-full h-full object-cover mix-blend-luminosity opacity-80" data-alt="A high-contrast black and white photograph showing a large crowd at a political rally, shot from a low angle. The image has a harsh halftone texture overlay, resembling an editorial magazine clipping. A bright yellow solid rectangle is placed disruptively in the top left corner. Urban, gritty, energetic mood." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC1xqZsC_srlYrQpCOQw6-kSSYjVY3CV0t9I1TbKgEOnaleJM5sZahjr58KWir3zYUKki6AvSrIc4J5m_skLi7N31m_jLqb6q1j8vvY3Y9skkrOgF1ubs3aoeuYfwsCJ7SHQM3eRTd13tYrIp6ZwJ0DQCwUSKV1iqCbmWWuiZhysV4EBgf2sgcvbTGYGBL46bO9ZHJWTw0MODXGml8IsdRrxGagvUCwMIC4JquX4_av0rESHXW86i1CBQul41VL2O8VMEBWknrxNg"/>
+</div>
+<div class="flex-1">
+<div class="flex items-center gap-2 mb-1">
+<span class="bg-primary text-on-primary font-caption text-caption px-2 py-0.5 rounded-full uppercase">Política</span>
+<span class="text-outline font-caption text-caption">Há 2 horas</span>
+</div>
+<h4 class="font-label-bold text-label-bold text-primary line-clamp-1 text-lg">O Papel do Movimento Estudantil nas Eleições de 2024</h4>
+</div>
+<div class="flex gap-2">
+<button class="p-2 border border-primary text-primary hover:bg-amarelo transition-colors" title="Editar">
+<span class="material-symbols-outlined text-sm">edit</span>
+</button>
+<button class="p-2 border border-primary text-primary hover:bg-surface-variant transition-colors" title="Estatísticas">
+<span class="material-symbols-outlined text-sm">bar_chart</span>
+</button>
+</div>
+</div>
+<!-- List Item 2 -->
+<div class="flex flex-col sm:flex-row gap-4 items-start sm:items-center p-4 border border-outline-variant hover:bg-surface-container-low transition-colors">
+<div class="w-24 h-16 bg-primary flex-shrink-0 relative overflow-hidden border border-primary">
+<img alt="Mulheres na tecnologia e liderança" class="w-full h-full object-cover mix-blend-luminosity opacity-80" data-alt="A dynamic editorial style photograph of a woman speaking confidently into a microphone. The aesthetic is modern brutalist collage, featuring a stark monochrome base with overlaid semi-transparent geometric shapes in magenta and cyan. The lighting is high-key studio white. The mood is authoritative and empowering." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCVNrqRHyWxPVObNXQU9RPYDoSZqK9_dFTl3lC6N_nXUS9peI_Bbuo9hQ4t-uY4PyjEUDF8swxiu1LpL4pC-LRJnft_Noj8Y3Uc4oGzef4rkqU287FzymUrjNQPzHyLb12Ybcc4hmkIA4351U6cYLHbzVvdXUAV1hHmrK9X0UqzGY2sV5K_BqQuvqanGf9uGRZpMcffXwKExPIA6mlmWo_wIQO46WWot5aQD7DPXyX3BT4jmxjcIdihQOo2RFFK0QaND-yvIG0z1A"/>
+</div>
+<div class="flex-1">
+<div class="flex items-center gap-2 mb-1">
+<span class="bg-primary text-on-primary font-caption text-caption px-2 py-0.5 rounded-full uppercase">Gênero</span>
+<span class="text-outline font-caption text-caption">Ontem</span>
+</div>
+<h4 class="font-label-bold text-label-bold text-primary line-clamp-1 text-lg">Lideranças Femininas: Quebrando o Teto de Vidro no Setor Público</h4>
+</div>
+<div class="flex gap-2">
+<button class="p-2 border border-primary text-primary hover:bg-amarelo transition-colors" title="Editar">
+<span class="material-symbols-outlined text-sm">edit</span>
+</button>
+<button class="p-2 border border-primary text-primary hover:bg-surface-variant transition-colors" title="Estatísticas">
+<span class="material-symbols-outlined text-sm">bar_chart</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Right Column: Quick Stats & Newsletter Drafts -->
+<div class="flex flex-col gap-6">
+<!-- Newsletter Status -->
+<div class="bg-surface-container-lowest border-2 border-primary shadow-brutal p-6 relative">
+<div class="absolute top-0 right-0 w-2 h-full bg-verde border-l-2 border-primary"></div>
+<h2 class="font-headline-md text-headline-md uppercase mb-4 flex items-center gap-2">
+<span class="material-symbols-outlined text-verde">mail</span> 
+                            Newsletter Semanal
+                        </h2>
+<div class="border border-outline-variant p-4 bg-surface-container mb-4">
+<h4 class="font-label-bold text-label-bold text-primary mb-1">Edição #45 - Em Rascunho</h4>
+<p class="font-body-md text-sm text-secondary">Previsão de disparo: Sexta-feira, 08:00.</p>
+<div class="mt-3 w-full bg-outline-variant h-2 rounded-full overflow-hidden border border-primary">
+<div class="bg-verde h-full w-3/4"></div>
+</div>
+<p class="font-caption text-caption text-right mt-1 text-primary">75% Concluído</p>
+</div>
+<button class="w-full py-3 bg-surface border-2 border-primary font-label-bold text-label-bold text-primary hover:bg-verde transition-colors shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] uppercase tracking-widest">
+                            Continuar Edição
+                        </button>
+</div>
+<!-- Mini Chart Card (Decorative representation) -->
+<div class="bg-tertiary text-on-tertiary border-2 border-primary shadow-brutal p-6 relative overflow-hidden">
+<div class="relative z-10">
+<h2 class="font-label-bold text-label-bold uppercase text-outline-variant tracking-widest mb-1">Crescimento de Base</h2>
+<div class="font-headline-md text-headline-md text-amarelo mb-4">+1.240 <span class="text-lg text-on-tertiary font-body-md">este mês</span></div>
+<!-- Brutalist Chart Representation -->
+<div class="flex items-end gap-2 h-24 mt-4 border-b-2 border-primary-fixed-dim pb-1">
+<div class="w-1/6 bg-surface-variant h-[30%]"></div>
+<div class="w-1/6 bg-surface-variant h-[45%]"></div>
+<div class="w-1/6 bg-surface-variant h-[40%]"></div>
+<div class="w-1/6 bg-surface-variant h-[65%]"></div>
+<div class="w-1/6 bg-surface-variant h-[80%]"></div>
+<div class="w-1/6 bg-amarelo h-[100%] border border-on-tertiary shadow-[2px_2px_0px_0px_rgba(255,255,255,0.2)]"></div>
+</div>
+<div class="flex justify-between mt-2 font-caption text-caption text-outline-variant">
+<span>Ago</span>
+<span>Set</span>
+<span>Out</span>
+<span>Nov</span>
+<span>Dez</span>
+<span class="text-amarelo font-bold">Jan</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+</div>
+</main>
+</body></html>
