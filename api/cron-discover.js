@@ -65,12 +65,15 @@ module.exports = async function handler(req, res) {
       ...(existingOpps || []).map(o => o.sourceUrl)
     ].filter(Boolean))
 
-    const newLinks = uniqueLinks.filter(l => !existingUrls.has(l.url)).slice(0, 15) // Limite de 15 por execução para não estourar tempo/cota
+    const newLinks = uniqueLinks.filter(l => !existingUrls.has(l.url)).slice(0, 5) // Limite de 5 por execução para não estourar a cota da IA e timeout da Vercel
     console.log(`Novos links para processar: ${newLinks.length}`)
 
     let processedCount = 0
     let pendingCount = 0
     let rejectedCount = 0
+
+    // Função de delay auxiliar
+    const delay = ms => new Promise(res => setTimeout(res, ms))
 
     // 4. Processar cada novo link
     for (const linkObj of newLinks) {
@@ -119,6 +122,10 @@ module.exports = async function handler(req, res) {
           }
         }
         processedCount++
+        
+        // Aguardar 3 segundos para evitar 429 Too Many Requests do Gemini
+        await delay(3000)
+        
       } catch (e) {
         console.error(`Erro ao processar link ${linkObj.url}:`, e.message)
       }
