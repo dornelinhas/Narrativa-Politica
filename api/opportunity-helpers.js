@@ -221,7 +221,8 @@ const scoreOpportunityCandidate = (text = '', href = '') => {
 
 const analyzeWithAI = async (prompt, apiKey) => {
   const genAI = new GoogleGenerativeAI(apiKey)
-  const modelsToTry = ["gemini-2.0-flash-lite", "gemini-2.0-flash", "gemini-2.5-flash"]
+  // Utiliza a versão 1.5 que possui um limite diário de 1.500 requests no plano gratuito
+  const modelsToTry = ["gemini-1.5-flash", "gemini-1.5-pro", "gemini-2.0-flash-lite"]
   let lastError = null
 
   for (const modelName of modelsToTry) {
