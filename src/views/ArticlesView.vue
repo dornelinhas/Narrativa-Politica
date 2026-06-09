@@ -75,13 +75,22 @@ const filteredPosts = computed(() => {
   })
 })
 
+const featuredPosts = computed(() => {
+  if (currentPage.value !== 1) return []
+  return filteredPosts.value.slice(0, 3)
+})
+
 const paginatedPosts = computed(() => {
-  const start = (currentPage.value - 1) * itemsPerPage
-  return filteredPosts.value.slice(start, start + itemsPerPage)
+  // If on page 1, skip the first 3 featured posts
+  // If on page 2+, skip the 3 featured + (page-2)*itemsPerPage
+  const offset = currentPage.value === 1 ? 3 : 3 + (currentPage.value - 2) * itemsPerPage
+  return filteredPosts.value.slice(offset, offset + itemsPerPage)
 })
 
 const totalPages = computed(() => {
-  return Math.ceil(filteredPosts.value.length / itemsPerPage)
+  const total = filteredPosts.value.length
+  if (total <= 3) return 1
+  return 1 + Math.ceil((total - 3) / itemsPerPage)
 })
 
 const setPage = (p) => {
@@ -126,7 +135,29 @@ const setPage = (p) => {
       <!-- Left Column (Grid-8) -->
       <div class="art-col-left">
 
-        <!-- UNIFORM ARTICLES GRID -->
+        <!-- FEATURED POSTS (Large, Top 3) -->
+        <div class="art-featured-grid" v-if="featuredPosts.length > 0">
+          <router-link v-for="post in featuredPosts" :key="post.id" :to="`/conteudo/${post.id}`" class="art-large-card paper-shadow">
+            <div class="large-card-image-box">
+              <span class="large-badge">{{ post.category || 'ARTIGO' }}</span>
+              <img :src="post.image || 'https://images.unsplash.com/photo-1541844053589-346841d0b34c?w=800&q=80'" class="large-img" alt="Cover" />
+            </div>
+            <div class="large-card-content">
+              <span class="art-date">{{ formatDate(post.date) }}</span>
+              <h3 class="large-card-title">{{ post.title }}</h3>
+              <p class="art-excerpt line-clamp-3 mt-auto">{{ post.excerpt }}</p>
+              <div class="large-card-footer">
+                <span class="art-read-more border-b-thick">
+                  LER MAIS <span class="material-symbols-outlined text-sm pt-1">arrow_forward</span>
+                </span>
+              </div>
+            </div>
+          </router-link>
+        </div>
+
+        <div v-if="currentPage === 1 && paginatedPosts.length > 0" class="art-divider"></div>
+
+        <!-- UNIFORM ARTICLES GRID (Smaller, rest of posts) -->
         <div class="art-uniform-grid" v-if="paginatedPosts.length">
           <router-link v-for="post in paginatedPosts" :key="post.id" :to="`/conteudo/${post.id}`" class="art-mini-card paper-shadow">
             <div class="mini-card-image">
@@ -461,7 +492,55 @@ const setPage = (p) => {
   font-family: var(--font-sans); font-size: 18px; font-style: italic; color: #444748; line-height: 1.4;
 }
 
-/* EMPTY STATE */
+/* FEATURED GRID (TOP 3) */
+.art-featured-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+.art-large-card {
+  display: flex; flex-direction: column; border: var(--border-thick); background: #fff; text-decoration: none; color: inherit; transition: transform 0.2s;
+}
+@media (min-width: 768px) {
+  .art-large-card { flex-direction: row; }
+}
+.art-large-card:hover { transform: translate(-4px, -4px); box-shadow: var(--shadow-paper-lg); }
+.large-card-image-box {
+  position: relative; border-bottom: var(--border-thick); background: #ddd9d8; min-height: 240px;
+}
+@media (min-width: 768px) {
+  .large-card-image-box { width: 45%; border-bottom: none; border-right: var(--border-thick); }
+}
+.large-badge {
+  position: absolute; top: 16px; left: 16px;
+  background: var(--np-black); color: #fff; border: var(--border-thick);
+  font-family: var(--font-sans); font-size: 10px; font-weight: 800;
+  padding: 4px 12px; border-radius: 99px; z-index: 10;
+}
+.large-img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(100%) contrast(1.25); mix-blend-mode: multiply; position: absolute; inset: 0; transition: all 0.3s ease; }
+.art-large-card:hover .large-img { filter: none; mix-blend-mode: normal; }
+.large-card-content { padding: 32px; display: flex; flex-direction: column; flex: 1; justify-content: space-between; }
+.large-card-title {
+  font-family: var(--font-display); font-size: 32px; line-height: 1.1; font-weight: 800;
+  color: var(--np-black); text-transform: uppercase; margin-bottom: 16px;
+}
+.large-card-footer { margin-top: 32px; }
+.art-read-more {
+  font-family: var(--font-sans); font-size: 12px; font-weight: 800; text-transform: uppercase;
+  color: var(--np-black); padding-bottom: 4px; display: inline-flex; align-items: center; gap: 4px;
+  border-bottom-color: var(--np-vermelho); transition: color 0.2s;
+}
+.art-large-card:hover .art-read-more { color: var(--np-vermelho); }
+
+.art-divider {
+  height: 4px;
+  background-color: var(--np-black);
+  margin: 48px 0;
+  width: 100%;
+}
+
+/* UNIFORM GRID */
+
 .art-empty-state {
   padding: 64px; text-align: center; background: #fff; border: var(--border-thick); margin-top: 32px;
 }
