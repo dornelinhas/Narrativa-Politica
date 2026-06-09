@@ -211,36 +211,15 @@ const setPage = (p) => {
           </div>
         </router-link>
 
-        <!-- PAGE 1 NAVIGATION BUTTON -->
-        <div class="art-next-page-action" v-if="currentPage === 1 && totalPages > 1">
-          <button @click="setPage(2)" class="btn-brutal btn-next-big paper-shadow">
-            VER MAIS ARTIGOS
-            <span class="material-symbols-outlined">arrow_forward</span>
-          </button>
-        </div>
-
-        <!-- OTHER ARTICLES GRID (Only for page 2+) -->
-        <div class="art-others-grid" v-if="currentPage > 1 && paginatedOtherPosts.length">
-          <router-link v-for="post in paginatedOtherPosts" :key="post.id" :to="`/conteudo/${post.id}`" class="art-mini-card paper-shadow">
-            <div class="mini-card-image">
-              <img :src="post.image || 'https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?w=500&q=80'" alt="Cover" />
-            </div>
-            <div class="mini-card-content">
-              <span class="mini-category">{{ post.category }}</span>
-              <h4 class="mini-title">{{ post.title }}</h4>
-              <span class="mini-date">{{ formatDate(post.date) }}</span>
-            </div>
-          </router-link>
-        </div>
-
-        <!-- PAGINATION CONTROLS (Only for page 2+) -->
-        <div class="art-pagination" v-if="currentPage > 1 && totalPages > 1">
+        <!-- PAGINATION CONTROLS -->
+        <div class="art-pagination" v-if="totalPages > 1">
           <button 
             class="pag-btn" 
+            :disabled="currentPage === 1"
             @click="setPage(currentPage - 1)"
           >
             <span class="material-symbols-outlined">chevron_left</span>
-            VOLTAR
+            ANTERIOR
           </button>
 
           <div class="pag-pages">
@@ -264,6 +243,7 @@ const setPage = (p) => {
             <span class="material-symbols-outlined">chevron_right</span>
           </button>
         </div>
+
         <!-- Empty State -->
         <div v-if="filteredPosts.length === 0" class="art-empty-state paper-shadow">
           <h3 class="empty-title">NENHUM ARTIGO ENCONTRADO</h3>
@@ -754,22 +734,22 @@ const setPage = (p) => {
 .mini-title { font-family: var(--font-display); font-size: 18px; line-height: 1.2; font-weight: 800; text-transform: uppercase; margin: 0 0 4px 0; }
 .mini-date { font-size: 10px; color: #868381; }
 
-/* PAGINATION */
+/* PAGINATION COMPACT */
 .art-pagination {
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 24px;
-  margin-top: 64px;
-  padding: 24px;
-  border-top: var(--border-thick);
+  gap: 16px;
+  margin-top: 48px;
+  padding: 16px;
+  border-top: var(--border-thin);
 }
 .pag-btn {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 4px;
   font-family: var(--font-sans);
-  font-size: 12px;
+  font-size: 10px;
   font-weight: 800;
   text-transform: uppercase;
   background: transparent;
@@ -780,15 +760,36 @@ const setPage = (p) => {
 .pag-btn:hover:not(:disabled) { color: var(--np-vermelho); }
 .pag-btn:disabled { opacity: 0.3; cursor: not-allowed; }
 
-.pag-pages { display: flex; gap: 8px; }
+.pag-pages { display: flex; gap: 4px; }
 .pag-page-num {
-  width: 32px; height: 32px;
+  width: 28px; height: 28px;
   display: flex; align-items: center; justify-content: center;
-  border: var(--border-thick);
-  font-family: var(--font-sans); font-size: 14px; font-weight: 800;
+  border: var(--border-thin);
+  font-family: var(--font-sans); font-size: 12px; font-weight: 800;
   background: #fff; cursor: pointer; transition: all 0.2s;
 }
-.pag-page-num.active { background: var(--np-black); color: #fff; transform: translate(-2px, -2px); box-shadow: 2px 2px 0 var(--np-vermelho); }
+.pag-page-num.active { background: var(--np-black); color: #fff; transform: translate(-1px, -1px); box-shadow: 1px 1px 0 var(--np-vermelho); }
+.pag-page-num:hover:not(.active) { background: var(--np-creme); }
+
+/* EMPTY STATE */
+  text-transform: uppercase;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+.pag-btn:hover:not(:disabled) { color: var(--np-vermelho); }
+.pag-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+
+.pag-pages { display: flex; gap: 4px; }
+.pag-page-num {
+  width: 28px; height: 28px;
+  display: flex; align-items: center; justify-content: center;
+  border: var(--border-thin);
+  font-family: var(--font-sans); font-size: 12px; font-weight: 800;
+  background: #fff; cursor: pointer; transition: all 0.2s;
+}
+.pag-page-num.active { background: var(--np-black); color: #fff; transform: translate(-1px, -1px); box-shadow: 1px 1px 0 var(--np-vermelho); }
 .pag-page-num:hover:not(.active) { background: var(--np-creme); }
 
 /* EMPTY STATE */
@@ -802,35 +803,6 @@ const setPage = (p) => {
 .empty-title { font-family: var(--font-display); font-size: 32px; font-weight: 800; margin-bottom: 16px; }
 .empty-text { font-family: var(--font-sans); color: #444748; margin-bottom: 24px; }
 
-/* NEXT PAGE BIG BUTTON */
-.art-next-page-action {
-  display: flex;
-  justify-content: center;
-  margin-top: 48px;
-  padding: 32px 0;
-}
-.btn-next-big {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  background: var(--np-amarelo);
-  color: var(--np-black);
-  padding: 24px 48px;
-  font-family: var(--font-display);
-  font-size: 24px;
-  font-weight: 800;
-  text-transform: uppercase;
-  border: var(--border-thick);
-  cursor: pointer;
-  transition: all 0.2s;
-}
-.btn-next-big:hover {
-  transform: translate(-4px, -4px);
-  box-shadow: 8px 8px 0 var(--np-black);
-  background: #fff;
-}
-
-/* ── RESPONSIVE V4 ───────────────────────────── */
 @media (max-width: 1023px) {
   .art-main-grid { grid-template-columns: 1fr; gap: 64px; }
   .art-title { font-size: 60px; }
