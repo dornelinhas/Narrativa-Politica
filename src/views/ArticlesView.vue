@@ -5,7 +5,45 @@ import { Search, Mail, Filter } from 'lucide-vue-next'
 
 const searchQuery = ref('')
 const selectedCategory = ref('Tudo')
+const currentPage = ref(1)
 const itemsPerPage = 4
+
+const categories = ['Tudo', 'DEMOCRACIA', 'ECONOMIA', 'GÊNERO', 'BRASÍLIA', 'TRANSPARÊNCIA', 'MEIO AMBIENTE', 'POLÍTICA URBANA']
+
+const mockPosts = [
+  { 
+    id: 'm1', 
+    title: "Democracia - O Custo Oculto da Desinformação", 
+    excerpt: "Como as campanhas de desinformação afetam não apenas o resultado nas urnas, mas também o tecido social e a confiança nas instituições democráticas brasileiras.", 
+    category: "DEMOCRACIA",
+    image: "https://images.unsplash.com/photo-1541844053589-346841d0b34c?w=800&q=80",
+    date: "12 OUTUBRO 2024"
+  },
+  { 
+    id: 'm2', 
+    title: "Economia e Desigualdade Tributária", 
+    excerpt: "Por que quem ganha menos acaba pagando proporcionalmente mais impostos no Brasil e como a reforma tributária pode mudar esse cenário.", 
+    category: "ECONOMIA",
+    image: "https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?w=500&q=80",
+    date: "05 SETEMBRO 2024"
+  },
+  { 
+    id: 'm3', 
+    title: "Lideranças Femininas: Ocupar para Transformar", 
+    excerpt: "A importância de ter mulheres em cargos de decisão e os desafios enfrentados no ambiente político institucional.", 
+    category: "GÊNERO",
+    image: "https://images.unsplash.com/photo-1573164713714-d95e436ab8d6?w=500&q=80",
+    date: "28 AGOSTO 2024"
+  },
+  { 
+    id: 'm4', 
+    title: "Orçamento Secreto e Transparência", 
+    excerpt: "Entenda o impacto das emendas parlamentares na governabilidade e o que está em jogo na suprema corte.", 
+    category: "BRASÍLIA",
+    image: "https://images.unsplash.com/photo-1529107386315-e1a2ed48a620?w=800&q=80",
+    date: "15 AGOSTO 2024"
+  }
+]
 
 const formatDate = (dateStr) => {
   if (!dateStr) return ''
