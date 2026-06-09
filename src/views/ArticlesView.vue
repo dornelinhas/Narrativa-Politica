@@ -5,58 +5,23 @@ import { Search, Mail, Filter } from 'lucide-vue-next'
 
 const searchQuery = ref('')
 const selectedCategory = ref('Tudo')
-const currentPage = ref(1)
-const itemsPerPage = 6
-
-const categories = ['Tudo', 'DEMOCRACIA', 'ECONOMIA', 'GÊNERO', 'BRASÍLIA', 'TRANSPARÊNCIA', 'MEIO AMBIENTE', 'POLÍTICA URBANA']
-
-const mockPosts = [
-  { 
-    id: 'm1', 
-    title: "Democracia - O Custo Oculto da Desinformação", 
-    excerpt: "Como as campanhas de desinformação afetam não apenas o resultado nas urnas, mas também o tecido social e a confiança nas instituições democráticas brasileiras.", 
-    category: "DEMOCRACIA",
-    image: "https://images.unsplash.com/photo-1541844053589-346841d0b34c?w=800&q=80",
-    date: "12 OUTUBRO 2024"
-  },
-  { 
-    id: 'm2', 
-    title: "Economia e Desigualdade Tributária", 
-    excerpt: "Por que quem ganha menos acaba pagando proporcionalmente mais impostos no Brasil e como a reforma tributária pode mudar esse cenário.", 
-    category: "ECONOMIA",
-    image: "https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?w=500&q=80",
-    date: "05 SETEMBRO 2024"
-  },
-  { 
-    id: 'm3', 
-    title: "Lideranças Femininas: Ocupar para Transformar", 
-    excerpt: "A importância de ter mulheres em cargos de decisão e os desafios enfrentados no ambiente político institucional.", 
-    category: "GÊNERO",
-    image: "https://images.unsplash.com/photo-1573164713714-d95e436ab8d6?w=500&q=80",
-    date: "28 AGOSTO 2024"
-  },
-  { 
-    id: 'm4', 
-    title: "Orçamento Secreto e Transparência", 
-    excerpt: "Entenda o impacto das emendas parlamentares na governabilidade e o que está em jogo na suprema corte.", 
-    category: "BRASÍLIA",
-    image: "https://images.unsplash.com/photo-1529107386315-e1a2ed48a620?w=800&q=80",
-    date: "15 AGOSTO 2024"
-  }
-]
+const itemsPerPage = 4
 
 const formatDate = (dateStr) => {
   if (!dateStr) return ''
-  // Handle ISO strings or YYYY-MM-DD
-  const date = new Date(dateStr)
-  if (isNaN(date.getTime())) return dateStr
-
-  const day = String(date.getDate()).padStart(2, '0')
-  const months = ['JANEIRO', 'FEVEREIRO', 'MARÇO', 'ABRIL', 'MAIO', 'JUNHO', 'JULHO', 'AGOSTO', 'SETEMBRO', 'OUTUBRO', 'NOVEMBRO', 'DEZEMBRO']
-  const month = months[date.getMonth()]
-  const year = date.getFullYear()
-
-  return `${day} ${month} ${year}`
+  try {
+    const date = new Date(dateStr)
+    if (isNaN(date.getTime())) return dateStr
+    
+    const day = date.getDate()
+    const months = ['JANEIRO', 'FEVEREIRO', 'MARÇO', 'ABRIL', 'MAIO', 'JUNHO', 'JULHO', 'AGOSTO', 'SETEMBRO', 'OUTUBRO', 'NOVEMBRO', 'DEZEMBRO']
+    const month = months[date.getMonth()]
+    const year = date.getFullYear()
+    
+    return `${day} ${month} ${year}`
+  } catch {
+    return dateStr
+  }
 }
 
 const filteredPosts = computed(() => {
@@ -65,30 +30,20 @@ const filteredPosts = computed(() => {
 
   const query = searchQuery.value.toLowerCase()
   return posts.filter(post => {
-    const matchesSearch = post.title.toLowerCase().includes(query) || 
+    const matchesSearch = (post.title || '').toLowerCase().includes(query) || 
                           (post.excerpt && post.excerpt.toLowerCase().includes(query))
     const matchesCategory = selectedCategory.value === 'Tudo' || post.category === selectedCategory.value
     return matchesSearch && matchesCategory
   })
 })
 
-const featuredPost = computed(() => currentPage.value === 1 ? filteredPosts.value[0] : null)
-const secondRowPosts = computed(() => currentPage.value === 1 ? filteredPosts.value.slice(1, 3) : [])
-const bannerPost = computed(() => currentPage.value === 1 ? filteredPosts.value[3] : null)
-
-// When on page 1, we only show the featured 4.
-// On subsequent pages, we show a grid of itemsPerPage.
-const paginatedOtherPosts = computed(() => {
-  if (currentPage.value === 1) return []
-
-  const startIdx = 4 + (currentPage.value - 2) * itemsPerPage
-  return filteredPosts.value.slice(startIdx, startIdx + itemsPerPage)
+const paginatedPosts = computed(() => {
+  const start = (currentPage.value - 1) * itemsPerPage
+  return filteredPosts.value.slice(start, start + itemsPerPage)
 })
 
 const totalPages = computed(() => {
-  const count = filteredPosts.value.length
-  if (count <= 4) return 1
-  return 1 + Math.ceil((count - 4) / itemsPerPage)
+  return Math.ceil(filteredPosts.value.length / itemsPerPage)
 })
 
 const setPage = (p) => {
@@ -129,104 +84,39 @@ const setPage = (p) => {
     </header>
 
     <main class="container-max art-main-grid">
-      
+
       <!-- Left Column (Grid-8) -->
       <div class="art-col-left">
-        
-        <!-- Featured Post -->
-        <router-link v-if="featuredPost" :to="`/conteudo/${featuredPost.id}`" class="art-featured-card paper-shadow">
-          <div class="featured-shadow-decor"></div>
 
-          <div class="featured-inner">
-            <div class="featured-image-box">
-              <span class="featured-badge border-primary">{{ featuredPost.category || 'DEMOCRACIA' }}</span>   
-              <img :src="featuredPost.image || 'https://images.unsplash.com/photo-1541844053589-346841d0b34c?w=800&q=80'" class="featured-img" alt="Cover" />
+        <!-- UNIFORM ARTICLES GRID -->
+        <div class="art-uniform-grid" v-if="paginatedPosts.length">
+          <router-link v-for="post in paginatedPosts" :key="post.id" :to="`/conteudo/${post.id}`" class="art-mini-card paper-shadow">
+            <div class="mini-card-image">
+              <img :src="post.image || 'https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?w=500&q=80'" alt="Cover" />
             </div>
-
-            <div class="featured-content">
-              <div class="featured-corner-decor"></div>
-
-              <div>
-                <span class="art-date">{{ formatDate(featuredPost.date || '2024-10-12') }}</span>
-                <h2 class="featured-title">
-                  {{ featuredPost.title }}
-                </h2>
-                <p class="art-excerpt line-clamp-3">
-                  {{ featuredPost.excerpt || 'Como as campanhas de desinformação afetam não apenas o resultado nas urnas, mas também o tecido social e a confiança...' }}
-                </p>
-              </div>
-
-              <div class="featured-footer">
-                <span class="art-read-more border-b-thick">
-                  LER ARTIGO COMPLETO <span class="material-symbols-outlined text-sm pt-1">arrow_forward</span>
-                </span>
-              </div>
-            </div>
-          </div>
-        </router-link>
-
-        <!-- Second Row (2 posts) -->
-        <div class="art-second-row" v-if="secondRowPosts.length">
-          <router-link v-for="(post, index) in secondRowPosts" :key="post.id" :to="`/conteudo/${post.id}`" class="art-small-card paper-shadow">
-            <div class="small-card-image-box">
-              <span class="small-badge border-primary text-preto" :class="index === 0 ? 'bg-verde' : 'bg-rosa text-white'">
-                {{ post.category || (index === 0 ? 'ECONOMIA' : 'GÊNERO') }}
-              </span>
-              <img :src="post.image || 'https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?w=500&q=80'" class="small-img" alt="Cover" />
-            </div>
-
-            <div class="small-card-content">
-              <span class="art-date">{{ formatDate(post.date || (index === 0 ? '2024-09-05' : '2024-08-28')) }}</span>
-              <h3 class="small-card-title">
-                {{ post.title }}
-              </h3>
-              <p class="art-excerpt line-clamp-2 mt-auto">
-                {{ post.excerpt || 'Por que quem ganha menos acaba pagando proporcionalmente mais impostos no Brasil.' }}
-              </p>
+            <div class="mini-card-content">
+              <span class="mini-category">{{ post.category }}</span>
+              <h4 class="mini-title">{{ post.title }}</h4>
+              <span class="mini-date">{{ formatDate(post.date) }}</span>
             </div>
           </router-link>
         </div>
 
-        <!-- Horizontal Dark Banner -->
-        <router-link v-if="bannerPost" :to="`/conteudo/${bannerPost.id}`" class="art-banner-card paper-shadow">
-          <div class="banner-decor-left"></div>
-
-          <div class="banner-content-left">
-            <span class="art-date text-amarelo">{{ bannerPost.category || 'ORÇAMENTO SECRETO' }}</span>        
-            <h3 class="banner-title text-white">
-              {{ bannerPost.title }}
-            </h3>
-          </div>
-
-          <div class="banner-content-right">
-            <p class="banner-excerpt">
-              {{ bannerPost.excerpt || 'Um raio-X nas emendas RP9 e como a falta de clareza sobre o destino dos recursos afeta o desenvolvimento de políticas estruturantes no país.' }}
-            </p>
-            <div class="banner-footer">
-              <span class="banner-date">{{ formatDate(bannerPost.date || '2024-07-10') }}</span>
-              <span class="banner-btn">
-                LER ANÁLISE
-              </span>
-            </div>
-          </div>
-        </router-link>
-
         <!-- PAGINATION CONTROLS -->
         <div class="art-pagination" v-if="totalPages > 1">
           <button 
-            class="pag-btn" 
+            class="pag-btn paper-shadow-sm" 
             :disabled="currentPage === 1"
             @click="setPage(currentPage - 1)"
           >
             <span class="material-symbols-outlined">chevron_left</span>
-            ANTERIOR
           </button>
 
           <div class="pag-pages">
             <button 
               v-for="p in totalPages" 
               :key="p" 
-              class="pag-page-num"
+              class="pag-page-num paper-shadow-sm"
               :class="{ active: currentPage === p }"
               @click="setPage(p)"
             >
@@ -235,11 +125,10 @@ const setPage = (p) => {
           </div>
 
           <button 
-            class="pag-btn" 
+            class="pag-btn paper-shadow-sm" 
             :disabled="currentPage === totalPages"
             @click="setPage(currentPage + 1)"
           >
-            PRÓXIMA
             <span class="material-symbols-outlined">chevron_right</span>
           </button>
         </div>
@@ -248,11 +137,10 @@ const setPage = (p) => {
         <div v-if="filteredPosts.length === 0" class="art-empty-state paper-shadow">
           <h3 class="empty-title">NENHUM ARTIGO ENCONTRADO</h3>
           <p class="empty-text">Tente ajustar seus termos de busca ou filtros.</p>
-          <button @click="searchQuery = ''; selectedCategory = 'Tudo'" class="btn-brutal bg-amarelo">LIMPAR BUSCA</button>
+          <button @click="searchQuery = ''; selectedCategory = 'Tudo'" class="btn-brutal btn-amarelo">LIMPAR BUSCA</button>
         </div>
 
       </div>
-
       <!-- Right Column (Grid-4) -->
       <aside class="art-col-right">
         
@@ -701,15 +589,14 @@ const setPage = (p) => {
   font-family: var(--font-sans); font-size: 18px; font-style: italic; color: #444748; line-height: 1.4;
 }
 
-/* OTHERS GRID */
-.art-others-grid {
+/* UNIFORM GRID */
+.art-uniform-grid {
   display: grid;
   grid-template-columns: 1fr;
   gap: 24px;
-  margin-top: 32px;
 }
 @media (min-width: 640px) {
-  .art-others-grid { grid-template-columns: 1fr 1fr; }
+  .art-uniform-grid { grid-template-columns: 1fr 1fr; }
 }
 
 .art-mini-card {
@@ -721,55 +608,53 @@ const setPage = (p) => {
   text-decoration: none;
   color: inherit;
   transition: transform 0.2s;
+  position: relative;
 }
-.art-mini-card:hover { transform: translateX(4px); }
+.art-mini-card:hover { transform: translate(-2px, -2px); box-shadow: var(--shadow-paper); }
 .mini-card-image {
-  width: 80px; height: 80px; flex-shrink: 0;
-  border: var(--border-thick); overflow: hidden;
+  width: 100px; height: 100px; flex-shrink: 0;
+  border: var(--border-thin); overflow: hidden;
+  background: var(--surface-dim);
 }
 .mini-card-image img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(100%); transition: filter 0.3s; }
 .art-mini-card:hover .mini-card-image img { filter: none; }
-.mini-card-content { display: flex; flex-direction: column; justify-content: center; }
-.mini-category { font-size: 10px; font-weight: 700; color: var(--np-vermelho); text-transform: uppercase; margin-bottom: 4px; }
-.mini-title { font-family: var(--font-display); font-size: 18px; line-height: 1.2; font-weight: 800; text-transform: uppercase; margin: 0 0 4px 0; }
-.mini-date { font-size: 10px; color: #868381; }
+.mini-card-content { display: flex; flex-direction: column; justify-content: center; overflow: hidden; }
+.mini-category { font-size: 10px; font-weight: 800; color: var(--np-vermelho); text-transform: uppercase; margin-bottom: 4px; }
+.mini-title { font-family: var(--font-display); font-size: 18px; line-height: 1.1; font-weight: 800; text-transform: uppercase; margin: 0 0 8px 0; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+.mini-date { font-size: 10px; color: #868381; font-weight: 700; }
 
-/* PAGINATION COMPACT */
+/* PAGINATION COMPACT BOXED */
 .art-pagination {
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 16px;
+  gap: 12px;
   margin-top: 48px;
-  padding: 16px;
-  border-top: var(--border-thin);
+  padding: 24px 0;
+  border-top: var(--border-thick);
 }
 .pag-btn {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  font-family: var(--font-sans);
-  font-size: 10px;
-  font-weight: 800;
-  text-transform: uppercase;
-  background: transparent;
-  border: none;
+  width: 36px; height: 36px;
+  display: flex; align-items: center; justify-content: center;
+  background: #fff;
+  border: var(--border-thick);
   cursor: pointer;
-  transition: color 0.2s;
+  transition: all 0.2s;
+  color: var(--np-black);
 }
-.pag-btn:hover:not(:disabled) { color: var(--np-vermelho); }
+.pag-btn:hover:not(:disabled) { background: var(--np-amarelo); transform: translate(-2px, -2px); }
 .pag-btn:disabled { opacity: 0.3; cursor: not-allowed; }
 
-.pag-pages { display: flex; gap: 4px; }
+.pag-pages { display: flex; gap: 8px; }
 .pag-page-num {
-  width: 28px; height: 28px;
+  width: 36px; height: 36px;
   display: flex; align-items: center; justify-content: center;
-  border: var(--border-thin);
-  font-family: var(--font-sans); font-size: 12px; font-weight: 800;
+  border: var(--border-thick);
+  font-family: var(--font-sans); font-size: 14px; font-weight: 900;
   background: #fff; cursor: pointer; transition: all 0.2s;
 }
-.pag-page-num.active { background: var(--np-black); color: #fff; transform: translate(-1px, -1px); box-shadow: 1px 1px 0 var(--np-vermelho); }
-.pag-page-num:hover:not(.active) { background: var(--np-creme); }
+.pag-page-num.active { background: var(--np-black); color: #fff; transform: translate(-2px, -2px); box-shadow: 2px 2px 0 var(--np-amarelo); }
+.pag-page-num:hover:not(.active) { background: var(--np-creme); transform: translate(-1px, -1px); }
 
 /* EMPTY STATE */
   text-transform: uppercase;
