@@ -1,6 +1,6 @@
 <script setup>
 import { ref, onMounted, watch } from 'vue'
-import { Bold, Italic, List, Heading2, Heading3, Image as ImageIcon, Type, Trash2, Quote, Link, MessageSquarePlus, Link2Off, MessageSquareOff } from 'lucide-vue-next'
+import { Bold, Italic, Underline, Strikethrough, List, Heading2, Heading3, Image as ImageIcon, Type, Trash2, Quote, Link, MessageSquarePlus, Link2Off, MessageSquareOff, AlignLeft, AlignCenter, AlignRight, AlignJustify, Info } from 'lucide-vue-next'
 import { uploadImage } from '../lib/supabaseStorage'
 
 const props = defineProps({
@@ -43,6 +43,16 @@ const removeLink = () => {
   execCmd('unlink')
 }
 
+const addInfoBox = () => {
+  const selection = window.getSelection()
+  let text = 'Escreva sua informação de destaque aqui...'
+  if (selection && selection.rangeCount > 0 && !selection.isCollapsed) {
+    text = selection.toString()
+  }
+  const html = `<div class="info-callout-box"><strong>💡 NOTA DE DESTAQUE</strong><p>${text}</p></div><p><br></p>`
+  execCmd('insertHTML', html)
+}
+
 const addExplanation = () => {
   const selection = window.getSelection()
   if (!selection.rangeCount || selection.isCollapsed) {
@@ -83,9 +93,6 @@ const removeExplanation = () => {
 }
 
 const setFontSize = (size) => {
-  // execCommand('fontSize') uses 1-7, which is limited. 
-  // We'll use a span with style for more control if needed, 
-  // but for simplicity and to follow document.execCommand:
   execCmd('fontSize', size)
 }
 
@@ -160,12 +167,22 @@ const deleteSelectedImage = () => {
       <div class="toolbar-group">
         <button type="button" @click="execCmd('bold')" title="Negrito"><Bold :size="16" /></button>
         <button type="button" @click="execCmd('italic')" title="Itálico"><Italic :size="16" /></button>
+        <button type="button" @click="execCmd('underline')" title="Sublinhado"><Underline :size="16" /></button>
+        <button type="button" @click="execCmd('strikeThrough')" title="Tachado"><Strikethrough :size="16" /></button>
+      </div>
+
+      <div class="toolbar-group">
+        <button type="button" @click="execCmd('justifyLeft')" title="Alinhar à Esquerda"><AlignLeft :size="16" /></button>
+        <button type="button" @click="execCmd('justifyCenter')" title="Centralizar"><AlignCenter :size="16" /></button>
+        <button type="button" @click="execCmd('justifyRight')" title="Alinhar à Direita"><AlignRight :size="16" /></button>
+        <button type="button" @click="execCmd('justifyFull')" title="Justificar Texto"><AlignJustify :size="16" /></button>
       </div>
       
       <div class="toolbar-group">
         <button type="button" @click="execCmd('formatBlock', 'H2')" title="Título 2"><Heading2 :size="16" /></button>
         <button type="button" @click="execCmd('formatBlock', 'H3')" title="Título 3"><Heading3 :size="16" /></button>
         <button type="button" @click="execCmd('formatBlock', 'blockquote')" title="Citação"><Quote :size="16" /></button>
+        <button type="button" @click="addInfoBox" title="Inserir Balão de Destaque / Info"><Info :size="16" /></button>
       </div>
 
       <div class="toolbar-group">
@@ -183,7 +200,7 @@ const deleteSelectedImage = () => {
       <div class="toolbar-group">
         <button type="button" @click="addLink" title="Adicionar Link"><Link :size="16" /></button>
         <button type="button" @click="removeLink" title="Remover Link"><Link2Off :size="16" /></button>
-        <button type="button" @click="addExplanation" title="Adicionar Balão de Explicação"><MessageSquarePlus :size="16" /></button>
+        <button type="button" @click="addExplanation" title="Adicionar Balão de Explicação (Hover)"><MessageSquarePlus :size="16" /></button>
         <button type="button" @click="removeExplanation" title="Remover Balão de Explicação"><MessageSquareOff :size="16" /></button>
         <button type="button" @click="execCmd('insertUnorderedList')" title="Lista"><List :size="16" /></button>
         <button type="button" @click="triggerFileInput" title="Inserir Imagem"><ImageIcon :size="16" /></button>
@@ -353,6 +370,28 @@ const deleteSelectedImage = () => {
   line-height: 1.4;
   color: #1C1C1C;
   border-radius: 0 12px 12px 0;
+}
+
+.editor-content :deep(.info-callout-box) {
+  background: #FEF3C7;
+  border-left: 6px solid #F59E0B;
+  padding: 15px 20px;
+  margin: 1.5rem 0;
+  border-radius: 0 8px 8px 0;
+  font-family: "Inter", sans-serif;
+  color: #1C1C1C;
+  font-size: 1.05rem;
+  box-shadow: 4px 4px 0px rgba(0,0,0,0.05);
+}
+
+.editor-content :deep(.info-callout-box strong) {
+  font-family: "Archivo Black", sans-serif;
+  display: block;
+  margin-bottom: 5px;
+  color: #D97706;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .editor-content :deep(img) {
