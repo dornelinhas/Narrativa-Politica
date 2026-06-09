@@ -5,7 +5,10 @@ import { Search, Mail, Filter } from 'lucide-vue-next'
 
 const searchQuery = ref('')
 const selectedCategory = ref('Tudo')
-const emailNewsletter = ref('')
+const currentPage = ref(1)
+const itemsPerPage = 6
+
+const categories = ['Tudo', 'DEMOCRACIA', 'ECONOMIA', 'GÊNERO', 'BRASÍLIA', 'TRANSPARÊNCIA', 'MEIO AMBIENTE', 'POLÍTICA URBANA']
 
 const mockPosts = [
   { 
@@ -42,14 +45,51 @@ const mockPosts = [
   }
 ]
 
-const allPosts = computed(() => {
-  const posts = filterPublicPosts(siteContent.posts || [])
-  return posts.length > 0 ? posts : mockPosts
+const filteredPosts = computed(() => {
+  let posts = filterPublicPosts(siteContent.posts || [])
+  if (posts.length === 0) posts = mockPosts
+
+  return posts.filter(post => {
+    const matchesSearch = post.title.toLowerCase().includes(searchQuery.value.toLowerCase()) || 
+                          (post.excerpt && post.excerpt.toLowerCase().includes(searchQuery.value.toLowerCase()))
+    const matchesCategory = selectedCategory.value === 'Tudo' || post.category === selectedCategory.value
+    return matchesSearch && matchesCategory
+  })
 })
-const featuredPost = computed(() => allPosts.value[0])
-const secondRowPosts = computed(() => allPosts.value.slice(1, 3))
-const bannerPost = computed(() => allPosts.value[3])
-const otherPosts = computed(() => allPosts.value.slice(4))
+
+const featuredPost = computed(() => currentPage.value === 1 ? filteredPosts.value[0] : null)
+const secondRowPosts = computed(() => currentPage.value === 1 ? filteredPosts.value.slice(1, 3) : [])
+const bannerPost = computed(() => currentPage.value === 1 ? filteredPosts.value[3] : null)
+
+const paginatedOtherPosts = computed(() => {
+  const offset = currentPage.value === 1 ? 4 : 0
+  const start = offset + (currentPage.value - 1) * itemsPerPage
+  const end = start + itemsPerPage
+  
+  // If we are on page 1, we skip the first 4 (featured/row/banner)
+  // If we are on page 2+, we show all posts from that page's offset
+  // Wait, let's simplify:
+  if (currentPage.value === 1) {
+    return filteredPosts.value.slice(4, 4 + itemsPerPage)
+  } else {
+    // On page 2+, we should probably just show a grid of everything after the first 4
+    // or everything including the first 4? Usually, the first 4 are "special" only on page 1.
+    const startIdx = 4 + (currentPage.value - 1) * itemsPerPage
+    return filteredPosts.value.slice(startIdx, startIdx + itemsPerPage)
+  }
+})
+
+const totalPages = computed(() => {
+  const length = filteredPosts.value.length
+  if (length <= 4 + itemsPerPage) return 1
+  const remaining = length - (4 + itemsPerPage)
+  return 1 + Math.ceil(remaining / itemsPerPage)
+})
+
+const setPage = (p) => {
+  currentPage.value = p
+  window.scrollTo({ top: 0, behavior: 'smooth' })
+}
 </script>
 
 <template>
@@ -69,7 +109,12 @@ const otherPosts = computed(() => allPosts.value.slice(4))
           <button class="pill-badge pill-white filter-btn">FILTROS <Filter :size="12" /></button>
         </div>
         <div class="art-search-box paper-shadow">
-          <input type="text" placeholder="Pesquisar artigos..." class="art-search-input" />
+          <input 
+            type="text" 
+            placeholder="Pesquisar artigos..." 
+            class="art-search-input" 
+            v-model="searchQuery"
+          />
           <button class="art-search-btn">
             <Search :size="18" class="text-white" />
           </button>
@@ -88,7 +133,7 @@ const otherPosts = computed(() => allPosts.value.slice(4))
           
           <div class="featured-inner">
             <div class="featured-image-box">
-              <span class="featured-badge border-primary">DEMOCRACIA</span>
+              <span class="featured-badge border-primary">{{ featuredPost.category || 'DEMOCRACIA' }}</span>
               <img :src="featuredPost.image || 'https://images.unsplash.com/photo-1541844053589-346841d0b34c?w=800&q=80'" class="featured-img" alt="Cover" />
             </div>
             
@@ -96,7 +141,7 @@ const otherPosts = computed(() => allPosts.value.slice(4))
               <div class="featured-corner-decor"></div>
               
               <div>
-                <span class="art-date">12 OUTUBRO 2024</span>
+                <span class="art-date">{{ featuredPost.date || '12 OUTUBRO 2024' }}</span>
                 <h2 class="featured-title">
                   {{ featuredPost.title }}
                 </h2>
@@ -115,17 +160,17 @@ const otherPosts = computed(() => allPosts.value.slice(4))
         </router-link>
 
         <!-- Second Row (2 posts) -->
-        <div class="art-second-row">
+        <div class="art-second-row" v-if="secondRowPosts.length">
           <router-link v-for="(post, index) in secondRowPosts" :key="post.id" :to="`/conteudo/${post.id}`" class="art-small-card paper-shadow">
             <div class="small-card-image-box">
               <span class="small-badge border-primary text-preto" :class="index === 0 ? 'bg-verde' : 'bg-rosa text-white'">
-                {{ index === 0 ? 'ECONOMIA' : 'GÊNERO' }}
+                {{ post.category || (index === 0 ? 'ECONOMIA' : 'GÊNERO') }}
               </span>
               <img :src="post.image || 'https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?w=500&q=80'" class="small-img" alt="Cover" />
             </div>
             
             <div class="small-card-content">
-              <span class="art-date">05 SETEMBRO 2024</span>
+              <span class="art-date">{{ post.date || '05 SETEMBRO 2024' }}</span>
               <h3 class="small-card-title">
                 {{ post.title }}
               </h3>
@@ -141,7 +186,7 @@ const otherPosts = computed(() => allPosts.value.slice(4))
           <div class="banner-decor-left"></div>
           
           <div class="banner-content-left">
-            <span class="art-date text-amarelo">ORÇAMENTO SECRETO</span>
+            <span class="art-date text-amarelo">{{ bannerPost.category || 'ORÇAMENTO SECRETO' }}</span>
             <h3 class="banner-title text-white">
               {{ bannerPost.title }}
             </h3>
@@ -152,13 +197,68 @@ const otherPosts = computed(() => allPosts.value.slice(4))
               {{ bannerPost.excerpt || 'Um raio-X nas emendas RP9 e como a falta de clareza sobre o destino dos recursos afeta o desenvolvimento de políticas estruturantes no país.' }}
             </p>
             <div class="banner-footer">
-              <span class="banner-date">10 JULHO 2024</span>
+              <span class="banner-date">{{ bannerPost.date || '10 JULHO 2024' }}</span>
               <span class="banner-btn">
                 LER ANÁLISE
               </span>
             </div>
           </div>
         </router-link>
+
+        <!-- OTHER ARTICLES GRID -->
+        <div class="art-others-grid" v-if="paginatedOtherPosts.length">
+          <router-link v-for="post in paginatedOtherPosts" :key="post.id" :to="`/conteudo/${post.id}`" class="art-mini-card paper-shadow">
+            <div class="mini-card-image">
+              <img :src="post.image || 'https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?w=500&q=80'" alt="Cover" />
+            </div>
+            <div class="mini-card-content">
+              <span class="mini-category">{{ post.category }}</span>
+              <h4 class="mini-title">{{ post.title }}</h4>
+              <span class="mini-date">{{ post.date }}</span>
+            </div>
+          </router-link>
+        </div>
+
+        <!-- PAGINATION CONTROLS -->
+        <div class="art-pagination" v-if="totalPages > 1">
+          <button 
+            class="pag-btn" 
+            :disabled="currentPage === 1"
+            @click="setPage(currentPage - 1)"
+          >
+            <span class="material-symbols-outlined">chevron_left</span>
+            ANTERIOR
+          </button>
+          
+          <div class="pag-pages">
+            <button 
+              v-for="p in totalPages" 
+              :key="p" 
+              class="pag-page-num"
+              :class="{ active: currentPage === p }"
+              @click="setPage(p)"
+            >
+              {{ p }}
+            </button>
+          </div>
+
+          <button 
+            class="pag-btn" 
+            :disabled="currentPage === totalPages"
+            @click="setPage(currentPage + 1)"
+          >
+            PRÓXIMA
+            <span class="material-symbols-outlined">chevron_right</span>
+          </button>
+        </div>
+
+        <!-- Empty State -->
+        <div v-if="filteredPosts.length === 0" class="art-empty-state paper-shadow">
+          <h3 class="empty-title">NENHUM ARTIGO ENCONTRADO</h3>
+          <p class="empty-text">Tente ajustar seus termos de busca ou filtros.</p>
+          <button @click="searchQuery = ''; selectedCategory = 'Tudo'" class="btn-brutal bg-amarelo">LIMPAR BUSCA</button>
+        </div>
+
       </div>
 
       <!-- Right Column (Grid-4) -->
@@ -171,12 +271,15 @@ const otherPosts = computed(() => allPosts.value.slice(4))
           <h3 class="side-title border-b-thick">TEMAS POPULARES</h3>
           
           <div class="topics-list">
-            <span class="topic-pill bg-verde border-thick">ECONOMIA</span>
-            <span class="topic-pill bg-rosa text-white border-thick">GÊNERO</span>
-            <span class="topic-pill bg-azul text-white border-thick">DEMOCRACIA</span>
-            <span class="topic-pill bg-amarelo border-thick">TRANSPARÊNCIA</span>
-            <span class="topic-pill bg-white border-thick">MEIO AMBIENTE</span>
-            <span class="topic-pill bg-white border-thick">POLÍTICA URBANA</span>
+            <button 
+              v-for="cat in categories" 
+              :key="cat"
+              class="topic-pill border-thick"
+              :class="selectedCategory === cat ? 'bg-preto text-white' : 'bg-white'"
+              @click="selectedCategory = cat; currentPage = 1"
+            >
+              {{ cat }}
+            </button>
           </div>
         </div>
 
@@ -506,6 +609,12 @@ const otherPosts = computed(() => allPosts.value.slice(4))
 .topic-pill {
   border-radius: 99px; font-family: var(--font-sans); font-size: 10px; font-weight: 700; text-transform: uppercase;
   padding: 4px 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.topic-pill:hover:not(.bg-preto) {
+  background-color: var(--surface-container-high);
+  transform: translate(-1px, -1px);
 }
 
 .art-newsletter-box {
@@ -599,6 +708,87 @@ const otherPosts = computed(() => allPosts.value.slice(4))
 .quote-text {
   font-family: var(--font-sans); font-size: 18px; font-style: italic; color: #444748; line-height: 1.4;
 }
+
+/* OTHERS GRID */
+.art-others-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+  margin-top: 32px;
+}
+@media (min-width: 640px) {
+  .art-others-grid { grid-template-columns: 1fr 1fr; }
+}
+
+.art-mini-card {
+  display: flex;
+  gap: 16px;
+  background: #fff;
+  border: var(--border-thick);
+  padding: 16px;
+  text-decoration: none;
+  color: inherit;
+  transition: transform 0.2s;
+}
+.art-mini-card:hover { transform: translateX(4px); }
+.mini-card-image {
+  width: 80px; height: 80px; flex-shrink: 0;
+  border: var(--border-thick); overflow: hidden;
+}
+.mini-card-image img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(100%); transition: filter 0.3s; }
+.art-mini-card:hover .mini-card-image img { filter: none; }
+.mini-card-content { display: flex; flex-direction: column; justify-content: center; }
+.mini-category { font-size: 10px; font-weight: 700; color: var(--np-vermelho); text-transform: uppercase; margin-bottom: 4px; }
+.mini-title { font-family: var(--font-display); font-size: 18px; line-height: 1.2; font-weight: 800; text-transform: uppercase; margin: 0 0 4px 0; }
+.mini-date { font-size: 10px; color: #868381; }
+
+/* PAGINATION */
+.art-pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 24px;
+  margin-top: 64px;
+  padding: 24px;
+  border-top: var(--border-thick);
+}
+.pag-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-sans);
+  font-size: 12px;
+  font-weight: 800;
+  text-transform: uppercase;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+.pag-btn:hover:not(:disabled) { color: var(--np-vermelho); }
+.pag-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+
+.pag-pages { display: flex; gap: 8px; }
+.pag-page-num {
+  width: 32px; height: 32px;
+  display: flex; align-items: center; justify-content: center;
+  border: var(--border-thick);
+  font-family: var(--font-sans); font-size: 14px; font-weight: 800;
+  background: #fff; cursor: pointer; transition: all 0.2s;
+}
+.pag-page-num.active { background: var(--np-black); color: #fff; transform: translate(-2px, -2px); box-shadow: 2px 2px 0 var(--np-vermelho); }
+.pag-page-num:hover:not(.active) { background: var(--np-creme); }
+
+/* EMPTY STATE */
+.art-empty-state {
+  padding: 64px;
+  text-align: center;
+  background: #fff;
+  border: var(--border-thick);
+  margin-top: 32px;
+}
+.empty-title { font-family: var(--font-display); font-size: 32px; font-weight: 800; margin-bottom: 16px; }
+.empty-text { font-family: var(--font-sans); color: #444748; margin-bottom: 24px; }
 
 /* ── RESPONSIVE V4 ───────────────────────────── */
 @media (max-width: 1023px) {
