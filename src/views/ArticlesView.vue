@@ -45,13 +45,28 @@ const mockPosts = [
   }
 ]
 
+const formatDate = (dateStr) => {
+  if (!dateStr) return ''
+  // Handle ISO strings or YYYY-MM-DD
+  const date = new Date(dateStr)
+  if (isNaN(date.getTime())) return dateStr
+
+  const day = String(date.getDate()).padStart(2, '0')
+  const months = ['JANEIRO', 'FEVEREIRO', 'MARÇO', 'ABRIL', 'MAIO', 'JUNHO', 'JULHO', 'AGOSTO', 'SETEMBRO', 'OUTUBRO', 'NOVEMBRO', 'DEZEMBRO']
+  const month = months[date.getMonth()]
+  const year = date.getFullYear()
+
+  return `${day} ${month} ${year}`
+}
+
 const filteredPosts = computed(() => {
   let posts = filterPublicPosts(siteContent.posts || [])
   if (posts.length === 0) posts = mockPosts
 
+  const query = searchQuery.value.toLowerCase()
   return posts.filter(post => {
-    const matchesSearch = post.title.toLowerCase().includes(searchQuery.value.toLowerCase()) || 
-                          (post.excerpt && post.excerpt.toLowerCase().includes(searchQuery.value.toLowerCase()))
+    const matchesSearch = post.title.toLowerCase().includes(query) || 
+                          (post.excerpt && post.excerpt.toLowerCase().includes(query))
     const matchesCategory = selectedCategory.value === 'Tudo' || post.category === selectedCategory.value
     return matchesSearch && matchesCategory
   })
@@ -61,35 +76,26 @@ const featuredPost = computed(() => currentPage.value === 1 ? filteredPosts.valu
 const secondRowPosts = computed(() => currentPage.value === 1 ? filteredPosts.value.slice(1, 3) : [])
 const bannerPost = computed(() => currentPage.value === 1 ? filteredPosts.value[3] : null)
 
+// When on page 1, we only show the featured 4.
+// On subsequent pages, we show a grid of itemsPerPage.
 const paginatedOtherPosts = computed(() => {
-  const offset = currentPage.value === 1 ? 4 : 0
-  const start = offset + (currentPage.value - 1) * itemsPerPage
-  const end = start + itemsPerPage
-  
-  // If we are on page 1, we skip the first 4 (featured/row/banner)
-  // If we are on page 2+, we show all posts from that page's offset
-  // Wait, let's simplify:
-  if (currentPage.value === 1) {
-    return filteredPosts.value.slice(4, 4 + itemsPerPage)
-  } else {
-    // On page 2+, we should probably just show a grid of everything after the first 4
-    // or everything including the first 4? Usually, the first 4 are "special" only on page 1.
-    const startIdx = 4 + (currentPage.value - 1) * itemsPerPage
-    return filteredPosts.value.slice(startIdx, startIdx + itemsPerPage)
-  }
+  if (currentPage.value === 1) return []
+
+  const startIdx = 4 + (currentPage.value - 2) * itemsPerPage
+  return filteredPosts.value.slice(startIdx, startIdx + itemsPerPage)
 })
 
 const totalPages = computed(() => {
-  const length = filteredPosts.value.length
-  if (length <= 4 + itemsPerPage) return 1
-  const remaining = length - (4 + itemsPerPage)
-  return 1 + Math.ceil(remaining / itemsPerPage)
+  const count = filteredPosts.value.length
+  if (count <= 4) return 1
+  return 1 + Math.ceil((count - 4) / itemsPerPage)
 })
 
 const setPage = (p) => {
   currentPage.value = p
   window.scrollTo({ top: 0, behavior: 'smooth' })
 }
+
 </script>
 
 <template>
@@ -130,18 +136,18 @@ const setPage = (p) => {
         <!-- Featured Post -->
         <router-link v-if="featuredPost" :to="`/conteudo/${featuredPost.id}`" class="art-featured-card paper-shadow">
           <div class="featured-shadow-decor"></div>
-          
+
           <div class="featured-inner">
             <div class="featured-image-box">
-              <span class="featured-badge border-primary">{{ featuredPost.category || 'DEMOCRACIA' }}</span>
+              <span class="featured-badge border-primary">{{ featuredPost.category || 'DEMOCRACIA' }}</span>   
               <img :src="featuredPost.image || 'https://images.unsplash.com/photo-1541844053589-346841d0b34c?w=800&q=80'" class="featured-img" alt="Cover" />
             </div>
-            
+
             <div class="featured-content">
               <div class="featured-corner-decor"></div>
-              
+
               <div>
-                <span class="art-date">{{ featuredPost.date || '12 OUTUBRO 2024' }}</span>
+                <span class="art-date">{{ formatDate(featuredPost.date || '2024-10-12') }}</span>
                 <h2 class="featured-title">
                   {{ featuredPost.title }}
                 </h2>
@@ -149,7 +155,7 @@ const setPage = (p) => {
                   {{ featuredPost.excerpt || 'Como as campanhas de desinformação afetam não apenas o resultado nas urnas, mas também o tecido social e a confiança...' }}
                 </p>
               </div>
-              
+
               <div class="featured-footer">
                 <span class="art-read-more border-b-thick">
                   LER ARTIGO COMPLETO <span class="material-symbols-outlined text-sm pt-1">arrow_forward</span>
@@ -168,9 +174,9 @@ const setPage = (p) => {
               </span>
               <img :src="post.image || 'https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?w=500&q=80'" class="small-img" alt="Cover" />
             </div>
-            
+
             <div class="small-card-content">
-              <span class="art-date">{{ post.date || '05 SETEMBRO 2024' }}</span>
+              <span class="art-date">{{ formatDate(post.date || (index === 0 ? '2024-09-05' : '2024-08-28')) }}</span>
               <h3 class="small-card-title">
                 {{ post.title }}
               </h3>
@@ -184,20 +190,20 @@ const setPage = (p) => {
         <!-- Horizontal Dark Banner -->
         <router-link v-if="bannerPost" :to="`/conteudo/${bannerPost.id}`" class="art-banner-card paper-shadow">
           <div class="banner-decor-left"></div>
-          
+
           <div class="banner-content-left">
-            <span class="art-date text-amarelo">{{ bannerPost.category || 'ORÇAMENTO SECRETO' }}</span>
+            <span class="art-date text-amarelo">{{ bannerPost.category || 'ORÇAMENTO SECRETO' }}</span>        
             <h3 class="banner-title text-white">
               {{ bannerPost.title }}
             </h3>
           </div>
-          
+
           <div class="banner-content-right">
             <p class="banner-excerpt">
               {{ bannerPost.excerpt || 'Um raio-X nas emendas RP9 e como a falta de clareza sobre o destino dos recursos afeta o desenvolvimento de políticas estruturantes no país.' }}
             </p>
             <div class="banner-footer">
-              <span class="banner-date">{{ bannerPost.date || '10 JULHO 2024' }}</span>
+              <span class="banner-date">{{ formatDate(bannerPost.date || '2024-07-10') }}</span>
               <span class="banner-btn">
                 LER ANÁLISE
               </span>
@@ -205,8 +211,16 @@ const setPage = (p) => {
           </div>
         </router-link>
 
-        <!-- OTHER ARTICLES GRID -->
-        <div class="art-others-grid" v-if="paginatedOtherPosts.length">
+        <!-- PAGE 1 NAVIGATION BUTTON -->
+        <div class="art-next-page-action" v-if="currentPage === 1 && totalPages > 1">
+          <button @click="setPage(2)" class="btn-brutal btn-next-big paper-shadow">
+            VER MAIS ARTIGOS
+            <span class="material-symbols-outlined">arrow_forward</span>
+          </button>
+        </div>
+
+        <!-- OTHER ARTICLES GRID (Only for page 2+) -->
+        <div class="art-others-grid" v-if="currentPage > 1 && paginatedOtherPosts.length">
           <router-link v-for="post in paginatedOtherPosts" :key="post.id" :to="`/conteudo/${post.id}`" class="art-mini-card paper-shadow">
             <div class="mini-card-image">
               <img :src="post.image || 'https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?w=500&q=80'" alt="Cover" />
@@ -214,22 +228,21 @@ const setPage = (p) => {
             <div class="mini-card-content">
               <span class="mini-category">{{ post.category }}</span>
               <h4 class="mini-title">{{ post.title }}</h4>
-              <span class="mini-date">{{ post.date }}</span>
+              <span class="mini-date">{{ formatDate(post.date) }}</span>
             </div>
           </router-link>
         </div>
 
-        <!-- PAGINATION CONTROLS -->
-        <div class="art-pagination" v-if="totalPages > 1">
+        <!-- PAGINATION CONTROLS (Only for page 2+) -->
+        <div class="art-pagination" v-if="currentPage > 1 && totalPages > 1">
           <button 
             class="pag-btn" 
-            :disabled="currentPage === 1"
             @click="setPage(currentPage - 1)"
           >
             <span class="material-symbols-outlined">chevron_left</span>
-            ANTERIOR
+            VOLTAR
           </button>
-          
+
           <div class="pag-pages">
             <button 
               v-for="p in totalPages" 
@@ -251,7 +264,6 @@ const setPage = (p) => {
             <span class="material-symbols-outlined">chevron_right</span>
           </button>
         </div>
-
         <!-- Empty State -->
         <div v-if="filteredPosts.length === 0" class="art-empty-state paper-shadow">
           <h3 class="empty-title">NENHUM ARTIGO ENCONTRADO</h3>
@@ -789,6 +801,34 @@ const setPage = (p) => {
 }
 .empty-title { font-family: var(--font-display); font-size: 32px; font-weight: 800; margin-bottom: 16px; }
 .empty-text { font-family: var(--font-sans); color: #444748; margin-bottom: 24px; }
+
+/* NEXT PAGE BIG BUTTON */
+.art-next-page-action {
+  display: flex;
+  justify-content: center;
+  margin-top: 48px;
+  padding: 32px 0;
+}
+.btn-next-big {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: var(--np-amarelo);
+  color: var(--np-black);
+  padding: 24px 48px;
+  font-family: var(--font-display);
+  font-size: 24px;
+  font-weight: 800;
+  text-transform: uppercase;
+  border: var(--border-thick);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.btn-next-big:hover {
+  transform: translate(-4px, -4px);
+  box-shadow: 8px 8px 0 var(--np-black);
+  background: #fff;
+}
 
 /* ── RESPONSIVE V4 ───────────────────────────── */
 @media (max-width: 1023px) {
