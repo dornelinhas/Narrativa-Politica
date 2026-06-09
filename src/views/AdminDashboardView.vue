@@ -1838,7 +1838,7 @@ onUnmounted(() => {
 
           <div class="editor-workspace-dual mb-10">
              <div class="main-editor-area">
-                   <QuillEditor theme="snow" contentType="html" v-model:content="novoArtigo.content" placeholder="Escreva o conteúdo do seu artigo aqui..." />
+                   <BrutalEditor v-model="novoArtigo.content" placeholder="Escreva o conteúdo do seu artigo aqui..." />
                 </div>
                 
                 <!-- SEO & SOCIAL SIDEBAR -->
